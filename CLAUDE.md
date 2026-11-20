@@ -1,4 +1,4 @@
-# CLAUDE.md — Prabu: Post-Apocalyptic Survival RPG (working title)
+# CLAUDE.md — The King of Survival
 
 This file is the standing brief for any Claude session on this repository. Read it fully before doing any work.
 
@@ -219,6 +219,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-004 Placeholder art only, centrally managed.
 - D-005 Client-side architecture, stack as in §7 (Claude's authority per owner).
 - D-006 Prototype systems as listed in §5; deferred list in §6.
+- D-007 Game name: **The King of Survival**.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.

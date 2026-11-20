@@ -1,6 +1,6 @@
 # World and geography
 
-What is confirmed about where the prototype takes place, and the sites proposed for approval.
+What is confirmed about where the prototype takes place, and the approved prototype sites.
 The canon (timeline, Prabu, the family) lives in CLAUDE.md §3–§4 and is not repeated here.
 
 ## Confirmed
@@ -15,13 +15,14 @@ The canon (timeline, Prabu, the family) lives in CLAUDE.md §3–§4 and is not 
 | D-012 | Prototype area: **~25 km radius** around the settlement, plus **Madurai city ruins (~75–80 km)** as the single distant destination. |
 | D-013 | Discoverable places cover **Madurai city ruins, water sources, hunting grounds, and roads/rail/airport**. |
 | D-014 | Madurai was **not struck directly**: standing, decayed ruins, with **scattered low-level fallout patches** across the region. |
+| D-015 | The prototype sites below are approved (was P-008). |
 
 ### Why these fit together
 - Prabu is the settlement's hunter, and the sanctuary forest is on his doorstep.
 - The drought/famine canon shows in the dry tanks and the failing Pilavakkal reservoir.
 - Madurai is the big, dangerous, rewarding trip that pulls the player outward.
 
-## Proposed sites — P-008 (awaiting owner approval)
+## Prototype sites — D-015 (approved)
 
 Real places only. Distances are approximate, from public sources. They get confirmed against the map data when M1 brings in GeoJSON, and anything that ends up outside the 25 km radius gets flagged.
 
@@ -36,7 +37,7 @@ Real places only. Distances are approximate, from public sources. They get confi
 | 6 | **Rajapalayam town ruins** | Ruins | ~20–25 km | Second town on NH 744 and the rail line. |
 | 7 | **Madurai city ruins**, including the airport on the city's south side | City ruins + airport | ~75–80 km via NH 744 (T. Kallupatti, Tirumangalam) | The far expedition (D-012). |
 
-That makes 7 discoverable places plus home, within P-001's 6–8.
+That makes 7 discoverable places plus home. This settles the locations part of P-001.
 
 ### Not decided (owner only)
 - **Q9:** where the fallout patches (D-014) lie.

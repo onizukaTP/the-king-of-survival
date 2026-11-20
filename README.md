@@ -14,7 +14,7 @@ You play Prabu, a hunter from a struggling settlement in the Western Ghats footh
 | [CLAUDE.md](CLAUDE.md) | The standing brief: canon, rules, decisions, milestones, workflow. Start here. |
 | [docs/requirements.md](docs/requirements.md) | Every requirement and its status, traced to a decision. |
 | [docs/decisions.md](docs/decisions.md) | Decision log (confirmed / proposed / open). |
-| [docs/world.md](docs/world.md) | Geography and setting decisions, proposed sites. |
+| [docs/world.md](docs/world.md) | Geography and setting decisions, prototype sites. |
 | [docs/architecture.md](docs/architecture.md) | How the code works. |
 | [docs/progress.md](docs/progress.md) | What's done, in progress, pending and blocked. |
 | [CREDITS.md](CREDITS.md) | Data and asset sources. |

@@ -271,7 +271,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | # | Milestone | Depends on | Status |
 |---|---|---|---|
 | M0 | Skeleton: Vite/React/TS, engine core, GameState, command dispatcher, seeded RNG, content loader + Zod, asset manifest, IndexedDB save/load, CI + deploy | — | Done — live at https://onizukatp.github.io/the-king-of-survival/ |
-| M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Done on `dev` (not yet released to `main`) |
+| M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Done — live |
 | M2 | Time & survival: clock, decay, thresholds, death | M1, Q3 | Blocked |
 | M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Not started |
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Blocked |

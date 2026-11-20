@@ -146,7 +146,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 - All game state lives in one **serialisable `GameState`** object.
 - State changes only through **commands**: `applyCommand(state, command) → { state, events }`. UI dispatches commands and renders state; it never mutates state or contains game rules.
 - Randomness comes from a **seeded RNG stored in GameState** → deterministic, reproducible tests and saves.
-- Game time is an integer (minutes since game start) advanced by actions, not wall-clock time (pending owner approval of the time model, Q2).
+- Game time is an integer (minutes since game start) advanced by actions, not wall-clock time (confirmed for travel by D-010; other actions pending P-003).
 - Invalid commands return a typed error/rejection; they never throw unhandled or partially mutate state.
 
 ### Planned directory layout
@@ -220,19 +220,20 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-005 Client-side architecture, stack as in §7 (Claude's authority per owner).
 - D-006 Prototype systems as listed in §5; deferred list in §6.
 - D-007 Game name: **The King of Survival**.
+- D-008 (Q1, part) Prabu's settlement and the prototype's playable locations are in **Madurai and the dry south**. The whole state is still rendered. The exact settlement spot is still open (Q1b).
+- D-009 (Q2, replaces P-004) Free movement: the player can travel to any point. Routes use roads where faster and go cross-country (slower, riskier) elsewhere. M1 treats cross-country as uniform ground (no terrain cost yet); the "riskier" part arrives with events (M6).
+- D-010 (Q2) Travel resolves in **legs**: each leg resolves instantly with a short cosmetic marker animation, the clock advances by the leg's time, and travel can be interrupted between legs. No real-time movement; state is never saved mid-leg.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
 - P-002 Survival attributes: Health, Hunger, Thirst, Fatigue, Radiation, with threshold penalties.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
-- P-004 Travel: hybrid (roads faster, off-road slower/riskier); M1 implements road/river-network travel first.
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens: Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 
 ### Open — blocking (do not implement affected areas until answered)
-- Q1 Starting city/region of the settlement and the prototype's playable region. *(blocks M1)*
-- Q2 Travel model and whether travel is animated in real time or resolves instantly. *(blocks M1)*
+- Q1b Exact settlement spot within the Madurai/south region, and the prototype's discoverable locations (ties to P-001). *(blocks M1 locations and discovery; map rendering and travel can start)*
 - Q3 Final survival attribute list; are injuries separate from Health? *(blocks M2)*
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*
 - Q5 Enemy mix: animals / human bandits / mutants. *(blocks M7)*
@@ -255,7 +256,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | # | Milestone | Depends on | Status |
 |---|---|---|---|
 | M0 | Skeleton: Vite/React/TS, engine core, GameState, command dispatcher, seeded RNG, content loader + Zod, asset manifest, IndexedDB save/load, CI + deploy | — | Done — live at https://onizukatp.github.io/the-king-of-survival/ |
-| M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0, Q1, Q2 | Blocked |
+| M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0, Q1b | Not started — map render and travel unblocked; locations/discovery wait on Q1b |
 | M2 | Time & survival: clock, decay, thresholds, death | M1, Q3 | Blocked |
 | M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Not started |
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Blocked |

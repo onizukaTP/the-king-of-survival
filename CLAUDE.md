@@ -165,7 +165,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
-├─ scripts/                # one-off data preprocessing (e.g., geo simplification)
+├─ scripts/geo/            # Overpass query + build-geo.mjs: regenerates roads, rail, state outline
 ├─ src/
 │  ├─ engine/
 │  │  ├─ core/             # GameState, commands, rng, clock, ids
@@ -236,6 +236,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-018 **Discovery:** fog clears in a ~3 km sight radius along Prabu's path; any site inside that radius is discovered.
 - D-019 **Walking speeds:** road 4.5 km/h, cross-country 3 km/h.
 - D-020 A new game starts on **Day 1 at 06:00** (dawn). May be revisited when the opening narrative (Q7) is decided.
+- D-021 (owner chose option C when the OSM data showed the clash) The settlement sits at the sanctuary's **north-east forest edge, ~6 km north-west of Srivilliputhur town** (9.5599, 77.6251), not at Shenbagathoppu. Shenbagathoppu turned out nearer Rajapalayam (~9 km) than the town (~14 km), which clashed with D-017. The hunting ground is the sanctuary forest beside home; the water site is the Pilavakkal (Periyar) dam. Real coordinates and distances are in `docs/world.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -243,6 +244,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
+- P-009 Leg length: a trip is cut into legs of at most **60 game minutes** (`world.json`). It sets how often travel can be interrupted once events exist (M6). Used in M1 as a working value.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 
 ### Open — blocking (do not implement affected areas until answered)
@@ -269,7 +271,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | # | Milestone | Depends on | Status |
 |---|---|---|---|
 | M0 | Skeleton: Vite/React/TS, engine core, GameState, command dispatcher, seeded RNG, content loader + Zod, asset manifest, IndexedDB save/load, CI + deploy | — | Done — live at https://onizukatp.github.io/the-king-of-survival/ |
-| M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Not started — ready to build: all decisions in place (D-008–D-020) |
+| M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Done on `dev` (not yet released to `main`) |
 | M2 | Time & survival: clock, decay, thresholds, death | M1, Q3 | Blocked |
 | M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Not started |
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Blocked |

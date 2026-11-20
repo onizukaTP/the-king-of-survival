@@ -3,11 +3,12 @@
 ## Completed
 - **M0 Skeleton** — live at https://onizukatp.github.io/the-king-of-survival/. Contents: Vite + React + TS strict, engine core (`GameState` via Zod schema, `applyCommand` dispatcher with typed rejections, seeded mulberry32 RNG), content loader with Zod + cross-reference checks, asset manifest with placeholder fallback, IndexedDB save/load with versioned saves + migration chain, Title and skeleton Game screens, 13 unit tests, 1 Playwright smoke test, ESLint rules that block `Math.random`, `Date`, DOM and React inside `src/engine/`, GitHub Actions CI + Pages deploy.
   - Acceptance verified on the live site: New Game → Save → reload → Continue restores identical state; CI passes lint, typecheck, unit and e2e tests.
-
-## In progress
-- **M1 World map** — built and tested on `dev`; not yet released to `main` (the live site still shows M0).
+- **M1 World map** — released to `main` and live at the same URL.
   - Tamil Nadu map (MapLibre, Natural Earth outline, OSM roads and rail), the 8 sites, fog with a 3 km sight radius, discovery, free travel by road and cross-country in legs of up to 60 min, clock, stop after this leg, save/load (save v2 with a migration from v1), desktop side panel and mobile bottom sheet.
   - Acceptance verified: travel between locations; time and discovery persist across save/load (e2e test); every visible control checked in the browser.
+
+## In progress
+- Nothing. Next work waits on owner decisions (below).
 
 ## Pending (unblocked)
 - M3 Items & inventory — needs P-001 item list approved first.

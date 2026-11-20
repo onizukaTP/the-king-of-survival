@@ -8,7 +8,7 @@
 - (none)
 
 ## Pending (unblocked)
-- M1 World map — all design decisions in place (D-008–D-015, sites in docs/world.md). The map screen layout (P-007) needs owner approval before the UI is built.
+- M1 World map — ready to build. All decisions are in place: D-008–D-020, sites in docs/world.md, layout in docs/ui.md.
 - M3 Items & inventory — needs P-001 item list approved first.
 - M5 Crafting — needs P-001 recipes approved first.
 

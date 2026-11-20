@@ -16,6 +16,9 @@ The canon (timeline, Prabu, the family) lives in CLAUDE.md §3–§4 and is not 
 | D-013 | Discoverable places cover **Madurai city ruins, water sources, hunting grounds, and roads/rail/airport**. |
 | D-014 | Madurai was **not struck directly**: standing, decayed ruins, with **scattered low-level fallout patches** across the region. |
 | D-015 | The prototype sites below are approved (was P-008). |
+| D-017 | At the start Prabu already knows sites 0–4 below; sites 5–7 must be discovered. |
+| D-018 | Fog clears in a ~3 km sight radius along his path; sites inside it are discovered. |
+| D-019 | Walking speeds: road 4.5 km/h, cross-country 3 km/h. |
 
 ### Why these fit together
 - Prabu is the settlement's hunter, and the sanctuary forest is on his doorstep.

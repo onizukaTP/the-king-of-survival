@@ -8,12 +8,12 @@
 - (none)
 
 ## Pending (unblocked)
-- M1 World map — map render and leg-based free travel (D-008–D-010) can start; locations wait on Q1b.
+- M1 World map — map render and leg-based free travel (D-008–D-012) can start; locations and discovery wait on P-008 (sites, see docs/world.md).
 - M3 Items & inventory — needs P-001 item list approved first.
 - M5 Crafting — needs P-001 recipes approved first.
 
 ## Blocked
-- M1 locations and discovery (Q1b), M2 (Q3), M4, M6, M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
+- M1 locations and discovery (P-008), radiation content (Q9), M2 (Q3), M4, M6, M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
 
 ## Technical choices made in M0 (Claude's authority)
 - `GameState` type is derived from its Zod schema, so save validation and the type can't drift.

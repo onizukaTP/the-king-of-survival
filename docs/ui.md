@@ -21,4 +21,4 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 - Speeds: road 4.5 km/h, cross-country 3 km/h.
 - The game starts on Day 1 at 06:00.
 - Fog clears in a ~3 km sight radius along Prabu's path.
-- At the start he already knows home, Shenbagathoppu forest, Srivilliputhur town ruins, the NH 744 stretch and the railway station.
+- At the start he already knows home, the sanctuary forest beside it (D-021), Srivilliputhur town ruins, the NH 744 stretch and the railway station.

@@ -19,28 +19,29 @@ The canon (timeline, Prabu, the family) lives in CLAUDE.md §3–§4 and is not 
 | D-017 | At the start Prabu already knows sites 0–4 below; sites 5–7 must be discovered. |
 | D-018 | Fog clears in a ~3 km sight radius along his path; sites inside it are discovered. |
 | D-019 | Walking speeds: road 4.5 km/h, cross-country 3 km/h. |
+| D-021 | The settlement sits at the sanctuary's **north-east forest edge, ~6 km north-west of Srivilliputhur town** (9.5599, 77.6251), not at Shenbagathoppu. The OSM data showed Shenbagathoppu was nearer Rajapalayam than the town, which clashed with D-017. The hunting ground is the sanctuary forest next to it, and the water site is the Pilavakkal (Periyar) dam. |
 
 ### Why these fit together
 - Prabu is the settlement's hunter, and the sanctuary forest is on his doorstep.
 - The drought/famine canon shows in the dry tanks and the failing Pilavakkal reservoir.
 - Madurai is the big, dangerous, rewarding trip that pulls the player outward.
 
-## Prototype sites — D-015 (approved)
+## Prototype sites — D-015 (approved), placed per D-021
 
-Real places only. Distances are approximate, from public sources. They get confirmed against the map data when M1 brings in GeoJSON, and anything that ends up outside the 25 km radius gets flagged.
+Coordinates come from OpenStreetMap and live in `src/content/data/sites.json`. Distance is straight-line from home. Walking time is the game's own route: the fastest mix of road and cross-country at D-019 speeds.
 
-| # | Site | Kind | Approx. distance from settlement | Why it's here |
-|---|---|---|---|---|
-| 0 | **Home settlement**: forest edge near Shenbagathoppu, west of Srivilliputhur | Home | — | Where D-011 puts it; the sanctuary trailheads are ~10 km from Srivilliputhur town. |
-| 1 | **Shenbagathoppu forest** (Grizzled Squirrel Wildlife Sanctuary) | Hunting ground | next door | Prabu's hunting land. |
-| 2 | **Srivilliputhur town ruins** (the temple-tower town) | Ruins | ~10 km | Nearest town to scavenge; the tall temple tower is a natural landmark. |
-| 3 | **Srivilliputhur railway station** (Virudhunagar–Tenkasi line, ~5 km east of town) | Rail | ~15 km | Rail yard and wrecks; the line runs on to Rajapalayam and Virudhunagar. |
-| 4 | **NH 744 highway stretch** (Srivilliputhur–Rajapalayam section) | Road | ~10 km | The Kollam–Madurai highway; vehicle wrecks; the fast road toward Madurai. |
-| 5 | **Watrap Periyakulam tank / Pilavakkal dam** (foot of the Ghats, Watrap) | Water | ~20 km (unverified) | Water is the scarcest resource; a nearly dry reservoir. |
-| 6 | **Rajapalayam town ruins** | Ruins | ~20–25 km | Second town on NH 744 and the rail line. |
-| 7 | **Madurai city ruins**, including the airport on the city's south side | City ruins + airport | ~75–80 km via NH 744 (T. Kallupatti, Tirumangalam) | The far expedition (D-012). |
+| # | Site (game name) | Kind | Lat, lon | Distance | Walk | Known at start |
+|---|---|---|---|---|---|---|
+| 0 | Home | Home | 9.5599, 77.6251 | — | — | yes |
+| 1 | Sanctuary forest (Grizzled Squirrel Wildlife Sanctuary) | Hunting ground | 9.5793, 77.6137 | 2.5 km | 50 min | yes |
+| 2 | Srivilliputhur town ruins | Ruins | 9.5081, 77.6336 | 5.8 km | 1 h 42 min | yes |
+| 3 | Srivilliputhur railway station | Rail | 9.4978, 77.6451 | 7.2 km | 2 h 12 min | yes |
+| 4 | NH 744 highway (Srivilliputhur–Rajapalayam stretch) | Road | 9.4820, 77.5897 | 9.5 km | 2 h 56 min | yes |
+| 5 | Pilavakkal dam (Periyar dam, Watrap) | Water | 9.6412, 77.5262 | 14.1 km | 4 h 42 min | no |
+| 6 | Rajapalayam town ruins | Ruins | 9.4456, 77.5543 | 14.9 km | 4 h 19 min | no |
+| 7 | Madurai city ruins (the airport is on the city's south side) | City ruins | 9.9261, 78.1141 | 67 km | 17 h 33 min | no |
 
-That makes 7 discoverable places plus home. This settles the locations part of P-001.
+That makes 7 discoverable places plus home, settling the locations part of P-001. Everything except Madurai is within the 25 km radius (D-012).
 
 ### Not decided (owner only)
 - **Q9:** where the fallout patches (D-014) lie.
@@ -48,6 +49,8 @@ That makes 7 discoverable places plus home. This settles the locations part of P
 - Names of the settlement and of Prabu's family.
 
 ## Sources
+- Site coordinates, roads and rail: © OpenStreetMap contributors (ODbL), queried in Nov 2026; see `scripts/geo/`.
+- State outline: Natural Earth 1:10m admin-1 (public domain).
 - Srivilliputtur / Grizzled Squirrel Wildlife Sanctuary: https://en.wikipedia.org/wiki/Grizzled_Squirrel_Wildlife_Sanctuary
 - Shenbagathoppu trail distances: https://trektamilnadu.com/trail/shenbagathoppu-wpudhupatti-1
 - NH 744 route (Rajapalayam – Srivilliputtur – T. Kallupatti – Tirumangalam): https://en.wikipedia.org/wiki/National_Highway_744_(India)

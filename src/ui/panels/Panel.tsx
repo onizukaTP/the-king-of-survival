@@ -1,0 +1,71 @@
+import { previewTravel } from '../../engine/systems/travel/travel';
+import { content, useGameStore } from '../../store/gameStore';
+import { formatClock, formatDuration, formatKm, kindLabel } from '../format';
+
+/** Right-hand panel (bottom sheet on mobile): the selected place, or the trip under way (D-016). */
+export function Panel() {
+  const game = useGameStore((s) => s.game);
+  const selection = useGameStore((s) => s.selection);
+  const stopRequested = useGameStore((s) => s.stopRequested);
+  const select = useGameStore((s) => s.select);
+  const travel = useGameStore((s) => s.travel);
+  const requestStop = useGameStore((s) => s.requestStop);
+  if (!game) return null;
+
+  if (game.travel) {
+    const t = game.travel;
+    const remaining = t.legs.slice(t.nextLeg).reduce((sum, l) => sum + l.minutes, 0);
+    const name = t.siteId ? content.sites[t.siteId]?.name : 'Unmarked ground';
+    return (
+      <div className="panel-body">
+        <h2>Travelling</h2>
+        <p className="muted">To {name}</p>
+        <hr />
+        <Row label="Leg" value={`${Math.max(1, t.nextLeg)} of ${t.legs.length}`} />
+        <div className="progress" aria-hidden="true"><div style={{ width: `${(t.nextLeg / t.legs.length) * 100}%` }} /></div>
+        <Row label="Arrive" value={formatClock(game.clockMinutes + remaining)} />
+        <button className="panel-action" onClick={requestStop} disabled={stopRequested}>
+          {stopRequested ? 'Stopping…' : 'Stop after this leg'}
+        </button>
+      </div>
+    );
+  }
+
+  if (!selection) return <p className="muted panel-hint">Select a place or any point on the map.</p>;
+
+  const site = 'siteId' in selection ? content.sites[selection.siteId] : undefined;
+  const preview = previewTravel(game, selection, content);
+  return (
+    <div className="panel-body">
+      <div className="panel-head">
+        <h2>{site?.name ?? 'Unmarked ground'}</h2>
+        <button className="icon" aria-label="Close" onClick={() => select(null)}>×</button>
+      </div>
+      <p className="muted">
+        {site ? kindLabel[site.kind] : 'point' in selection && `${selection.point.lat.toFixed(3)}° N, ${selection.point.lon.toFixed(3)}° E`}
+      </p>
+      <hr />
+      {preview.ok ? (
+        <>
+          <Row label="Distance" value={formatKm(preview.plan.roadKm + preview.plan.crossKm)} />
+          <Row label="Road" value={formatKm(preview.plan.roadKm)} />
+          <Row label="Cross-country" value={formatKm(preview.plan.crossKm)} />
+          <Row label="Time" value={formatDuration(preview.plan.minutes)} />
+          <Row label="Legs" value={String(preview.plan.legs.length)} />
+          <button className="panel-action" onClick={() => void travel()}>Travel</button>
+        </>
+      ) : (
+        <p className="muted">{preview.error.message}</p>
+      )}
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="row">
+      <span className="muted">{label}</span>
+      <span>{value}</span>
+    </div>
+  );
+}

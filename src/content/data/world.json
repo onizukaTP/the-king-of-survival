@@ -1,0 +1,6 @@
+{
+  "roadSpeedKmh": 4.5,
+  "crossCountrySpeedKmh": 3,
+  "sightRadiusKm": 3,
+  "legMaxMinutes": 60
+}

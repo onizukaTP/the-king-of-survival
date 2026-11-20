@@ -22,7 +22,7 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 |---|---|---|---|
 | R-10 | Tamil Nadu only, real geography, one continuous map; data structures allow more regions later. | ✅ | D-002 |
 | R-11 | Prototype region: Madurai and the dry south. | ✅ | D-008 |
-| R-12 | Settlement: Western Ghats foothills west of Srivilliputhur. | ✅ | D-011 |
+| R-12 | Settlement: the sanctuary's north-east forest edge, ~6 km north-west of Srivilliputhur town. | ✅ | D-011, D-021 |
 | R-13 | Prototype area ~25 km around the settlement, plus Madurai city ruins as the one far destination. | ✅ | D-012 |
 | R-14 | Discoverable places cover city ruins, water, hunting grounds, roads/rail/airport. | ✅ | D-013 |
 | R-15 | Specific sites and the exact settlement spot. | ✅ | D-015, `docs/world.md` |
@@ -58,6 +58,7 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 | R-41 | Basic progression. | 🟡 / ❓ | P-006, Q6 |
 | R-42 | Data-driven events with choices. | ✅ (contents 🟡) | D-006, P-001 |
 | R-43 | Screen flow and layout: map screen ✅ (D-016, `docs/ui.md`); other screens 🟡. | ✅ / 🟡 | D-016, P-007 |
+| R-48 | Trips are cut into legs of at most 60 game minutes. | 🟡 | P-009 |
 | R-46 | Walking speeds: road 4.5 km/h, cross-country 3 km/h. | ✅ | D-019 |
 | R-47 | A new game starts on Day 1 at 06:00. | ✅ | D-020 |
 | R-44 | Save model (manual / autosave / permadeath). | ❓ | Q8 |

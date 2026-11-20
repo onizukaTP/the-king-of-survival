@@ -1,11 +1,11 @@
 # The King of Survival
 
 A single-player, browser-based, post-apocalyptic survival RPG set in Tamil Nadu, 27 years after nuclear annihilation.
-You play Prabu, a hunter from a struggling settlement in the Western Ghats foothills near Srivilliputhur.
+You play Prabu, a hunter from a struggling settlement on the forest edge near Srivilliputhur.
 
 **Play the current build:** https://onizukatp.github.io/the-king-of-survival/
 
-> Status: early prototype. M0 (the technical skeleton) is done; the map and gameplay come next. See [docs/progress.md](docs/progress.md).
+> Status: early prototype. M0 (skeleton) is live; M1 (world map and travel) is on `dev`. See [docs/progress.md](docs/progress.md).
 
 ## Docs
 

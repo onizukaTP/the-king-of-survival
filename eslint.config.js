@@ -14,6 +14,10 @@ export default tseslint.config(
     rules: reactHooks.configs.recommended.rules,
   },
   {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: { globals: globals.node },
+  },
+  {
     // CLAUDE.md §7: the engine stays pure and deterministic.
     files: ['src/engine/**/*.ts'],
     rules: {

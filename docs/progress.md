@@ -5,10 +5,11 @@
   - Acceptance verified on the live site: New Game → Save → reload → Continue restores identical state; CI passes lint, typecheck, unit and e2e tests.
 
 ## In progress
-- (none)
+- **M1 World map** — built and tested on `dev`; not yet released to `main` (the live site still shows M0).
+  - Tamil Nadu map (MapLibre, Natural Earth outline, OSM roads and rail), the 8 sites, fog with a 3 km sight radius, discovery, free travel by road and cross-country in legs of up to 60 min, clock, stop after this leg, save/load (save v2 with a migration from v1), desktop side panel and mobile bottom sheet.
+  - Acceptance verified: travel between locations; time and discovery persist across save/load (e2e test); every visible control checked in the browser.
 
 ## Pending (unblocked)
-- M1 World map — ready to build. All decisions are in place: D-008–D-020, sites in docs/world.md, layout in docs/ui.md.
 - M3 Items & inventory — needs P-001 item list approved first.
 - M5 Crafting — needs P-001 recipes approved first.
 
@@ -23,3 +24,11 @@
 - One manual save slot, placeholder until Q8.
 - Vite `base: './'` so GitHub Pages works under any repo name.
 - JSON save export/import (§7) not built yet.
+
+## Technical choices made in M1 (Claude's authority)
+- Fog is a 2D canvas overlay inside MapLibre's canvas container, under the markers; revealed points are kept one per ~1 km cell.
+- Routing: Dijkstra over the OSM road graph with cross-country links to the 8 nearest road nodes at each end, plus a direct cross-country option.
+- Road data is thinned to 300 m vertex spacing (junctions kept): about 9k nodes, 345 KB.
+- `preserveDrawingBuffer` is on, and MapLibre's worker URL is set explicitly for Vite.
+- `applyCommand` now takes `content`, because travel needs the road graph and sites.
+- Saves are checked against content on load (unknown character or site → rejected).

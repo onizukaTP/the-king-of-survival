@@ -47,7 +47,7 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 | R-30 | Map of Tamil Nadu with pan/zoom. | ✅ | D-006, §5 |
 | R-31 | Free movement to any point; roads faster, cross-country slower (and riskier from M6). | ✅ | D-009 |
 | R-32 | Travel resolves in legs; the clock advances per leg; it can be interrupted between legs. | ✅ | D-010 |
-| R-33 | Location discovery and exploration (fog of war). | ✅ | D-006, D-015 |
+| R-33 | Location discovery and exploration (fog of war): nearby sites known at start, ~3 km sight radius. | ✅ | D-006, D-015, D-017, D-018 |
 | R-34 | Game time advances with actions (travel confirmed; scavenge/rest/craft proposed). | ✅ / 🟡 | D-010, P-003 |
 | R-35 | Survival attributes and penalties. | 🟡 / ❓ | P-002, Q3 |
 | R-36 | Inventory: definitions, stacking, weight, use, equip. | ✅ (contents 🟡) | D-006, P-001 |
@@ -57,7 +57,9 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 | R-40 | Combat design details. | 🟡 / ❓ | P-005, Q4, Q5 |
 | R-41 | Basic progression. | 🟡 / ❓ | P-006, Q6 |
 | R-42 | Data-driven events with choices. | ✅ (contents 🟡) | D-006, P-001 |
-| R-43 | Screen flow and layout. | 🟡 | P-007 |
+| R-43 | Screen flow and layout: map screen ✅ (D-016, `docs/ui.md`); other screens 🟡. | ✅ / 🟡 | D-016, P-007 |
+| R-46 | Walking speeds: road 4.5 km/h, cross-country 3 km/h. | ✅ | D-019 |
+| R-47 | A new game starts on Day 1 at 06:00. | ✅ | D-020 |
 | R-44 | Save model (manual / autosave / permadeath). | ❓ | Q8 |
 | R-45 | Content counts: 7 places + home (✅ D-015); ~20–25 items, 6–8 recipes, 3–4 enemies, 8–10 events (🟡). | ✅ / 🟡 | D-015, P-001 |
 

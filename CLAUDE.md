@@ -160,7 +160,8 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ decisions.md         # decision log (D-xxx), mirrors §8
 │  ├─ progress.md          # completed / in-progress / pending / blocked
 │  ├─ architecture.md      # how the built code works (engine, saves, content, CI)
-│  └─ world.md             # confirmed geography, setting decisions and prototype sites
+│  ├─ world.md             # confirmed geography, setting decisions and prototype sites
+│  └─ ui.md                # approved screen layouts
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
@@ -230,6 +231,11 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-013 (Q1b) The prototype's discoverable places include all four kinds: **Madurai city ruins, water sources, hunting grounds, roads/rail/airport**.
 - D-014 Madurai was **not struck directly** in the Annihilation: standing, decayed ruins with **scattered low-level fallout patches**. Radiation is a background risk, not a single big zone. Where the patches lie is still open (Q9).
 - D-015 (approves P-008) Prototype sites (real places; details and sources in `docs/world.md`): home settlement on the forest edge near Shenbagathoppu; Shenbagathoppu forest (hunting); Srivilliputhur town ruins; Srivilliputhur railway station; NH 744 highway stretch; Watrap Periyakulam tank / Pilavakkal dam (water); Rajapalayam town ruins; Madurai city ruins with the airport (far trip). That is 7 discoverable places + home. This settles the locations part of P-001; its item, recipe, enemy and event counts are still proposed.
+- D-016 (part of P-007) **Map screen layout** for M1: top bar (time, status, Menu), full-screen map with fog, right side panel for the selected place / unmarked ground / travel progress; bottom sheet on mobile; no bottom navigation until those features exist. Spec in `docs/ui.md`.
+- D-017 At the start Prabu **already knows** home, Shenbagathoppu forest, Srivilliputhur town ruins, the NH 744 stretch and Srivilliputhur railway station. Watrap/Pilavakkal, Rajapalayam and Madurai must be discovered.
+- D-018 **Discovery:** fog clears in a ~3 km sight radius along Prabu's path; any site inside that radius is discovered.
+- D-019 **Walking speeds:** road 4.5 km/h, cross-country 3 km/h.
+- D-020 A new game starts on **Day 1 at 06:00** (dawn). May be revisited when the opening narrative (Q7) is decided.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -237,7 +243,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
-- P-007 Screens: Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
+- P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 
 ### Open — blocking (do not implement affected areas until answered)
 - Q9 Where the fallout patches (D-014) lie in the prototype area. *(blocks radiation content in M2/M4; not M1)*
@@ -263,7 +269,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | # | Milestone | Depends on | Status |
 |---|---|---|---|
 | M0 | Skeleton: Vite/React/TS, engine core, GameState, command dispatcher, seeded RNG, content loader + Zod, asset manifest, IndexedDB save/load, CI + deploy | — | Done — live at https://onizukatp.github.io/the-king-of-survival/ |
-| M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Not started — design unblocked (D-008–D-015); the map screen layout (P-007) needs approval before the UI is built |
+| M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Not started — ready to build: all decisions in place (D-008–D-020) |
 | M2 | Time & survival: clock, decay, thresholds, death | M1, Q3 | Blocked |
 | M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Not started |
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Blocked |

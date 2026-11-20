@@ -10,7 +10,7 @@ export function TitleScreen() {
   return (
     <main className="screen">
       <h1>The King of Survival</h1>
-      <p className="muted">Working title · M0 skeleton</p>
+      <p className="muted">M0 skeleton</p>
       <div className="actions">
         <button onClick={newGame}>New Game</button>
         <button onClick={() => void loadGame()} disabled={!hasSave} title={hasSave ? undefined : 'No saved game yet'}>

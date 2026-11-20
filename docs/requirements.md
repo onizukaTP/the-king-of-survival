@@ -25,7 +25,7 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 | R-12 | Settlement: Western Ghats foothills west of Srivilliputhur. | ✅ | D-011 |
 | R-13 | Prototype area ~25 km around the settlement, plus Madurai city ruins as the one far destination. | ✅ | D-012 |
 | R-14 | Discoverable places cover city ruins, water, hunting grounds, roads/rail/airport. | ✅ | D-013 |
-| R-15 | Specific sites and the exact settlement spot. | 🟡 | P-008, `docs/world.md` |
+| R-15 | Specific sites and the exact settlement spot. | ✅ | D-015, `docs/world.md` |
 | R-16 | Madurai not struck directly; scattered low-level fallout patches. | ✅ | D-014 |
 | R-17 | Where the fallout patches are. | ❓ | Q9 |
 | R-18 | Safe zones, hostile territories, other settlements, route system. | ❓ | Owner-only (§3) |
@@ -47,7 +47,7 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 | R-30 | Map of Tamil Nadu with pan/zoom. | ✅ | D-006, §5 |
 | R-31 | Free movement to any point; roads faster, cross-country slower (and riskier from M6). | ✅ | D-009 |
 | R-32 | Travel resolves in legs; the clock advances per leg; it can be interrupted between legs. | ✅ | D-010 |
-| R-33 | Location discovery and exploration (fog of war). | ✅ (sites 🟡 P-008) | D-006 |
+| R-33 | Location discovery and exploration (fog of war). | ✅ | D-006, D-015 |
 | R-34 | Game time advances with actions (travel confirmed; scavenge/rest/craft proposed). | ✅ / 🟡 | D-010, P-003 |
 | R-35 | Survival attributes and penalties. | 🟡 / ❓ | P-002, Q3 |
 | R-36 | Inventory: definitions, stacking, weight, use, equip. | ✅ (contents 🟡) | D-006, P-001 |
@@ -59,7 +59,7 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 | R-42 | Data-driven events with choices. | ✅ (contents 🟡) | D-006, P-001 |
 | R-43 | Screen flow and layout. | 🟡 | P-007 |
 | R-44 | Save model (manual / autosave / permadeath). | ❓ | Q8 |
-| R-45 | Content counts: 6–8 places, ~20–25 items, 6–8 recipes, 3–4 enemies, 8–10 events. | 🟡 | P-001 |
+| R-45 | Content counts: 7 places + home (✅ D-015); ~20–25 items, 6–8 recipes, 3–4 enemies, 8–10 events (🟡). | ✅ / 🟡 | D-015, P-001 |
 
 ## Deferred (do not build)
 

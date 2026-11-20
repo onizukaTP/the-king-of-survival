@@ -1,10 +1,52 @@
-:root { color-scheme: dark; font-family: system-ui, sans-serif; background: #1c1916; color: #e6dccf; }
+:root { color-scheme: dark; font-family: system-ui, sans-serif; background: #1c1916; color: #e6dccf; --muted: #9a8f82; --line: #3d352d; --panel: #221e1a; --accent: #5aa0e0; }
 body { margin: 0; }
+h1, h2 { margin: 0; }
+h2 { font-size: 17px; font-weight: 600; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 8px 0; width: 100%; }
 .screen { max-width: 640px; margin: 0 auto; padding: 32px 16px; }
-.muted { color: #9a8f82; }
+.muted { color: var(--muted); }
 .actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0; }
-button { font: inherit; padding: 10px 20px; background: #4a3f33; color: inherit; border: 1px solid #6b5a47; border-radius: 4px; cursor: pointer; }
+button { font: inherit; padding: 8px 16px; background: #4a3f33; color: inherit; border: 1px solid #6b5a47; border-radius: 4px; cursor: pointer; }
 button:disabled { opacity: 0.45; cursor: not-allowed; }
-.character { display: flex; gap: 16px; align-items: center; }
-.character h2 { margin: 0; }
-pre { overflow-x: auto; font-size: 12px; }
+
+/* Map screen (D-016) */
+.game { display: grid; grid-template-rows: auto 1fr; height: 100dvh; }
+.topbar { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-bottom: 1px solid var(--line); background: var(--panel); font-size: 14px; min-width: 0; }
+.clock { font-weight: 600; white-space: nowrap; }
+.pill { padding: 2px 8px; border-radius: 4px; background: #2e2822; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-message { flex: 1; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.menu { position: relative; }
+.menu > button { padding: 4px 12px; }
+.menu-list { position: absolute; right: 0; top: calc(100% + 4px); display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; z-index: 10; min-width: 140px; }
+.menu-list button { border: 0; background: none; text-align: left; border-radius: 0; }
+.menu-list button:hover { background: #2e2822; }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 280px; min-height: 0; }
+.map { position: relative; min-height: 0; }
+.fog { position: absolute; top: 0; left: 0; pointer-events: none; }
+.panel { border-left: 1px solid var(--line); background: var(--panel); padding: 12px; overflow-y: auto; }
+.panel-body { display: flex; flex-direction: column; gap: 6px; height: 100%; }
+.panel-head { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+.panel-hint { margin: 0; }
+.panel p { margin: 0; }
+.icon { padding: 0 8px; background: none; border: 0; font-size: 20px; line-height: 1; }
+.row { display: flex; justify-content: space-between; font-size: 14px; padding: 2px 0; }
+.panel-action { margin-top: 12px; }
+.progress { height: 6px; border-radius: 3px; background: #2e2822; overflow: hidden; }
+.progress > div { height: 100%; background: var(--accent); transition: width 0.3s; }
+
+.prabu-marker { width: 12px; height: 12px; border-radius: 50%; background: #f4ece1; border: 2px solid #141210; box-shadow: 0 0 0 2px #f4ece1; }
+.site-marker { display: flex; align-items: center; gap: 6px; padding: 0; background: none; border: 0; color: #e6dccf; font-size: 12px; cursor: pointer; }
+.site-marker .dot { width: 12px; height: 12px; border-radius: 50%; background: #9a8f82; border: 2px solid #141210; flex: none; }
+.site-marker .label { background: rgba(20, 18, 16, 0.75); padding: 1px 5px; border-radius: 3px; white-space: nowrap; }
+.site-marker.kind-home .dot { background: #d8784c; }
+.site-marker.kind-water .dot { background: #5aa0e0; }
+.site-marker.kind-hunting .dot { background: #7fa35a; }
+.site-marker.kind-city .dot { background: #c9a04a; }
+
+/* Mobile: full-screen map, panel as a bottom sheet only when there's something to show. */
+@media (max-width: 720px) {
+  .main { grid-template-columns: 1fr; position: relative; }
+  .panel { position: absolute; left: 0; right: 0; bottom: 0; max-height: 50%; border-left: 0; border-top: 1px solid var(--line); border-radius: 12px 12px 0 0; display: none; z-index: 5; }
+  .main.panel-open .panel { display: block; }
+  .site-marker .label { display: none; }
+}

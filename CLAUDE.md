@@ -146,7 +146,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 - All game state lives in one **serialisable `GameState`** object.
 - State changes only through **commands**: `applyCommand(state, command) → { state, events }`. UI dispatches commands and renders state; it never mutates state or contains game rules.
 - Randomness comes from a **seeded RNG stored in GameState** → deterministic, reproducible tests and saves.
-- Game time is an integer (minutes since game start) advanced by actions, not wall-clock time (pending owner approval of the time model, Q2).
+- Game time is an integer (minutes since game start) advanced by actions, not wall-clock time (confirmed for travel by D-010; other actions pending P-003).
 - Invalid commands return a typed error/rejection; they never throw unhandled or partially mutate state.
 
 ### Planned directory layout
@@ -156,13 +156,16 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 ├─ CLAUDE.md
 ├─ CREDITS.md
 ├─ docs/
-│  ├─ requirements.md      # Stage 1 consolidated requirements
+│  ├─ requirements.md      # Stage 1 consolidated requirements, each traced to a decision
 │  ├─ decisions.md         # decision log (D-xxx), mirrors §8
-│  └─ progress.md          # completed / in-progress / pending / blocked
+│  ├─ progress.md          # completed / in-progress / pending / blocked
+│  ├─ architecture.md      # how the built code works (engine, saves, content, CI)
+│  ├─ world.md             # confirmed geography, setting decisions and prototype sites
+│  └─ ui.md                # approved screen layouts
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
-├─ scripts/                # one-off data preprocessing (e.g., geo simplification)
+├─ scripts/geo/            # Overpass query + build-geo.mjs: regenerates roads, rail, state outline
 ├─ src/
 │  ├─ engine/
 │  │  ├─ core/             # GameState, commands, rng, clock, ids
@@ -220,19 +223,32 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-005 Client-side architecture, stack as in §7 (Claude's authority per owner).
 - D-006 Prototype systems as listed in §5; deferred list in §6.
 - D-007 Game name: **The King of Survival**.
+- D-008 (Q1, part) Prabu's settlement and the prototype's playable locations are in **Madurai and the dry south**. The whole state is still rendered. The exact settlement spot is still open (Q1b).
+- D-009 (Q2, replaces P-004) Free movement: the player can travel to any point. Routes use roads where faster and go cross-country (slower, riskier) elsewhere. M1 treats cross-country as uniform ground (no terrain cost yet); the "riskier" part arrives with events (M6).
+- D-010 (Q2) Travel resolves in **legs**: each leg resolves instantly with a short cosmetic marker animation, the clock advances by the leg's time, and travel can be interrupted between legs. No real-time movement; state is never saved mid-leg.
+- D-011 (Q1b) Prabu's settlement is in the **Western Ghats foothills west of Srivilliputhur** (Virudhunagar district), beside the Grizzled Squirrel Wildlife Sanctuary. The exact map coordinate is picked from the map data in M1 and shown to the owner for confirmation.
+- D-012 (Q1b) Prototype area: **compact, ~25 km radius** around the settlement, plus **Madurai city ruins (~75–80 km)** as the single distant destination, a long, costly expedition.
+- D-013 (Q1b) The prototype's discoverable places include all four kinds: **Madurai city ruins, water sources, hunting grounds, roads/rail/airport**.
+- D-014 Madurai was **not struck directly** in the Annihilation: standing, decayed ruins with **scattered low-level fallout patches**. Radiation is a background risk, not a single big zone. Where the patches lie is still open (Q9).
+- D-015 (approves P-008) Prototype sites (real places; details and sources in `docs/world.md`): home settlement on the forest edge near Shenbagathoppu; Shenbagathoppu forest (hunting); Srivilliputhur town ruins; Srivilliputhur railway station; NH 744 highway stretch; Watrap Periyakulam tank / Pilavakkal dam (water); Rajapalayam town ruins; Madurai city ruins with the airport (far trip). That is 7 discoverable places + home. This settles the locations part of P-001; its item, recipe, enemy and event counts are still proposed.
+- D-016 (part of P-007) **Map screen layout** for M1: top bar (time, status, Menu), full-screen map with fog, right side panel for the selected place / unmarked ground / travel progress; bottom sheet on mobile; no bottom navigation until those features exist. Spec in `docs/ui.md`.
+- D-017 At the start Prabu **already knows** home, Shenbagathoppu forest, Srivilliputhur town ruins, the NH 744 stretch and Srivilliputhur railway station. Watrap/Pilavakkal, Rajapalayam and Madurai must be discovered.
+- D-018 **Discovery:** fog clears in a ~3 km sight radius along Prabu's path; any site inside that radius is discovered.
+- D-019 **Walking speeds:** road 4.5 km/h, cross-country 3 km/h.
+- D-020 A new game starts on **Day 1 at 06:00** (dawn). May be revisited when the opening narrative (Q7) is decided.
+- D-021 (owner chose option C when the OSM data showed the clash) The settlement sits at the sanctuary's **north-east forest edge, ~6 km north-west of Srivilliputhur town** (9.5599, 77.6251), not at Shenbagathoppu. Shenbagathoppu turned out nearer Rajapalayam (~9 km) than the town (~14 km), which clashed with D-017. The hunting ground is the sanctuary forest beside home; the water site is the Pilavakkal (Periyar) dam. Real coordinates and distances are in `docs/world.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
 - P-002 Survival attributes: Health, Hunger, Thirst, Fatigue, Radiation, with threshold penalties.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
-- P-004 Travel: hybrid (roads faster, off-road slower/riskier); M1 implements road/river-network travel first.
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
-- P-007 Screens: Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
+- P-009 Leg length: a trip is cut into legs of at most **60 game minutes** (`world.json`). It sets how often travel can be interrupted once events exist (M6). Used in M1 as a working value.
+- P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 
 ### Open — blocking (do not implement affected areas until answered)
-- Q1 Starting city/region of the settlement and the prototype's playable region. *(blocks M1)*
-- Q2 Travel model and whether travel is animated in real time or resolves instantly. *(blocks M1)*
+- Q9 Where the fallout patches (D-014) lie in the prototype area. *(blocks radiation content in M2/M4; not M1)*
 - Q3 Final survival attribute list; are injuries separate from Health? *(blocks M2)*
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*
 - Q5 Enemy mix: animals / human bandits / mutants. *(blocks M7)*
@@ -254,8 +270,8 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 
 | # | Milestone | Depends on | Status |
 |---|---|---|---|
-| M0 | Skeleton: Vite/React/TS, engine core, GameState, command dispatcher, seeded RNG, content loader + Zod, asset manifest, IndexedDB save/load, CI + deploy | — | In progress — built and tested locally; deploy pending |
-| M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0, Q1, Q2 | Blocked |
+| M0 | Skeleton: Vite/React/TS, engine core, GameState, command dispatcher, seeded RNG, content loader + Zod, asset manifest, IndexedDB save/load, CI + deploy | — | Done — live at https://onizukatp.github.io/the-king-of-survival/ |
+| M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Done — live |
 | M2 | Time & survival: clock, decay, thresholds, death | M1, Q3 | Blocked |
 | M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Not started |
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Blocked |
@@ -290,6 +306,14 @@ Keep this table and `docs/progress.md` current at the end of every work session.
 5. Verify in the browser that every visible control actually works.
 6. Update §9, `docs/progress.md`, and `docs/decisions.md`.
 7. Summarise for the owner: what was built, architectural choices made and why, what's pending/blocked.
+
+### Git workflow (owner's rule)
+
+- Remote: `git@github-personal:onizukaTP/the-king-of-survival.git`. Always use the `github-personal` SSH host (account onizukaTP), never the work profiles.
+- Every piece of work goes on its own branch cut from `dev`: `feature/<name>`, `chore/<name>`, `docs/<name>`, `ci/<name>`.
+- Merge finished branches into `dev` with `git merge --no-ff`. Keep the feature branches (don't delete them).
+- `main` is the release branch: every push to `main` deploys to GitHub Pages. Merge `dev` into `main` only to publish.
+- CI runs on pushes to `main` and `dev` and on PRs.
 
 ### Definition of done
 - Typecheck, lint, unit and e2e tests pass.

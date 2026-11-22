@@ -2,6 +2,7 @@ import type { Content } from '../../content/loader';
 import { dropItem, equipItem, unequipItem, applyItem } from '../systems/inventory/inventory';
 import { drinkHere, fillBottles, hunt, search, takeFromGround, type Find } from '../systems/scavenging/scavenging';
 import { rest } from '../systems/survival/survival';
+import { cook, feedFire, makeFire } from '../systems/fire/fire';
 import { enterTown, leaveTown, walkTo } from '../systems/town/town';
 import { advanceTravel, startTravel, stopTravel, type TravelTarget } from '../systems/travel/travel';
 import type { GameState, Meter } from './state';
@@ -25,7 +26,11 @@ export type Command =
   | { type: 'town.enter' }
   | { type: 'town.leave' }
   // `spotId`: 'edge', a building or a water point of the town he's in.
-  | { type: 'town.walk'; spotId: string };
+  | { type: 'town.walk'; spotId: string }
+  // Fire and cooking (D-056): `method` and `recipeId` come from fire.json.
+  | { type: 'fire.make'; method: string }
+  | { type: 'fire.feed' }
+  | { type: 'fire.cook'; recipeId: string };
 
 export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst' | 'radiation';
 
@@ -52,7 +57,10 @@ export type GameEvent =
   | { type: 'irradiated'; amount: number }
   | { type: 'town_entered'; siteId: string }
   | { type: 'town_left' }
-  | { type: 'walked'; spotId: string };
+  | { type: 'walked'; spotId: string }
+  | { type: 'fire_lit'; method: string }
+  | { type: 'fire_fed' }
+  | { type: 'cooked'; recipeId: string; count: number };
 
 export type CommandError = {
   code:
@@ -84,7 +92,14 @@ export type CommandError = {
     | 'not_in_town'
     | 'not_at_edge'
     | 'no_town_here'
-    | 'unknown_spot';
+    | 'unknown_spot'
+    | 'needs_item'
+    | 'no_firewood'
+    | 'no_fire'
+    | 'fire_burning'
+    | 'fire_too_low'
+    | 'unknown_recipe'
+    | 'missing_item';
   message: string;
 };
 
@@ -127,6 +142,12 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return leaveTown(state, content);
     case 'town.walk':
       return walkTo(state, command.spotId, content);
+    case 'fire.make':
+      return makeFire(state, command.method, content);
+    case 'fire.feed':
+      return feedFire(state, content);
+    case 'fire.cook':
+      return cook(state, command.recipeId, content);
     default:
       return { ok: false, error: { code: 'unknown_command', message: `Unknown command: ${(command as { type: string }).type}` } };
   }

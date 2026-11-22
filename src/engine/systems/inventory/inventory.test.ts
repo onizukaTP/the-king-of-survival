@@ -59,10 +59,17 @@ describe('inventory', () => {
 
 describe('using items', () => {
   it('eats food, capped at 100, and uses one from the stack', () => {
-    const s = withItems([['item.tinned_food', 2]], (g) => (g.survival.food = 80));
+    const s = withItems([['item.tinned_food', 2], ['item.can_opener', 1]], (g) => (g.survival.food = 80));
     const { state } = ok(s, { type: 'item.use', index: indexOf(s, 'item.tinned_food') });
     expect(state.survival.food).toBe(100);
     expect(state.inventory.stacks[indexOf(state, 'item.tinned_food')]!.count).toBe(1);
+    expect(indexOf(state, 'item.can_opener')).toBeGreaterThanOrEqual(0);
+  });
+
+  it('tinned food needs a can opener in the pack (D-056)', () => {
+    const s = withItems([['item.tinned_food', 1]], (g) => (g.survival.food = 50));
+    const result = applyCommand(s, { type: 'item.use', index: indexOf(s, 'item.tinned_food') }, content);
+    expect(result.ok || result.error.code).toBe('needs_item');
   });
 
   it('drinking leaves an empty bottle; clean water is always safe', () => {

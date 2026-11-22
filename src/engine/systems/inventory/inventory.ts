@@ -51,7 +51,7 @@ export function addItems(state: GameState, itemId: string, count: number, conten
 }
 
 /** Takes one item out of a stack, removing the stack when it empties. Returns the single item. */
-function takeOne(inventory: Inventory, index: number): Stack {
+export function takeOne(inventory: Inventory, index: number): Stack {
   const stack = inventory.stacks[index]!;
   stack.count -= 1;
   if (stack.count === 0) inventory.stacks.splice(index, 1);
@@ -84,6 +84,10 @@ export function applyItem(state: GameState, index: number, content: Content): Co
 
   const fx = item.effects ?? {};
   if (!item.effects && !item.curesInjury) return fail('cannot_use', `${item.name} can't be used on its own.`);
+  // D-056: tinned food needs a can opener in the pack; the opener is kept.
+  if (item.needsItem && !state.inventory.stacks.some((t) => t.itemId === item.needsItem)) {
+    return fail('needs_item', `Prabu needs a ${content.items[item.needsItem]!.name.toLowerCase()} for that.`);
+  }
   // D-039: Health can't rise while injured, so a pure painkiller would be wasted.
   if (s.injured && !item.curesInjury && fx.health && !fx.food && !fx.water) {
     return fail('injured', 'Treat the injury first, with a bandage or neem paste.');

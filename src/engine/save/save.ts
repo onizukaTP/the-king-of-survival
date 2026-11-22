@@ -3,7 +3,7 @@ import type { Content } from '../../content/loader';
 import { gameStateSchema, startingInventory, startingSurvival, startPosition, type GameState } from '../core/state';
 import { initialMap } from '../systems/travel/travel';
 
-export const SAVE_VERSION = 5;
+export const SAVE_VERSION = 6;
 
 const saveSchema = z.object({
   saveVersion: z.literal(SAVE_VERSION),
@@ -64,6 +64,8 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
     const sites = Object.fromEntries(Object.entries(gs.sites).filter(([id]) => !content.towns[id]));
     return { ...save, saveVersion: 5, gameState: { ...gs, sites, town: null } };
   },
+  // v5 → v6 (fire, D-056): no fire burning.
+  5: (save) => ({ ...save, saveVersion: 6, gameState: { ...(save.gameState as object), fire: null } }),
 };
 
 /** `createdAt` is passed in because the engine never reads the wall clock. */

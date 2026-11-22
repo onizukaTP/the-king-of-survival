@@ -62,6 +62,10 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 | R-46 | Walking speeds: road 4.5 km/h, cross-country 3 km/h. | ✅ | D-019 |
 | R-47 | A new game starts on Day 1 at 06:00. | ✅ | D-020 |
 | R-44 | Save model (manual / autosave / permadeath). | ❓ | Q8 |
+| R-49 | Clicking the selected place again (or double-clicking it) travels there; double-clicking open ground travels there. | ✅ | D-022 |
+| R-50 | Survival meters Health, Food, Water, Rest; Food or Water at 0 lowers Health; Rest at 0 speeds Food/Water drain and raises encounter chance; radiation can lower Health. | ✅ (numbers 🟡) | D-023, P-011 |
+| R-51 | Vehicles from cycle to military vehicle, crafted and used for travel. | ✅ (scope ❓) | D-024, Q10 |
+| R-52 | Item list. | 🟡 | P-010 |
 | R-45 | Content counts: 7 places + home (✅ D-015); ~20–25 items, 6–8 recipes, 3–4 enemies, 8–10 events (🟡). | ✅ / 🟡 | D-015, P-001 |
 
 ## Deferred (do not build)

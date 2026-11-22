@@ -19,7 +19,9 @@ The canon (timeline, Prabu, the family) lives in CLAUDE.md §3–§4 and is not 
 | D-017 | At the start Prabu already knows sites 0–4 below; sites 5–7 must be discovered. |
 | D-018 | Fog clears in a ~3 km sight radius along his path; sites inside it are discovered. |
 | D-019 | Walking speeds: road 4.5 km/h, cross-country 3 km/h. |
-| D-025 | (answers Q9) Heavy fallout lies in **northern Tamil Nadu**, outside the prototype area. In the prototype, radiation exists only as Madurai's scattered low-level patches (D-014). Exactly where they sit inside the Madurai ruins is proposed with M4. |
+| D-025 | (answers Q9) Heavy fallout lies in **northern Tamil Nadu**, outside the prototype area. *(Refined by D-043.)* |
+| D-043 | Radiation zone: every point within **30 km of the line from Trichy to Villupuram**. **Madurai has no radiation** (this replaces D-014's patches), and neither does the prototype area. |
+| D-044 | Water can be collected at any lake, tank, pond, reservoir or river; only flowing rivers give clean water. |
 | D-029 | Most animals are affected by radiation and many are mutated, in the spirit of Fallout. |
 | D-021 | The settlement sits at the sanctuary's **north-east forest edge, ~6 km north-west of Srivilliputhur town** (9.5599, 77.6251), not at Shenbagathoppu. The OSM data showed Shenbagathoppu was nearer Rajapalayam than the town, which clashed with D-017. The hunting ground is the sanctuary forest next to it, and the water site is the Pilavakkal (Periyar) dam. |
 
@@ -46,7 +48,6 @@ Coordinates come from OpenStreetMap and live in `src/content/data/sites.json`. D
 That makes 7 discoverable places plus home, settling the locations part of P-001. Everything except Madurai is within the 25 km radius (D-012).
 
 ### Not decided (owner only)
-- Exactly where Madurai's fallout patches sit (proposed with M4).
 - Safe zones, hostile territories and any other settlements in the area: none are proposed here.
 - Names of the settlement and of Prabu's family.
 

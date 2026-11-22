@@ -16,7 +16,7 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-011 (Q1b) Prabu's settlement is in the **Western Ghats foothills west of Srivilliputhur** (Virudhunagar district), beside the Grizzled Squirrel Wildlife Sanctuary. The exact map coordinate is picked from the map data in M1 and shown to the owner for confirmation.
 - D-012 (Q1b) Prototype area: **compact, ~25 km radius** around the settlement, plus **Madurai city ruins (~75–80 km)** as the single distant destination, a long, costly expedition.
 - D-013 (Q1b) The prototype's discoverable places include all four kinds: **Madurai city ruins, water sources, hunting grounds, roads/rail/airport**.
-- D-014 Madurai was **not struck directly** in the Annihilation: standing, decayed ruins with **scattered low-level fallout patches**. Radiation is a background risk, not a single big zone. Where the patches lie is still open (Q9).
+- D-014 Madurai was **not struck directly** in the Annihilation: standing, decayed ruins with **scattered low-level fallout patches**. Radiation is a background risk, not a single big zone. Where the patches lie is still open (Q9). *(The Madurai patches are superseded by D-043: Madurai has no radiation.)*
 - D-015 (approves P-008) Prototype sites (real places; details and sources in `docs/world.md`): home settlement on the forest edge near Shenbagathoppu; Shenbagathoppu forest (hunting); Srivilliputhur town ruins; Srivilliputhur railway station; NH 744 highway stretch; Watrap Periyakulam tank / Pilavakkal dam (water); Rajapalayam town ruins; Madurai city ruins with the airport (far trip). That is 7 discoverable places + home. This settles the locations part of P-001; its item, recipe, enemy and event counts are still proposed.
 - D-016 (part of P-007) **Map screen layout** for M1: top bar (time, status, Menu), full-screen map with fog, right side panel for the selected place / unmarked ground / travel progress; bottom sheet on mobile; no bottom navigation until those features exist. Spec in `docs/ui.md`.
 - D-017 At the start Prabu **already knows** home, Shenbagathoppu forest, Srivilliputhur town ruins, the NH 744 stretch and Srivilliputhur railway station. Watrap/Pilavakkal, Rajapalayam and Madurai must be discovered.
@@ -27,7 +27,7 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-022 **Click again to travel:** clicking the place that is already selected (so also double-clicking it) starts the trip; double-clicking open ground travels there. Double-click no longer zooms (wheel, pinch and +/− still do).
 - D-023 (answers most of Q3; replaces P-002) **Survival meters: Health, Food, Water, Rest.** Health starts at 100. When Food or Water is at 0, Health drops. When Rest is at 0, Food and Water drain faster and the chance of meeting enemies rises (encounters arrive with M6/M7). Radiation can lower Health, in the spirit of Fallout (how is open; where is Q9). Rates are proposed in P-011.
 - D-024 **Vehicles** are planned, travelled with and built through crafting: cycle (cart upgrade), scooter (cart upgrade), bike (faster, low storage), moped (slow, more storage), sedan, XUV, tempo, mini van, big van, lorry, military vehicle; more later. When and how is Q10. List and suggestions in `docs/vehicles.md`.
-- D-025 (answers Q9) Heavy fallout lies in **northern Tamil Nadu**, outside the prototype area. In the prototype, radiation exists only as Madurai's scattered low-level patches (D-014); where they sit inside the ruins is proposed with M4.
+- D-025 (answers Q9) Heavy fallout lies in **northern Tamil Nadu**, outside the prototype area. In the prototype, radiation exists only as Madurai's scattered low-level patches (D-014); where they sit inside the ruins is proposed with M4. *(Refined by D-043.)*
 - D-026 (approves P-010) **Item list** in `docs/items.md`. **Starting kit:** hunting knife, lighter (half full), torch (half charged; recharged with a charger / hand-crank charger). Flint and steel becomes a scavenged item.
 - D-027 **Unsafe water** can cause diarrhoea, parasites or dysentery, which dehydrate him. Numbers in D-036.
 - D-028 **Food spoils**, mercifully at first ("we can crank it up later"). Numbers in D-036.
@@ -45,6 +45,10 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-040 (resolves T5) **Prabu and his mother came to the settlement from the north, and her sickness began there.**
 - D-041 **Inventory and meters layout** approved from the mockup: four meters and a Pack button in the top bar; the Pack in the side panel / bottom sheet. Spec in `docs/ui.md`.
 - D-042 **M2 and M3 stay on `dev` until M4 (scavenging) is ready.** A new run has no food or water and no way to find any before scavenging, so releasing them alone would make every run end in thirst.
+- D-043 (supersedes the Madurai patches of D-014; refines D-025) **Radiation zone:** every point within **30 km of the line from Trichy to Villupuram**. Madurai and the prototype area have none. Every hour inside has a **1-in-4 chance of +5 radiation**, which lowers maximum Health (D-035).
+- D-044 **Water:** bottles can be filled at **any water** on the map (lakes, tanks, ponds, reservoirs, rivers). **Only flowing rivers give clean water**; all other water is unsafe, still drinkable with the illness risk (D-027), until boiled or filtered.
+- D-045 **Search finds:** the player chooses what to take; what stays behind remains **at that place for 96 hours**.
+- D-046 **Home** gives nothing until trading exists (its stores come with trading). **Hunting** is chance-based until combat (M7).
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -52,7 +56,7 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
-- P-013 Scavenging (M4): Search (1 h, or 45 min with the torch for 10% battery), Hunt in the forest, Fill bottles and Drink at the dam; per-site loot tables with depletion and regrowth; Madurai searches risk radiation that lowers maximum Health. In `docs/scavenging.md`, with four questions.
+- P-013 Scavenging (M4), updated with D-043 to D-046: Search (1 h, or 45 min with the torch for 10% battery), Hunt, Fill bottles and Drink at any water, per-site loot tables with depletion and regrowth, take-or-leave finds, the radiation zone. Remaining numbers in `docs/scavenging.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*

@@ -13,13 +13,12 @@
 - **Double-click travel (D-022)** — on `dev`: clicking the selected place again or double-clicking a place or open ground starts the trip; e2e test added.
 
 ## Pending (unblocked)
-- M3 Items & inventory — needs the item list (P-010, `docs/items.md`) approved first.
-- M5 Crafting — needs recipes proposed and approved (after P-010).
-- M2 Survival — design confirmed (D-023); needs the numbers (P-011) and Q8 approved; food and water need M3 items to be playable.
-- Vehicles (D-024) — needs Q10.
+- M3 Items & inventory — item list approved (D-026); needs the numbers (P-012) and the inventory screen layout approved.
+- M2 Survival — design and numbers approved (D-023, D-035); best built right after M3, since food and water come from items.
+- M5 Crafting — needs recipes proposed and approved.
 
 ## Blocked
-- Radiation content (Q9), M2 (Q3), M4, M6, M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
+- M10 Vehicles (needs vehicle numbers), M2's save-on-death behaviour (Q8), M4, M6, M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
 
 ## Technical choices made in M0 (Claude's authority)
 - `GameState` type is derived from its Zod schema, so save validation and the type can't drift.

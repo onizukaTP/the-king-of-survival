@@ -58,14 +58,17 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 | R-41 | Basic progression. | 🟡 / ❓ | P-006, Q6 |
 | R-42 | Data-driven events with choices. | ✅ (contents 🟡) | D-006, P-001 |
 | R-43 | Screen flow and layout: map screen ✅ (D-016, `docs/ui.md`); other screens 🟡. | ✅ / 🟡 | D-016, P-007 |
-| R-48 | Trips are cut into legs of at most 60 game minutes. | 🟡 | P-009 |
+| R-48 | Trips are cut into legs of at most 30 game minutes and stop by themselves when a meter falls to 25 or 0. | ✅ | D-035 |
 | R-46 | Walking speeds: road 4.5 km/h, cross-country 3 km/h. | ✅ | D-019 |
 | R-47 | A new game starts on Day 1 at 06:00. | ✅ | D-020 |
 | R-44 | Save model (manual / autosave / permadeath). | ❓ | Q8 |
 | R-49 | Clicking the selected place again (or double-clicking it) travels there; double-clicking open ground travels there. | ✅ | D-022 |
-| R-50 | Survival meters Health, Food, Water, Rest; Food or Water at 0 lowers Health; Rest at 0 speeds Food/Water drain and raises encounter chance; radiation can lower Health. | ✅ (numbers 🟡) | D-023, P-011 |
-| R-51 | Vehicles from cycle to military vehicle, crafted and used for travel. | ✅ (scope ❓) | D-024, Q10 |
-| R-52 | Item list. | 🟡 | P-010 |
+| R-50 | Survival meters Health, Food, Water, Rest; Food or Water at 0 lowers Health; Rest at 0 speeds Food/Water drain and raises encounter chance; radiation can lower Health. | ✅ | D-023, D-035 |
+| R-51 | Vehicles from cycle to military vehicle, crafted and used for travel. | ✅ | D-024, D-030 to D-034 |
+| R-52 | Item list and starting kit (knife, half-full lighter, half-charged torch). | ✅ (numbers 🟡) | D-026, P-012 |
+| R-53 | Unsafe water can make him ill (dehydration); food spoils, gently at first. | ✅ (numbers 🟡) | D-027, D-028, P-012 |
+| R-54 | Prototype vehicles: bullock cart (rare find), hand cart, cycle with trailer, auto-rickshaw; biodiesel scavenged; drop chances; wear faster off-road. | ✅ (numbers ❓) | D-031 to D-034 |
+| R-55 | Radiation: heavy fallout in northern Tamil Nadu (outside the prototype); only Madurai's scattered patches in the prototype; radiation lowers maximum Health. | ✅ | D-025, D-035 |
 | R-45 | Content counts: 7 places + home (✅ D-015); ~20–25 items, 6–8 recipes, 3–4 enemies, 8–10 events (🟡). | ✅ / 🟡 | D-015, P-001 |
 
 ## Deferred (do not build)

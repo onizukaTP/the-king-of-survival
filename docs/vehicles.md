@@ -1,4 +1,4 @@
-# Vehicles — D-024 (list confirmed; scope and rules open, Q10)
+# Vehicles — D-024, D-030 to D-034
 
 ## Confirmed by the owner (D-024)
 
@@ -18,19 +18,37 @@
 
 More can be added later.
 
-## Claude's suggestions (not approved)
+## Added from Claude's suggestions (D-030)
 
-- **Bullock cart**: no fuel; fits the canon of declining cattle (an ox is precious); slow, big storage.
-- **Hand cart (thallu vandi)**: the first "vehicle" on foot; more storage, slower walking.
-- **Rail pump trolley**: hand-pumped along the railway lines; the station is already a site and the rail data is on the map.
-- **Auto-rickshaw**: the iconic three-wheeler; middle ground between scooter and car.
-- **Tractor with trailer**: rural Tamil Nadu workhorse; diesel, good off-road, big storage.
-- **Coracle / small boat**: for reservoirs and rivers (Vaigai, Periyar dam); later.
-- **Electric scooter / e-rickshaw**: the one powered vehicle that can run without old fuel (salvaged battery + solar).
+| Vehicle | Owner's note |
+|---|---|
+| Bullock cart | Costly to buy, because the bull is a living animal. Bulls can be caught with a trap; taming comes later. |
+| Hand cart (thallu vandi) | Approved |
+| Auto-rickshaw | Approved |
+| Tractor with trailer | Approved |
+| Small boat | Approved |
+| E-rickshaw | Approved |
 
-## Open questions (Q10)
+Not taken up: rail pump trolley, electric scooter.
 
-1. **When:** in the prototype (and which ones), or after it?
-2. **Fuel:** 27 years after the war, old petrol and diesel would have gone bad, and tyres and batteries perished. Options: (a) ignore it, fuel is a rare scavenged item; (b) fuel must be made: biodiesel from pungam (Pongamia, common in Tamil Nadu), ethanol from sugarcane or palm, a wood-gas burner, or solar for electric ones; (c) mix: a little old fuel early, made fuel later.
-3. **How Prabu gets one:** crafted, repaired from a wreck with parts, found working, or traded (trading is deferred, §6).
-4. **Rules:** road only vs cross-country (an XUV, tractor or military vehicle off-road; a sedan not), cargo capacity (ties into the M3 carry limit), breakdowns and repair, noise drawing enemies.
+## Prototype vehicles (D-031, answers Q10.1)
+
+**Bullock cart, hand cart, cycle with trailer, auto-rickshaw.** All others come after the prototype.
+
+- **Bullock cart** in the prototype: a very rare find (an abandoned cart with a bull). Buying needs trading and catching needs taming, both later.
+
+## Fuel (D-032, answers Q10.2)
+
+People have learned to make **biodiesel**, and it is sold everywhere. It runs vehicles and generators (generators are very rare to find). With no trading in the prototype, biodiesel is **scavenged** there.
+
+## How vehicles are found (D-033, answers Q10.3)
+
+Vehicles and items have drop chances. Some things are found only where they would likely be, and even then very rarely, because scavengers got there first. A cycle can be found whole or built from its parts.
+
+## Maintenance (D-034, answers Q10.4)
+
+Vehicles wear as they are used: slowly on roads, faster off-road.
+
+## Still to propose (vehicles milestone)
+
+Speed, cargo space, fuel use and wear rate for each prototype vehicle; how repairs work and what they cost; whether the bull needs food and water; which vehicles can leave the road.

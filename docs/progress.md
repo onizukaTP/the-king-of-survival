@@ -25,10 +25,12 @@
 - Nothing.
 
 ## Pending (unblocked)
+- M4b Town maps — proposed in `docs/towns.md` (P-014); waiting for approval. M2–M4 are released together with it (D-051).
+- Night and moonlight — proposed in `docs/night.md` (P-015); built with M6.
 - M5 Crafting — needs recipes proposed and approved.
 
 ## Blocked
-- M10 Vehicles (needs vehicle numbers), M4, M6, M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
+- M10 Vehicles (needs vehicle numbers), M6, M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
 
 ## Technical choices made in M0 (Claude's authority)
 - `GameState` type is derived from its Zod schema, so save validation and the type can't drift.

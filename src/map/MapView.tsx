@@ -21,6 +21,8 @@ const waterAreasGeoJson = (): FeatureCollection => ({
   features: content.water.areas.map((a) => ({ type: 'Feature', properties: { river: a.river }, geometry: { type: 'Polygon', coordinates: [a.ring] } })),
 });
 const riversGeoJson = (): Feature => ({ type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: content.water.rivers } });
+// D-050: mapped wells, clean water.
+const wellsGeoJson = (): Feature => ({ type: 'Feature', properties: {}, geometry: { type: 'MultiPoint', coordinates: content.water.wells } });
 
 /** D-043: the band within radiusKm of the Trichy–Villupuram line, as a polygon with rounded ends. */
 function zoneGeoJson(): Feature {
@@ -106,6 +108,7 @@ export function MapView() {
           route: { type: 'geojson', data: line([]) },
           water: { type: 'geojson', data: waterAreasGeoJson() },
           rivers: { type: 'geojson', data: riversGeoJson() },
+          wells: { type: 'geojson', data: wellsGeoJson() },
           zone: { type: 'geojson', data: zoneGeoJson() },
         },
         layers: [
@@ -114,6 +117,7 @@ export function MapView() {
           { id: 'border', type: 'line', source: 'land', paint: { 'line-color': COLORS.border, 'line-width': 1 } },
           { id: 'water', type: 'fill', source: 'water', paint: { 'fill-color': ['case', ['get', 'river'], COLORS.river, COLORS.still] } },
           { id: 'rivers', type: 'line', source: 'rivers', paint: { 'line-color': COLORS.river, 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.8, 12, 2, 14, 3.5] } },
+          { id: 'wells', type: 'circle', source: 'wells', paint: { 'circle-color': COLORS.river, 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 1.5, 12, 3, 15, 5], 'circle-stroke-color': '#1c1916', 'circle-stroke-width': 1 } },
           { id: 'zone', type: 'fill', source: 'zone', paint: { 'fill-color': COLORS.zone, 'fill-opacity': 0.18 } },
           { id: 'zone-edge', type: 'line', source: 'zone', paint: { 'line-color': COLORS.zone, 'line-width': 1.5, 'line-dasharray': [4, 3] } },
           { id: 'rail', type: 'line', source: 'rail', paint: { 'line-color': COLORS.rail, 'line-width': 1.5, 'line-dasharray': [3, 2] } },

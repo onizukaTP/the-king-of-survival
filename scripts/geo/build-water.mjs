@@ -7,6 +7,7 @@
 // Writes src/content/data/water.json:
 //   areas:  lakes, tanks, ponds, reservoirs, canals and river polygons; `river: true` only for flowing rivers.
 //   rivers: flowing river centre lines. Seasonal ("intermittent") rivers are left out: not flowing.
+//   wells:  mapped wells, as points; well water is clean (D-050).
 // Coordinates are [lon, lat].
 import { readFileSync, writeFileSync } from 'node:fs';
 
@@ -68,10 +69,17 @@ function joinRings(segments) {
 const osm = JSON.parse(readFileSync(osmPath, 'utf8'));
 const areas = [];
 const rivers = [];
+const wells = [];
 let skipped = 0;
 
 for (const e of osm.elements) {
   const t = e.tags ?? {};
+  if (t.man_made === 'water_well') {
+    const g = e.type === 'node' ? [[round(e.lon), round(e.lat)]] : pts(e.geometry ?? []);
+    if (!g.length) { skipped++; continue; }
+    wells.push([round(g.reduce((s, p) => s + p[0], 0) / g.length), round(g.reduce((s, p) => s + p[1], 0) / g.length)]);
+    continue;
+  }
   const seasonal = t.intermittent === 'yes' || t.seasonal === 'yes';
   if (t.waterway === 'river') {
     if (seasonal || !e.geometry) { skipped++; continue; }
@@ -92,5 +100,5 @@ for (const e of osm.elements) {
 }
 
 const out = 'src/content/data/water.json';
-writeFileSync(out, JSON.stringify({ areas, rivers }));
-console.log(`${out}: ${areas.length} areas (${areas.filter((a) => a.river).length} river), ${rivers.length} river lines, ${skipped} skipped`);
+writeFileSync(out, JSON.stringify({ areas, rivers, wells }));
+console.log(`${out}: ${areas.length} areas (${areas.filter((a) => a.river).length} river), ${rivers.length} river lines, ${wells.length} wells, ${skipped} skipped`);

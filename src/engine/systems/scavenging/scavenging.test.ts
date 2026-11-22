@@ -32,11 +32,11 @@ describe('search (P-013)', () => {
   it('takes an hour, finds things from the site table, and leaves them on the ground here', () => {
     let found = 0;
     for (let seed = 1; seed <= 40; seed++) {
-      const s = at('loc.srivilliputhur', seed);
+      const s = at('loc.srivilliputhur_station', seed);
       const r = ok(s, { type: 'scavenge.search', torch: false });
       expect(r.state.clockMinutes).toBe(s.clockMinutes + 60);
       const searched = r.events[0] as Extract<GameEvent, { type: 'searched' }>;
-      const tableItems = content.loot['loc.srivilliputhur']!.search.map((e) => e.itemId);
+      const tableItems = content.loot['loc.srivilliputhur_station']!.search.map((e) => e.itemId);
       for (const f of searched.finds) expect(tableItems).toContain(f.itemId);
       expect(groundHere(r.state)).toHaveLength(searched.finds.length);
       expect(r.state.inventory).toEqual(s.inventory);
@@ -46,7 +46,7 @@ describe('search (P-013)', () => {
   });
 
   it('is reproducible from the same save', () => {
-    const s = at('loc.madurai', 7);
+    const s = at('loc.srivilliputhur_station', 7);
     expect(ok(s, { type: 'scavenge.search', torch: false }).state).toEqual(ok(s, { type: 'scavenge.search', torch: false }).state);
   });
 
@@ -73,6 +73,8 @@ describe('search (P-013)', () => {
 
   it('refuses at home, on open ground and while travelling', () => {
     expect(err(at('loc.home'), { type: 'scavenge.search', torch: false })).toBe('nothing_to_search');
+    // A town's finds are in its buildings (P-014): nothing to search at its point on the world map.
+    expect(err(at('loc.madurai'), { type: 'scavenge.search', torch: false })).toBe('nothing_to_search');
     expect(err(at({ lat: 9.6, lon: 77.7 }), { type: 'scavenge.search', torch: false })).toBe('not_at_site');
     const moving = ok(at('loc.home'), { type: 'travel.start', target: { siteId: 'loc.nh744' } }).state;
     expect(err(moving, { type: 'scavenge.search', torch: false })).toBe('travel_in_progress');
@@ -134,6 +136,9 @@ describe('water (D-044)', () => {
     expect(waterAt(site('loc.home'), content)).toBeNull();
     const [x, y] = content.water.rivers[0]![0]!;
     expect(waterAt({ lat: y, lon: x }, content)).toBe('river');
+    // D-050: a mapped well is clean.
+    const [wx, wy] = content.water.wells[0]!;
+    expect(waterAt({ lat: wy, lon: wx }, content)).toBe('well');
   });
 
   it('fills every empty bottle: unsafe at still water, clean at a river, 5 minutes each', () => {

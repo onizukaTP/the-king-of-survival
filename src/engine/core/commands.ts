@@ -2,6 +2,7 @@ import type { Content } from '../../content/loader';
 import { dropItem, equipItem, unequipItem, applyItem } from '../systems/inventory/inventory';
 import { drinkHere, fillBottles, hunt, search, takeFromGround, type Find } from '../systems/scavenging/scavenging';
 import { rest } from '../systems/survival/survival';
+import { enterTown, leaveTown, walkTo } from '../systems/town/town';
 import { advanceTravel, startTravel, stopTravel, type TravelTarget } from '../systems/travel/travel';
 import type { GameState, Meter } from './state';
 
@@ -20,7 +21,11 @@ export type Command =
   | { type: 'water.fill' }
   | { type: 'water.drink' }
   // `indexes` point into state.ground.
-  | { type: 'ground.take'; indexes: number[] };
+  | { type: 'ground.take'; indexes: number[] }
+  | { type: 'town.enter' }
+  | { type: 'town.leave' }
+  // `spotId`: 'edge', a building or a water point of the town he's in.
+  | { type: 'town.walk'; spotId: string };
 
 export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst' | 'radiation';
 
@@ -44,7 +49,10 @@ export type GameEvent =
   | { type: 'bottles_filled'; count: number; clean: boolean }
   | { type: 'drank'; clean: boolean }
   | { type: 'items_taken'; count: number }
-  | { type: 'irradiated'; amount: number };
+  | { type: 'irradiated'; amount: number }
+  | { type: 'town_entered'; siteId: string }
+  | { type: 'town_left' }
+  | { type: 'walked'; spotId: string };
 
 export type CommandError = {
   code:
@@ -71,7 +79,11 @@ export type CommandError = {
     | 'no_torch_charge'
     | 'cannot_hunt_here'
     | 'no_water'
-    | 'no_empty_bottles';
+    | 'no_empty_bottles'
+    | 'in_town'
+    | 'not_in_town'
+    | 'no_town_here'
+    | 'unknown_spot';
   message: string;
 };
 
@@ -108,6 +120,12 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return drinkHere(state, content);
     case 'ground.take':
       return takeFromGround(state, command.indexes, content);
+    case 'town.enter':
+      return enterTown(state, content);
+    case 'town.leave':
+      return leaveTown(state, content);
+    case 'town.walk':
+      return walkTo(state, command.spotId, content);
     default:
       return { ok: false, error: { code: 'unknown_command', message: `Unknown command: ${(command as { type: string }).type}` } };
   }

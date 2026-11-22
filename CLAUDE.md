@@ -167,12 +167,12 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ items.md             # item list (D-026) and numbers (D-036)
 │  ├─ vehicles.md          # vehicles (D-024, D-030 to D-034)
 │  ├─ scavenging.md        # scavenging (D-047)
-│  ├─ towns.md             # town maps proposal (P-014)
+│  ├─ towns.md             # town maps (D-052)
 │  └─ night.md             # night proposal (P-015)
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
-├─ scripts/geo/            # Overpass query + build-geo.mjs: regenerates roads, rail, state outline
+├─ scripts/geo/            # Overpass queries + build scripts: roads, rail, state outline, water and wells, town streets
 ├─ src/
 │  ├─ engine/
 │  │  ├─ core/             # GameState, commands, rng, clock, ids
@@ -274,6 +274,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-049 **Town maps:** each town has **its own map** with buildings to scavenge, and **every building type has its own loot table**. Building types are **any that reflect a real town**; temples, garages, supermarkets, medical stores, apartments and independent houses were the owner's examples. Layouts are **hand-made, with real landmarks where they exist** (OpenStreetMap has too few buildings for these towns). Details proposed in P-014.
 - D-050 **Water at places:** ponds, lakes and **wells** are placed at places. **Well water is clean** (adds to D-044, where only flowing rivers were clean).
 - D-051 **M2–M4 wait for town maps** before release (extends D-042).
+- D-052 (approves P-014) **Town maps:** 16 building types; Srivilliputhur 13 buildings, Rajapalayam 16, Madurai 24 (with the airport); enter and leave a town for no time; walk between buildings at road speed; search time, stock loss and a loot table per type; town wells clean, tanks unsafe; the 39 OpenStreetMap wells on the world map; save v5. Spec in `docs/towns.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -281,7 +282,6 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
-- P-014 Town maps (D-049, D-050): 16 building types; Srivilliputhur 13 buildings, Rajapalayam 16, Madurai 24 (with the airport); enter and leave a town; walk between buildings at road speed; search time and stock by building size; a loot table per type; wells clean; the 39 OpenStreetMap wells added to the world map; save v5. Spec in `docs/towns.md`.
 - P-015 Night (D-048): night 18:30–06:00; 30-day moon cycle with three full-moon nights; the torch switches on by itself when moving in the dark and uses 10% an hour; risk numbers come with M6/M7. Spec in `docs/night.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
@@ -309,7 +309,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M2 | Time & survival: clock, decay, thresholds, death | M1, M3 | Done on `dev` (not yet released) |
 | M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Done on `dev` (not yet released) |
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Done on `dev` (not yet released; M2–M4 go out with town maps, D-051) |
-| M4b | Town maps: buildings, per-type loot, wells (D-049, D-050) | M4 | Waiting for P-014 approval |
+| M4b | Town maps: buildings, per-type loot, wells (D-049, D-050, D-052) | M4 | Done on `dev` (not yet released; M2–M4b go out together, D-051) |
 | M5 | Crafting | M3 | Not started |
 | M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Blocked |
 | M7 | Combat | M3, M6, Q4, Q5 | Blocked |

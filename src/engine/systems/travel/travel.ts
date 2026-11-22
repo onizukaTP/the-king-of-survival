@@ -79,6 +79,7 @@ export function previewTravel(state: GameState, target: TravelTarget, content: C
 }
 
 export function startTravel(state: GameState, target: TravelTarget, content: Content): CommandResult {
+  if (state.town) return { ok: false, error: { code: 'in_town', message: 'Leave the town first.' } };
   const preview = previewTravel(state, target, content);
   if (!preview.ok) return preview;
   state.travel = { destination: preview.destination, siteId: preview.siteId, legs: preview.plan.legs, nextLeg: 0 };

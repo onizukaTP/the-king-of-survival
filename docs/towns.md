@@ -1,11 +1,13 @@
-# Town maps and water at places (P-014) — proposed, awaiting approval
+# Town maps and water at places — approved (D-052), built
 
 Confirmed by the owner:
 - **D-049:** every town has its own map of buildings to scavenge. Layouts are hand-made, with real landmarks where they exist. Building types can be any that reflect a real Tamil Nadu town; the owner's list was examples.
 - **D-050:** ponds, lakes and wells sit at places, and **well water is clean**.
 - **D-051:** M2–M4 wait for town maps before release.
 
-Everything below is a proposal.
+Everything below was approved as P-014 (D-052) and is built (M4b), except where a note says otherwise.
+
+**Where the buildings are:** landmarks and most buildings sit on real OpenStreetMap points of interest of their kind (for example a real petrol bunk or hospital). Kinds with nothing mapped, such as houses, ration shops and wells, are placed on a real street near the town centre. The tank is the real still-water body nearest each town's point. Every place is at least 100 m from every other, so floor piles never mix. The data is in `src/content/data/towns.json`; streets come from `scripts/geo/build-town-streets.mjs`.
 
 ## Which places get a town map
 
@@ -124,7 +126,7 @@ Town maps add Prabu's position inside a town, plus stock and floor piles for eac
 - Old stock for the three towns is dropped.
 - Their ground piles move to the town's entrance.
 
-## Town map screen (needs layout approval, rule 6)
+## Town map screen
 
 - **Map area:** a flat top-down plan drawn in SVG, not MapLibre.
   - Streets are grey lines. Buildings are blocks with a type icon and a short label.

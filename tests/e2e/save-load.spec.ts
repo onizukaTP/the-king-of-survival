@@ -116,31 +116,51 @@ test('dying ends the run and deletes its save (D-038)', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Continue' })).toBeDisabled();
 });
 
-test('search the town, take the finds; dropped things stay on the ground (M4)', async ({ page }) => {
+test('enter the town, walk to a building, search it; drops stay on its floor; leave (M4, P-014)', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'New Game' }).click();
   await page.getByRole('button', { name: 'Srivilliputhur town ruins' }).dblclick();
   await expect(page.getByTestId('status')).toHaveText('At: Srivilliputhur town ruins', { timeout: 15_000 });
   const panel = page.getByTestId('here-panel');
-  await expect(panel).toContainText('Left to find: 100%');
+  await panel.getByRole('button', { name: 'Enter town' }).click();
+  await expect(page.getByTestId('status')).toHaveText('In Srivilliputhur town ruins');
+
+  // Click a building to see it, click it again to walk there (D-022 on the town map).
+  const garage = page.getByRole('button', { name: 'Garage', exact: true });
+  await garage.click();
+  await expect(page.getByTestId('spot-panel')).toContainText('Left to find100%');
+  await garage.click();
+  await expect(page.getByTestId('status')).toHaveText('In Srivilliputhur town ruins: Garage');
+  await expect(page.getByTestId('clock')).not.toHaveText(/06:|07:[0-4]/);
+
+  // The town map survives a reload.
+  await page.reload();
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await expect(page.getByTestId('status')).toHaveText('In Srivilliputhur town ruins: Garage');
 
   // Finds are random per run; a few searches always turn something up.
   for (let i = 0; i < 6 && !(await panel.getByText('On the ground').count()); i++) {
-    await panel.getByRole('button', { name: 'Search (1 h)' }).click();
+    await panel.getByRole('button', { name: 'Search (45 min)' }).click();
   }
   await expect(panel.getByText('On the ground')).toBeVisible();
   await panel.getByRole('button', { name: 'Take all' }).click();
   await expect(panel.getByText('On the ground')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /^Pack/ })).not.toHaveText('Pack 0.65 kg');
 
-  // Drop the torch: it waits on the ground here and can be taken back.
+  // Drop the torch: it waits on the garage floor and can be taken back.
   await page.getByRole('button', { name: /^Pack/ }).click();
   await page.getByRole('button', { name: /^Torch/ }).click();
   await page.getByTestId('item-card').getByRole('button', { name: 'Drop 1' }).click();
-  await page.locator('.prabu-marker').click();
+  await garage.click();
   await expect(panel).toContainText('Torch');
   await panel.getByRole('checkbox').last().check();
   await panel.getByRole('button', { name: 'Take selected' }).click();
   await page.getByRole('button', { name: /^Pack/ }).click();
   await expect(page.locator('.panel')).toContainText('Torch · 50%');
+
+  // Leave: back on the world map at the town.
+  await page.getByRole('button', { name: /^Pack/ }).click();
+  await garage.click();
+  await panel.getByRole('button', { name: 'Leave town' }).click();
+  await expect(page.getByTestId('status')).toHaveText('At: Srivilliputhur town ruins');
 });

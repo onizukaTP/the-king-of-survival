@@ -3,7 +3,7 @@ import type { Content } from '../../content/loader';
 import { gameStateSchema, startingInventory, startingSurvival, startPosition, type GameState } from '../core/state';
 import { initialMap } from '../systems/travel/travel';
 
-export const SAVE_VERSION = 4;
+export const SAVE_VERSION = 5;
 
 const saveSchema = z.object({
   saveVersion: z.literal(SAVE_VERSION),
@@ -57,6 +57,13 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
       },
     };
   },
+  // v4 → v5 (town maps, D-049): not in a town; towns lose their town-wide search stock, since
+  // their finds now live in buildings. Ground piles at a town's point stay at its edge.
+  4: (save, content) => {
+    const gs = save.gameState as { sites: Record<string, unknown> };
+    const sites = Object.fromEntries(Object.entries(gs.sites).filter(([id]) => !content.towns[id]));
+    return { ...save, saveVersion: 5, gameState: { ...gs, sites, town: null } };
+  },
 };
 
 /** `createdAt` is passed in because the engine never reads the wall clock. */
@@ -92,6 +99,13 @@ export function loadSave(raw: unknown, content: Content): LoadResult {
   const { stacks, weapon } = gameState.inventory;
   const items = [...stacks, ...gameState.ground].map((st) => st.itemId).concat(weapon ? [weapon] : []);
   if (items.some((id) => !content.items[id])) return { ok: false, error: 'Save refers to an unknown item.' };
-  if (Object.keys(gameState.sites).some((id) => !content.sites[id])) return { ok: false, error: 'Save refers to an unknown place.' };
+  const buildingIds = new Set(Object.values(content.towns).flatMap((t) => t.buildings.map((b) => b.id)));
+  if (Object.keys(gameState.sites).some((id) => !content.sites[id] && !buildingIds.has(id))) return { ok: false, error: 'Save refers to an unknown place.' };
+  const { town } = gameState;
+  if (town) {
+    const map = content.towns[town.siteId];
+    const spots = map ? ['edge', ...map.buildings.map((b) => b.id), ...map.water.map((w) => w.id)] : [];
+    if (!map || (town.at !== null && !spots.includes(town.at))) return { ok: false, error: 'Save refers to an unknown town.' };
+  }
   return { ok: true, save: parsed.data };
 }

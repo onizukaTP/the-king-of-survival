@@ -3,6 +3,7 @@ import type { Site } from '../../../content/schemas';
 import type { CommandError, CommandResult, GameEvent } from '../../core/commands';
 import type { GameState, MapState } from '../../core/state';
 import { distanceKm, insideOutline, samplePath, type LatLon } from './geo';
+import { zoneShare } from '../survival/radiation';
 import { passTime } from '../survival/survival';
 import { planRoute, type RoutePlan } from './route';
 
@@ -91,7 +92,7 @@ export function advanceTravel(state: GameState, content: Content): CommandResult
   if (!travel || !leg) return fail('not_travelling', 'Prabu isn\'t travelling.');
   const events: GameEvent[] = [];
   state.player.position = leg.path[leg.path.length - 1]!;
-  passTime(state, leg.minutes, 'travel', content, events);
+  passTime(state, leg.minutes, 'travel', content, events, zoneShare(leg.path, content));
   reveal(state.map, samplePath(leg.path, REVEAL_STEP_KM), content, events);
   travel.nextLeg += 1;
   events.unshift({ type: 'leg_completed', leg: travel.nextLeg, of: travel.legs.length });

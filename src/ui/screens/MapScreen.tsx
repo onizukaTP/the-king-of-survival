@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Meter } from '../../engine/core/state';
+import { maxHealth, type Meter } from '../../engine/core/state';
 import { carriedKg } from '../../engine/systems/inventory/inventory';
 import { siteAt } from '../../engine/systems/travel/travel';
 import { MapView } from '../../map/MapView';
@@ -32,16 +32,19 @@ export function MapScreen() {
         <span className="pill" data-testid="status">{status}</span>
         {game.survival.illUntil !== null && <span className="pill warn">Ill</span>}
         {game.survival.injured && <span className="pill warn">Injured</span>}
+        {game.survival.radiation > 0 && <span className="pill warn">Irradiated</span>}
         <span className="topbar-message" role="status">{message}</span>
         <div className="meters">
           {METERS.map(([meter, label]) => {
             const value = Math.round(game.survival[meter]);
             const level = value <= 0 ? 'empty' : value <= warnAt ? 'low' : '';
+            // D-043: the part of Health lost to radiation shows as a dark end segment.
+            const lost = meter === 'health' ? 100 - maxHealth(game.survival) : 0;
             return (
-              <span key={meter} className={`meter ${level}`} title={`${label} ${value}`} role="meter" aria-label={label}
+              <span key={meter} className={`meter ${level}`} title={`${label} ${value}${lost ? ` (max ${100 - lost})` : ''}`} role="meter" aria-label={label}
                 aria-valuenow={value} aria-valuemin={0} aria-valuemax={100} data-testid={`meter-${meter}`}>
                 <span className="meter-label">{label}</span>
-                <span className="meter-bar"><span style={{ width: `${value}%` }} /></span>
+                <span className="meter-bar"><span style={{ width: `${value}%` }} />{lost > 0 && <span className="meter-lost" style={{ width: `${lost}%` }} />}</span>
               </span>
             );
           })}

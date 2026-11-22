@@ -1,5 +1,6 @@
 import type { Content } from '../../content/loader';
 import { dropItem, equipItem, unequipItem, applyItem } from '../systems/inventory/inventory';
+import { drinkHere, fillBottles, hunt, search, takeFromGround, type Find } from '../systems/scavenging/scavenging';
 import { rest } from '../systems/survival/survival';
 import { advanceTravel, startTravel, stopTravel, type TravelTarget } from '../systems/travel/travel';
 import type { GameState, Meter } from './state';
@@ -13,9 +14,15 @@ export type Command =
   | { type: 'item.use'; index: number }
   | { type: 'item.drop'; index: number; count: number }
   | { type: 'item.equip'; index: number }
-  | { type: 'item.unequip' };
+  | { type: 'item.unequip' }
+  | { type: 'scavenge.search'; torch: boolean }
+  | { type: 'scavenge.hunt' }
+  | { type: 'water.fill' }
+  | { type: 'water.drink' }
+  // `indexes` point into state.ground.
+  | { type: 'ground.take'; indexes: number[] };
 
-export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst';
+export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst' | 'radiation';
 
 export type GameEvent =
   | { type: 'travel_started'; legs: number }
@@ -31,7 +38,13 @@ export type GameEvent =
   | { type: 'injury_cured' }
   | { type: 'item_used'; itemId: string }
   | { type: 'item_spoiled'; itemId: string; count: number }
-  | { type: 'died'; cause: DeathCause };
+  | { type: 'died'; cause: DeathCause }
+  | { type: 'searched'; finds: Find[]; torch: boolean }
+  | { type: 'hunted'; finds: Find[] }
+  | { type: 'bottles_filled'; count: number; clean: boolean }
+  | { type: 'drank'; clean: boolean }
+  | { type: 'items_taken'; count: number }
+  | { type: 'irradiated'; amount: number };
 
 export type CommandError = {
   code:
@@ -52,7 +65,13 @@ export type CommandError = {
     | 'no_weapon'
     | 'bad_duration'
     | 'already_rested'
-    | 'too_heavy';
+    | 'too_heavy'
+    | 'not_at_site'
+    | 'nothing_to_search'
+    | 'no_torch_charge'
+    | 'cannot_hunt_here'
+    | 'no_water'
+    | 'no_empty_bottles';
   message: string;
 };
 
@@ -74,11 +93,21 @@ function run(state: GameState, command: Command, content: Content): CommandResul
     case 'item.use':
       return applyItem(state, command.index, content);
     case 'item.drop':
-      return dropItem(state, command.index, command.count);
+      return dropItem(state, command.index, command.count, content);
     case 'item.equip':
       return equipItem(state, command.index, content);
     case 'item.unequip':
       return unequipItem(state);
+    case 'scavenge.search':
+      return search(state, command.torch, content);
+    case 'scavenge.hunt':
+      return hunt(state, content);
+    case 'water.fill':
+      return fillBottles(state, content);
+    case 'water.drink':
+      return drinkHere(state, content);
+    case 'ground.take':
+      return takeFromGround(state, command.indexes, content);
     default:
       return { ok: false, error: { code: 'unknown_command', message: `Unknown command: ${(command as { type: string }).type}` } };
   }

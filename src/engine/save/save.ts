@@ -3,7 +3,7 @@ import type { Content } from '../../content/loader';
 import { gameStateSchema, startingInventory, startingSurvival, startPosition, type GameState } from '../core/state';
 import { initialMap } from '../systems/travel/travel';
 
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 const saveSchema = z.object({
   saveVersion: z.literal(SAVE_VERSION),
@@ -41,6 +41,22 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
       gameState: { ...gs, survival: startingSurvival(content), inventory: startingInventory(content, gs.clockMinutes), dead: false },
     };
   },
+  // v3 → v4 (M4): boiled water became clean water; radiation, site depletion and the ground.
+  3: (save) => {
+    const gs = save.gameState as { survival: object; inventory: { stacks: { itemId: string }[]; weapon: string | null } };
+    const rename = (id: string) => (id === 'item.boiled_water' ? 'item.clean_water' : id);
+    return {
+      ...save,
+      saveVersion: 4,
+      gameState: {
+        ...gs,
+        survival: { ...gs.survival, radiation: 0, zoneMinutes: 0 },
+        inventory: { ...gs.inventory, stacks: gs.inventory.stacks.map((s) => ({ ...s, itemId: rename(s.itemId) })) },
+        sites: {},
+        ground: [],
+      },
+    };
+  },
 };
 
 /** `createdAt` is passed in because the engine never reads the wall clock. */
@@ -74,6 +90,8 @@ export function loadSave(raw: unknown, content: Content): LoadResult {
   if (!content.characters[gameState.player.characterId]) return { ok: false, error: 'Save refers to an unknown character.' };
   if (gameState.map.discoveredSiteIds.some((id) => !content.sites[id])) return { ok: false, error: 'Save refers to an unknown place.' };
   const { stacks, weapon } = gameState.inventory;
-  if (stacks.some((st) => !content.items[st.itemId]) || (weapon && !content.items[weapon])) return { ok: false, error: 'Save refers to an unknown item.' };
+  const items = [...stacks, ...gameState.ground].map((st) => st.itemId).concat(weapon ? [weapon] : []);
+  if (items.some((id) => !content.items[id])) return { ok: false, error: 'Save refers to an unknown item.' };
+  if (Object.keys(gameState.sites).some((id) => !content.sites[id])) return { ok: false, error: 'Save refers to an unknown place.' };
   return { ok: true, save: parsed.data };
 }

@@ -267,6 +267,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-044 **Water:** bottles can be filled at **any water** on the map (lakes, tanks, ponds, reservoirs, rivers). **Only flowing rivers give clean water**; all other water is unsafe, still drinkable with the illness risk (D-027), until boiled or filtered.
 - D-045 **Search finds:** the player chooses what to take; what stays behind remains **at that place for 96 hours**.
 - D-046 **Home** gives nothing until trading exists (its stores come with trading). **Hunting** is chance-based until combat (M7).
+- D-047 (approves P-013, with changes) **Scavenging:** Search 1 h, or 45 min with the torch for **5%** battery; **Hunt is a 1-hour roll**; loot tables as proposed, with depletion of 10 points a search (floor 10%) and **a full refresh 7 days after a place is first searched**; boiled water renamed **clean water**; **dropped items also stay on the ground 96 h**; the radiation zone is **drawn on the map in yellow with a radiation icon in the middle**. Spec in `docs/scavenging.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -274,7 +275,6 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
-- P-013 Scavenging (M4), updated with D-043 to D-046: Search (1 h, or 45 min with the torch for 10% battery), Hunt, Fill bottles and Drink at any water, per-site loot tables with depletion and regrowth, take-or-leave finds, the radiation zone. Remaining numbers in `docs/scavenging.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*
@@ -300,7 +300,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Done — live |
 | M2 | Time & survival: clock, decay, thresholds, death | M1, M3 | Done on `dev` (not yet released) |
 | M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Done on `dev` (not yet released) |
-| M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Not started (proposal P-013 awaiting approval) |
+| M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Done on `dev` (not yet released; M2–M4 can now go out together, D-042) |
 | M5 | Crafting | M3 | Not started |
 | M6 | Event system: data-driven events with choices/consequences | M2, M3 | Blocked |
 | M7 | Combat | M3, M6, Q4, Q5 | Blocked |

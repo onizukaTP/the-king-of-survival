@@ -11,6 +11,11 @@ export function formatClock(minutes: number): string {
 
 /** 160 → "2 h 40 min"; 50 → "50 min". */
 export function formatDuration(minutes: number): string {
+  if (minutes >= 48 * 60) {
+    const d = Math.floor(minutes / 1440);
+    const h = Math.floor((minutes % 1440) / 60);
+    return h ? `${d} d ${h} h` : `${d} d`;
+  }
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   if (!h) return `${m} min`;

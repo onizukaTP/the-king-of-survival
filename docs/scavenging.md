@@ -1,14 +1,14 @@
-# Scavenging (M4) — proposal P-013, updated with the owner's answers
+# Scavenging (M4) — approved (D-043 to D-047), built
 
-Confirmed by the owner: D-043 (radiation zone), D-044 (water), D-045 (take or leave finds), D-046 (home stores later; chance-based hunting). The remaining numbers below are still P-013, awaiting approval. All numbers are starting values for the balance pass (M9) and live in data.
+Confirmed by the owner: D-043 (radiation zone), D-044 (water), D-045 (take or leave finds), D-046 (home stores later; chance-based hunting) and D-047 (the rest of P-013, with changes). All numbers are starting values for the balance pass (M9) and live in `src/content/data/scavenging.json` and `loot.json`.
 
 ## Actions
 
 | Action | Where | Time | What happens |
 |---|---|---|---|
 | **Search** | Every site except home | 1 h | Two draws from the site's loot table. |
-| **Search with torch** | Same, if the torch has charge | 45 min | Same draws, 25% faster; uses 10% of the torch battery (D-037). |
-| **Hunt** | Sanctuary forest | 2 h | 40% chance of raw meat ×2–3; 30% chance of animal hide. Chance-based until combat (M7) (D-046). |
+| **Search with torch** | Same, if the torch has 5% charge | 45 min | Same draws, 25% faster; uses 5% of the torch battery (D-037, D-047). |
+| **Hunt** | Sanctuary forest | 1 h | One roll per hour: 40% chance of raw meat ×2–3, 30% chance of animal hide. Chance-based until combat (M7) (D-046, D-047). |
 | **Fill bottles** | At any water (D-044) | 5 min per bottle | Each empty bottle is filled: **clean water** at a river, **unsafe water** anywhere else. |
 | **Drink** | At any water | 10 min | Water to 100. From a river it's safe; anywhere else it carries the 1-in-5 illness chance (D-027). |
 
@@ -20,32 +20,32 @@ Time passes through the same survival clock as travel and rest.
 - **Clean water** comes only from flowing rivers. All other water is unsafe: drinkable, with the illness risk (D-027), until it is **boiled or filtered** (both are crafting, M5).
 - **Data:** water bodies and rivers come from OpenStreetMap (ODbL, credited), for the same area as the road data (the prototype box around home and Madurai). Elsewhere in Tamil Nadu there is no water data yet, so nothing to fill there; it can be extended later.
 - Prabu counts as "at water" within 200 m of a water body or river.
-- **Proposed item change:** rename "Bottle of boiled water" to **"Bottle of clean water"**, since river water, boiled water and filtered water would all be the same thing. Old saves are migrated.
+- "Bottle of boiled water" is now **"Bottle of clean water"** (D-047), since river, boiled and filtered water are the same thing. Old saves are migrated.
 
 ## How a search works
 
 - Each **draw** goes down the site's table: every entry has a chance and a quantity range, and the first that hits is found.
-- **Depletion (D-033):** each site has a richness from 100% down to 10%. Every search lowers it by 10 points and every chance is multiplied by it. It recovers each day by the site's regrowth rate.
-- **Take or leave (D-045):** finds are shown in the panel with a checkbox each and Take selected / Take all. Whatever stays behind remains **at that place for 96 hours**, listed under "Left here", and can be picked up later. After 96 hours it's gone.
+- **Depletion (D-033, D-047):** each site has a richness from 100% down to 10%. Every search lowers it by 10 points and every chance is multiplied by it. **Seven days after a place is first searched, its loot refreshes to 100%**, and the next search starts a new 7-day count. The panel shows "Left to find: 80%".
+- **Take or leave (D-045):** finds land on the ground where Prabu stands and are listed under "On the ground" with a checkbox each and Take selected / Take all. Whatever stays behind remains there **for 96 hours**, then it's gone.
 - Taking is refused past 50 kg (D-036), with a message.
-- Assumed, please confirm: items **dropped** from the pack also stay where he dropped them for 96 hours, the same way.
+- Items **dropped** from the pack go on the ground the same way, for 96 hours (D-047).
 - Draws use the seeded RNG, so a save always replays the same way.
 
 ## Loot tables (chance per draw, quantity)
 
-**Sanctuary forest** (regrows 20%/day): firewood 55% (1–2) · bamboo 35% (1) · neem leaves 30% (1–3).
+**Sanctuary forest**: firewood 55% (1–2) · bamboo 35% (1) · neem leaves 30% (1–3).
 
-**Srivilliputhur town ruins** (regrows 2%/day): cloth rags 25% (1–2) · scrap metal 25% (1–2) · empty bottle 20% (1) · coir rope 10% (1) · tinned food 8% (1) · millet 6% (1) · salt 6% (1) · flint and steel 4% · cooking pot 4% · aruval 3% · pre-war painkillers 3% · lighter fuel 2% · hand-crank charger 2%.
+**Srivilliputhur town ruins**: cloth rags 25% (1–2) · scrap metal 25% (1–2) · empty bottle 20% (1) · coir rope 10% (1) · tinned food 8% (1) · millet 6% (1) · salt 6% (1) · flint and steel 4% · cooking pot 4% · aruval 3% · pre-war painkillers 3% · lighter fuel 2% · hand-crank charger 2%.
 
-**Srivilliputhur railway station** (regrows 2%/day): scrap metal 40% (1–3) · cloth rags 15% (1) · empty bottle 15% (1) · coir rope 10% (1) · tinned food 5% (1) · pre-war painkillers 3% · lighter fuel 3% · hand-crank charger 3%.
+**Srivilliputhur railway station**: scrap metal 40% (1–3) · cloth rags 15% (1) · empty bottle 15% (1) · coir rope 10% (1) · tinned food 5% (1) · pre-war painkillers 3% · lighter fuel 3% · hand-crank charger 3%.
 
-**NH 744 highway** (regrows 2%/day; wrecks): scrap metal 40% (1–2) · empty bottle 20% (1) · cloth rags 12% (1) · tinned food 6% (1) · lighter fuel 4%.
+**NH 744 highway** (wrecks): scrap metal 40% (1–2) · empty bottle 20% (1) · cloth rags 12% (1) · tinned food 6% (1) · lighter fuel 4%.
 
-**Pilavakkal dam** (regrows 20%/day): tender coconut 25% (1–2) · firewood 25% (1) · neem leaves 15% (1–2). It is also water (unsafe: a reservoir, not a flowing river).
+**Pilavakkal dam**: tender coconut 25% (1–2) · firewood 25% (1) · neem leaves 15% (1–2). It is also water (unsafe: a reservoir, not a flowing river).
 
-**Rajapalayam town ruins** (regrows 2%/day; a bigger town, a little richer): cloth rags 30% (1–3) · scrap metal 25% (1–2) · empty bottle 20% (1–2) · tinned food 10% (1) · millet 8% (1) · salt 6% · coir rope 8% · cooking pot 5% · aruval 4% · pre-war painkillers 4% · lighter fuel 3% · hand-crank charger 2% · tender coconut 6%.
+**Rajapalayam town ruins** (a bigger town, a little richer): cloth rags 30% (1–3) · scrap metal 25% (1–2) · empty bottle 20% (1–2) · tinned food 10% (1) · millet 8% (1) · salt 6% · coir rope 8% · cooking pot 5% · aruval 4% · pre-war painkillers 4% · lighter fuel 3% · hand-crank charger 2% · tender coconut 6%.
 
-**Madurai city ruins** (regrows 1%/day; richest, **no radiation**, D-043): tinned food 15% (1–2) · scrap metal 35% (1–3) · empty bottle 25% (1–2) · cloth rags 25% (1–2) · pre-war painkillers 8% · cooking pot 6% · aruval 5% · hand-crank charger 5% · lighter fuel 5% · flint and steel 4%.
+**Madurai city ruins** (richest, **no radiation**, D-043): tinned food 15% (1–2) · scrap metal 35% (1–3) · empty bottle 25% (1–2) · cloth rags 25% (1–2) · pre-war painkillers 8% · cooking pot 6% · aruval 5% · hand-crank charger 5% · lighter fuel 5% · flint and steel 4%.
 
 **Home:** nothing to search; the settlement's stores come with trading (D-046).
 
@@ -54,8 +54,4 @@ Time passes through the same survival clock as travel and rest.
 - **The zone:** every point within **30 km of the straight line from Trichy to Villupuram** (a band with rounded ends). Madurai and the prototype area have none.
 - **Exposure:** every hour Prabu spends inside (travelling, resting or searching) has a **1-in-4 chance of +5 radiation**. For a travel leg, the hours inside are the share of the leg's path that lies in the zone.
 - Radiation lowers **maximum** Health one for one (D-035); Health can't heal past it. The Health meter shows the lost part as a dark end segment, and an "Irradiated" tag appears in the top bar. Nothing removes radiation yet (iodine tablets are a "later" item).
-- Open: is the zone **drawn on the map** from the start (survivors would know the dead lands), or only felt? Proposed: drawn faintly from the start.
-
-## Still to approve (P-013)
-
-Search and hunt times, the torch bonus, the loot tables, depletion and regrowth, 200 m "at water", the clean-water rename, dropped items staying 96 h, and showing the radiation zone on the map.
+- The zone is **drawn on the map from the start in yellow, with a radiation icon in the middle** (D-047).

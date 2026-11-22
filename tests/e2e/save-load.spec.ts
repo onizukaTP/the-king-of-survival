@@ -43,7 +43,8 @@ test('clicking unmarked ground offers a cross-country trip', async ({ page }) =>
   await expect(page.locator('.panel h2')).toHaveText('Unmarked ground');
   await expect(page.getByRole('button', { name: 'Travel', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Close' }).click();
-  await expect(page.locator('.panel')).toContainText('Select a place');
+  // With nothing selected the panel shows where Prabu stands.
+  await expect(page.locator('.panel h2')).toHaveText('Home');
 });
 
 test('double-clicking a place or open ground starts the trip', async ({ page }) => {
@@ -113,4 +114,33 @@ test('dying ends the run and deletes its save (D-038)', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Continue' })).toBeDisabled();
   await page.reload();
   await expect(page.getByRole('button', { name: 'Continue' })).toBeDisabled();
+});
+
+test('search the town, take the finds; dropped things stay on the ground (M4)', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'New Game' }).click();
+  await page.getByRole('button', { name: 'Srivilliputhur town ruins' }).dblclick();
+  await expect(page.getByTestId('status')).toHaveText('At: Srivilliputhur town ruins', { timeout: 15_000 });
+  const panel = page.getByTestId('here-panel');
+  await expect(panel).toContainText('Left to find: 100%');
+
+  // Finds are random per run; a few searches always turn something up.
+  for (let i = 0; i < 6 && !(await panel.getByText('On the ground').count()); i++) {
+    await panel.getByRole('button', { name: 'Search (1 h)' }).click();
+  }
+  await expect(panel.getByText('On the ground')).toBeVisible();
+  await panel.getByRole('button', { name: 'Take all' }).click();
+  await expect(panel.getByText('On the ground')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /^Pack/ })).not.toHaveText('Pack 0.65 kg');
+
+  // Drop the torch: it waits on the ground here and can be taken back.
+  await page.getByRole('button', { name: /^Pack/ }).click();
+  await page.getByRole('button', { name: /^Torch/ }).click();
+  await page.getByTestId('item-card').getByRole('button', { name: 'Drop 1' }).click();
+  await page.locator('.prabu-marker').click();
+  await expect(panel).toContainText('Torch');
+  await panel.getByRole('checkbox').last().check();
+  await panel.getByRole('button', { name: 'Take selected' }).click();
+  await page.getByRole('button', { name: /^Pack/ }).click();
+  await expect(page.locator('.panel')).toContainText('Torch · 50%');
 });

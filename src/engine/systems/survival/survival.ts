@@ -1,7 +1,9 @@
 import type { Content } from '../../../content/loader';
 import type { CommandResult, DeathCause, GameEvent } from '../../core/commands';
-import type { GameState, Meter } from '../../core/state';
+import { nextRandom } from '../../core/rng';
+import { maxHealth, type GameState, type Meter } from '../../core/state';
 import { carriedKg, loadMultiplier } from '../inventory/inventory';
+import { inRadiationZone } from './radiation';
 
 /** What Prabu is doing while time passes: only travel carries the overload cost, only sleep restores Rest. */
 export type Activity = 'travel' | 'sleep' | 'work';
@@ -14,7 +16,11 @@ const clamp = (v: number) => (v < 1e-9 ? 0 : v > 100 - 1e-9 ? 100 : v);
  * Advances the clock minute by minute, applying survival drain (D-023, D-035, D-036, D-027),
  * then spoils food (D-028). Stops early if Prabu dies. Mutates `state`, which is always a copy.
  */
-export function passTime(state: GameState, minutes: number, activity: Activity, content: Content, events: GameEvent[]) {
+export function passTime(
+  state: GameState, minutes: number, activity: Activity, content: Content, events: GameEvent[],
+  // Share of this time spent in the radiation zone; a travel leg passes its path's share, everything else is where he stands.
+  zoneShare = inRadiationZone(state.player.position, content) ? 1 : 0,
+) {
   const cfg = content.survival;
   const s = state.survival;
   const before = { ...s };
@@ -31,7 +37,7 @@ export function passTime(state: GameState, minutes: number, activity: Activity, 
     const emptyMeters = (s.food <= 0 ? 1 : 0) + (s.water <= 0 ? 1 : 0);
     s.health = clamp(s.health - (cfg.emptyMeterHealthPerHour / 60) * emptyMeters);
     const canHeal = activity === 'sleep' && !s.injured && s.food > cfg.sleepHealAbove && s.water > cfg.sleepHealAbove;
-    if (canHeal) s.health = clamp(s.health + cfg.sleepHealthPerHour / 60);
+    if (canHeal) s.health = Math.min(maxHealth(s), clamp(s.health + cfg.sleepHealthPerHour / 60));
 
     state.clockMinutes += 1;
     if (s.illUntil !== null && state.clockMinutes >= s.illUntil) {
@@ -46,6 +52,25 @@ export function passTime(state: GameState, minutes: number, activity: Activity, 
     }
   }
 
+  // D-043: every full hour inside the zone rolls once; part-hours carry over to the next action.
+  const rad = content.scavenging.radiation;
+  s.zoneMinutes += minutes * zoneShare;
+  while (s.zoneMinutes >= 60) {
+    s.zoneMinutes -= 60;
+    const [value, next] = nextRandom(state.rngState);
+    state.rngState = next;
+    if (value < rad.chancePerHour) {
+      s.radiation = Math.min(100, s.radiation + rad.amount);
+      s.health = Math.min(s.health, maxHealth(s));
+      events.push({ type: 'irradiated', amount: rad.amount });
+    }
+  }
+  if (s.health <= 0) {
+    state.dead = true;
+    events.push({ type: 'died', cause: 'radiation' });
+    return;
+  }
+
   for (const meter of METERS) {
     if (before[meter] > 0 && s[meter] <= 0) events.push({ type: 'meter_low', meter, empty: true });
     else if (before[meter] > cfg.warnAt && s[meter] <= cfg.warnAt) events.push({ type: 'meter_low', meter, empty: false });
@@ -56,6 +81,8 @@ export function passTime(state: GameState, minutes: number, activity: Activity, 
     events.push({ type: 'item_spoiled', itemId: stack.itemId, count: stack.count });
     return false;
   });
+  // Things left on the ground vanish after 96 hours (D-045), and food there spoils as usual.
+  state.ground = state.ground.filter((p) => p.expiresAt > state.clockMinutes && (p.spoilsAt === undefined || p.spoilsAt > state.clockMinutes));
 }
 
 /** Sleeps for a while, anywhere (D-035). Resolves instantly; the clock jumps. */

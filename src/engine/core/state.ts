@@ -43,6 +43,24 @@ const survivalStateSchema = z.object({
   injured: z.boolean(),
   // Game minute when the stomach illness from unsafe water ends (D-027), or null.
   illUntil: z.number().int().nullable(),
+  // Lowers maximum Health one for one (D-035, D-043).
+  radiation: z.number().min(0).max(100),
+  // Minutes spent in the radiation zone not yet rolled for; every full hour rolls once (D-043).
+  zoneMinutes: z.number().nonnegative(),
+});
+
+// Search depletion per site (P-013): missing sites are untouched (100%).
+const siteStateSchema = z.object({
+  richness: z.number().min(0).max(100),
+  // When the site's loot refreshes to 100% (7 days after it was first searched since the last refresh).
+  refreshAt: z.number().int().nullable(),
+});
+
+// Finds left behind and dropped items, which stay where they are for 96 hours (D-045).
+const groundPileSchema = stackSchema.extend({
+  lat: z.number(),
+  lon: z.number(),
+  expiresAt: z.number().int(),
 });
 
 // The schema is the single source of truth for GameState's shape; saves are validated against it.
@@ -57,6 +75,8 @@ export const gameStateSchema = z.object({
   travel: travelSchema.nullable(),
   survival: survivalStateSchema,
   inventory: inventorySchema,
+  sites: z.record(z.string(), siteStateSchema),
+  ground: z.array(groundPileSchema),
   // Permadeath (D-038): once true, every command is refused.
   dead: z.boolean(),
 });
@@ -67,9 +87,12 @@ export type Stack = z.infer<typeof stackSchema>;
 export type Inventory = z.infer<typeof inventorySchema>;
 export type SurvivalState = z.infer<typeof survivalStateSchema>;
 export type Meter = 'health' | 'food' | 'water' | 'rest';
+export type GroundPile = z.infer<typeof groundPileSchema>;
+
+export const maxHealth = (s: SurvivalState) => Math.max(0, 100 - s.radiation);
 
 export function startingSurvival(content: Content): SurvivalState {
-  return { ...content.survival.start, injured: false, illUntil: null };
+  return { ...content.survival.start, injured: false, illUntil: null, radiation: 0, zoneMinutes: 0 };
 }
 
 export function startingInventory(content: Content, clockMinutes: number): Inventory {
@@ -93,6 +116,8 @@ export function createNewGame(content: Content, seed: number): GameState {
     travel: null,
     survival: startingSurvival(content),
     inventory: startingInventory(content, content.newGame.startClockMinutes),
+    sites: {},
+    ground: [],
     dead: false,
   };
 }

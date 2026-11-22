@@ -1,9 +1,9 @@
-# Items — proposal P-010 (awaiting owner approval)
+# Items — approved (D-026, was P-010)
 
-Proposed in answer to the owner's request for an item list. Nothing here is built until approved.
+The owner approved this list, with the starting kit, unsafe-water illness and spoilage rules added (D-026 to D-028). Weights, spoilage times and other numbers are still proposed (P-012, at the end).
 Effects use the survival meters from D-023 (0–100) and the drain rates proposed in P-011; they are starting values for the balance pass (M9).
 
-**Prototype?** ✓ = proposed for the prototype (29 items, a little over P-001's ~20–25; see "If you want 25" below). *Later* = good fit, but not needed yet.
+**Prototype?** ✓ = in the prototype (32 items: the 29 approved plus the three starting-kit items from D-026). *Later* = good fit, but not needed yet.
 
 ## Food
 
@@ -26,7 +26,7 @@ Effects use the survival meters from D-023 (0–100) and the drain rates propose
 | ID | Item | Effect | Where it comes from | Prototype? |
 |---|---|---|---|---|
 | item.empty_bottle | Empty bottle | Fill it at a water source | Scavenged anywhere | ✓ |
-| item.unsafe_water | Bottle of unsafe water | Water +25 (risk: open question) | Filled at the dam or a tank | ✓ |
+| item.unsafe_water | Bottle of unsafe water | Water +25; may make him sick (D-027) | Filled at the dam or a tank | ✓ |
 | item.boiled_water | Bottle of boiled water | Water +25 | Crafted: unsafe water + firewood, needs pot | ✓ |
 | item.clay_pot | Clay water pot (mann paanai) | Holds 4 bottles' worth; heavy, can break | Village ruins | Later |
 
@@ -58,12 +58,15 @@ Effects use the survival meters from D-023 (0–100) and the drain rates propose
 
 | ID | Item | Use | Where it comes from | Prototype? |
 |---|---|---|---|---|
-| item.hunting_knife | Hunting knife | Melee; skinning | Starting kit? (narrative: owner decides) | ✓ |
+| item.hunting_knife | Hunting knife | Melee; skinning | Starting kit (D-026) | ✓ |
 | item.aruval | Aruval (billhook) | Heavy melee; clearing brush | Village ruins | ✓ |
 | item.bamboo_spear | Bamboo spear | Melee with reach | Crafted: bamboo + scrap metal | ✓ |
 | item.bow | Bamboo bow | Ranged; needs arrows | Crafted: bamboo + coir rope | ✓ |
 | item.arrow | Arrows | Ammo for the bow | Crafted: bamboo + scrap metal | ✓ |
-| item.flint | Flint and steel | Needed to make fire | Starting kit / scavenged | ✓ |
+| item.flint | Flint and steel | Makes fire; never runs out | Scavenged | ✓ |
+| item.lighter | Lighter | Makes fire; uses fuel | Starting kit, half full (D-026) | ✓ |
+| item.torch | Torch | Light; uses battery | Starting kit, half charged (D-026) | ✓ |
+| item.crank_charger | Charger / hand-crank charger | Recharges the torch | Scavenged | ✓ |
 | item.cooking_pot | Cooking pot | Needed to cook and boil | Home / ruins | ✓ |
 | item.slingshot | Slingshot (kavan) | Quiet ranged; small game | Crafted: wood + rubber tube | Later |
 | item.lathi | Bamboo staff (silambam) | Melee, defensive | Crafted: bamboo | Later |
@@ -71,10 +74,28 @@ Effects use the survival meters from D-023 (0–100) and the drain rates propose
 | item.sleeping_mat | Grass sleeping mat (korai paai) | Rest recovers faster | Village ruins | Later |
 | item.jute_sack | Jute sack | Raises carry limit | Ruins | Later |
 
-## Vehicle parts and fuel (only if vehicles come in; see `docs/vehicles.md`)
+## Vehicle parts and fuel (D-031 to D-034; proposed for the vehicles milestone, P-012)
 
-Tyre, inner tube, chain, spark plug, battery, engine parts, and fuel (see the fuel question).
+| ID | Item | Use | Where it comes from |
+|---|---|---|---|
+| item.biodiesel | Can of biodiesel | Fuel for the auto-rickshaw (and generators, later) | Scavenged in towns and on the highway (D-032) |
+| item.cycle_frame | Cycle frame | Part to build a cycle | Ruins (rare) |
+| item.cycle_wheel | Cycle wheel | Part to build a cycle (two needed) | Ruins |
+| item.cycle_chain | Cycle chain | Part to build a cycle | Ruins |
+| item.engine_parts | Engine parts | Repairs the auto-rickshaw | Highway wrecks, the station (rare) |
 
-## If you want 25
+Later: tyre, spark plug, battery, generator (very rare, D-032).
 
-Move these four to *Later*: aruval, salt + salted dried meat (they go together), neem leaves (make neem paste a found item).
+## Proposed numbers — P-012 (awaiting approval)
+
+**Carry limit on foot:** 25 kg. Picking up more than that is refused; carts and vehicles will add cargo space.
+
+**Weights (kg):** raw meat 1 · cooked meat 0.5 · dried meat 0.2 · millet 1 · porridge 0.5 · tender coconut 1.5 · tinned food 0.4 · salt 0.5 · empty bottle 0.1 · water bottle (either) 1.1 · bandage 0.1 · neem leaves 0.1 · neem paste 0.2 · pills 0.05 · firewood 2 · bamboo 1.5 · scrap metal 1 · cloth 0.2 · coir rope 0.5 · animal hide 2 · hunting knife 0.3 · aruval 0.8 · bamboo spear 1.2 · bow 0.8 · arrow 0.05 · flint 0.1 · cooking pot 1 · lighter 0.05 · torch 0.3 · charger 0.4.
+
+**Spoilage (D-028, merciful):** raw meat 3 days · cooked meat 5 days · millet porridge 2 days · tender coconut 10 days. Everything else keeps. Spoiled food disappears with a message.
+
+**Unsafe water (D-027):** each drink has a 20% chance of a stomach illness that lasts 24 hours. While ill, Water drains twice as fast. Boiled water is always safe.
+
+**Lighter and torch:** the lighter holds 20 lights and starts with 10; each cooking or boiling uses one. The torch battery starts at 50%; cranking the charger for 30 minutes adds 25%.
+
+**Equip:** one weapon slot; the hunting knife starts equipped.

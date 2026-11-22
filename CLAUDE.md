@@ -146,7 +146,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 - All game state lives in one **serialisable `GameState`** object.
 - State changes only through **commands**: `applyCommand(state, command) → { state, events }`. UI dispatches commands and renders state; it never mutates state or contains game rules.
 - Randomness comes from a **seeded RNG stored in GameState** → deterministic, reproducible tests and saves.
-- Game time is an integer (minutes since game start) advanced by actions, not wall-clock time (confirmed for travel by D-010; other actions pending P-003).
+- Game time is an integer (minutes since game start) advanced by actions, not wall-clock time (confirmed for travel by D-010 and for resting by D-035; other actions pending P-003).
 - Invalid commands return a typed error/rejection; they never throw unhandled or partially mutate state.
 
 ### Planned directory layout
@@ -162,8 +162,8 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ architecture.md      # how the built code works (engine, saves, content, CI)
 │  ├─ world.md             # confirmed geography, setting decisions and prototype sites
 │  ├─ ui.md                # approved screen layouts
-│  ├─ items.md             # proposed item list (P-010)
-│  └─ vehicles.md          # vehicle list (D-024) and open questions (Q10)
+│  ├─ items.md             # item list (D-026) and proposed numbers (P-012)
+│  └─ vehicles.md          # vehicles (D-024, D-030 to D-034)
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
@@ -242,32 +242,41 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-022 **Click again to travel:** clicking the place that is already selected (so also double-clicking it) starts the trip; double-clicking open ground travels there. Double-click no longer zooms (wheel, pinch and +/− still do).
 - D-023 (answers most of Q3; replaces P-002) **Survival meters: Health, Food, Water, Rest.** Health starts at 100. When Food or Water is at 0, Health drops. When Rest is at 0, Food and Water drain faster and the chance of meeting enemies rises (encounters arrive with M6/M7). Radiation can lower Health, in the spirit of Fallout (how is open; where is Q9). Rates are proposed in P-011.
 - D-024 **Vehicles** are planned, travelled with and built through crafting: cycle (cart upgrade), scooter (cart upgrade), bike (faster, low storage), moped (slow, more storage), sedan, XUV, tempo, mini van, big van, lorry, military vehicle; more later. When and how is Q10. List and suggestions in `docs/vehicles.md`.
+- D-025 (answers Q9) Heavy fallout lies in **northern Tamil Nadu**, outside the prototype area. In the prototype, radiation exists only as Madurai's scattered low-level patches (D-014); where they sit inside the ruins is proposed with M4.
+- D-026 (approves P-010) **Item list** in `docs/items.md`. **Starting kit:** hunting knife, lighter (half full), torch (half charged; recharged with a charger / hand-crank charger). Flint and steel becomes a scavenged item.
+- D-027 **Unsafe water** can cause diarrhoea, parasites or dysentery, which dehydrate him. Numbers in P-012.
+- D-028 **Food spoils**, mercifully at first ("we can crank it up later"). Numbers in P-012.
+- D-029 **Most animals are affected by radiation and many are mutated**, in the spirit of Fallout. Animals can be caught with traps; taming comes later.
+- D-030 Vehicles added from Claude's suggestions: **bullock cart** (costly to buy, a living animal), **hand cart, auto-rickshaw, tractor with trailer, small boat, e-rickshaw**. Details in `docs/vehicles.md`.
+- D-031 (Q10.1) **Prototype vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw.** In the prototype the bullock cart is a very rare find (an abandoned cart with a bull).
+- D-032 (Q10.2) **Biodiesel** is made by survivors and sold everywhere; it runs vehicles and generators (generators are very rare). In the prototype it is scavenged, since there is no trading.
+- D-033 (Q10.3) Items and vehicles have **drop chances**; some things are found only where they would likely be, and very rarely, because scavengers got there first. A cycle is found whole or built from parts.
+- D-034 (Q10.4) **Vehicle maintenance:** vehicles wear with use, slowly on roads and faster off-road.
+- D-035 (approves P-011; replaces P-009) **Survival numbers:** meters 0–100 starting at 100; Water −3/h, Food −1.5/h, Rest −5/h awake, sleep +12.5/h; Rest at 0 → Food and Water drain ×2; each of Food or Water at 0 → Health −5/h; Health +2/h while sleeping with Food and Water above 25; Rest action (1 h / 4 h / until rested) anywhere; Health 0 → game over; radiation lowers maximum Health. **Legs are at most 30 minutes**, and a trip stops by itself at the end of a leg when a meter falls to 25 or to 0.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
-- P-009 Leg length: a trip is cut into legs of at most **60 game minutes** (`world.json`). It sets how often travel can be interrupted once events exist (M6). Used in M1 as a working value. The owner expects it to change with survival (D-023); a new value is proposed in P-011.
-- P-010 Item list: 29 prototype items plus later ones, in `docs/items.md` (replaces the item count in P-001).
-- P-011 Survival numbers (meters 0–100, start at 100): Water −3/h (empty in ~33 h), Food −1.5/h (~67 h), Rest −5/h awake (~20 h); sleeping restores Rest +12.5/h (8 h to full). Rest at 0 → Food and Water drain ×2. Food at 0 → Health −5/h; Water at 0 → Health −5/h (both at 0: −10/h). Health recovers +2/h while sleeping if Food and Water are above 25. A **Rest** action (1 h / 4 h / until rested) works anywhere. Health 0 → game over. Legs shortened to **30 min**, and a trip stops by itself at the end of a leg when a meter falls to 25 or to 0. Radiation lowers *maximum* Health (Fallout-style) once Q9 places patches.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
+- P-012 Numbers for items and vehicles: carry limit 25 kg on foot, item weights, spoilage times, a 20% chance of a 24-hour illness from unsafe water (Water drains ×2), lighter and torch charges, one weapon slot, and the cycle parts and biodiesel items. In `docs/items.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
-- Q9 Where the fallout patches (D-014) lie in the prototype area. *(blocks radiation content in M2/M4; not M1)*
-- Q3 (rest answered by D-023) How Health recovers; whether injuries are separate from Health; how radiation lowers Health. *(blocks M2; recommendations in P-011)*
-- Q10 Vehicles (D-024): prototype or later, fuel model, how they are obtained, road/off-road and cargo rules. *(blocks vehicle work only)*
+- Q3 (mostly answered by D-023 and D-035) Are injuries separate from Health? *(not blocking M2; assumed no until answered)*
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*
-- Q5 Enemy mix: animals / human bandits / mutants. *(blocks M7)*
+- Q5 Enemy mix: animals / human bandits / mutants. Animals are largely mutated (D-029). *(blocks M7)*
 - Q6 Progression model. *(blocks M8)*
 - Q7 Opening narrative: playable prologue with mother alive, text intro after her death, or death mid-play. *(blocks M8)*
 - Q8 Death and save model: permadeath / manual saves / autosave. *(affects M0 save UX, M2)*
 - T1–T4 Timeline/character inconsistencies in §4.
+- T5 Canon says Prabu's mother fell ill from radiation, but D-025 puts no fallout near home (only far north and Madurai). Where did her exposure come from? Not blocking; affects the opening narrative (Q7).
 
 ### Open — non-blocking
 - Tamil localisation readiness.
 - Names: settlement, mother, father, brother.
-- Currency/bartering before the wealth arc.
+- Currency/bartering before the wealth arc (bullock cart buying and biodiesel selling wait on it).
+- What the torch is used for, and how the lighter is refilled.
 
 When the owner answers, move the item to **Confirmed** with a new D-number and update `docs/decisions.md`.
 
@@ -279,13 +288,14 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 |---|---|---|---|
 | M0 | Skeleton: Vite/React/TS, engine core, GameState, command dispatcher, seeded RNG, content loader + Zod, asset manifest, IndexedDB save/load, CI + deploy | — | Done — live at https://onizukatp.github.io/the-king-of-survival/ |
 | M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Done — live |
-| M2 | Time & survival: clock, decay, thresholds, death | M1, P-011, Q8 | Blocked (needs P-011 approved; food and water need M3 items) |
-| M3 | Items & inventory: definitions, stacking, weight, use, equip | M0, P-010 | Not started (needs P-010 approved) |
+| M2 | Time & survival: clock, decay, thresholds, death | M1, M3 | Ready after M3 (design approved, D-023/D-035; Q8 decides what happens to saves on death) |
+| M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Ready (items approved, D-026; needs P-012 numbers and the inventory screen layout) |
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Blocked |
 | M5 | Crafting | M3 | Not started |
 | M6 | Event system: data-driven events with choices/consequences | M2, M3 | Blocked |
 | M7 | Combat | M3, M6, Q4, Q5 | Blocked |
 | M8 | Progression, opening narrative, journal | M7, Q6, Q7 | Blocked |
+| M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Blocked (needs vehicle numbers proposed and approved) |
 | M9 | Integration, balance pass, playtest | All | Blocked |
 
 Keep this table and `docs/progress.md` current at the end of every work session.

@@ -135,6 +135,9 @@ export function TownMap() {
                 ? <rect x={p.x - r} y={p.y - r} width={2 * r} height={2 * r} transform={`rotate(45 ${p.x} ${p.y})`} />
                 : <rect x={p.x - r} y={p.y - r} width={2 * r} height={2 * r} rx={px(2)} />}
               {label && <text x={p.x + r + px(4)} y={p.y + px(4)} fontSize={px(12)}>{spot.name}</text>}
+              {/* One clickable strip over marker and label, so the gap between them isn't dead (width is a rough text estimate). */}
+              <rect className="hit" x={p.x - r - px(3)} y={p.y - r - px(3)} height={2 * r + px(6)}
+                width={2 * r + px(6) + (label ? px(8 + 7 * spot.name.length) : 0)} />
             </g>
           );
         })}

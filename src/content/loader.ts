@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import {
+  buildingTypeSchema, townSchema, townStreetsSchema, type BuildingType, type Town, type TownStreets,
   characterSchema, itemSchema, lootSchema, newGameSchema, outlineSchema, roadsSchema, scavengingSchema, siteSchema, survivalSchema, waterSchema, worldSchema,
   type Character, type Item, type Loot, type NewGameConfig, type Outline, type Roads, type ScavengingConfig, type Site, type SurvivalConfig, type Water, type WorldConfig,
 } from './schemas';
@@ -8,12 +9,16 @@ import items from './data/items.json';
 import loot from './data/loot.json';
 import scavenging from './data/scavenging.json';
 import water from './data/water.json';
+import buildingTypes from './data/building-types.json';
+import towns from './data/towns.json';
+import townStreets from './data/town-streets.json';
 import survival from './data/survival.json';
 import newGame from './data/new-game.json';
 import roads from './data/roads.json';
 import sites from './data/sites.json';
 import tamilNadu from './data/tamil-nadu.json';
 import world from './data/world.json';
+import { distanceKm } from '../engine/systems/travel/geo';
 
 export interface Content {
   characters: Record<string, Character>;
@@ -24,6 +29,10 @@ export interface Content {
   loot: Record<string, Loot>;
   scavenging: ScavengingConfig;
   water: Water;
+  buildingTypes: Record<string, BuildingType>;
+  // Keyed by the town's site id.
+  towns: Record<string, Town>;
+  townStreets: TownStreets;
   roads: Roads;
   outline: Outline;
   newGame: NewGameConfig;
@@ -38,6 +47,9 @@ export interface RawContent {
   loot: unknown;
   scavenging: unknown;
   water: unknown;
+  buildingTypes: unknown;
+  towns: unknown;
+  townStreets: unknown;
   roads: unknown;
   outline: unknown;
   newGame: unknown;
@@ -63,6 +75,9 @@ export function parseContent(raw: RawContent): Content {
     loot: Object.fromEntries(z.array(lootSchema).parse(raw.loot).map((l) => [l.siteId, l])),
     scavenging: scavengingSchema.parse(raw.scavenging),
     water: waterSchema.parse(raw.water),
+    buildingTypes: byId(z.array(buildingTypeSchema).parse(raw.buildingTypes), 'building type'),
+    towns: Object.fromEntries(z.array(townSchema).parse(raw.towns).map((t) => [t.siteId, t])),
+    townStreets: townStreetsSchema.parse(raw.townStreets),
     roads: roadsSchema.parse(raw.roads),
     outline: outlineSchema.parse(raw.outline),
     newGame: newGameSchema.parse(raw.newGame),
@@ -93,6 +108,28 @@ export function parseContent(raw: RawContent): Content {
       if (e.min > e.max) throw new Error(`loot.json ${l.siteId}: ${e.itemId} min is above max`);
     }
   }
+  for (const bt of Object.values(content.buildingTypes)) {
+    for (const e of bt.search) {
+      item(e.itemId, `building-types.json ${bt.id}`);
+      if (e.min > e.max) throw new Error(`building-types.json ${bt.id}: ${e.itemId} min is above max`);
+    }
+  }
+  const spotIds = new Set<string>();
+  for (const t of Object.values(content.towns)) {
+    const site = content.sites[t.siteId];
+    if (!site) throw new Error(`towns.json: unknown site ${t.siteId}`);
+    // A town's finds live in its buildings; a town-wide table as well would be a content mistake.
+    if (content.loot[t.siteId]) throw new Error(`loot.json: ${t.siteId} has a town map, so it has no town-wide loot`);
+    const spots = [{ id: 'its edge', lat: site.lat, lon: site.lon }, ...t.buildings, ...t.water];
+    for (const b of t.buildings) if (!content.buildingTypes[b.typeId]) throw new Error(`towns.json ${b.id}: unknown building type ${b.typeId}`);
+    for (const [i, a] of spots.entries()) {
+      if (i > 0 && spotIds.has(a.id)) throw new Error(`towns.json: duplicate id ${a.id}`);
+      spotIds.add(a.id);
+      // Ground piles count as "here" within 50 m, so spots must be clearly apart or piles would mix.
+      for (const b of spots.slice(i + 1)) if (distanceKm(a, b) < 0.1) throw new Error(`towns.json ${t.siteId}: ${a.id} and ${b.id} are under 100 m apart`);
+    }
+  }
+  for (const id of Object.keys(content.townStreets)) if (!content.towns[id]) throw new Error(`town-streets.json: ${id} has no town map`);
   const nodeCount = content.roads.nodes.length;
   const badEdge = content.roads.edges.find(([a, b]) => a >= nodeCount || b >= nodeCount);
   if (badEdge) throw new Error(`roads.json: edge ${badEdge.join(',')} points past the ${nodeCount} nodes`);
@@ -100,5 +137,5 @@ export function parseContent(raw: RawContent): Content {
 }
 
 export function loadContent(): Content {
-  return parseContent({ characters, sites, items, world, survival, loot, scavenging, water, roads, outline: tamilNadu, newGame });
+  return parseContent({ characters, sites, items, world, survival, loot, scavenging, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame });
 }

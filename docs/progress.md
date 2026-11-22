@@ -21,11 +21,17 @@
   - Save v4 with a migration from v3. Acceptance: loot varies by place, places deplete, seeded tests reproducible; 86 unit tests and 7 e2e tests pass; checked in the browser on desktop and phone width.
   - Fixed while building: Prabu's marker was hidden under the marker of the place he stood at, so it couldn't be clicked.
 
+- **M4b Town maps** — built on `dev`, not released (D-051: M2–M4b go out together).
+  - Srivilliputhur (13 buildings), Rajapalayam (16) and Madurai (24, with the airport), 16 building types each with its own search time, stock loss and loot table; real streets from OpenStreetMap; landmarks on their real spots.
+  - Enter town, click a building to see it and again to walk there (straight line at road speed, legs of up to 30 min that stop on a low meter), search, floor piles per building, wells (clean) and a tank (unsafe) in each town, Leave town.
+  - The 39 mapped wells on the world map give clean water (D-050). Towns no longer have a town-wide search.
+  - Save v5 with a migration from v4. 98 unit tests and 7 e2e tests pass; checked in the browser on desktop and at phone width.
+
 ## In progress
 - Nothing.
 
 ## Pending (unblocked)
-- M4b Town maps — proposed in `docs/towns.md` (P-014); waiting for approval. M2–M4 are released together with it (D-051).
+- Release M2–M4b together (D-051), on the owner's go-ahead.
 - Night and moonlight — proposed in `docs/night.md` (P-015); built with M6.
 - M5 Crafting — needs recipes proposed and approved.
 

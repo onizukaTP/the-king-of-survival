@@ -41,7 +41,7 @@ UI (React + MapLibre) ──store action──▶ store (Zustand) ──applyCom
 | `public/geo/rail.json` | Rail lines; display only. |
 | `tests/e2e/` | Playwright smoke tests (run against the production build). |
 
-## Game state (save version 4)
+## Game state (save version 5)
 
 ```ts
 GameState = {
@@ -68,8 +68,9 @@ GameState = {
     stacks: { itemId, count, charge?, spoilsAt? }[],  // charge: lighter/torch; spoilsAt: game minute (D-028)
     weapon: string | null,                // the one weapon slot (D-036)
   },
-  sites: { [siteId]: { richness, refreshAt } },  // search depletion; missing = untouched (D-047)
+  sites: { [siteId | buildingId]: { richness, refreshAt } },  // search depletion; missing = untouched (D-047)
   ground: { lat, lon, itemId, count, charge?, spoilsAt?, expiresAt }[],  // finds and drops, 96 h (D-045)
+  town: null | { siteId, at: 'edge' | buildingId | waterPointId | null },  // inside a town map (D-049); null at = stopped between spots
   dead: boolean,                          // permadeath: every command is refused (D-038)
 }
 ```
@@ -95,15 +96,18 @@ applyCommand(state, command, content) →
 | `item.drop { index, count }` | Puts part or all of a stack on the ground where he stands, for 96 h. | `bad_item` |
 | `item.equip { index }` / `item.unequip` | One weapon slot; the old weapon goes back to the pack. | `bad_item`, `not_a_weapon`, `no_weapon` |
 
-| `scavenge.search { torch }` | Searches the site: 1 h (45 min and 5% battery with the torch); finds go on the ground. | `travel_in_progress`, `not_at_site`, `nothing_to_search` (home), `no_torch_charge` |
+| `scavenge.search { torch }` | Searches the site, or in a town the building he stands at (its type's time, stock loss and table); 5% battery with the torch; finds go on the ground. | `travel_in_progress`, `not_at_site`, `nothing_to_search` (home, a town's own point), `no_torch_charge` |
 | `scavenge.hunt` | One hour of hunting in the forest; finds go on the ground. | `travel_in_progress`, `cannot_hunt_here` |
-| `water.fill` | Fills every empty bottle: clean at a river, unsafe elsewhere; 5 min each. | `travel_in_progress`, `no_water`, `no_empty_bottles` |
+| `water.fill` | Fills every empty bottle: clean at a river or well, unsafe elsewhere; 5 min each. In a town only its wells and tank count. | `travel_in_progress`, `no_water`, `no_empty_bottles` |
 | `water.drink` | Water to 100 in 10 min; still water may make him ill. | `travel_in_progress`, `no_water` |
 | `ground.take { indexes }` | Takes piles from the ground here into the pack, all or nothing. | `bad_item` (not here), `too_heavy` |
+| `town.enter` | At a town's point: opens its town map at the edge. No time. | `travel_in_progress`, `in_town`, `no_town_here` |
+| `town.walk { spotId }` | Walks straight to a building, water point or the edge at road speed, in legs of up to 30 min; stops part-way after a leg where a meter fell low. | `not_in_town`, `unknown_spot`, `already_there` |
+| `town.leave` | Back to the world map at the town's point. No time. | `not_in_town` |
 
 Every command is refused with `dead` once Prabu has died.
 
-Events: `travel_started`, `leg_completed {leg, of}`, `site_discovered {siteId}`, `arrived {siteId|null}`, `travel_stopped {reason: player|meter}`, `rested {minutes}`, `meter_low {meter, empty}`, `fell_ill`, `recovered`, `injury_cured`, `item_used {itemId}`, `item_spoiled {itemId, count}`, `died {cause}`, `searched {finds, torch}`, `hunted {finds}`, `bottles_filled {count, clean}`, `drank {clean}`, `items_taken {count}`, `irradiated {amount}`.
+Events: `travel_started`, `leg_completed {leg, of}`, `site_discovered {siteId}`, `arrived {siteId|null}`, `travel_stopped {reason: player|meter}`, `rested {minutes}`, `meter_low {meter, empty}`, `fell_ill`, `recovered`, `injury_cured`, `item_used {itemId}`, `item_spoiled {itemId, count}`, `died {cause}`, `searched {finds, torch}`, `hunted {finds}`, `bottles_filled {count, clean}`, `drank {clean}`, `items_taken {count}`, `irradiated {amount}`, `town_entered {siteId}`, `town_left`, `walked {spotId}`. `travel.start` is refused with `in_town` inside a town.
 
 - Handlers get a **copy** of the state (`structuredClone`), so a failure can't leave state half-changed. Exceptions become `internal_error` and never escape.
 
@@ -147,9 +151,13 @@ Events: `travel_started`, `leg_completed {leg, of}`, `site_discovered {siteId}`,
   - Finds go on the ground with a 96-hour expiry; `passTime` removes expired or spoiled piles.
   - `waterAt(p)` checks the water data (bounding boxes first, then point-in-polygon or distance to edge or river line within 200 m). Rivers win over still water.
 - `systems/survival/radiation`: `inRadiationZone` is distance to the Trichy–Villupuram segment ≤ 30 km. `passTime` adds the minutes spent inside (a travel leg passes the share of its path inside) to `zoneMinutes`; each full hour rolls 1 in 4 for +5 radiation. Health is capped at `100 − radiation`; at 100 radiation he dies.
-- Content: `loot.json` (per site: `search` and `hunt` tables), `scavenging.json` (times, torch, depletion, refresh, ground hours, water range, bottle and torch item ids, radiation zone), `water.json` (generated).
+- `systems/town` (D-049, D-052): `townSpots` (edge, buildings, water points), `spotHere`, `walkMinutes`, and the three town commands. A building's search uses its type from `building-types.json` and keeps its own stock in `state.sites` under the building id. Floor piles use the building's coordinates; spots are at least 100 m apart (checked at load), so piles never mix.
+- `waterHere(state)`: in a town, only the water point he stands at (well clean, tank unsafe); elsewhere `waterAt` on the world data, where mapped wells count as clean (D-050).
+- Content: `loot.json` (per site: `search` and `hunt` tables; towns have none), `scavenging.json` (times, torch, depletion, refresh, ground hours, water range, bottle and torch item ids, radiation zone), `water.json` (generated, with wells), `building-types.json`, `towns.json` (buildings and water points at real coordinates), `town-streets.json` (generated, drawn only).
 
 ## Map rendering
+
+- **Town map** (`src/map/TownMap.tsx`, D-052): an SVG plan in metres around the town's point, not MapLibre. Streets, buildings (fading as their stock runs low), water points, the edge and Prabu. Wheel or +/− to zoom, drag to pan; the first view frames everything within 3 km of the edge. Labels show once zoomed in past 120 px per km, and always for the selected spot and where he stands. Clicking a spot selects it; clicking it again walks there; clicking where he stands opens the Here panel.
 
 - MapLibre GL with no tile server. The style is built in code from content:
   - Tamil Nadu fill and border, from `tamil-nadu.json`.
@@ -175,7 +183,8 @@ Events: `travel_started`, `leg_completed {leg, of}`, `site_discovered {siteId}`,
    - `public/geo/rail.json`.
    - `src/content/data/tamil-nadu.json`.
 
-4. Water: run `scripts/geo/water.overpassql` on the Overpass API, then `node scripts/geo/build-water.mjs <osm-water.json>`. It writes `src/content/data/water.json`: about 640 lakes, tanks, ponds and reservoirs and about 100 flowing river lines (seasonal rivers and swimming pools left out; vertices thinned to 50 m), 430 KB.
+4. Water and wells: run `scripts/geo/water.overpassql` on the Overpass API, then `node scripts/geo/build-water.mjs <osm-water.json>`. It writes `src/content/data/water.json`: about 640 lakes, tanks, ponds and reservoirs and about 100 flowing river lines (seasonal rivers and swimming pools left out; vertices thinned to 50 m) and the 39 mapped wells as points, 430 KB.
+5. Town streets: run `scripts/geo/town-streets.overpassql`, then `node scripts/geo/build-town-streets.mjs <osm-streets.json>`. It writes `src/content/data/town-streets.json`: streets clipped to each town's box (Madurai keeps main roads only, since its map reaches the airport), about 200 KB. Town buildings in `towns.json` are hand-placed; see `docs/towns.md`.
 
 Raw downloads are not committed.
 
@@ -196,7 +205,7 @@ Raw downloads are not committed.
 ## Saves
 
 ```ts
-SaveFile = { saveVersion: 3, createdAt: ISO string, gameState }
+SaveFile = { saveVersion: 5, createdAt: ISO string, gameState }
 ```
 
 - `loadSave(unknown, content)`:
@@ -208,6 +217,8 @@ SaveFile = { saveVersion: 3, createdAt: ISO string, gameState }
   - **1 → 2** (M0 → M1): adds position (start site), map (known places plus the start reveal) and `travel: null`, and moves the clock to count from 00:00.
   - **2 → 3** (M1 → M2/M3): adds full meters, the starting kit and `dead: false`.
   - **3 → 4** (M4): renames boiled water to clean water; adds radiation 0, `sites: {}` and `ground: []`.
+  - **4 → 5** (town maps): adds `town: null` and drops the old town-wide stock of the three towns. Ground piles at a town's point stay at its edge.
+  - Validation also rejects stock for unknown buildings and a `town` that points at an unknown town or spot.
 - Storage: IndexedDB database `king-of-survival`, store `saves`, key `manual` (the name dates from M0; it now holds the one run).
 - **Autosave and permadeath (D-038):** the store writes the save after every accepted command (so after every leg, rest and item action). Writes are queued so they land in order. When a command reports `died`, the save is deleted and the game over screen shows. "Save and quit" writes once more and returns to the title.
 
@@ -215,7 +226,7 @@ SaveFile = { saveVersion: 3, createdAt: ISO string, gameState }
 
 | Layer | Tool | Where | Covers now |
 |---|---|---|---|
-| Engine and content | Vitest | `src/**/*.test.ts` (86 tests) | RNG; content validation and cross-references; new game (start time, position, known places); geo (distance, Tamil Nadu boundary, sampling); routing (legs ≤ 60 min and joined end to end, uses roads, never slower than straight, no-roads fallback, deterministic); travel commands (leg by leg, clock, arrival, discovery, fog dedupe, stop, every rejection leaves state unchanged, unmarked ground); saves (round-trip including mid-trip, v1 → v2 → v3 migrations, rejection of bad saves including unknown items and out-of-range meters); survival (drain rates, exhaustion, overload on the road only, empty meters, death, warnings, illness, spoilage, rest and healing, no healing while injured or hungry, rest rejections, 30-minute legs, trips stopping on a low meter, death on the road); inventory (starting kit, stacking, 50 kg limit, load multiplier, eating, drinking and the bottle, unsafe-water illness rate and reproducibility, injury cure, painkillers refused while injured, charger and lighter fuel, bad uses, equip swap, drop); scavenging (search finds from the table onto the ground, reproducible, depletion and 7-day refresh, torch time and battery, refusals; hunting; take and leave, 96-hour expiry, only what's here, all-or-nothing weight; water at the dam, none at home, rivers; filling clean and unsafe; drinking and illness; radiation zone shape, hourly rolls, part-hours, healing capped, death). |
+| Engine and content | Vitest | `src/**/*.test.ts` (98 tests) | RNG; content validation and cross-references; new game (start time, position, known places); geo (distance, Tamil Nadu boundary, sampling); routing (legs ≤ 60 min and joined end to end, uses roads, never slower than straight, no-roads fallback, deterministic); travel commands (leg by leg, clock, arrival, discovery, fog dedupe, stop, every rejection leaves state unchanged, unmarked ground); saves (round-trip including mid-trip, v1 → v2 → v3 migrations, rejection of bad saves including unknown items and out-of-range meters); survival (drain rates, exhaustion, overload on the road only, empty meters, death, warnings, illness, spoilage, rest and healing, no healing while injured or hungry, rest rejections, 30-minute legs, trips stopping on a low meter, death on the road); inventory (starting kit, stacking, 50 kg limit, load multiplier, eating, drinking and the bottle, unsafe-water illness rate and reproducibility, injury cure, painkillers refused while injured, charger and lighter fuel, bad uses, equip swap, drop); scavenging (search finds from the table onto the ground, reproducible, depletion and 7-day refresh, torch time and battery, refusals; hunting; take and leave, 96-hour expiry, only what's here, all-or-nothing weight; water at the dam, none at home, rivers; filling clean and unsafe; drinking and illness; radiation zone shape, hourly rolls, part-hours, healing capped, death; mapped wells clean); towns (enter, leave, refusals, no world travel inside, walk time and landing, stopping part-way on a low meter, building search uses its type's time, table and own stock, house depletion and torch time, nothing to search at the edge or water, floor piles stay per building, well clean and tank unsafe, data spacing, save round-trip and v4 → v5 migration). |
 | End to end | Playwright | `tests/e2e/` | New game → travel to town → meters drained → reload → Continue restores identical state (autosave) → Save and quit → Continue. Unmarked ground panel. Double-click travel. Pack shows the starting kit; unequip and equip; Rest 4 hours moves the clock and drains Water. Resting until death → game over → Continue disabled after reload. Resting after a trip leaves the marker still. Search the town until something turns up → Take all → pack heavier → drop the torch → it's on the ground → take it back. |
 
 ## Build, CI and deploy

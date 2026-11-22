@@ -63,6 +63,10 @@ const groundPileSchema = stackSchema.extend({
   expiresAt: z.number().int(),
 });
 
+// Inside a town map (D-049). `at` is where he stands: 'edge' (the town's site point), a building or
+// water point id, or null after a walk stopped part-way.
+const townStateSchema = z.object({ siteId: z.string(), at: z.string().nullable() });
+
 // The schema is the single source of truth for GameState's shape; saves are validated against it.
 // Changing it means bumping SAVE_VERSION and adding a migration (src/engine/save/save.ts).
 export const gameStateSchema = z.object({
@@ -77,6 +81,7 @@ export const gameStateSchema = z.object({
   inventory: inventorySchema,
   sites: z.record(z.string(), siteStateSchema),
   ground: z.array(groundPileSchema),
+  town: townStateSchema.nullable(),
   // Permadeath (D-038): once true, every command is refused.
   dead: z.boolean(),
 });
@@ -88,6 +93,7 @@ export type Inventory = z.infer<typeof inventorySchema>;
 export type SurvivalState = z.infer<typeof survivalStateSchema>;
 export type Meter = 'health' | 'food' | 'water' | 'rest';
 export type GroundPile = z.infer<typeof groundPileSchema>;
+export type TownState = z.infer<typeof townStateSchema>;
 
 export const maxHealth = (s: SurvivalState) => Math.max(0, 100 - s.radiation);
 
@@ -118,6 +124,7 @@ export function createNewGame(content: Content, seed: number): GameState {
     inventory: startingInventory(content, content.newGame.startClockMinutes),
     sites: {},
     ground: [],
+    town: null,
     dead: false,
   };
 }

@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { maxHealth, type Meter } from '../../engine/core/state';
 import { carriedKg } from '../../engine/systems/inventory/inventory';
 import { siteAt } from '../../engine/systems/travel/travel';
+import { spotHere } from '../../engine/systems/town/town';
 import { MapView } from '../../map/MapView';
+import { TownMap } from '../../map/TownMap';
 import { content, useGameStore } from '../../store/gameStore';
 import { formatClock, formatKg } from '../format';
 import { Panel } from '../panels/Panel';
@@ -13,6 +15,7 @@ export function MapScreen() {
   const game = useGameStore((s) => s.game);
   const message = useGameStore((s) => s.message);
   const selection = useGameStore((s) => s.selection);
+  const townSelection = useGameStore((s) => s.townSelection);
   const panel = useGameStore((s) => s.panel);
   const openPanel = useGameStore((s) => s.openPanel);
   const saveAndQuit = useGameStore((s) => s.saveAndQuit);
@@ -20,8 +23,11 @@ export function MapScreen() {
   if (!game) return null;
 
   const here = siteAt(game.player.position, content);
-  const status = game.travel ? 'On the road' : here ? `At: ${here.name}` : 'In the open';
-  const panelOpen = Boolean(selection || game.travel || panel);
+  const spot = spotHere(game, content);
+  const status = game.town
+    ? `In ${content.sites[game.town.siteId]?.name}${spot && spot.kind !== 'edge' ? `: ${spot.name}` : ''}`
+    : game.travel ? 'On the road' : here ? `At: ${here.name}` : 'In the open';
+  const panelOpen = Boolean(selection || (game.town && townSelection) || game.travel || panel);
   const toggle = (p: 'pack' | 'rest') => openPanel(panel === p ? null : p);
   const warnAt = content.survival.warnAt;
 
@@ -63,7 +69,7 @@ export function MapScreen() {
         </div>
       </header>
       <div className={`main ${panelOpen ? 'panel-open' : ''}`}>
-        <MapView />
+        {game.town ? <TownMap key={game.town.siteId} /> : <MapView />}
         <aside className="panel">
           <Panel />
         </aside>

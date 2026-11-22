@@ -1,8 +1,10 @@
 import { previewTravel } from '../../engine/systems/travel/travel';
 import { content, useGameStore } from '../../store/gameStore';
 import { formatClock, formatDuration, formatKm, kindLabel } from '../format';
+import { PackPanel } from './PackPanel';
+import { RestPanel } from './RestPanel';
 
-/** Right-hand panel (bottom sheet on mobile): the selected place, or the trip under way (D-016). */
+/** Right-hand panel (bottom sheet on mobile): the trip under way, Pack, Rest, or the selected place (D-016). */
 export function Panel() {
   const game = useGameStore((s) => s.game);
   const selection = useGameStore((s) => s.selection);
@@ -10,6 +12,7 @@ export function Panel() {
   const select = useGameStore((s) => s.select);
   const travel = useGameStore((s) => s.travel);
   const requestStop = useGameStore((s) => s.requestStop);
+  const panel = useGameStore((s) => s.panel);
   if (!game) return null;
 
   if (game.travel) {
@@ -31,6 +34,8 @@ export function Panel() {
     );
   }
 
+  if (panel === 'pack') return <PackPanel />;
+  if (panel === 'rest') return <RestPanel />;
   if (!selection) return <p className="muted panel-hint">Select a place or any point on the map.</p>;
 
   const site = 'siteId' in selection ? content.sites[selection.siteId] : undefined;

@@ -3,7 +3,7 @@
 The owner approved this list, with the starting kit, unsafe-water illness and spoilage rules added (D-026 to D-028). The numbers at the end are approved (D-036), with the owner's change to the carry limit.
 Effects use the survival meters from D-023 (0–100) and the drain rates proposed in P-011; they are starting values for the balance pass (M9).
 
-**Prototype?** ✓ = in the prototype (33 items: the 29 approved, the three starting-kit items from D-026, and lighter fuel from D-037). *Later* = good fit, but not needed yet.
+**Prototype?** ✓ = in the prototype (32 items: the 28 approved (earlier miscounted as 29), the three starting-kit items from D-026, and lighter fuel from D-037). *Later* = good fit, but not needed yet.
 
 ## Food
 

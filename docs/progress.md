@@ -7,14 +7,18 @@
   - Tamil Nadu map (MapLibre, Natural Earth outline, OSM roads and rail), the 8 sites, fog with a 3 km sight radius, discovery, free travel by road and cross-country in legs of up to 60 min, clock, stop after this leg, save/load (save v2 with a migration from v1), desktop side panel and mobile bottom sheet.
   - Acceptance verified: travel between locations; time and discovery persist across save/load (e2e test); every visible control checked in the browser.
 
-## In progress
-- Nothing. Next work waits on owner decisions (below).
+- **Double-click travel (D-022)** — on `dev`, not released.
+- **M3 Items & inventory + M2 Survival** — built together on `dev`, not released.
+  - 32 items as data; starting kit (knife equipped, lighter 10/20, torch 50%); stacking; 25 kg free, 50 kg maximum, drain ×1 → ×2 on the road; eat, drink, apply, crank the charger, refill the lighter; one weapon slot; drop.
+  - Health, Food, Water, Rest with the approved rates; exhaustion; empty meters hurt; death; unsafe-water illness; spoilage; injuries block healing until treated; Rest action; 30-minute legs that stop on a low meter.
+  - Autosave after every action; permadeath deletes the save; Save and quit; save v3 with a migration from v2.
+  - Acceptance: M3 (use, equip, drop work; carry limit enforced in the engine; invalid actions rejected with a message) and M2 (meters change predictably; penalties apply; death → game over) are covered by 69 unit tests and 5 e2e tests, and were checked in the browser on desktop and at phone width.
 
-- **Double-click travel (D-022)** — on `dev`: clicking the selected place again or double-clicking a place or open ground starts the trip; e2e test added.
+## In progress
+- Nothing.
 
 ## Pending (unblocked)
-- M3 Items & inventory — items and numbers approved (D-026, D-036); needs the inventory screen layout approved.
-- M2 Survival — design and numbers approved (D-023, D-035, D-038 permadeath/autosave, D-039 injuries); best built right after M3, since food and water come from items.
+- M4 Scavenging — needs loot tables proposed and approved (plus the torch's search-speed bonus and where Madurai's fallout patches sit).
 - M5 Crafting — needs recipes proposed and approved.
 
 ## Blocked

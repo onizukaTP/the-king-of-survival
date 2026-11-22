@@ -2,7 +2,7 @@ import type { SaveFile } from '../engine/save/save';
 
 const DB_NAME = 'king-of-survival';
 const STORE = 'saves';
-// shortcut: one manual slot until the save model (Q8) is decided.
+// The one run (D-038). The key name dates from M0's manual slot; kept so older saves still load.
 const SLOT = 'manual';
 
 function openDb(): Promise<IDBDatabase> {
@@ -32,3 +32,4 @@ async function run<T>(mode: IDBTransactionMode, op: (store: IDBObjectStore) => I
 
 export const writeSave = (save: SaveFile) => run('readwrite', (s) => s.put(save, SLOT)).then(() => undefined);
 export const readSave = (): Promise<unknown> => run('readonly', (s) => s.get(SLOT));
+export const deleteSave = () => run('readwrite', (s) => s.delete(SLOT)).then(() => undefined);

@@ -260,6 +260,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-038 (answers Q8) **Permadeath with autosave:** one run; the game saves itself after every leg and action, and the Save button becomes "Save and quit". When Prabu dies, the run's save is deleted.
 - D-039 (answers Q3) **Injuries are part of Health:** an injury lowers Health, and Health cannot recover until the injury is cured. A **cloth bandage or neem–turmeric paste** cures an injury; painkillers only restore Health. Injuries come from combat and events (M6/M7).
 - D-040 (resolves T5) **Prabu and his mother came to the settlement from the north, and her sickness began there.**
+- D-041 **Inventory and meters layout** approved from the mockup: four meters and a Pack button in the top bar; the Pack in the side panel / bottom sheet. Spec in `docs/ui.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -290,9 +291,9 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 |---|---|---|---|
 | M0 | Skeleton: Vite/React/TS, engine core, GameState, command dispatcher, seeded RNG, content loader + Zod, asset manifest, IndexedDB save/load, CI + deploy | — | Done — live at https://onizukatp.github.io/the-king-of-survival/ |
 | M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Done — live |
-| M2 | Time & survival: clock, decay, thresholds, death | M1, M3 | Ready after M3 (design approved: D-023, D-035, D-038, D-039) |
-| M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Ready (D-026, D-036; needs the inventory screen layout approved) |
-| M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Blocked |
+| M2 | Time & survival: clock, decay, thresholds, death | M1, M3 | Done on `dev` (not yet released) |
+| M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Done on `dev` (not yet released) |
+| M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Not started (needs loot tables proposed and approved) |
 | M5 | Crafting | M3 | Not started |
 | M6 | Event system: data-driven events with choices/consequences | M2, M3 | Blocked |
 | M7 | Combat | M3, M6, Q4, Q5 | Blocked |

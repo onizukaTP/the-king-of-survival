@@ -1,6 +1,6 @@
-# Fire, cooking and the can opener — approved (D-057, was P-016) and built
+# Fire, cooking and the can opener — approved (D-057, was P-016), built and live
 
-The owner's rules (D-056) and the numbers and screen below (D-057) are approved and built on `dev`. Methods and recipes are data in `src/content/data/fire.json`.
+The owner's rules (D-056) and the numbers and screen below (D-057) are approved, built and live. Methods and recipes are data in `src/content/data/fire.json`.
 
 ## The owner's rules (D-056)
 

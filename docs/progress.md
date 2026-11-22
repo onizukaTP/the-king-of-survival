@@ -27,13 +27,13 @@
   - The 39 mapped wells on the world map give clean water (D-050). Towns no longer have a town-wide search.
   - Save v5 with a migration from v4. 98 unit tests and 7 e2e tests pass; checked in the browser on desktop and at phone width.
 
-- **Town ends, zoom lock, Pack sort and quick use (D-054, D-055)** — on `dev`, not released.
+- **Town ends, zoom lock, Pack sort and quick use (D-054, D-055)** — live (released 2026-11-22).
   - North, south, east and west ends in each town; leaving from one puts Prabu at that end on the world map.
   - The town map can't zoom out past the whole town.
   - Pack: sort by kind, name or weight; Eat / Drink / Use on each usable row; double-click a row to use it.
   - 100 unit tests and 7 e2e tests pass; checked in the browser on desktop and phone width.
 
-- **Fire and cooking (D-056, D-057)** — on `dev`, not released.
+- **Fire and cooking (D-056, D-057)** — live (released 2026-11-22).
   - Make a fire with the lighter, a matchbox, flint and steel or by rubbing two sticks; add firewood; cook raw meat, boil water, sterilize rags into sterilized bandages.
   - New items: matchbox, can opener, sterilized bandage. Tinned food needs a can opener.
   - Save v6 with a migration from v5. 112 unit tests and 7 e2e tests pass; checked in the browser on desktop and phone width, including loading a v5 save.

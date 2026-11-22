@@ -271,7 +271,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-046 **Home** gives nothing until trading exists (its stores come with trading). **Hunting** is chance-based until combat (M7).
 - D-047 (approves P-013, with changes) **Scavenging:** Search 1 h, or 45 min with the torch for **5%** battery; **Hunt is a 1-hour roll**; loot tables as proposed, with depletion of 10 points a search (floor 10%) and **a full refresh 7 days after a place is first searched**; boiled water renamed **clean water**; **dropped items also stay on the ground 96 h**; the radiation zone is **drawn on the map in yellow with a radiation icon in the middle**. Spec in `docs/scavenging.md`.
 - D-048 **Night:** moving in the dark at night without a torch **greatly raises the chance of injury or ambush**, except on **full-moon nights**. Designed now (P-015); the injury chance comes with events (M6) and ambushes with combat (M7).
-- D-049 **Town maps:** each town has **its own map** with buildings to scavenge: **temples, garages, supermarkets, medical stores, apartments and independent houses**; **every building type has its own loot table**. Layouts are **hand-made, with real landmarks where they exist** (OpenStreetMap has too few buildings for these towns). Details proposed in P-014.
+- D-049 **Town maps:** each town has **its own map** with buildings to scavenge, and **every building type has its own loot table**. Building types are **any that reflect a real town**; temples, garages, supermarkets, medical stores, apartments and independent houses were the owner's examples. Layouts are **hand-made, with real landmarks where they exist** (OpenStreetMap has too few buildings for these towns). Details proposed in P-014.
 - D-050 **Water at places:** ponds, lakes and **wells** are placed at places. **Well water is clean** (adds to D-044, where only flowing rivers were clean).
 - D-051 **M2–M4 wait for town maps** before release (extends D-042).
 
@@ -281,7 +281,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
-- P-014 Town maps (D-049, D-050): Srivilliputhur 10 buildings, Rajapalayam 12, Madurai 18; enter and leave a town; walk between buildings at road speed; search time, stock and a loot table per building type; wells clean; the 39 OpenStreetMap wells added to the world map; save v5. Spec in `docs/towns.md`.
+- P-014 Town maps (D-049, D-050): 16 building types; Srivilliputhur 13 buildings, Rajapalayam 16, Madurai 24 (with the airport); enter and leave a town; walk between buildings at road speed; search time and stock by building size; a loot table per type; wells clean; the 39 OpenStreetMap wells added to the world map; save v5. Spec in `docs/towns.md`.
 - P-015 Night (D-048): night 18:30–06:00; 30-day moon cycle with three full-moon nights; the torch switches on by itself when moving in the dark and uses 10% an hour; risk numbers come with M6/M7. Spec in `docs/night.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
@@ -289,7 +289,6 @@ Engine unit tests live next to the code (`*.test.ts`).
 - Q5 Enemy mix: animals / human bandits / mutants. Animals are largely mutated (D-029). *(blocks M7)*
 - Q6 Progression model. *(blocks M8)*
 - Q7 Opening narrative: playable prologue with mother alive, text intro after her death, or death mid-play. *(blocks M8)*
-- Q11 Madurai airport (D-015) is not one of the six building types: leave it out of the town map for now, or add an airport type? *(part of P-014)*
 - T1–T4 Timeline/character inconsistencies in §4.
 
 ### Open — non-blocking

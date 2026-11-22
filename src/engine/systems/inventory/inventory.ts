@@ -3,6 +3,7 @@ import type { SurvivalConfig } from '../../../content/schemas';
 import type { CommandError, CommandResult, GameEvent } from '../../core/commands';
 import { nextRandom } from '../../core/rng';
 import type { GameState, Inventory, Stack } from '../../core/state';
+import { leaveOnGround } from '../scavenging/scavenging';
 import { passTime } from '../survival/survival';
 
 const fail = (code: CommandError['code'], message: string) => ({ ok: false as const, error: { code, message } });
@@ -109,10 +110,12 @@ export function applyItem(state: GameState, index: number, content: Content): Co
   return { ok: true, state, events };
 }
 
-export function dropItem(state: GameState, index: number, count: number): CommandResult {
+/** Drops part of a stack where Prabu stands; it stays there for 96 hours (D-045). */
+export function dropItem(state: GameState, index: number, count: number, content: Content): CommandResult {
   const stack = stackAt(state, index);
   if (!stack) return fail('bad_item', 'That item isn\'t in the pack.');
   if (!Number.isInteger(count) || count < 1 || count > stack.count) return fail('bad_item', `Drop between 1 and ${stack.count}.`);
+  leaveOnGround(state, { ...stack, count }, content);
   stack.count -= count;
   if (stack.count === 0) state.inventory.stacks.splice(index, 1);
   return { ok: true, state, events: [] };

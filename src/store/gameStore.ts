@@ -14,7 +14,7 @@ export const LEG_ANIMATION_MS = 600;
 
 type Screen = 'title' | 'game' | 'gameover';
 /** What the side panel shows when no trip is under way (D-016 plus the approved Pack layout). */
-export type PanelMode = 'pack' | 'rest' | null;
+export type PanelMode = 'pack' | 'rest' | 'here' | null;
 
 interface GameStore {
   screen: Screen;
@@ -61,6 +61,14 @@ function describe(events: GameEvent[]): string | null {
     if (e.type === 'item_spoiled') notes.push(`${itemName(e.itemId)} ×${e.count} spoiled.`);
     if (e.type === 'meter_low') notes.push(`${METER_NAMES[e.meter]} is ${e.empty ? 'empty' : 'low'}.`);
     if (e.type === 'travel_stopped' && e.reason === 'meter') notes.push('Trip stopped.');
+    if (e.type === 'searched' || e.type === 'hunted') {
+      const finds = e.finds.map((f) => `${itemName(f.itemId).toLowerCase()}${f.count > 1 ? ` ×${f.count}` : ''}`);
+      notes.push(finds.length ? `Found: ${finds.join(', ')}. It's on the ground here.` : 'Found nothing.');
+    }
+    if (e.type === 'bottles_filled') notes.push(`Filled ${e.count} bottle${e.count > 1 ? 's' : ''} with ${e.clean ? 'clean' : 'unsafe'} water.`);
+    if (e.type === 'drank') notes.push(e.clean ? 'Drank clean river water.' : 'Drank unsafe water.');
+    if (e.type === 'items_taken') notes.push('Taken.');
+    if (e.type === 'irradiated') notes.push(`Radiation +${e.amount}.`);
   }
   return notes.length ? notes.join(' ') : null;
 }

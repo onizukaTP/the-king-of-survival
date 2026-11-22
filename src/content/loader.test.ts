@@ -3,13 +3,16 @@ import { loadContent, parseContent, type RawContent } from './loader';
 import characters from './data/characters.json';
 import items from './data/items.json';
 import survival from './data/survival.json';
+import loot from './data/loot.json';
+import scavenging from './data/scavenging.json';
+import water from './data/water.json';
 import newGame from './data/new-game.json';
 import roads from './data/roads.json';
 import sites from './data/sites.json';
 import tamilNadu from './data/tamil-nadu.json';
 import world from './data/world.json';
 
-const raw: RawContent = { characters, sites, items, world, survival, roads, outline: tamilNadu, newGame };
+const raw: RawContent = { characters, sites, items, world, survival, loot, scavenging, water, roads, outline: tamilNadu, newGame };
 const prabu = characters[0]!;
 const home = sites[0]!;
 
@@ -37,6 +40,8 @@ describe('content loader', () => {
     expect(() => parseContent({ ...raw, newGame: { ...newGame, startingWeapon: 'item.salt' } })).toThrow(/not a weapon/);
     expect(() => parseContent({ ...raw, newGame: { ...newGame, startingKit: [{ itemId: 'item.gold', count: 1 }] } })).toThrow(/unknown item/);
     expect(() => parseContent({ ...raw, items: [...items, { id: 'item.x', name: 'X', category: 'tool', weightKg: 1, leaves: 'item.nothing' }] })).toThrow(/unknown item/);
+    expect(() => parseContent({ ...raw, loot: [{ siteId: 'loc.atlantis', search: [] }] })).toThrow(/unknown site/);
+    expect(() => parseContent({ ...raw, loot: [{ siteId: 'loc.home', search: [{ itemId: 'item.gold', chance: 1, min: 1, max: 1 }] }] })).toThrow(/unknown item/);
     expect(() => parseContent({ ...raw, roads: { nodes: [[9.5, 77.6]], edges: [[0, 5, 1]] } })).toThrow(/points past/);
   });
 });

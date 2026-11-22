@@ -41,7 +41,7 @@ UI (React + MapLibre) ──store action──▶ store (Zustand) ──applyCom
 | `public/geo/rail.json` | Rail lines; display only. |
 | `tests/e2e/` | Playwright smoke tests (run against the production build). |
 
-## Game state (save version 3)
+## Game state (save version 4)
 
 ```ts
 GameState = {
@@ -61,11 +61,15 @@ GameState = {
     health, food, water, rest,
     injured: boolean,                     // blocks Health recovery until cured (D-039)
     illUntil: number | null,              // end of the unsafe-water illness (D-027)
+    radiation: number,                    // lowers maximum Health one for one (D-043)
+    zoneMinutes: number,                  // time in the zone not yet rolled for
   },
   inventory: {
     stacks: { itemId, count, charge?, spoilsAt? }[],  // charge: lighter/torch; spoilsAt: game minute (D-028)
     weapon: string | null,                // the one weapon slot (D-036)
   },
+  sites: { [siteId]: { richness, refreshAt } },  // search depletion; missing = untouched (D-047)
+  ground: { lat, lon, itemId, count, charge?, spoilsAt?, expiresAt }[],  // finds and drops, 96 h (D-045)
   dead: boolean,                          // permadeath: every command is refused (D-038)
 }
 ```
@@ -88,12 +92,18 @@ applyCommand(state, command, content) →
 | `travel.stop` | Drops the remaining legs; Prabu stays where the last leg ended. | `not_travelling` |
 | `rest { minutes \| 'until_rested' }` | Sleeps; the clock jumps (D-035). | `travel_in_progress`, `bad_duration` (not 1 min–24 h), `already_rested` |
 | `item.use { index }` | Eat, drink, apply or crank: meters, cure, illness roll, leftover (empty bottle), recharge. | `bad_item`, `cannot_use` (ingredients, materials), `injured` (painkiller before the injury is treated), `nothing_to_recharge` |
-| `item.drop { index, count }` | Drops part or all of a stack. | `bad_item` |
+| `item.drop { index, count }` | Puts part or all of a stack on the ground where he stands, for 96 h. | `bad_item` |
 | `item.equip { index }` / `item.unequip` | One weapon slot; the old weapon goes back to the pack. | `bad_item`, `not_a_weapon`, `no_weapon` |
+
+| `scavenge.search { torch }` | Searches the site: 1 h (45 min and 5% battery with the torch); finds go on the ground. | `travel_in_progress`, `not_at_site`, `nothing_to_search` (home), `no_torch_charge` |
+| `scavenge.hunt` | One hour of hunting in the forest; finds go on the ground. | `travel_in_progress`, `cannot_hunt_here` |
+| `water.fill` | Fills every empty bottle: clean at a river, unsafe elsewhere; 5 min each. | `travel_in_progress`, `no_water`, `no_empty_bottles` |
+| `water.drink` | Water to 100 in 10 min; still water may make him ill. | `travel_in_progress`, `no_water` |
+| `ground.take { indexes }` | Takes piles from the ground here into the pack, all or nothing. | `bad_item` (not here), `too_heavy` |
 
 Every command is refused with `dead` once Prabu has died.
 
-Events: `travel_started`, `leg_completed {leg, of}`, `site_discovered {siteId}`, `arrived {siteId|null}`, `travel_stopped {reason: player|meter}`, `rested {minutes}`, `meter_low {meter, empty}`, `fell_ill`, `recovered`, `injury_cured`, `item_used {itemId}`, `item_spoiled {itemId, count}`, `died {cause}`.
+Events: `travel_started`, `leg_completed {leg, of}`, `site_discovered {siteId}`, `arrived {siteId|null}`, `travel_stopped {reason: player|meter}`, `rested {minutes}`, `meter_low {meter, empty}`, `fell_ill`, `recovered`, `injury_cured`, `item_used {itemId}`, `item_spoiled {itemId, count}`, `died {cause}`, `searched {finds, torch}`, `hunted {finds}`, `bottles_filled {count, clean}`, `drank {clean}`, `items_taken {count}`, `irradiated {amount}`.
 
 - Handlers get a **copy** of the state (`structuredClone`), so a failure can't leave state half-changed. Exceptions become `internal_error` and never escape.
 
@@ -130,6 +140,15 @@ Events: `travel_started`, `leg_completed {leg, of}`, `site_discovered {siteId}`,
 - `addItems` refuses anything that would take the load past 50 kg. Nothing calls it from the UI yet: scavenging (M4) and crafting (M5) will.
 - Unsafe water rolls the seeded RNG, so the same save always gets the same outcome.
 
+## Scavenging, water and radiation (D-043 to D-047)
+
+- `systems/scavenging`: search, hunt, fill, drink, take, and `leaveOnGround` (used by search, hunt and drop).
+  - A search makes two draws; each walks the site's table and takes the first entry whose chance × richness hits. Richness drops 10 points a search (floor 10%) and resets 7 days after the first search.
+  - Finds go on the ground with a 96-hour expiry; `passTime` removes expired or spoiled piles.
+  - `waterAt(p)` checks the water data (bounding boxes first, then point-in-polygon or distance to edge or river line within 200 m). Rivers win over still water.
+- `systems/survival/radiation`: `inRadiationZone` is distance to the Trichy–Villupuram segment ≤ 30 km. `passTime` adds the minutes spent inside (a travel leg passes the share of its path inside) to `zoneMinutes`; each full hour rolls 1 in 4 for +5 radiation. Health is capped at `100 − radiation`; at 100 radiation he dies.
+- Content: `loot.json` (per site: `search` and `hunt` tables), `scavenging.json` (times, torch, depletion, refresh, ground hours, water range, bottle and torch item ids, radiation zone), `water.json` (generated).
+
 ## Map rendering
 
 - MapLibre GL with no tile server. The style is built in code from content:
@@ -155,6 +174,8 @@ Events: `travel_started`, `leg_completed {leg, of}`, `site_discovered {siteId}`,
    - `src/content/data/roads.json`: the graph. Junctions and way ends are kept, other vertices thinned to 300 m spacing; about 9k nodes and 10k edges, 345 KB.
    - `public/geo/rail.json`.
    - `src/content/data/tamil-nadu.json`.
+
+4. Water: run `scripts/geo/water.overpassql` on the Overpass API, then `node scripts/geo/build-water.mjs <osm-water.json>`. It writes `src/content/data/water.json`: about 640 lakes, tanks, ponds and reservoirs and about 100 flowing river lines (seasonal rivers and swimming pools left out; vertices thinned to 50 m), 430 KB.
 
 Raw downloads are not committed.
 
@@ -186,6 +207,7 @@ SaveFile = { saveVersion: 3, createdAt: ISO string, gameState }
 - Migrations:
   - **1 → 2** (M0 → M1): adds position (start site), map (known places plus the start reveal) and `travel: null`, and moves the clock to count from 00:00.
   - **2 → 3** (M1 → M2/M3): adds full meters, the starting kit and `dead: false`.
+  - **3 → 4** (M4): renames boiled water to clean water; adds radiation 0, `sites: {}` and `ground: []`.
 - Storage: IndexedDB database `king-of-survival`, store `saves`, key `manual` (the name dates from M0; it now holds the one run).
 - **Autosave and permadeath (D-038):** the store writes the save after every accepted command (so after every leg, rest and item action). Writes are queued so they land in order. When a command reports `died`, the save is deleted and the game over screen shows. "Save and quit" writes once more and returns to the title.
 
@@ -193,8 +215,8 @@ SaveFile = { saveVersion: 3, createdAt: ISO string, gameState }
 
 | Layer | Tool | Where | Covers now |
 |---|---|---|---|
-| Engine and content | Vitest | `src/**/*.test.ts` (69 tests) | RNG; content validation and cross-references; new game (start time, position, known places); geo (distance, Tamil Nadu boundary, sampling); routing (legs ≤ 60 min and joined end to end, uses roads, never slower than straight, no-roads fallback, deterministic); travel commands (leg by leg, clock, arrival, discovery, fog dedupe, stop, every rejection leaves state unchanged, unmarked ground); saves (round-trip including mid-trip, v1 → v2 → v3 migrations, rejection of bad saves including unknown items and out-of-range meters); survival (drain rates, exhaustion, overload on the road only, empty meters, death, warnings, illness, spoilage, rest and healing, no healing while injured or hungry, rest rejections, 30-minute legs, trips stopping on a low meter, death on the road); inventory (starting kit, stacking, 50 kg limit, load multiplier, eating, drinking and the bottle, unsafe-water illness rate and reproducibility, injury cure, painkillers refused while injured, charger and lighter fuel, bad uses, equip swap, drop). |
-| End to end | Playwright | `tests/e2e/` | New game → travel to town → meters drained → reload → Continue restores identical state (autosave) → Save and quit → Continue. Unmarked ground panel. Double-click travel. Pack shows the starting kit; unequip and equip; Rest 4 hours moves the clock and drains Water. Resting until death → game over → Continue disabled after reload. |
+| Engine and content | Vitest | `src/**/*.test.ts` (86 tests) | RNG; content validation and cross-references; new game (start time, position, known places); geo (distance, Tamil Nadu boundary, sampling); routing (legs ≤ 60 min and joined end to end, uses roads, never slower than straight, no-roads fallback, deterministic); travel commands (leg by leg, clock, arrival, discovery, fog dedupe, stop, every rejection leaves state unchanged, unmarked ground); saves (round-trip including mid-trip, v1 → v2 → v3 migrations, rejection of bad saves including unknown items and out-of-range meters); survival (drain rates, exhaustion, overload on the road only, empty meters, death, warnings, illness, spoilage, rest and healing, no healing while injured or hungry, rest rejections, 30-minute legs, trips stopping on a low meter, death on the road); inventory (starting kit, stacking, 50 kg limit, load multiplier, eating, drinking and the bottle, unsafe-water illness rate and reproducibility, injury cure, painkillers refused while injured, charger and lighter fuel, bad uses, equip swap, drop); scavenging (search finds from the table onto the ground, reproducible, depletion and 7-day refresh, torch time and battery, refusals; hunting; take and leave, 96-hour expiry, only what's here, all-or-nothing weight; water at the dam, none at home, rivers; filling clean and unsafe; drinking and illness; radiation zone shape, hourly rolls, part-hours, healing capped, death). |
+| End to end | Playwright | `tests/e2e/` | New game → travel to town → meters drained → reload → Continue restores identical state (autosave) → Save and quit → Continue. Unmarked ground panel. Double-click travel. Pack shows the starting kit; unequip and equip; Rest 4 hours moves the clock and drains Water. Resting until death → game over → Continue disabled after reload. Resting after a trip leaves the marker still. Search the town until something turns up → Take all → pack heavier → drop the torch → it's on the ground → take it back. |
 
 ## Build, CI and deploy
 

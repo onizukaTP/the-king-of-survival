@@ -65,12 +65,12 @@ describe('using items', () => {
     expect(state.inventory.stacks[indexOf(state, 'item.tinned_food')]!.count).toBe(1);
   });
 
-  it('drinking leaves an empty bottle; boiled water is always safe', () => {
-    let s = withItems([['item.boiled_water', 1]], (g) => (g.survival.water = 50));
-    s = ok(s, { type: 'item.use', index: indexOf(s, 'item.boiled_water') }).state;
+  it('drinking leaves an empty bottle; clean water is always safe', () => {
+    let s = withItems([['item.clean_water', 1]], (g) => (g.survival.water = 50));
+    s = ok(s, { type: 'item.use', index: indexOf(s, 'item.clean_water') }).state;
     expect(s.survival.water).toBe(75);
     expect(s.survival.illUntil).toBeNull();
-    expect(indexOf(s, 'item.boiled_water')).toBe(-1);
+    expect(indexOf(s, 'item.clean_water')).toBe(-1);
     expect(indexOf(s, 'item.empty_bottle')).toBeGreaterThanOrEqual(0);
   });
 

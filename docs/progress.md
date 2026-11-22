@@ -14,11 +14,17 @@
   - Autosave after every action; permadeath deletes the save; Save and quit; save v3 with a migration from v2.
   - Acceptance: M3 (use, equip, drop work; carry limit enforced in the engine; invalid actions rejected with a message) and M2 (meters change predictably; penalties apply; death → game over) are covered by 69 unit tests and 5 e2e tests, and were checked in the browser on desktop and at phone width.
 
+- **M4 Scavenging** — built on `dev`, not released.
+  - Search (1 h, or 45 min with the torch for 5%), Hunt (1 h) in the forest, per-site loot tables, depletion and 7-day refresh, take-or-leave with 96-hour ground piles (drops too).
+  - Water from OpenStreetMap: fill bottles and drink at any lake, tank, pond, reservoir or river; clean only from flowing rivers. "Boiled water" is now "clean water".
+  - Radiation zone 30 km around the Trichy–Villupuram line, drawn in yellow with an icon; 1-in-4 per hour inside for +5 radiation, lowering maximum Health.
+  - Save v4 with a migration from v3. Acceptance: loot varies by place, places deplete, seeded tests reproducible; 86 unit tests and 7 e2e tests pass; checked in the browser on desktop and phone width.
+  - Fixed while building: Prabu's marker was hidden under the marker of the place he stood at, so it couldn't be clicked.
+
 ## In progress
 - Nothing.
 
 ## Pending (unblocked)
-- M4 Scavenging — proposed as P-013 (`docs/scavenging.md`); waiting for approval. M2 and M3 are held on `dev` until M4 is done (D-042).
 - M5 Crafting — needs recipes proposed and approved.
 
 ## Blocked

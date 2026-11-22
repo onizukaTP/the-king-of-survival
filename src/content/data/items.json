@@ -10,7 +10,7 @@
 
   { "id": "item.empty_bottle", "name": "Empty bottle", "category": "water", "weightKg": 0.1 },
   { "id": "item.unsafe_water", "name": "Bottle of unsafe water", "category": "water", "weightKg": 1.1, "effects": { "water": 25 }, "illnessChance": 0.2, "leaves": "item.empty_bottle" },
-  { "id": "item.boiled_water", "name": "Bottle of boiled water", "category": "water", "weightKg": 1.1, "effects": { "water": 25 }, "leaves": "item.empty_bottle" },
+  { "id": "item.clean_water", "name": "Bottle of clean water", "category": "water", "weightKg": 1.1, "effects": { "water": 25 }, "leaves": "item.empty_bottle" },
 
   { "id": "item.cloth_bandage", "name": "Cloth bandage", "category": "medical", "weightKg": 0.1, "effects": { "health": 10 }, "curesInjury": true },
   { "id": "item.neem_leaves", "name": "Neem leaves", "category": "medical", "weightKg": 0.1 },

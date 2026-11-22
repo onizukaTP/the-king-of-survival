@@ -40,6 +40,22 @@ describe('save/load', () => {
     expect(result.save.gameState.dead).toBe(false);
   });
 
+  it('migrates an M2/M3 (v3) save: boiled water becomes clean water; no radiation, no ground', () => {
+    const v3State: Record<string, unknown> = {
+      ...state,
+      survival: { ...state.survival },
+      inventory: { stacks: [{ itemId: 'item.boiled_water', count: 2 }], weapon: 'item.hunting_knife' },
+    };
+    for (const key of ['sites', 'ground']) delete v3State[key];
+    delete (v3State.survival as Record<string, unknown>).radiation;
+    delete (v3State.survival as Record<string, unknown>).zoneMinutes;
+    const result = loadSave({ saveVersion: 3, createdAt: 'x', gameState: v3State }, content);
+    if (!result.ok) throw new Error(result.error);
+    expect(result.save.gameState.inventory.stacks).toEqual([{ itemId: 'item.clean_water', count: 2 }]);
+    expect(result.save.gameState.survival).toMatchObject({ radiation: 0, zoneMinutes: 0 });
+    expect(result.save.gameState).toMatchObject({ sites: {}, ground: [] });
+  });
+
   it.each([
     ['null', null],
     ['a string', 'nope'],

@@ -1,0 +1,23 @@
+{
+  "searchMinutes": 60,
+  "torchSearchMinutes": 45,
+  "torchItemId": "item.torch",
+  "torchChargePerSearch": 5,
+  "drawsPerSearch": 2,
+  "depletionPerSearch": 10,
+  "minRichness": 10,
+  "refreshMinutes": 10080,
+  "huntMinutes": 60,
+  "groundMinutes": 5760,
+  "waterRangeKm": 0.2,
+  "fillMinutesPerBottle": 5,
+  "drinkMinutes": 10,
+  "bottles": { "empty": "item.empty_bottle", "clean": "item.clean_water", "unsafe": "item.unsafe_water" },
+  "radiation": {
+    "from": { "name": "Trichy", "lat": 10.7905, "lon": 78.7047 },
+    "to": { "name": "Villupuram", "lat": 11.9401, "lon": 79.4861 },
+    "radiusKm": 30,
+    "chancePerHour": 0.25,
+    "amount": 5
+  }
+}

@@ -27,6 +27,12 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 - **Title:** with a run in progress, New Game first asks "Your current run will be lost." with Start a new run / Keep my run.
 - **Phones:** the top bar wraps to three rows: clock and buttons, then status, then the four meters.
 
+## Here panel and map additions (M4) — D-047
+
+- **Here panel** (the side panel when nothing is selected; on a phone, tap Prabu's marker or the place he stands at): place name and kind (or "Open ground" with coordinates), a line when there's water (clean river or unsafe still water), a warning inside the radiation zone, and buttons for Search, Search with torch, Hunt, Fill N bottles and Drink, each shown only where it works, with its time. "Left to find: N%" for searchable places. "On the ground" lists finds and dropped items with a checkbox each, the time before they're gone, Take selected and Take all.
+- **Map:** still water in dark blue, flowing rivers in bright blue, and the radiation zone in yellow with a dashed edge and a radiation icon in the middle. Prabu's marker sits above place markers and can be clicked.
+- **Top bar:** an "Irradiated" tag, and the Health meter shows the part lost to radiation as a dark end segment.
+
 ## Numbers the map screen shows (D-017 to D-020)
 - Speeds: road 4.5 km/h, cross-country 3 km/h.
 - The game starts on Day 1 at 06:00.

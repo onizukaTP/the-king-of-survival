@@ -1,10 +1,13 @@
 import { z } from 'zod';
 import {
-  characterSchema, itemSchema, newGameSchema, outlineSchema, roadsSchema, siteSchema, survivalSchema, worldSchema,
-  type Character, type Item, type NewGameConfig, type Outline, type Roads, type Site, type SurvivalConfig, type WorldConfig,
+  characterSchema, itemSchema, lootSchema, newGameSchema, outlineSchema, roadsSchema, scavengingSchema, siteSchema, survivalSchema, waterSchema, worldSchema,
+  type Character, type Item, type Loot, type NewGameConfig, type Outline, type Roads, type ScavengingConfig, type Site, type SurvivalConfig, type Water, type WorldConfig,
 } from './schemas';
 import characters from './data/characters.json';
 import items from './data/items.json';
+import loot from './data/loot.json';
+import scavenging from './data/scavenging.json';
+import water from './data/water.json';
 import survival from './data/survival.json';
 import newGame from './data/new-game.json';
 import roads from './data/roads.json';
@@ -18,6 +21,9 @@ export interface Content {
   items: Record<string, Item>;
   world: WorldConfig;
   survival: SurvivalConfig;
+  loot: Record<string, Loot>;
+  scavenging: ScavengingConfig;
+  water: Water;
   roads: Roads;
   outline: Outline;
   newGame: NewGameConfig;
@@ -29,6 +35,9 @@ export interface RawContent {
   items: unknown;
   world: unknown;
   survival: unknown;
+  loot: unknown;
+  scavenging: unknown;
+  water: unknown;
   roads: unknown;
   outline: unknown;
   newGame: unknown;
@@ -51,6 +60,9 @@ export function parseContent(raw: RawContent): Content {
     items: byId(z.array(itemSchema).parse(raw.items), 'item'),
     world: worldSchema.parse(raw.world),
     survival: survivalSchema.parse(raw.survival),
+    loot: Object.fromEntries(z.array(lootSchema).parse(raw.loot).map((l) => [l.siteId, l])),
+    scavenging: scavengingSchema.parse(raw.scavenging),
+    water: waterSchema.parse(raw.water),
     roads: roadsSchema.parse(raw.roads),
     outline: outlineSchema.parse(raw.outline),
     newGame: newGameSchema.parse(raw.newGame),
@@ -72,6 +84,15 @@ export function parseContent(raw: RawContent): Content {
   const { startingWeapon, startingKit } = content.newGame;
   if (startingWeapon && !item(startingWeapon, 'new-game.json').weapon) throw new Error(`new-game.json: ${startingWeapon} is not a weapon`);
   for (const k of startingKit) item(k.itemId, 'new-game.json');
+  for (const id of Object.values(content.scavenging.bottles)) item(id, 'scavenging.json bottles');
+  if (!item(content.scavenging.torchItemId, 'scavenging.json torchItemId').charge) throw new Error('scavenging.json: the torch item has no charge');
+  for (const l of Object.values(content.loot)) {
+    if (!content.sites[l.siteId]) throw new Error(`loot.json: unknown site ${l.siteId}`);
+    for (const e of [...l.search, ...(l.hunt ?? [])]) {
+      item(e.itemId, `loot.json ${l.siteId}`);
+      if (e.min > e.max) throw new Error(`loot.json ${l.siteId}: ${e.itemId} min is above max`);
+    }
+  }
   const nodeCount = content.roads.nodes.length;
   const badEdge = content.roads.edges.find(([a, b]) => a >= nodeCount || b >= nodeCount);
   if (badEdge) throw new Error(`roads.json: edge ${badEdge.join(',')} points past the ${nodeCount} nodes`);
@@ -79,5 +100,5 @@ export function parseContent(raw: RawContent): Content {
 }
 
 export function loadContent(): Content {
-  return parseContent({ characters, sites, items, world, survival, roads, outline: tamilNadu, newGame });
+  return parseContent({ characters, sites, items, world, survival, loot, scavenging, water, roads, outline: tamilNadu, newGame });
 }

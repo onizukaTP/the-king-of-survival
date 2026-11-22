@@ -92,6 +92,13 @@ export function MapView() {
     });
     map.addControl(new NavigationControl({ showCompass: false }), 'top-left');
     map.on('click', (e: { lngLat: { lat: number; lng: number } }) => useGameStore.getState().select({ point: { lat: e.lngLat.lat, lon: e.lngLat.lng } }));
+    // Double-click on open ground travels there (replaces double-click zoom; wheel, pinch and +/− still zoom).
+    map.on('dblclick', (e: { lngLat: { lat: number; lng: number }; preventDefault: () => void }) => {
+      e.preventDefault();
+      const store = useGameStore.getState();
+      store.select({ point: { lat: e.lngLat.lat, lon: e.lngLat.lng } });
+      void store.travel();
+    });
 
     // Fog sits between the map and the markers, so known places show through it.
     const fog = document.createElement('canvas');
@@ -130,10 +137,15 @@ export function MapView() {
       el.setAttribute('aria-label', site.name);
       el.innerHTML = `<span class="dot"></span><span class="label"></span>`;
       el.querySelector('.label')!.textContent = site.name;
+      // Clicking the already-selected place (so also a double-click) travels there.
       el.addEventListener('click', (e) => {
         e.stopPropagation();
-        select({ siteId: id });
+        const store = useGameStore.getState();
+        const selected = store.selection && 'siteId' in store.selection && store.selection.siteId === id;
+        if (selected) void store.travel();
+        else select({ siteId: id });
       });
+      el.addEventListener('dblclick', (e) => e.stopPropagation());
       siteMarkers.current.set(id, new Marker({ element: el, anchor: 'left', offset: [-6, 0] }).setLngLat([site.lon, site.lat]).addTo(map));
     }
   }, [discovered, select]);

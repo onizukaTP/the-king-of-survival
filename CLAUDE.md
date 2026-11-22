@@ -161,7 +161,9 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ progress.md          # completed / in-progress / pending / blocked
 │  ├─ architecture.md      # how the built code works (engine, saves, content, CI)
 │  ├─ world.md             # confirmed geography, setting decisions and prototype sites
-│  └─ ui.md                # approved screen layouts
+│  ├─ ui.md                # approved screen layouts
+│  ├─ items.md             # proposed item list (P-010)
+│  └─ vehicles.md          # vehicle list (D-024) and open questions (Q10)
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
@@ -237,19 +239,24 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-019 **Walking speeds:** road 4.5 km/h, cross-country 3 km/h.
 - D-020 A new game starts on **Day 1 at 06:00** (dawn). May be revisited when the opening narrative (Q7) is decided.
 - D-021 (owner chose option C when the OSM data showed the clash) The settlement sits at the sanctuary's **north-east forest edge, ~6 km north-west of Srivilliputhur town** (9.5599, 77.6251), not at Shenbagathoppu. Shenbagathoppu turned out nearer Rajapalayam (~9 km) than the town (~14 km), which clashed with D-017. The hunting ground is the sanctuary forest beside home; the water site is the Pilavakkal (Periyar) dam. Real coordinates and distances are in `docs/world.md`.
+- D-022 **Click again to travel:** clicking the place that is already selected (so also double-clicking it) starts the trip; double-clicking open ground travels there. Double-click no longer zooms (wheel, pinch and +/− still do).
+- D-023 (answers most of Q3; replaces P-002) **Survival meters: Health, Food, Water, Rest.** Health starts at 100. When Food or Water is at 0, Health drops. When Rest is at 0, Food and Water drain faster and the chance of meeting enemies rises (encounters arrive with M6/M7). Radiation can lower Health, in the spirit of Fallout (how is open; where is Q9). Rates are proposed in P-011.
+- D-024 **Vehicles** are planned, travelled with and built through crafting: cycle (cart upgrade), scooter (cart upgrade), bike (faster, low storage), moped (slow, more storage), sedan, XUV, tempo, mini van, big van, lorry, military vehicle; more later. When and how is Q10. List and suggestions in `docs/vehicles.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
-- P-002 Survival attributes: Health, Hunger, Thirst, Fatigue, Radiation, with threshold penalties.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
-- P-009 Leg length: a trip is cut into legs of at most **60 game minutes** (`world.json`). It sets how often travel can be interrupted once events exist (M6). Used in M1 as a working value.
+- P-009 Leg length: a trip is cut into legs of at most **60 game minutes** (`world.json`). It sets how often travel can be interrupted once events exist (M6). Used in M1 as a working value. The owner expects it to change with survival (D-023); a new value is proposed in P-011.
+- P-010 Item list: 29 prototype items plus later ones, in `docs/items.md` (replaces the item count in P-001).
+- P-011 Survival numbers (meters 0–100, start at 100): Water −3/h (empty in ~33 h), Food −1.5/h (~67 h), Rest −5/h awake (~20 h); sleeping restores Rest +12.5/h (8 h to full). Rest at 0 → Food and Water drain ×2. Food at 0 → Health −5/h; Water at 0 → Health −5/h (both at 0: −10/h). Health recovers +2/h while sleeping if Food and Water are above 25. A **Rest** action (1 h / 4 h / until rested) works anywhere. Health 0 → game over. Legs shortened to **30 min**, and a trip stops by itself at the end of a leg when a meter falls to 25 or to 0. Radiation lowers *maximum* Health (Fallout-style) once Q9 places patches.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 
 ### Open — blocking (do not implement affected areas until answered)
 - Q9 Where the fallout patches (D-014) lie in the prototype area. *(blocks radiation content in M2/M4; not M1)*
-- Q3 Final survival attribute list; are injuries separate from Health? *(blocks M2)*
+- Q3 (rest answered by D-023) How Health recovers; whether injuries are separate from Health; how radiation lowers Health. *(blocks M2; recommendations in P-011)*
+- Q10 Vehicles (D-024): prototype or later, fuel model, how they are obtained, road/off-road and cargo rules. *(blocks vehicle work only)*
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*
 - Q5 Enemy mix: animals / human bandits / mutants. *(blocks M7)*
 - Q6 Progression model. *(blocks M8)*
@@ -272,8 +279,8 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 |---|---|---|---|
 | M0 | Skeleton: Vite/React/TS, engine core, GameState, command dispatcher, seeded RNG, content loader + Zod, asset manifest, IndexedDB save/load, CI + deploy | — | Done — live at https://onizukatp.github.io/the-king-of-survival/ |
 | M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Done — live |
-| M2 | Time & survival: clock, decay, thresholds, death | M1, Q3 | Blocked |
-| M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Not started |
+| M2 | Time & survival: clock, decay, thresholds, death | M1, P-011, Q8 | Blocked (needs P-011 approved; food and water need M3 items) |
+| M3 | Items & inventory: definitions, stacking, weight, use, equip | M0, P-010 | Not started (needs P-010 approved) |
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Blocked |
 | M5 | Crafting | M3 | Not started |
 | M6 | Event system: data-driven events with choices/consequences | M2, M3 | Blocked |

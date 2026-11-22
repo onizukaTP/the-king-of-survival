@@ -109,6 +109,32 @@
     "lat": 9.50679,
     "lon": 77.6337
    }
+  ],
+  "ends": [
+   {
+    "id": "end.sri_north",
+    "name": "North end",
+    "lat": 9.52467,
+    "lon": 77.63294
+   },
+   {
+    "id": "end.sri_south",
+    "name": "South end",
+    "lat": 9.501,
+    "lon": 77.63205
+   },
+   {
+    "id": "end.sri_east",
+    "name": "East end",
+    "lat": 9.5079,
+    "lon": 77.64045
+   },
+   {
+    "id": "end.sri_west",
+    "name": "West end",
+    "lat": 9.50808,
+    "lon": 77.62511
+   }
   ]
  },
  {
@@ -248,6 +274,32 @@
     "name": "Tank",
     "lat": 9.44734,
     "lon": 77.55058
+   }
+  ],
+  "ends": [
+   {
+    "id": "end.raja_north",
+    "name": "North end",
+    "lat": 9.46179,
+    "lon": 77.55455
+   },
+   {
+    "id": "end.raja_south",
+    "name": "South end",
+    "lat": 9.42544,
+    "lon": 77.55443
+   },
+   {
+    "id": "end.raja_east",
+    "name": "East end",
+    "lat": 9.44571,
+    "lon": 77.57476
+   },
+   {
+    "id": "end.raja_west",
+    "name": "West end",
+    "lat": 9.44566,
+    "lon": 77.53397
    }
   ]
  },
@@ -444,6 +496,32 @@
     "name": "Tank",
     "lat": 9.91864,
     "lon": 78.11418
+   }
+  ],
+  "ends": [
+   {
+    "id": "end.mdu_north",
+    "name": "North end",
+    "lat": 9.94764,
+    "lon": 78.11944
+   },
+   {
+    "id": "end.mdu_south",
+    "name": "South end",
+    "lat": 9.83438,
+    "lon": 78.10437
+   },
+   {
+    "id": "end.mdu_east",
+    "name": "East end",
+    "lat": 9.92845,
+    "lon": 78.15832
+   },
+   {
+    "id": "end.mdu_west",
+    "name": "West end",
+    "lat": 9.92574,
+    "lon": 78.09009
    }
   ]
  }

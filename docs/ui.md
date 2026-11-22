@@ -22,6 +22,7 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 
 - **Top bar** adds four small bars, Health, Food, Water and Rest (amber at 25 or below, red label at 0; the exact value shows on hover), a **Pack** button showing the carried weight, a **Rest** button, and an "Ill" or "Injured" tag when they apply. The Menu now holds **Save and quit** (the game saves itself, D-038).
 - **Pack** opens in the side panel / bottom sheet: weight against 25 kg with marks at 25 and 50 kg and "Heavy: drains ×1.1 on the road" above 25 kg; the weapon slot with Unequip; items grouped as Food, Water, Medical, Weapons, Tools, Materials, with count, time left before spoiling, lighter lights or torch charge, and weight. Selecting an item shows a card with its effect and Eat / Drink / Use, Equip, Drop 1 and Drop all, each shown only when it does something.
+- **Pack additions (D-055):** a **Sort** menu (by kind, the grouped view; by name; by weight, heaviest first; by price waits for trading). Items that can be eaten, drunk or used carry an **Eat / Drink / Use** button on their row, and **double-clicking a row uses it**.
 - **Rest** (not in the mockup; added in the same style): the Rest meter, whether Health will recover, and buttons for 1 hour, 4 hours and "Until rested" with the wake-up time.
 - **Game over** (not in the mockup): "Prabu has died", the cause and time, and Back to title.
 - **Title:** with a run in progress, New Game first asks "Your current run will be lost." with Start a new run / Keep my run.
@@ -41,6 +42,15 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 - **Here panel in a town:** the building's search buttons, water at a well or tank, floor piles, and **Leave town** at the top when he stands at the edge of town (elsewhere a line says to walk to the edge, D-053).
 - **Mobile:** the plan full screen, the panel as a bottom sheet, as on the world map.
 - **World map:** mapped wells show as small light-blue dots.
+
+- **Town ends and zoom (D-054):** the north, south, east and west ends are grey diamonds like the edge; Leave town shows at any of them. Zooming out stops once the whole town fits, and panning keeps the view over the town.
+
+## Fire section (D-056, D-057)
+
+- The **Here panel** has a **Fire** section, below the search and water buttons.
+  - With no fire here, it shows one button per way he has to light one ("Light with lighter (5 min)", "Light with matchbox (5 min)", "Light with flint and steel (15 min)", "Rub two sticks (1 h 30 min)"), or "Needs firewood to make a fire."
+  - With a fire here, it shows "Burns for …", **Add firewood (+2 h)**, and Cook raw meat, Boil water and Sterilize rags with their batch and time. A recipe he can't do now is disabled with the reason ("Needs a cooking pot", "Add firewood first").
+- **Pack:** tinned food's Eat button is disabled without a can opener, with "Needs a can opener" on hover and in its card.
 
 ## Numbers the map screen shows (D-017 to D-020)
 - Speeds: road 4.5 km/h, cross-country 3 km/h.

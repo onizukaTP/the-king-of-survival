@@ -51,6 +51,18 @@ describe('entering and leaving a town (P-014)', () => {
     expect(ok(back, { type: 'town.leave' }).state.town).toBeNull();
   });
 
+  it('leaves from a north, south, east or west end at that end on the world map (D-054)', () => {
+    for (const town of Object.values(content.towns)) {
+      expect(town.ends.map((e) => e.name)).toEqual(['North end', 'South end', 'East end', 'West end']);
+    }
+    const end = content.towns[SRI]!.ends.find((e) => e.name === 'West end')!;
+    const there = ok(inTown(), { type: 'town.walk', spotId: end.id }).state;
+    const left = ok(there, { type: 'town.leave' }).state;
+    expect(left.town).toBeNull();
+    expect(left.player.position).toEqual({ lat: end.lat, lon: end.lon });
+    expect(left.player.position.lon).toBeLessThan(content.sites[SRI]!.lon);
+  });
+
   it('refuses away from a town, twice, or while travelling; no world travel from inside', () => {
     const home = createNewGame(content, 1);
     expect(err(home, { type: 'town.enter' })).toBe('no_town_here');

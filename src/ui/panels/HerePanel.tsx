@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { groundHere, searchOptions, waterHere } from '../../engine/systems/scavenging/scavenging';
+import { fireOptions } from '../../engine/systems/fire/fire';
 import { spotHere } from '../../engine/systems/town/town';
 import { inRadiationZone } from '../../engine/systems/survival/radiation';
 import { content, useGameStore } from '../../store/gameStore';
@@ -19,6 +20,7 @@ export function HerePanel() {
   const zone = inRadiationZone(game.player.position, content);
   const empties = game.inventory.stacks.filter((s) => s.itemId === cfg.bottles.empty).reduce((n, s) => n + s.count, 0);
   const here = groundHere(game);
+  const fire = fireOptions(game, content);
   const { lat, lon } = game.player.position;
 
   const run = (command: Parameters<typeof act>[0]) => {
@@ -37,7 +39,7 @@ export function HerePanel() {
       </p>
       {game.town && (spot?.kind === 'edge'
         ? <button className="small leave-town" onClick={() => run({ type: 'town.leave' })}>Leave town</button>
-        : <p className="muted">Walk to the edge of town to leave.</p>)}
+        : <p className="muted">Walk to the edge of town or one of its ends to leave.</p>)}
       {canEnterTown && <button onClick={() => run({ type: 'town.enter' })}>Enter town</button>}
       {water && <p>{water === 'river' ? 'A flowing river: clean water.' : water === 'well' ? 'A well: clean water.' : 'Still water: unsafe to drink without boiling or filtering.'}</p>}
       {zone && <p className="warn-text">Radiation zone. Every hour here risks radiation.</p>}
@@ -62,8 +64,37 @@ export function HerePanel() {
       )}
       {canSearch && <p className="muted">Left to find: {Math.round(richness)}%</p>}
       {!canSearch && !canHunt && !water && !canEnterTown && (
-        <p className="muted">{game.town ? 'Pick a building on the map to walk there.' : `Nothing to do here${site?.kind === 'home' ? ' yet' : ''}.`}</p>
+        <p className="muted">{game.town ? 'Pick a building on the map to walk there.' : `Nothing to find here${site?.kind === 'home' ? ' yet' : ''}.`}</p>
       )}
+
+      {/* Fire and cooking (D-056, P-016). */}
+      <section className="fire">
+        <h3>Fire</h3>
+        {fire.minutesLeft > 0 ? (
+          <>
+            <p className="muted">Burns for {formatDuration(fire.minutesLeft)}.</p>
+            <div className="card-actions">
+              {fire.firewood && <button className="small" onClick={() => run({ type: 'fire.feed' })}>Add firewood (+{formatDuration(content.fire.burnMinutesPerFirewood)})</button>}
+              {fire.recipes.map(({ recipe, count, missing }) => {
+                const why = missing ?? (fire.minutesLeft < recipe.minutes ? 'Add firewood first' : null);
+                return (
+                  <button key={recipe.id} className="small" disabled={Boolean(why)} onClick={() => run({ type: 'fire.cook', recipeId: recipe.id })}>
+                    {recipe.name}{count > 1 && ` ×${count}`} ({formatDuration(recipe.minutes)}){why && ` · ${why}`}
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        ) : fire.firewood ? (
+          <div className="card-actions">
+            {fire.methods.map((m) => (
+              <button key={m.id} className="small" onClick={() => run({ type: 'fire.make', method: m.id })}>
+                {m.itemId ? `Light with ${m.name.toLowerCase()}` : m.name} ({formatDuration(m.minutes)})
+              </button>
+            ))}
+          </div>
+        ) : <p className="muted">Needs firewood to make a fire.</p>}
+      </section>
 
       {here.length > 0 && (
         <section>

@@ -67,6 +67,9 @@ const groundPileSchema = stackSchema.extend({
 // water point id, or null after a walk stopped part-way.
 const townStateSchema = z.object({ siteId: z.string(), at: z.string().nullable() });
 
+// The one fire burning, where it was lit, until the game minute it burns out (D-056, P-016).
+const fireStateSchema = z.object({ lat: z.number(), lon: z.number(), outAt: z.number().int() });
+
 // The schema is the single source of truth for GameState's shape; saves are validated against it.
 // Changing it means bumping SAVE_VERSION and adding a migration (src/engine/save/save.ts).
 export const gameStateSchema = z.object({
@@ -82,6 +85,7 @@ export const gameStateSchema = z.object({
   sites: z.record(z.string(), siteStateSchema),
   ground: z.array(groundPileSchema),
   town: townStateSchema.nullable(),
+  fire: fireStateSchema.nullable(),
   // Permadeath (D-038): once true, every command is refused.
   dead: z.boolean(),
 });
@@ -94,6 +98,7 @@ export type SurvivalState = z.infer<typeof survivalStateSchema>;
 export type Meter = 'health' | 'food' | 'water' | 'rest';
 export type GroundPile = z.infer<typeof groundPileSchema>;
 export type TownState = z.infer<typeof townStateSchema>;
+export type FireState = z.infer<typeof fireStateSchema>;
 
 export const maxHealth = (s: SurvivalState) => Math.max(0, 100 - s.radiation);
 
@@ -125,6 +130,7 @@ export function createNewGame(content: Content, seed: number): GameState {
     sites: {},
     ground: [],
     town: null,
+    fire: null,
     dead: false,
   };
 }

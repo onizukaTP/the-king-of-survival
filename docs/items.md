@@ -87,6 +87,8 @@ Effects use the survival meters from D-023 (0–100) and the drain rates propose
 
 Later: tyre, spark plug, battery, generator (very rare, D-032).
 
+**Added by D-057** (fire and cooking, `docs/fire.md`): matchbox (tool, 0.02 kg, 10 matches, found with 3–10), can opener (tool, 0.1 kg, rare; needed to eat tinned food, D-056), sterilized bandage (medical, 0.1 kg, treats an injury, Health +20; made by boiling rags). Cooked meat and clean water are now made over a fire (`docs/fire.md`), replacing the "needs flint" and "+ firewood" notes above. That makes 35 items.
+
 ## Numbers — D-036 (approved P-012)
 
 **Carry limit on foot:** 25 kg without penalty, 50 kg at most; picking up past 50 kg is refused. Above 25 kg, Food, Water and Rest drain faster, gradually: ×1 at 25 kg, ×1.5 at 37.5 kg, ×2 at 50 kg. Carts and vehicles will add cargo space.

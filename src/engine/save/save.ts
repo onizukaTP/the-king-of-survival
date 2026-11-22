@@ -3,7 +3,7 @@ import type { Content } from '../../content/loader';
 import { gameStateSchema, startingInventory, startingSurvival, startPosition, type GameState } from '../core/state';
 import { initialMap } from '../systems/travel/travel';
 
-export const SAVE_VERSION = 5;
+export const SAVE_VERSION = 6;
 
 const saveSchema = z.object({
   saveVersion: z.literal(SAVE_VERSION),
@@ -64,6 +64,8 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
     const sites = Object.fromEntries(Object.entries(gs.sites).filter(([id]) => !content.towns[id]));
     return { ...save, saveVersion: 5, gameState: { ...gs, sites, town: null } };
   },
+  // v5 → v6 (fire, D-056): no fire burning.
+  5: (save) => ({ ...save, saveVersion: 6, gameState: { ...(save.gameState as object), fire: null } }),
 };
 
 /** `createdAt` is passed in because the engine never reads the wall clock. */
@@ -104,7 +106,7 @@ export function loadSave(raw: unknown, content: Content): LoadResult {
   const { town } = gameState;
   if (town) {
     const map = content.towns[town.siteId];
-    const spots = map ? ['edge', ...map.buildings.map((b) => b.id), ...map.water.map((w) => w.id)] : [];
+    const spots = map ? ['edge', ...map.buildings.map((b) => b.id), ...map.water.map((w) => w.id), ...map.ends.map((e) => e.id)] : [];
     if (!map || (town.at !== null && !spots.includes(town.at))) return { ok: false, error: 'Save refers to an unknown town.' };
   }
   return { ok: true, save: parsed.data };

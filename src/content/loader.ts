@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import {
-  buildingTypeSchema, townSchema, townStreetsSchema, type BuildingType, type Town, type TownStreets,
+  buildingTypeSchema, fireSchema, townSchema, type FireConfig, townStreetsSchema, type BuildingType, type Town, type TownStreets,
   characterSchema, itemSchema, lootSchema, newGameSchema, outlineSchema, roadsSchema, scavengingSchema, siteSchema, survivalSchema, waterSchema, worldSchema,
   type Character, type Item, type Loot, type NewGameConfig, type Outline, type Roads, type ScavengingConfig, type Site, type SurvivalConfig, type Water, type WorldConfig,
 } from './schemas';
@@ -8,6 +8,7 @@ import characters from './data/characters.json';
 import items from './data/items.json';
 import loot from './data/loot.json';
 import scavenging from './data/scavenging.json';
+import fire from './data/fire.json';
 import water from './data/water.json';
 import buildingTypes from './data/building-types.json';
 import towns from './data/towns.json';
@@ -28,6 +29,7 @@ export interface Content {
   survival: SurvivalConfig;
   loot: Record<string, Loot>;
   scavenging: ScavengingConfig;
+  fire: FireConfig;
   water: Water;
   buildingTypes: Record<string, BuildingType>;
   // Keyed by the town's site id.
@@ -46,6 +48,7 @@ export interface RawContent {
   survival: unknown;
   loot: unknown;
   scavenging: unknown;
+  fire: unknown;
   water: unknown;
   buildingTypes: unknown;
   towns: unknown;
@@ -74,6 +77,7 @@ export function parseContent(raw: RawContent): Content {
     survival: survivalSchema.parse(raw.survival),
     loot: Object.fromEntries(z.array(lootSchema).parse(raw.loot).map((l) => [l.siteId, l])),
     scavenging: scavengingSchema.parse(raw.scavenging),
+    fire: fireSchema.parse(raw.fire),
     water: waterSchema.parse(raw.water),
     buildingTypes: byId(z.array(buildingTypeSchema).parse(raw.buildingTypes), 'building type'),
     towns: Object.fromEntries(z.array(townSchema).parse(raw.towns).map((t) => [t.siteId, t])),
@@ -92,6 +96,7 @@ export function parseContent(raw: RawContent): Content {
   };
   for (const it of Object.values(content.items)) {
     if (it.leaves) item(it.leaves, `items.json ${it.id} leaves`);
+    if (it.needsItem) item(it.needsItem, `items.json ${it.id} needsItem`);
     if (it.recharges && !item(it.recharges.itemId, `items.json ${it.id} recharges`).charge) {
       throw new Error(`items.json: ${it.id} recharges ${it.recharges.itemId}, which has no charge`);
     }
@@ -101,6 +106,14 @@ export function parseContent(raw: RawContent): Content {
   for (const k of startingKit) item(k.itemId, 'new-game.json');
   for (const id of Object.values(content.scavenging.bottles)) item(id, 'scavenging.json bottles');
   if (!item(content.scavenging.torchItemId, 'scavenging.json torchItemId').charge) throw new Error('scavenging.json: the torch item has no charge');
+  const { fire } = content;
+  item(fire.firewoodItemId, 'fire.json firewoodItemId');
+  for (const id of fire.waterItemIds) item(id, 'fire.json waterItemIds');
+  for (const m of fire.methods) {
+    if (m.itemId && m.chargePerFire > 0 && !item(m.itemId, `fire.json ${m.id}`).charge) throw new Error(`fire.json: ${m.id} uses charge, but ${m.itemId} has none`);
+    if (m.itemId) item(m.itemId, `fire.json ${m.id}`);
+  }
+  for (const r of fire.recipes) for (const id of [r.from, r.to, ...(r.tool ? [r.tool] : [])]) item(id, `fire.json ${r.id}`);
   for (const l of Object.values(content.loot)) {
     if (!content.sites[l.siteId]) throw new Error(`loot.json: unknown site ${l.siteId}`);
     for (const e of [...l.search, ...(l.hunt ?? [])]) {
@@ -120,7 +133,7 @@ export function parseContent(raw: RawContent): Content {
     if (!site) throw new Error(`towns.json: unknown site ${t.siteId}`);
     // A town's finds live in its buildings; a town-wide table as well would be a content mistake.
     if (content.loot[t.siteId]) throw new Error(`loot.json: ${t.siteId} has a town map, so it has no town-wide loot`);
-    const spots = [{ id: 'its edge', lat: site.lat, lon: site.lon }, ...t.buildings, ...t.water];
+    const spots = [{ id: 'its edge', lat: site.lat, lon: site.lon }, ...t.buildings, ...t.water, ...t.ends];
     for (const b of t.buildings) if (!content.buildingTypes[b.typeId]) throw new Error(`towns.json ${b.id}: unknown building type ${b.typeId}`);
     for (const [i, a] of spots.entries()) {
       if (i > 0 && spotIds.has(a.id)) throw new Error(`towns.json: duplicate id ${a.id}`);
@@ -137,5 +150,5 @@ export function parseContent(raw: RawContent): Content {
 }
 
 export function loadContent(): Content {
-  return parseContent({ characters, sites, items, world, survival, loot, scavenging, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame });
+  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame });
 }

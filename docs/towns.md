@@ -25,7 +25,7 @@ Everything below was approved as P-014 (D-052) and is built (M4b), except where 
 3. **Moving:** it works like the world map. Click a building to select it, then click it again to walk there. Walking uses the straight-line distance at road speed (4.5 km/h, D-019), so 400 m takes about 5 minutes. Survival drains as on any trip.
 4. **At a building:** the panel shows **Search** (times below) and how much is left to find. Finds and drops work as in M4: you tick what to take, and the rest stays on that building's floor for 96 hours (D-045).
 5. **At a well or a tank:** **Fill bottles** and **Drink**, as in M4. A well gives clean water; a tank or pond gives unsafe water (D-044, D-050).
-6. **Leaving:** **Leave town** puts Prabu back on the world map at the town's point. He can leave **only from the edge of town** (D-053); elsewhere the panel says to walk to the edge.
+6. **Leaving:** **Leave town** puts Prabu back on the world map at the town's point. He can leave **only from the edge of town** (D-053) **or from its north, south, east or west end** (D-054); elsewhere the panel says to walk to one. Leaving from an end puts him at that end on the world map. Each end is the real street point nearest to 300 m beyond the town's outermost building or water in that direction (Madurai's south end lies past the airport, about 10 km out).
 
 All buildings in a town are visible as soon as Prabu enters. There is no fog inside towns.
 

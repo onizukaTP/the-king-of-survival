@@ -15,6 +15,8 @@ export const LEG_ANIMATION_MS = 600;
 type Screen = 'title' | 'game' | 'gameover';
 /** What the side panel shows when no trip is under way (D-016 plus the approved Pack layout). */
 export type PanelMode = 'pack' | 'rest' | 'here' | null;
+/** Pack order: grouped by kind, or a flat list by name or heaviest first. Price joins with trading. */
+export type PackSort = 'type' | 'name' | 'weight';
 
 interface GameStore {
   screen: Screen;
@@ -25,6 +27,9 @@ interface GameStore {
   /** The building or water point picked on a town map (P-014). */
   townSelection: string | null;
   panel: PanelMode;
+  /** How the Pack lists items; kept while the panel is closed. */
+  packSort: PackSort;
+  setPackSort: (sort: PackSort) => void;
   death: { cause: DeathCause; clockMinutes: number } | null;
   /** Path of the leg that just resolved, for the marker animation. */
   lastLegPath: LatLon[] | null;
@@ -74,6 +79,12 @@ function describe(events: GameEvent[]): string | null {
     if (e.type === 'town_entered') notes.push(`Entered ${content.sites[e.siteId]?.name ?? 'the town'}.`);
     if (e.type === 'items_taken') notes.push('Taken.');
     if (e.type === 'irradiated') notes.push(`Radiation +${e.amount}.`);
+    if (e.type === 'fire_lit') notes.push('Lit a fire.');
+    if (e.type === 'fire_fed') notes.push('Added firewood.');
+    if (e.type === 'cooked') {
+      const to = content.fire.recipes.find((r) => r.id === e.recipeId)?.to;
+      notes.push(`Made ${to ? itemName(to).toLowerCase() : 'it'}${e.count > 1 ? ` ×${e.count}` : ''}.`);
+    }
   }
   return notes.length ? notes.join(' ') : null;
 }
@@ -141,6 +152,7 @@ export const useGameStore = create<GameStore>((set, get) => {
     screen: 'title',
     game: null,
     hasSave: false,
+    packSort: 'type',
     ...reset,
 
     checkForSave: async () => {
@@ -188,6 +200,7 @@ export const useGameStore = create<GameStore>((set, get) => {
       if (dispatch({ type: 'town.walk', spotId })) set({ townSelection: null, panel: null });
     },
     openPanel: (panel) => set({ panel, selection: null, townSelection: null }),
+    setPackSort: (packSort) => set({ packSort }),
 
     travel: async () => {
       const { selection } = get();

@@ -1,0 +1,16 @@
+{
+  "firewoodItemId": "item.firewood",
+  "burnMinutesPerFirewood": 120,
+  "methods": [
+    { "id": "lighter", "name": "Lighter", "itemId": "item.lighter", "chargePerFire": 1, "minutes": 5 },
+    { "id": "matchbox", "name": "Matchbox", "itemId": "item.matchbox", "chargePerFire": 1, "minutes": 5 },
+    { "id": "flint", "name": "Flint and steel", "itemId": "item.flint", "chargePerFire": 0, "minutes": 15 },
+    { "id": "sticks", "name": "Rub two sticks", "itemId": null, "chargePerFire": 0, "minutes": 90 }
+  ],
+  "waterItemIds": ["item.unsafe_water", "item.clean_water"],
+  "recipes": [
+    { "id": "recipe.cook_meat", "name": "Cook raw meat", "from": "item.raw_meat", "to": "item.cooked_meat", "maxBatch": 3, "minutes": 30, "tool": null, "usesWater": false },
+    { "id": "recipe.boil_water", "name": "Boil water", "from": "item.unsafe_water", "to": "item.clean_water", "maxBatch": 4, "minutes": 30, "tool": "item.cooking_pot", "usesWater": false },
+    { "id": "recipe.sterilize_rags", "name": "Sterilize rags", "from": "item.cloth", "to": "item.sterile_bandage", "maxBatch": 3, "minutes": 30, "tool": "item.cooking_pot", "usesWater": true }
+  ]
+}

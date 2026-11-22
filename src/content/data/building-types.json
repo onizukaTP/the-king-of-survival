@@ -3,12 +3,14 @@
     { "itemId": "item.cloth", "chance": 0.3, "min": 1, "max": 2 },
     { "itemId": "item.empty_bottle", "chance": 0.2, "min": 1, "max": 1 },
     { "itemId": "item.coir_rope", "chance": 0.1, "min": 1, "max": 1 },
+    { "itemId": "item.matchbox", "chance": 0.1, "min": 1, "max": 1, "charge": [3, 10] },
     { "itemId": "item.millet", "chance": 0.08, "min": 1, "max": 1 },
     { "itemId": "item.salt", "chance": 0.08, "min": 1, "max": 1 },
     { "itemId": "item.cooking_pot", "chance": 0.06, "min": 1, "max": 1 },
     { "itemId": "item.tinned_food", "chance": 0.06, "min": 1, "max": 1 },
     { "itemId": "item.old_pills", "chance": 0.04, "min": 1, "max": 1 },
     { "itemId": "item.aruval", "chance": 0.03, "min": 1, "max": 1 },
+    { "itemId": "item.can_opener", "chance": 0.03, "min": 1, "max": 1 },
     { "itemId": "item.flint", "chance": 0.02, "min": 1, "max": 1 },
     { "itemId": "item.lighter_fuel", "chance": 0.02, "min": 1, "max": 1 }
   ] },
@@ -22,7 +24,8 @@
     { "itemId": "item.old_pills", "chance": 0.05, "min": 1, "max": 1 },
     { "itemId": "item.coir_rope", "chance": 0.05, "min": 1, "max": 1 },
     { "itemId": "item.crank_charger", "chance": 0.03, "min": 1, "max": 1 },
-    { "itemId": "item.lighter_fuel", "chance": 0.03, "min": 1, "max": 1 }
+    { "itemId": "item.lighter_fuel", "chance": 0.03, "min": 1, "max": 1 },
+    { "itemId": "item.can_opener", "chance": 0.03, "min": 1, "max": 1 }
   ] },
   { "id": "btype.place_of_worship", "name": "Place of worship", "searchMinutes": 45, "torchSearchMinutes": 35, "depletionPerSearch": 20, "search": [
     { "itemId": "item.cloth", "chance": 0.2, "min": 1, "max": 2 },
@@ -38,9 +41,11 @@
     { "itemId": "item.empty_bottle", "chance": 0.2, "min": 1, "max": 2 },
     { "itemId": "item.millet", "chance": 0.2, "min": 1, "max": 2 },
     { "itemId": "item.salt", "chance": 0.2, "min": 1, "max": 2 },
+    { "itemId": "item.matchbox", "chance": 0.12, "min": 1, "max": 1, "charge": [3, 10] },
     { "itemId": "item.tinned_food", "chance": 0.1, "min": 1, "max": 1 },
     { "itemId": "item.coir_rope", "chance": 0.08, "min": 1, "max": 1 },
-    { "itemId": "item.lighter_fuel", "chance": 0.03, "min": 1, "max": 1 }
+    { "itemId": "item.lighter_fuel", "chance": 0.03, "min": 1, "max": 1 },
+    { "itemId": "item.can_opener", "chance": 0.03, "min": 1, "max": 1 }
   ] },
   { "id": "btype.supermarket", "name": "Supermarket", "searchMinutes": 60, "torchSearchMinutes": 45, "depletionPerSearch": 15, "search": [
     { "itemId": "item.empty_bottle", "chance": 0.3, "min": 1, "max": 3 },
@@ -48,7 +53,9 @@
     { "itemId": "item.millet", "chance": 0.1, "min": 1, "max": 1 },
     { "itemId": "item.salt", "chance": 0.1, "min": 1, "max": 1 },
     { "itemId": "item.cloth", "chance": 0.1, "min": 1, "max": 1 },
+    { "itemId": "item.matchbox", "chance": 0.1, "min": 1, "max": 1, "charge": [3, 10] },
     { "itemId": "item.coir_rope", "chance": 0.08, "min": 1, "max": 1 },
+    { "itemId": "item.can_opener", "chance": 0.05, "min": 1, "max": 1 },
     { "itemId": "item.lighter_fuel", "chance": 0.04, "min": 1, "max": 1 },
     { "itemId": "item.crank_charger", "chance": 0.03, "min": 1, "max": 1 },
     { "itemId": "item.cooking_pot", "chance": 0.03, "min": 1, "max": 1 }
@@ -57,7 +64,8 @@
     { "itemId": "item.millet", "chance": 0.3, "min": 1, "max": 3 },
     { "itemId": "item.salt", "chance": 0.25, "min": 1, "max": 2 },
     { "itemId": "item.empty_bottle", "chance": 0.1, "min": 1, "max": 1 },
-    { "itemId": "item.cloth", "chance": 0.08, "min": 1, "max": 1 }
+    { "itemId": "item.cloth", "chance": 0.08, "min": 1, "max": 1 },
+    { "itemId": "item.matchbox", "chance": 0.08, "min": 1, "max": 1, "charge": [3, 10] }
   ] },
   { "id": "btype.medical_store", "name": "Medical store", "searchMinutes": 30, "torchSearchMinutes": 25, "depletionPerSearch": 25, "search": [
     { "itemId": "item.old_pills", "chance": 0.2, "min": 1, "max": 2 },
@@ -110,7 +118,9 @@
     { "itemId": "item.cooking_pot", "chance": 0.15, "min": 1, "max": 1 },
     { "itemId": "item.firewood", "chance": 0.15, "min": 1, "max": 1 },
     { "itemId": "item.millet", "chance": 0.12, "min": 1, "max": 1 },
+    { "itemId": "item.matchbox", "chance": 0.08, "min": 1, "max": 1, "charge": [3, 10] },
     { "itemId": "item.tinned_food", "chance": 0.05, "min": 1, "max": 1 },
+    { "itemId": "item.can_opener", "chance": 0.04, "min": 1, "max": 1 },
     { "itemId": "item.flint", "chance": 0.02, "min": 1, "max": 1 }
   ] },
   { "id": "btype.police_station", "name": "Police station", "searchMinutes": 45, "torchSearchMinutes": 35, "depletionPerSearch": 20, "search": [

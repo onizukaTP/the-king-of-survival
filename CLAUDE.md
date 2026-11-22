@@ -168,7 +168,8 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ vehicles.md          # vehicles (D-024, D-030 to D-034)
 │  ├─ scavenging.md        # scavenging (D-047)
 │  ├─ towns.md             # town maps (D-052)
-│  └─ night.md             # night proposal (P-015)
+│  ├─ night.md             # night proposal (P-015)
+│  └─ fire.md              # fire and cooking (D-056, D-057)
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
@@ -276,6 +277,10 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-051 **M2–M4 wait for town maps** before release (extends D-042).
 - D-052 (approves P-014) **Town maps:** 16 building types; Srivilliputhur 13 buildings, Rajapalayam 16, Madurai 24 (with the airport); enter and leave a town for no time; walk between buildings at road speed; search time, stock loss and a loot table per type; town wells clean, tanks unsafe; the 39 OpenStreetMap wells on the world map; save v5. Spec in `docs/towns.md`.
 - D-053 (refines D-052) **Leave town only from the edge of town**, which returns Prabu to the town's point on the world map. Elsewhere in the town he must walk back to the edge first.
+- D-054 **Town ends:** besides the edge of town, each town map has a **north, south, east and west end** where a real street leaves the town. Leaving from an end puts Prabu **at that end on the world map**. The town map **can't zoom out past the whole town**; zooming in is free.
+- D-055 **Pack:** sort **by kind, by name or by weight** (by price comes with trading); **double-clicking an item uses it**; every item that can be eaten, drunk or used has its **Eat / Drink / Use button on its row**.
+- D-056 **Fire:** made with a **matchbox, the lighter, flint and steel, or by rubbing two sticks** (slow). Over a fire Prabu can **cook raw meat, boil water, and boil rags into sterilized bandages**. **Tinned food needs a can opener**, a rare item. Firewood (already in the item list) is the fuel. Numbers in D-057.
+- D-057 (approves P-016) **Fire and cooking numbers:** 1 firewood + a way to light it (lighter or matchbox 5 min and one light, flint and steel 15 min, rubbing two sticks 90 min); a fire burns 2 h, +2 h per firewood added, one fire at a time; cook up to 3 raw meat, boil up to 4 bottles (pot), sterilize up to 3 rags with a pot and one bottle of water, 30 min each; new items matchbox (found with 3–10 matches), can opener (rare) and sterilized bandage (treats an injury, Health +20); no separate kindling; save v6. Spec in `docs/fire.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -311,7 +316,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Done — live (released 2026-11-22) |
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Done — live (released 2026-11-22) |
 | M4b | Town maps: buildings, per-type loot, wells (D-049, D-050, D-052) | M4 | Done — live (released 2026-11-22) |
-| M5 | Crafting | M3 | Not started |
+| M5 | Crafting | M3 | Fire and cooking done on `dev` (D-057, not yet released); other recipes need a proposal |
 | M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Blocked |
 | M7 | Combat | M3, M6, Q4, Q5 | Blocked |
 | M8 | Progression, opening narrative, journal | M7, Q6, Q7 | Blocked |

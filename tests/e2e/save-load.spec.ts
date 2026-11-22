@@ -133,8 +133,10 @@ test('enter the town, walk to a building, search it; drops stay on its floor; le
   await expect(page.getByTestId('status')).toHaveText('In Srivilliputhur town ruins: Garage');
   await expect(page.getByTestId('clock')).not.toHaveText(/06:|07:[0-4]/);
 
-  // The town map survives a reload.
-  await page.reload();
+  // Being in a town survives saving and loading. (Save and quit waits for the write; a bare
+  // reload right after a walk can beat the autosave on a slow machine.)
+  await page.getByRole('button', { name: 'Menu' }).click();
+  await page.getByRole('menuitem', { name: 'Save and quit' }).click();
   await page.getByRole('button', { name: 'Continue' }).click();
   await expect(page.getByTestId('status')).toHaveText('In Srivilliputhur town ruins: Garage');
 

@@ -3,6 +3,8 @@ import type { Site } from '../../../content/schemas';
 import type { CommandError, CommandResult, GameEvent } from '../../core/commands';
 import type { GameState, MapState } from '../../core/state';
 import { distanceKm, insideOutline, samplePath, type LatLon } from './geo';
+import { zoneShare } from '../survival/radiation';
+import { passTime } from '../survival/survival';
 import { planRoute, type RoutePlan } from './route';
 
 export type TravelTarget = { siteId: string } | { point: LatLon };
@@ -77,26 +79,33 @@ export function previewTravel(state: GameState, target: TravelTarget, content: C
 }
 
 export function startTravel(state: GameState, target: TravelTarget, content: Content): CommandResult {
+  if (state.town) return { ok: false, error: { code: 'in_town', message: 'Leave the town first.' } };
   const preview = previewTravel(state, target, content);
   if (!preview.ok) return preview;
   state.travel = { destination: preview.destination, siteId: preview.siteId, legs: preview.plan.legs, nextLeg: 0 };
   return { ok: true, state, events: [{ type: 'travel_started', legs: preview.plan.legs.length }] };
 }
 
-/** Resolves one leg instantly (D-010): move, advance the clock, clear fog, discover. */
+/** Resolves one leg instantly (D-010): move, pass the leg's time (survival drain), clear fog, discover. */
 export function advanceTravel(state: GameState, content: Content): CommandResult {
   const travel = state.travel;
   const leg = travel?.legs[travel.nextLeg];
   if (!travel || !leg) return fail('not_travelling', 'Prabu isn\'t travelling.');
   const events: GameEvent[] = [];
   state.player.position = leg.path[leg.path.length - 1]!;
-  state.clockMinutes += leg.minutes;
+  passTime(state, leg.minutes, 'travel', content, events, zoneShare(leg.path, content));
   reveal(state.map, samplePath(leg.path, REVEAL_STEP_KM), content, events);
   travel.nextLeg += 1;
   events.unshift({ type: 'leg_completed', leg: travel.nextLeg, of: travel.legs.length });
-  if (travel.nextLeg >= travel.legs.length) {
+  if (state.dead) {
+    state.travel = null;
+  } else if (travel.nextLeg >= travel.legs.length) {
     state.travel = null;
     events.push({ type: 'arrived', siteId: travel.siteId });
+  } else if (events.some((e) => e.type === 'meter_low')) {
+    // D-035: a falling meter ends the trip at the end of this leg so the player can react.
+    state.travel = null;
+    events.push({ type: 'travel_stopped', reason: 'meter' });
   }
   return { ok: true, state, events };
 }
@@ -105,5 +114,5 @@ export function advanceTravel(state: GameState, content: Content): CommandResult
 export function stopTravel(state: GameState): CommandResult {
   if (!state.travel) return fail('not_travelling', 'Prabu isn\'t travelling.');
   state.travel = null;
-  return { ok: true, state, events: [{ type: 'travel_stopped' }] };
+  return { ok: true, state, events: [{ type: 'travel_stopped', reason: 'player' }] };
 }

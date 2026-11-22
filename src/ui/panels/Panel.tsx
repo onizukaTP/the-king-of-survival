@@ -1,8 +1,12 @@
-import { previewTravel } from '../../engine/systems/travel/travel';
+import { previewTravel, siteAt } from '../../engine/systems/travel/travel';
 import { content, useGameStore } from '../../store/gameStore';
 import { formatClock, formatDuration, formatKm, kindLabel } from '../format';
+import { HerePanel } from './HerePanel';
+import { SpotPanel } from './SpotPanel';
+import { PackPanel } from './PackPanel';
+import { RestPanel } from './RestPanel';
 
-/** Right-hand panel (bottom sheet on mobile): the selected place, or the trip under way (D-016). */
+/** Right-hand panel (bottom sheet on mobile): the trip under way, Pack, Rest, the selected place, or where Prabu stands. */
 export function Panel() {
   const game = useGameStore((s) => s.game);
   const selection = useGameStore((s) => s.selection);
@@ -10,6 +14,8 @@ export function Panel() {
   const select = useGameStore((s) => s.select);
   const travel = useGameStore((s) => s.travel);
   const requestStop = useGameStore((s) => s.requestStop);
+  const panel = useGameStore((s) => s.panel);
+  const townSelection = useGameStore((s) => s.townSelection);
   if (!game) return null;
 
   if (game.travel) {
@@ -31,7 +37,12 @@ export function Panel() {
     );
   }
 
-  if (!selection) return <p className="muted panel-hint">Select a place or any point on the map.</p>;
+  if (panel === 'pack') return <PackPanel />;
+  if (panel === 'rest') return <RestPanel />;
+  if (game.town) return townSelection && townSelection !== game.town.at ? <SpotPanel spotId={townSelection} /> : <HerePanel />;
+  // Nothing chosen, or the place he's standing at: show what he can do here (P-013).
+  const hereSite = siteAt(game.player.position, content);
+  if (panel === 'here' || !selection || ('siteId' in selection && selection.siteId === hereSite?.id)) return <HerePanel />;
 
   const site = 'siteId' in selection ? content.sites[selection.siteId] : undefined;
   const preview = previewTravel(game, selection, content);

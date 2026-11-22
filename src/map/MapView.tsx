@@ -1,4 +1,4 @@
-import type { Feature } from 'geojson';
+import type { Feature, FeatureCollection } from 'geojson';
 import { Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl, type GeoJSONSource } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 // MapLibre v6 can't find its own worker once Vite bundles it; give it the bundled worker's URL.
@@ -10,7 +10,42 @@ import { content, LEG_ANIMATION_MS, useGameStore } from '../store/gameStore';
 
 setWorkerUrl(workerUrl);
 
-const COLORS = { sea: '#141210', land: '#3a342c', border: '#6b5f50', road: '#b08546', rail: '#857a6c', route: '#5aa0e0', fog: 'rgba(12, 10, 8, 0.5)' };
+const COLORS = {
+  sea: '#141210', land: '#3a342c', border: '#6b5f50', road: '#b08546', rail: '#857a6c', route: '#5aa0e0', fog: 'rgba(12, 10, 8, 0.5)',
+  still: '#2f5870', river: '#4f9fd8', zone: '#e6c828',
+};
+
+// D-044: still water (unsafe) and flowing rivers (clean) from scripts/geo/build-water.mjs.
+const waterAreasGeoJson = (): FeatureCollection => ({
+  type: 'FeatureCollection',
+  features: content.water.areas.map((a) => ({ type: 'Feature', properties: { river: a.river }, geometry: { type: 'Polygon', coordinates: [a.ring] } })),
+});
+const riversGeoJson = (): Feature => ({ type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: content.water.rivers } });
+// D-050: mapped wells, clean water.
+const wellsGeoJson = (): Feature => ({ type: 'Feature', properties: {}, geometry: { type: 'MultiPoint', coordinates: content.water.wells } });
+
+/** D-043: the band within radiusKm of the Trichy–Villupuram line, as a polygon with rounded ends. */
+function zoneGeoJson(): Feature {
+  const { from, to, radiusKm } = content.scavenging.radiation;
+  const kx = 111.32 * Math.cos(((from.lat + to.lat) / 2) * (Math.PI / 180));
+  const ky = 110.57;
+  const heading = Math.atan2((to.lat - from.lat) * ky, (to.lon - from.lon) * kx);
+  const arc = (c: LatLon, start: number) =>
+    Array.from({ length: 33 }, (_, i) => {
+      const a = start + (Math.PI * i) / 32;
+      return [c.lon + (radiusKm * Math.cos(a)) / kx, c.lat + (radiusKm * Math.sin(a)) / ky];
+    });
+  const ring = [...arc(to, heading - Math.PI / 2), ...arc(from, heading + Math.PI / 2)];
+  return { type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [[...ring, ring[0]!]] } };
+}
+
+// Placeholder radiation trefoil (D-004: placeholder art), drawn in the zone's middle.
+const TREFOIL = `<svg class="zone-icon" viewBox="-50 -50 100 100" aria-hidden="true">
+  <circle r="48" fill="#e6c828" stroke="#141210" stroke-width="4"/>
+  <circle r="8" fill="#141210"/>
+  ${[90, 210, 330].map((d) => `<path d="M0 0 L${40 * Math.cos(((d - 30) * Math.PI) / 180)} ${-40 * Math.sin(((d - 30) * Math.PI) / 180)} A40 40 0 0 0 ${40 * Math.cos(((d + 30) * Math.PI) / 180)} ${-40 * Math.sin(((d + 30) * Math.PI) / 180)} Z" fill="#141210"/>`).join('')}
+  <circle r="14" fill="#e6c828"/><circle r="8" fill="#141210"/>
+</svg>`;
 
 const roadsGeoJson = (): Feature => ({
   type: 'Feature',
@@ -71,11 +106,20 @@ export function MapView() {
           roads: { type: 'geojson', data: roadsGeoJson() },
           rail: { type: 'geojson', data: new URL('geo/rail.json', document.baseURI).href },
           route: { type: 'geojson', data: line([]) },
+          water: { type: 'geojson', data: waterAreasGeoJson() },
+          rivers: { type: 'geojson', data: riversGeoJson() },
+          wells: { type: 'geojson', data: wellsGeoJson() },
+          zone: { type: 'geojson', data: zoneGeoJson() },
         },
         layers: [
           { id: 'sea', type: 'background', paint: { 'background-color': COLORS.sea } },
           { id: 'land', type: 'fill', source: 'land', paint: { 'fill-color': COLORS.land } },
           { id: 'border', type: 'line', source: 'land', paint: { 'line-color': COLORS.border, 'line-width': 1 } },
+          { id: 'water', type: 'fill', source: 'water', paint: { 'fill-color': ['case', ['get', 'river'], COLORS.river, COLORS.still] } },
+          { id: 'rivers', type: 'line', source: 'rivers', paint: { 'line-color': COLORS.river, 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.8, 12, 2, 14, 3.5] } },
+          { id: 'wells', type: 'circle', source: 'wells', paint: { 'circle-color': COLORS.river, 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 1.5, 12, 3, 15, 5], 'circle-stroke-color': '#1c1916', 'circle-stroke-width': 1 } },
+          { id: 'zone', type: 'fill', source: 'zone', paint: { 'fill-color': COLORS.zone, 'fill-opacity': 0.18 } },
+          { id: 'zone-edge', type: 'line', source: 'zone', paint: { 'line-color': COLORS.zone, 'line-width': 1.5, 'line-dasharray': [4, 3] } },
           { id: 'rail', type: 'line', source: 'rail', paint: { 'line-color': COLORS.rail, 'line-width': 1.5, 'line-dasharray': [3, 2] } },
           { id: 'roads', type: 'line', source: 'roads', paint: { 'line-color': COLORS.road, 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.6, 11, 1.4, 14, 3] } },
           { id: 'route', type: 'line', source: 'route', paint: { 'line-color': COLORS.route, 'line-width': 3, 'line-dasharray': [1, 1.5] } },
@@ -92,6 +136,13 @@ export function MapView() {
     });
     map.addControl(new NavigationControl({ showCompass: false }), 'top-left');
     map.on('click', (e: { lngLat: { lat: number; lng: number } }) => useGameStore.getState().select({ point: { lat: e.lngLat.lat, lon: e.lngLat.lng } }));
+    // Double-click on open ground travels there (replaces double-click zoom; wheel, pinch and +/− still zoom).
+    map.on('dblclick', (e: { lngLat: { lat: number; lng: number }; preventDefault: () => void }) => {
+      e.preventDefault();
+      const store = useGameStore.getState();
+      store.select({ point: { lat: e.lngLat.lat, lon: e.lngLat.lng } });
+      void store.travel();
+    });
 
     // Fog sits between the map and the markers, so known places show through it.
     const fog = document.createElement('canvas');
@@ -103,9 +154,22 @@ export function MapView() {
     map.on('resize', redraw);
     map.on('load', redraw);
 
-    const el = document.createElement('div');
+    const { from, to } = content.scavenging.radiation;
+    const icon = document.createElement('div');
+    icon.innerHTML = TREFOIL;
+    icon.title = 'Radiation zone';
+    new Marker({ element: icon }).setLngLat([(from.lon + to.lon) / 2, (from.lat + to.lat) / 2]).addTo(map);
+
+    // Clicking Prabu shows what he can do where he stands (the only way to open it on a phone).
+    const el = document.createElement('button');
     el.className = 'prabu-marker';
     el.title = 'Prabu';
+    el.setAttribute('aria-label', 'Prabu: what to do here');
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      useGameStore.getState().openPanel('here');
+    });
+    el.addEventListener('dblclick', (e) => e.stopPropagation());
     prabuRef.current = new Marker({ element: el }).setLngLat([start.lon, start.lat]).addTo(map);
 
     mapRef.current = map;
@@ -130,10 +194,15 @@ export function MapView() {
       el.setAttribute('aria-label', site.name);
       el.innerHTML = `<span class="dot"></span><span class="label"></span>`;
       el.querySelector('.label')!.textContent = site.name;
+      // Clicking the already-selected place (so also a double-click) travels there.
       el.addEventListener('click', (e) => {
         e.stopPropagation();
-        select({ siteId: id });
+        const store = useGameStore.getState();
+        const selected = store.selection && 'siteId' in store.selection && store.selection.siteId === id;
+        if (selected) void store.travel();
+        else select({ siteId: id });
       });
+      el.addEventListener('dblclick', (e) => e.stopPropagation());
       siteMarkers.current.set(id, new Marker({ element: el, anchor: 'left', offset: [-6, 0] }).setLngLat([site.lon, site.lat]).addTo(map));
     }
   }, [discovered, select]);

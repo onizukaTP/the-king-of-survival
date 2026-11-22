@@ -68,6 +68,8 @@ Inspirations (atmosphere and broad mechanics only — **never copy content, char
 | Recent years | — | Prabu becomes the settlement's hunter. Settlement struggles: too many mouths, failing crops, little clean water, declining cattle, almost no medicine. |
 | Recent | 27 | Mother's health fails (radiation + famine). Prabu stays home to care for her instead of hunting. She dies. |
 
+Prabu and his mother came to the settlement from the north, and her sickness began there (D-040).
+
 **Mother's final revelation:** she has discovered a *trace* of the missing younger brother. This is a major story driver.
 
 **Mother's final wish:** that Prabu (1) finds his younger brother, (2) finds love, (3) lives a good and happy life — not merely power or wealth. This contrasts with Prabu's grief-shaped ambition; the player may interpret or fulfil it in different ways.
@@ -146,7 +148,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 - All game state lives in one **serialisable `GameState`** object.
 - State changes only through **commands**: `applyCommand(state, command) → { state, events }`. UI dispatches commands and renders state; it never mutates state or contains game rules.
 - Randomness comes from a **seeded RNG stored in GameState** → deterministic, reproducible tests and saves.
-- Game time is an integer (minutes since game start) advanced by actions, not wall-clock time (confirmed for travel by D-010; other actions pending P-003).
+- Game time is an integer (minutes since game start) advanced by actions, not wall-clock time (confirmed for travel by D-010 and for resting by D-035; other actions pending P-003).
 - Invalid commands return a typed error/rejection; they never throw unhandled or partially mutate state.
 
 ### Planned directory layout
@@ -161,11 +163,16 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ progress.md          # completed / in-progress / pending / blocked
 │  ├─ architecture.md      # how the built code works (engine, saves, content, CI)
 │  ├─ world.md             # confirmed geography, setting decisions and prototype sites
-│  └─ ui.md                # approved screen layouts
+│  ├─ ui.md                # approved screen layouts
+│  ├─ items.md             # item list (D-026) and numbers (D-036)
+│  ├─ vehicles.md          # vehicles (D-024, D-030 to D-034)
+│  ├─ scavenging.md        # scavenging (D-047)
+│  ├─ towns.md             # town maps (D-052)
+│  └─ night.md             # night proposal (P-015)
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
-├─ scripts/geo/            # Overpass query + build-geo.mjs: regenerates roads, rail, state outline
+├─ scripts/geo/            # Overpass queries + build scripts: roads, rail, state outline, water and wells, town streets
 ├─ src/
 │  ├─ engine/
 │  │  ├─ core/             # GameState, commands, rng, clock, ids
@@ -201,7 +208,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 
 - Save = `{ saveVersion, createdAt, gameState }`.
 - Every GameState shape change bumps `saveVersion` and adds a migration. Old saves must keep loading.
-- Save model (manual / autosave / permadeath) is an open decision (Q8).
+- Save model: permadeath with autosave, one run; the save is deleted when Prabu dies (D-038).
 
 ### Code conventions
 
@@ -229,7 +236,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-011 (Q1b) Prabu's settlement is in the **Western Ghats foothills west of Srivilliputhur** (Virudhunagar district), beside the Grizzled Squirrel Wildlife Sanctuary. The exact map coordinate is picked from the map data in M1 and shown to the owner for confirmation.
 - D-012 (Q1b) Prototype area: **compact, ~25 km radius** around the settlement, plus **Madurai city ruins (~75–80 km)** as the single distant destination, a long, costly expedition.
 - D-013 (Q1b) The prototype's discoverable places include all four kinds: **Madurai city ruins, water sources, hunting grounds, roads/rail/airport**.
-- D-014 Madurai was **not struck directly** in the Annihilation: standing, decayed ruins with **scattered low-level fallout patches**. Radiation is a background risk, not a single big zone. Where the patches lie is still open (Q9).
+- D-014 Madurai was **not struck directly** in the Annihilation: standing, decayed ruins with **scattered low-level fallout patches**. Radiation is a background risk, not a single big zone. Where the patches lie is still open (Q9). *(The Madurai patches are superseded by D-043: Madurai has no radiation.)*
 - D-015 (approves P-008) Prototype sites (real places; details and sources in `docs/world.md`): home settlement on the forest edge near Shenbagathoppu; Shenbagathoppu forest (hunting); Srivilliputhur town ruins; Srivilliputhur railway station; NH 744 highway stretch; Watrap Periyakulam tank / Pilavakkal dam (water); Rajapalayam town ruins; Madurai city ruins with the airport (far trip). That is 7 discoverable places + home. This settles the locations part of P-001; its item, recipe, enemy and event counts are still proposed.
 - D-016 (part of P-007) **Map screen layout** for M1: top bar (time, status, Menu), full-screen map with fog, right side panel for the selected place / unmarked ground / travel progress; bottom sheet on mobile; no bottom navigation until those features exist. Spec in `docs/ui.md`.
 - D-017 At the start Prabu **already knows** home, Shenbagathoppu forest, Srivilliputhur town ruins, the NH 744 stretch and Srivilliputhur railway station. Watrap/Pilavakkal, Rajapalayam and Madurai must be discovered.
@@ -237,30 +244,58 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-019 **Walking speeds:** road 4.5 km/h, cross-country 3 km/h.
 - D-020 A new game starts on **Day 1 at 06:00** (dawn). May be revisited when the opening narrative (Q7) is decided.
 - D-021 (owner chose option C when the OSM data showed the clash) The settlement sits at the sanctuary's **north-east forest edge, ~6 km north-west of Srivilliputhur town** (9.5599, 77.6251), not at Shenbagathoppu. Shenbagathoppu turned out nearer Rajapalayam (~9 km) than the town (~14 km), which clashed with D-017. The hunting ground is the sanctuary forest beside home; the water site is the Pilavakkal (Periyar) dam. Real coordinates and distances are in `docs/world.md`.
+- D-022 **Click again to travel:** clicking the place that is already selected (so also double-clicking it) starts the trip; double-clicking open ground travels there. Double-click no longer zooms (wheel, pinch and +/− still do).
+- D-023 (answers most of Q3; replaces P-002) **Survival meters: Health, Food, Water, Rest.** Health starts at 100. When Food or Water is at 0, Health drops. When Rest is at 0, Food and Water drain faster and the chance of meeting enemies rises (encounters arrive with M6/M7). Radiation can lower Health, in the spirit of Fallout (how is open; where is Q9). Rates are proposed in P-011.
+- D-024 **Vehicles** are planned, travelled with and built through crafting: cycle (cart upgrade), scooter (cart upgrade), bike (faster, low storage), moped (slow, more storage), sedan, XUV, tempo, mini van, big van, lorry, military vehicle; more later. When and how is Q10. List and suggestions in `docs/vehicles.md`.
+- D-025 (answers Q9) Heavy fallout lies in **northern Tamil Nadu**, outside the prototype area. In the prototype, radiation exists only as Madurai's scattered low-level patches (D-014); where they sit inside the ruins is proposed with M4. *(Refined by D-043.)*
+- D-026 (approves P-010) **Item list** in `docs/items.md`. **Starting kit:** hunting knife, lighter (half full), torch (half charged; recharged with a charger / hand-crank charger). Flint and steel becomes a scavenged item.
+- D-027 **Unsafe water** can cause diarrhoea, parasites or dysentery, which dehydrate him. Numbers in D-036.
+- D-028 **Food spoils**, mercifully at first ("we can crank it up later"). Numbers in D-036.
+- D-029 **Most animals are affected by radiation and many are mutated**, in the spirit of Fallout. Animals can be caught with traps; taming comes later.
+- D-030 Vehicles added from Claude's suggestions: **bullock cart** (costly to buy, a living animal), **hand cart, auto-rickshaw, tractor with trailer, small boat, e-rickshaw**. Details in `docs/vehicles.md`.
+- D-031 (Q10.1) **Prototype vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw.** In the prototype the bullock cart is a very rare find (an abandoned cart with a bull).
+- D-032 (Q10.2) **Biodiesel** is made by survivors and sold everywhere; it runs vehicles and generators (generators are very rare). In the prototype it is scavenged, since there is no trading.
+- D-033 (Q10.3) Items and vehicles have **drop chances**; some things are found only where they would likely be, and very rarely, because scavengers got there first. A cycle is found whole or built from parts.
+- D-034 (Q10.4) **Vehicle maintenance:** vehicles wear with use, slowly on roads and faster off-road.
+- D-035 (approves P-011; replaces P-009) **Survival numbers:** meters 0–100 starting at 100; Water −3/h, Food −1.5/h, Rest −5/h awake, sleep +12.5/h; Rest at 0 → Food and Water drain ×2; each of Food or Water at 0 → Health −5/h; Health +2/h while sleeping with Food and Water above 25; Rest action (1 h / 4 h / until rested) anywhere; Health 0 → game over; radiation lowers maximum Health. **Legs are at most 30 minutes**, and a trip stops by itself at the end of a leg when a meter falls to 25 or to 0.
+- D-036 (approves P-012, with a change) Item numbers in `docs/items.md`. **Carry limit:** 25 kg on foot without penalty, up to **50 kg** at most. Above 25 kg, Food, Water and Rest drain faster, **gradually**: ×1 at 25 kg, ×1.5 at 37.5 kg, ×2 at 50 kg.
+- D-037 The **torch makes searching faster**, by day and by night (numbers with M4). **Lighter fuel** is a rare scavenged item.
+- D-038 (answers Q8) **Permadeath with autosave:** one run; the game saves itself after every leg and action, and the Save button becomes "Save and quit". When Prabu dies, the run's save is deleted.
+- D-039 (answers Q3) **Injuries are part of Health:** an injury lowers Health, and Health cannot recover until the injury is cured. A **cloth bandage or neem–turmeric paste** cures an injury; painkillers only restore Health. Injuries come from combat and events (M6/M7).
+- D-040 (resolves T5) **Prabu and his mother came to the settlement from the north, and her sickness began there.**
+- D-041 **Inventory and meters layout** approved from the mockup: four meters and a Pack button in the top bar; the Pack in the side panel / bottom sheet. Spec in `docs/ui.md`.
+- D-042 **M2 and M3 stay on `dev` until M4 (scavenging) is ready.** A new run has no food or water and no way to find any before scavenging, so releasing them alone would make every run end in thirst.
+- D-043 (supersedes the Madurai patches of D-014; refines D-025) **Radiation zone:** every point within **30 km of the line from Trichy to Villupuram**. Madurai and the prototype area have none. Every hour inside has a **1-in-4 chance of +5 radiation**, which lowers maximum Health (D-035).
+- D-044 **Water:** bottles can be filled at **any water** on the map (lakes, tanks, ponds, reservoirs, rivers). **Only flowing rivers give clean water**; all other water is unsafe, still drinkable with the illness risk (D-027), until boiled or filtered.
+- D-045 **Search finds:** the player chooses what to take; what stays behind remains **at that place for 96 hours**.
+- D-046 **Home** gives nothing until trading exists (its stores come with trading). **Hunting** is chance-based until combat (M7).
+- D-047 (approves P-013, with changes) **Scavenging:** Search 1 h, or 45 min with the torch for **5%** battery; **Hunt is a 1-hour roll**; loot tables as proposed, with depletion of 10 points a search (floor 10%) and **a full refresh 7 days after a place is first searched**; boiled water renamed **clean water**; **dropped items also stay on the ground 96 h**; the radiation zone is **drawn on the map in yellow with a radiation icon in the middle**. Spec in `docs/scavenging.md`.
+- D-048 **Night:** moving in the dark at night without a torch **greatly raises the chance of injury or ambush**, except on **full-moon nights**. Designed now (P-015); the injury chance comes with events (M6) and ambushes with combat (M7).
+- D-049 **Town maps:** each town has **its own map** with buildings to scavenge, and **every building type has its own loot table**. Building types are **any that reflect a real town**; temples, garages, supermarkets, medical stores, apartments and independent houses were the owner's examples. Layouts are **hand-made, with real landmarks where they exist** (OpenStreetMap has too few buildings for these towns). Details proposed in P-014.
+- D-050 **Water at places:** ponds, lakes and **wells** are placed at places. **Well water is clean** (adds to D-044, where only flowing rivers were clean).
+- D-051 **M2–M4 wait for town maps** before release (extends D-042).
+- D-052 (approves P-014) **Town maps:** 16 building types; Srivilliputhur 13 buildings, Rajapalayam 16, Madurai 24 (with the airport); enter and leave a town for no time; walk between buildings at road speed; search time, stock loss and a loot table per type; town wells clean, tanks unsafe; the 39 OpenStreetMap wells on the world map; save v5. Spec in `docs/towns.md`.
+- D-053 (refines D-052) **Leave town only from the edge of town**, which returns Prabu to the town's point on the world map. Elsewhere in the town he must walk back to the edge first.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
-- P-002 Survival attributes: Health, Hunger, Thirst, Fatigue, Radiation, with threshold penalties.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
-- P-009 Leg length: a trip is cut into legs of at most **60 game minutes** (`world.json`). It sets how often travel can be interrupted once events exist (M6). Used in M1 as a working value.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
+- P-015 Night (D-048): night 18:30–06:00; 30-day moon cycle with three full-moon nights; the torch switches on by itself when moving in the dark and uses 10% an hour; risk numbers come with M6/M7. Spec in `docs/night.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
-- Q9 Where the fallout patches (D-014) lie in the prototype area. *(blocks radiation content in M2/M4; not M1)*
-- Q3 Final survival attribute list; are injuries separate from Health? *(blocks M2)*
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*
-- Q5 Enemy mix: animals / human bandits / mutants. *(blocks M7)*
+- Q5 Enemy mix: animals / human bandits / mutants. Animals are largely mutated (D-029). *(blocks M7)*
 - Q6 Progression model. *(blocks M8)*
 - Q7 Opening narrative: playable prologue with mother alive, text intro after her death, or death mid-play. *(blocks M8)*
-- Q8 Death and save model: permadeath / manual saves / autosave. *(affects M0 save UX, M2)*
 - T1–T4 Timeline/character inconsistencies in §4.
 
 ### Open — non-blocking
 - Tamil localisation readiness.
 - Names: settlement, mother, father, brother.
-- Currency/bartering before the wealth arc.
+- Currency/bartering before the wealth arc (bullock cart buying and biodiesel selling wait on it).
 
 When the owner answers, move the item to **Confirmed** with a new D-number and update `docs/decisions.md`.
 
@@ -272,13 +307,15 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 |---|---|---|---|
 | M0 | Skeleton: Vite/React/TS, engine core, GameState, command dispatcher, seeded RNG, content loader + Zod, asset manifest, IndexedDB save/load, CI + deploy | — | Done — live at https://onizukatp.github.io/the-king-of-survival/ |
 | M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Done — live |
-| M2 | Time & survival: clock, decay, thresholds, death | M1, Q3 | Blocked |
-| M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Not started |
-| M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Blocked |
+| M2 | Time & survival: clock, decay, thresholds, death | M1, M3 | Done on `dev` (not yet released) |
+| M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Done on `dev` (not yet released) |
+| M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Done on `dev` (not yet released; M2–M4 go out with town maps, D-051) |
+| M4b | Town maps: buildings, per-type loot, wells (D-049, D-050, D-052) | M4 | Done on `dev` (not yet released; M2–M4b go out together, D-051) |
 | M5 | Crafting | M3 | Not started |
-| M6 | Event system: data-driven events with choices/consequences | M2, M3 | Blocked |
+| M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Blocked |
 | M7 | Combat | M3, M6, Q4, Q5 | Blocked |
 | M8 | Progression, opening narrative, journal | M7, Q6, Q7 | Blocked |
+| M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Blocked (needs vehicle numbers proposed and approved) |
 | M9 | Integration, balance pass, playtest | All | Blocked |
 
 Keep this table and `docs/progress.md` current at the end of every work session.

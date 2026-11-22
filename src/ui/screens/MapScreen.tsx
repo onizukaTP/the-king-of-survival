@@ -28,7 +28,7 @@ export function MapScreen() {
     ? `In ${content.sites[game.town.siteId]?.name}${spot && spot.id !== TOWN_EDGE ? `: ${spot.name}` : ''}`
     : game.travel ? 'On the road' : here ? `At: ${here.name}` : 'In the open';
   const panelOpen = Boolean(selection || (game.town && townSelection) || game.travel || panel);
-  const toggle = (p: 'pack' | 'rest') => openPanel(panel === p ? null : p);
+  const toggle = (p: 'pack' | 'rest' | 'craft') => openPanel(panel === p ? null : p);
   const warnAt = content.survival.warnAt;
 
   return (
@@ -58,6 +58,7 @@ export function MapScreen() {
         <button className="small" aria-pressed={panel === 'pack'} onClick={() => toggle('pack')}>
           Pack {formatKg(carriedKg(game.inventory, content))}
         </button>
+        <button className="small" aria-pressed={panel === 'craft'} onClick={() => toggle('craft')}>Craft</button>
         <button className="small" aria-pressed={panel === 'rest'} onClick={() => toggle('rest')}>Rest</button>
         <div className="menu">
           <button className="small" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>Menu</button>

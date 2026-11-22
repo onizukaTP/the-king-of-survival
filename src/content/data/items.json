@@ -14,7 +14,9 @@
 
   { "id": "item.cloth_bandage", "name": "Cloth bandage", "category": "medical", "weightKg": 0.1, "effects": { "health": 10 }, "curesInjury": true },
   { "id": "item.neem_leaves", "name": "Neem leaves", "category": "medical", "weightKg": 0.1 },
-  { "id": "item.neem_paste", "name": "Neem–turmeric paste", "category": "medical", "weightKg": 0.2, "effects": { "health": 15 }, "curesInjury": true },
+  { "id": "item.turmeric", "name": "Turmeric", "category": "medical", "weightKg": 0.1 },
+  { "id": "item.neem_paste", "name": "Neem paste", "category": "medical", "weightKg": 0.2, "effects": { "health": 15 }, "curesInjury": true },
+  { "id": "item.neem_turmeric_paste", "name": "Neem–turmeric paste", "category": "medical", "weightKg": 0.2, "effects": { "health": 25 }, "curesInjury": true },
   { "id": "item.sterile_bandage", "name": "Sterilized bandage", "category": "medical", "weightKg": 0.1, "effects": { "health": 20 }, "curesInjury": true },
   { "id": "item.old_pills", "name": "Pre-war painkillers", "category": "medical", "weightKg": 0.05, "effects": { "health": 20 } },
 

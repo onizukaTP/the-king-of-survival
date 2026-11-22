@@ -172,3 +172,15 @@ test('enter the town, walk to a building, search it; drops stay on its floor; le
   await panel.getByRole('button', { name: 'Leave town' }).click();
   await expect(page.getByTestId('status')).toHaveText('At: Srivilliputhur town ruins');
 });
+
+test('the Craft panel lists recipes and blocks what is missing (M5)', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'New Game' }).click();
+  await page.getByRole('button', { name: 'Craft' }).click();
+  const cards = page.getByTestId('recipe-card');
+  await expect(cards).toHaveCount(4);
+  await expect(cards.first()).toContainText('Cloth rags 0/2');
+  await expect(cards.first()).toContainText('Needs 2 more cloth rags');
+  await expect(cards.first().getByRole('button', { name: 'Craft' })).toBeDisabled();
+  await expect(page.getByTestId('craft-panel')).toContainText('Tool: hunting knife ✓');
+});

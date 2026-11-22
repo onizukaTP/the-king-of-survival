@@ -14,7 +14,7 @@ export const LEG_ANIMATION_MS = 600;
 
 type Screen = 'title' | 'game' | 'gameover';
 /** What the side panel shows when no trip is under way (D-016 plus the approved Pack layout). */
-export type PanelMode = 'pack' | 'rest' | 'here' | null;
+export type PanelMode = 'pack' | 'rest' | 'craft' | 'here' | null;
 /** Pack order: grouped by kind, or a flat list by name or heaviest first. Price joins with trading. */
 export type PackSort = 'type' | 'name' | 'weight';
 
@@ -81,6 +81,7 @@ function describe(events: GameEvent[]): string | null {
     if (e.type === 'irradiated') notes.push(`Radiation +${e.amount}.`);
     if (e.type === 'fire_lit') notes.push('Lit a fire.');
     if (e.type === 'fire_fed') notes.push('Added firewood.');
+    if (e.type === 'crafted') notes.push(`Made ${itemName(e.itemId).toLowerCase()}${e.count > 1 ? ` ×${e.count}` : ''}.`);
     if (e.type === 'cooked') {
       const to = content.fire.recipes.find((r) => r.id === e.recipeId)?.to;
       notes.push(`Made ${to ? itemName(to).toLowerCase() : 'it'}${e.count > 1 ? ` ×${e.count}` : ''}.`);

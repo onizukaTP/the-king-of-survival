@@ -316,7 +316,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Done — live (released 2026-11-22) |
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Done — live (released 2026-11-22) |
 | M4b | Town maps: buildings, per-type loot, wells (D-049, D-050, D-052) | M4 | Done — live (released 2026-11-22) |
-| M5 | Crafting | M3 | Fire and cooking done on `dev` (D-057, not yet released); other recipes need a proposal |
+| M5 | Crafting | M3 | Fire and cooking done — live (released 2026-11-22, D-057); other recipes need a proposal |
 | M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Blocked |
 | M7 | Combat | M3, M6, Q4, Q5 | Blocked |
 | M8 | Progression, opening narrative, journal | M7, Q6, Q7 | Blocked |

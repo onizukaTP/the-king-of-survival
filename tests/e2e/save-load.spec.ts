@@ -58,6 +58,25 @@ test('double-clicking a place or open ground starts the trip', async ({ page }) 
   await expect(page.getByTestId('status')).toHaveText('On the road');
 });
 
+test('resting after a trip only passes time; Prabu stays put', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'New Game' }).click();
+  await page.getByRole('button', { name: 'Sanctuary forest' }).dblclick();
+  await expect(page.getByTestId('status')).toHaveText('At: Sanctuary forest', { timeout: 15_000 });
+  await page.waitForTimeout(800);
+  const marker = page.locator('.prabu-marker');
+  const before = await marker.boundingBox();
+
+  await page.getByRole('button', { name: 'Rest', exact: true }).click();
+  await page.getByRole('button', { name: '1 hour' }).click();
+  // The old bug replayed the last leg over ~600 ms; sample across that window.
+  for (const wait of [50, 200, 400]) {
+    await page.waitForTimeout(wait);
+    expect(await marker.boundingBox()).toEqual(before);
+  }
+  await expect(page.getByTestId('status')).toHaveText('At: Sanctuary forest');
+});
+
 test('the pack shows the starting kit and equips, and rest passes time', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'New Game' }).click();

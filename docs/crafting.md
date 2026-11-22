@@ -1,6 +1,6 @@
 # Crafting (M5) — approved (D-058, was P-017) and built
 
-The owner approved this with three changes, and it is built on `dev`:
+The owner approved this with three changes, and it is built and live (released 2026-11-22):
 
 - **Weapon recipes wait for M7.** The bamboo spear, bow and arrows below are not built.
 - **Turmeric** joins the item list (0.1 kg; about 8% in houses, provision stores, ration shops, supermarkets, hotels and places of worship). It is an optional booster: **Neem paste** (3 neem leaves, Health +15) or **Neem–turmeric paste** (3 neem leaves + 1 turmeric, Health +25). The old item `item.neem_paste` keeps its id and is now called "Neem paste".

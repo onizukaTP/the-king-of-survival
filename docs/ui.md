@@ -45,6 +45,13 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 
 - **Town ends and zoom (D-054):** the north, south, east and west ends are grey diamonds like the edge; Leave town shows at any of them. Zooming out stops once the whole town fits, and panning keeps the view over the town.
 
+## Fire section (D-056, D-057)
+
+- The **Here panel** has a **Fire** section, below the search and water buttons.
+  - With no fire here, it shows one button per way he has to light one ("Light with lighter (5 min)", "Light with matchbox (5 min)", "Light with flint and steel (15 min)", "Rub two sticks (1 h 30 min)"), or "Needs firewood to make a fire."
+  - With a fire here, it shows "Burns for …", **Add firewood (+2 h)**, and Cook raw meat, Boil water and Sterilize rags with their batch and time. A recipe he can't do now is disabled with the reason ("Needs a cooking pot", "Add firewood first").
+- **Pack:** tinned food's Eat button is disabled without a can opener, with "Needs a can opener" on hover and in its card.
+
 ## Numbers the map screen shows (D-017 to D-020)
 - Speeds: road 4.5 km/h, cross-country 3 km/h.
 - The game starts on Day 1 at 06:00.

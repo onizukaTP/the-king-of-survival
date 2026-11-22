@@ -5,7 +5,7 @@
   { "id": "item.millet", "name": "Millet grain", "category": "food", "weightKg": 1 },
   { "id": "item.millet_porridge", "name": "Millet porridge", "category": "food", "weightKg": 0.5, "effects": { "food": 25, "water": 10 }, "spoilsAfterMinutes": 2880 },
   { "id": "item.tender_coconut", "name": "Tender coconut", "category": "food", "weightKg": 1.5, "effects": { "food": 5, "water": 20 }, "spoilsAfterMinutes": 14400 },
-  { "id": "item.tinned_food", "name": "Pre-war tinned food", "category": "food", "weightKg": 0.4, "effects": { "food": 30 } },
+  { "id": "item.tinned_food", "name": "Pre-war tinned food", "category": "food", "weightKg": 0.4, "effects": { "food": 30 }, "needsItem": "item.can_opener" },
   { "id": "item.salt", "name": "Salt", "category": "food", "weightKg": 0.5 },
 
   { "id": "item.empty_bottle", "name": "Empty bottle", "category": "water", "weightKg": 0.1 },
@@ -15,6 +15,7 @@
   { "id": "item.cloth_bandage", "name": "Cloth bandage", "category": "medical", "weightKg": 0.1, "effects": { "health": 10 }, "curesInjury": true },
   { "id": "item.neem_leaves", "name": "Neem leaves", "category": "medical", "weightKg": 0.1 },
   { "id": "item.neem_paste", "name": "Neem–turmeric paste", "category": "medical", "weightKg": 0.2, "effects": { "health": 15 }, "curesInjury": true },
+  { "id": "item.sterile_bandage", "name": "Sterilized bandage", "category": "medical", "weightKg": 0.1, "effects": { "health": 20 }, "curesInjury": true },
   { "id": "item.old_pills", "name": "Pre-war painkillers", "category": "medical", "weightKg": 0.05, "effects": { "health": 20 } },
 
   { "id": "item.firewood", "name": "Firewood", "category": "material", "weightKg": 2 },
@@ -31,6 +32,8 @@
   { "id": "item.arrow", "name": "Arrow", "category": "weapon", "weightKg": 0.05 },
 
   { "id": "item.flint", "name": "Flint and steel", "category": "tool", "weightKg": 0.1 },
+  { "id": "item.matchbox", "name": "Matchbox", "category": "tool", "weightKg": 0.02, "charge": { "max": 10, "unit": "count" } },
+  { "id": "item.can_opener", "name": "Can opener", "category": "tool", "weightKg": 0.1 },
   { "id": "item.cooking_pot", "name": "Cooking pot", "category": "tool", "weightKg": 1 },
   { "id": "item.lighter", "name": "Lighter", "category": "tool", "weightKg": 0.05, "charge": { "max": 20, "unit": "count" } },
   { "id": "item.torch", "name": "Torch", "category": "tool", "weightKg": 0.3, "charge": { "max": 100, "unit": "percent" } },

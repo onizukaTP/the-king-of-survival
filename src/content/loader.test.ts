@@ -5,6 +5,7 @@ import items from './data/items.json';
 import survival from './data/survival.json';
 import loot from './data/loot.json';
 import scavenging from './data/scavenging.json';
+import fire from './data/fire.json';
 import water from './data/water.json';
 import buildingTypes from './data/building-types.json';
 import towns from './data/towns.json';
@@ -15,7 +16,7 @@ import sites from './data/sites.json';
 import tamilNadu from './data/tamil-nadu.json';
 import world from './data/world.json';
 
-const raw: RawContent = { characters, sites, items, world, survival, loot, scavenging, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame };
+const raw: RawContent = { characters, sites, items, world, survival, loot, scavenging, fire, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame };
 const prabu = characters[0]!;
 const home = sites[0]!;
 
@@ -26,7 +27,7 @@ describe('content loader', () => {
     expect(Object.keys(content.sites)).toHaveLength(8);
     expect(content.roads.nodes.length).toBeGreaterThan(1000);
     // D-026 + D-037: the 28 approved items, the three starting-kit additions and lighter fuel.
-    expect(Object.keys(content.items)).toHaveLength(32);
+    expect(Object.keys(content.items)).toHaveLength(35);
     // P-014: 16 building types; 13, 16 and 24 buildings; 39 mapped wells.
     expect(Object.keys(content.buildingTypes)).toHaveLength(16);
     expect(Object.values(content.towns).map((t) => t.buildings.length)).toEqual([13, 16, 24]);

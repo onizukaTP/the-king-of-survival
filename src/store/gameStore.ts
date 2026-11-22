@@ -79,6 +79,12 @@ function describe(events: GameEvent[]): string | null {
     if (e.type === 'town_entered') notes.push(`Entered ${content.sites[e.siteId]?.name ?? 'the town'}.`);
     if (e.type === 'items_taken') notes.push('Taken.');
     if (e.type === 'irradiated') notes.push(`Radiation +${e.amount}.`);
+    if (e.type === 'fire_lit') notes.push('Lit a fire.');
+    if (e.type === 'fire_fed') notes.push('Added firewood.');
+    if (e.type === 'cooked') {
+      const to = content.fire.recipes.find((r) => r.id === e.recipeId)?.to;
+      notes.push(`Made ${to ? itemName(to).toLowerCase() : 'it'}${e.count > 1 ? ` ×${e.count}` : ''}.`);
+    }
   }
   return notes.length ? notes.join(' ') : null;
 }

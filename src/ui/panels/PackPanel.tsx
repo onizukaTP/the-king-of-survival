@@ -42,6 +42,12 @@ const usable = (itemId: string) => {
   return Boolean(item.effects || item.curesInjury || item.recharges);
 };
 
+/** Why the item can't be used now (a missing can opener, D-056), or null. */
+function blocker(itemId: string, stacks: Stack[]) {
+  const needs = content.items[itemId]!.needsItem;
+  return needs && !stacks.some((s) => s.itemId === needs) ? `Needs a ${content.items[needs]!.name.toLowerCase()}` : null;
+}
+
 type Row = readonly [Stack, number];
 const sorters: Record<Exclude<PackSort, 'type'>, (a: Row, b: Row) => number> = {
   name: ([a], [b]) => content.items[a.itemId]!.name.localeCompare(content.items[b.itemId]!.name),
@@ -77,6 +83,7 @@ export function PackPanel() {
     const def = content.items[s.itemId]!;
     const extra = chargeText(s) ?? (s.spoilsAt !== undefined ? formatDuration(Math.max(0, s.spoilsAt - game.clockMinutes)) : null);
     const use = () => act({ type: 'item.use', index: i }) && setSelected(null);
+    const why = blocker(def.id, stacks);
     return (
       <li key={i} className="item-line">
         <button
@@ -84,12 +91,16 @@ export function PackPanel() {
           aria-pressed={selected === i}
           onClick={() => setSelected(selected === i ? null : i)}
           // Double-click uses a consumable straight away.
-          onDoubleClick={() => usable(def.id) && use()}
+          onDoubleClick={() => usable(def.id) && !why && use()}
         >
           <span>{def.name}{s.count > 1 && ` ×${s.count}`}{extra && <span className="muted"> · {extra}</span>}</span>
           <span className="muted">{formatKg(def.weightKg * s.count)}</span>
         </button>
-        {usable(def.id) && <button className="small row-use" aria-label={`${verbFor(def.id)} ${def.name}`} onClick={use}>{verbFor(def.id)}</button>}
+        {usable(def.id) && (
+          <button className="small row-use" aria-label={`${verbFor(def.id)} ${def.name}`} disabled={Boolean(why)} title={why ?? undefined} onClick={use}>
+            {verbFor(def.id)}
+          </button>
+        )}
       </li>
     );
   };
@@ -147,10 +158,11 @@ export function PackPanel() {
         <div className="item-card" data-testid="item-card">
           <strong>{item.name}</strong>
           <p className="muted">{effectText(item.id)} · {formatKg(item.weightKg)} each</p>
+          {blocker(item.id, stacks) && <p className="warn-text">{blocker(item.id, stacks)}.</p>}
           {stack.spoilsAt !== undefined && <p className="muted">Spoils in {formatDuration(Math.max(0, stack.spoilsAt - game.clockMinutes))}</p>}
           <div className="card-actions">
             {usable(item.id) && (
-              <button className="small" onClick={() => run({ type: 'item.use', index: selected })}>{verbFor(item.id)}</button>
+              <button className="small" disabled={Boolean(blocker(item.id, stacks))} onClick={() => run({ type: 'item.use', index: selected })}>{verbFor(item.id)}</button>
             )}
             {item.weapon && <button className="small" onClick={() => run({ type: 'item.equip', index: selected })}>Equip</button>}
             <button className="small" onClick={() => run({ type: 'item.drop', index: selected, count: 1 })}>Drop 1</button>

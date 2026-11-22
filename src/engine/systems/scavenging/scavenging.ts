@@ -13,7 +13,7 @@ const fail = (code: CommandError['code'], message: string) => ({ ok: false as co
 // Ground piles within this distance count as "here" (same as being at a place).
 const HERE_KM = 0.05;
 
-export type Find = { itemId: string; count: number };
+export type Find = { itemId: string; count: number; charge?: number };
 
 function roll(state: GameState): number {
   const [value, next] = nextRandom(state.rngState);
@@ -87,7 +87,7 @@ function torchIndex(state: GameState, content: Content): number {
 function finish(state: GameState, minutes: number, finds: Find[], content: Content, events: GameEvent[]) {
   passTime(state, minutes, 'work', content, events);
   if (state.dead) return;
-  for (const f of finds) leaveOnGround(state, makeStack(f.itemId, f.count, state.clockMinutes, content), content);
+  for (const f of finds) leaveOnGround(state, makeStack(f.itemId, f.count, state.clockMinutes, content, f.charge), content);
 }
 
 /** Search the site (P-013): two draws, each taking the first entry that hits, scaled by richness. */
@@ -114,7 +114,9 @@ export function search(state: GameState, useTorch: boolean, content: Content): C
   for (let d = 0; d < cfg.drawsPerSearch; d++) {
     for (const entry of target.entries) {
       if (roll(state) < entry.chance * (rich / 100)) {
-        finds.push({ itemId: entry.itemId, count: quantity(state, entry) });
+        const find: Find = { itemId: entry.itemId, count: quantity(state, entry) };
+        if (entry.charge) find.charge = entry.charge[0] + Math.floor(roll(state) * (entry.charge[1] - entry.charge[0] + 1));
+        finds.push(find);
         break;
       }
     }

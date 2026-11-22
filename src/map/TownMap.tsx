@@ -15,7 +15,17 @@ const PAD_M = 250;
 // Labels show once the plan is zoomed in at least this far (pixels per km), so they don't pile up.
 const LABELS_PX_PER_KM = 120;
 
+// The closest zoom: half a metre per pixel.
+const MIN_MPP = 0.5;
+
 type Box = { x: number; y: number; w: number; h: number };
+
+/** The box around points, padded. */
+function frame(points: { x: number; y: number }[]): Box {
+  const xs = points.map((p) => p.x), ys = points.map((p) => p.y);
+  const [x0, x1, y0, y1] = [Math.min(...xs) - PAD_M, Math.max(...xs) + PAD_M, Math.min(...ys) - PAD_M, Math.max(...ys) + PAD_M];
+  return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+}
 
 /** The town map (P-014): a flat plan of real streets with the town's buildings and water. */
 export function TownMap() {
@@ -36,12 +46,7 @@ export function TownMap() {
 
   const svg = useRef<SVGSVGElement>(null);
   const [size, setSize] = useState({ w: 800, h: 600 });
-  const [view, setView] = useState<Box>(() => {
-    const near = spots.filter((s) => distanceKm(s, origin) <= FIRST_VIEW_KM).map((s) => project(s, origin));
-    const xs = near.map((p) => p.x), ys = near.map((p) => p.y);
-    const [x0, x1, y0, y1] = [Math.min(...xs) - PAD_M, Math.max(...xs) + PAD_M, Math.min(...ys) - PAD_M, Math.max(...ys) + PAD_M];
-    return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
-  });
+  const [view, setView] = useState<Box>(() => frame(spots.filter((s) => distanceKm(s, origin) <= FIRST_VIEW_KM).map((s) => project(s, origin))));
 
   useEffect(() => {
     const el = svg.current;
@@ -52,12 +57,25 @@ export function TownMap() {
   }, []);
 
   // The viewBox is fitted with "meet", so one screen pixel is the larger of the two ratios in metres.
-  const metresPerPx = Math.max(view.w / size.w, view.h / size.h);
+  const mpp = (v: Box) => Math.max(v.w / size.w, v.h / size.h);
+  const metresPerPx = mpp(view);
   const px = (n: number) => n * metresPerPx;
   const showLabels = 1000 / metresPerPx >= LABELS_PX_PER_KM;
 
+  // D-054: zooming out stops once the whole town fits; zooming in is free down to a street's width.
+  const whole = useMemo(() => frame(spots.map((s) => project(s, origin))), [spots, origin]);
+  const maxMpp = mpp(whole);
+  // Panning keeps the middle of the view over the town.
+  const keepOver = (v: Box): Box => ({
+    ...v,
+    x: Math.min(Math.max(v.x + v.w / 2, whole.x), whole.x + whole.w) - v.w / 2,
+    y: Math.min(Math.max(v.y + v.h / 2, whole.y), whole.y + whole.h) - v.h / 2,
+  });
   const zoom = (factor: number, cx = view.x + view.w / 2, cy = view.y + view.h / 2) =>
-    setView((v) => ({ x: cx - (cx - v.x) * factor, y: cy - (cy - v.y) * factor, w: v.w * factor, h: v.h * factor }));
+    setView((v) => {
+      const f = Math.min(Math.max(factor, MIN_MPP / mpp(v)), Math.max(1, maxMpp / mpp(v)));
+      return keepOver({ x: cx - (cx - v.x) * f, y: cy - (cy - v.y) * f, w: v.w * f, h: v.h * f });
+    });
 
   const toPlan = (clientX: number, clientY: number) => {
     const m = svg.current!.getScreenCTM()!.inverse();
@@ -83,7 +101,7 @@ export function TownMap() {
     d.moved = true;
     d.x = e.clientX;
     d.y = e.clientY;
-    setView((v) => ({ ...v, x: v.x - px(dx), y: v.y - px(dy) }));
+    setView((v) => keepOver({ ...v, x: v.x - px(dx), y: v.y - px(dy) }));
   };
   const wasDrag = () => drag.current?.moved ?? false;
 

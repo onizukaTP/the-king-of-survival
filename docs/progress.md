@@ -27,11 +27,18 @@
   - The 39 mapped wells on the world map give clean water (D-050). Towns no longer have a town-wide search.
   - Save v5 with a migration from v4. 98 unit tests and 7 e2e tests pass; checked in the browser on desktop and at phone width.
 
+- **Town ends, zoom lock, Pack sort and quick use (D-054, D-055)** — on `dev`, not released.
+  - North, south, east and west ends in each town; leaving from one puts Prabu at that end on the world map.
+  - The town map can't zoom out past the whole town.
+  - Pack: sort by kind, name or weight; Eat / Drink / Use on each usable row; double-click a row to use it.
+  - 100 unit tests and 7 e2e tests pass; checked in the browser on desktop and phone width.
+
 ## In progress
 - Nothing.
 
 ## Pending (unblocked)
 - Night and moonlight — proposed in `docs/night.md` (P-015); built with M6.
+- Fire and cooking — proposed in `docs/fire.md` (P-016), awaiting approval.
 - M5 Crafting — needs recipes proposed and approved.
 
 ## Blocked

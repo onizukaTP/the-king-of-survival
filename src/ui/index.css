@@ -67,6 +67,10 @@ button[aria-pressed='true'] { background: #5e4f3f; }
 .items { list-style: none; margin: 0; padding: 0; }
 .item-row { display: flex; justify-content: space-between; gap: 8px; width: 100%; padding: 5px 4px; font-size: 14px; background: none; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; text-align: left; }
 .item-row.selected, .item-row:hover { background: #2e2822; }
+.item-line { display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--line); }
+.item-line .item-row { flex: 1; border-bottom: 0; }
+.row-use { flex: none; }
+.pack-sort { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 14px; }
 .item-card { border: 1px solid var(--line); border-radius: 4px; padding: 8px; margin-top: 10px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
 .card-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 label.item-row { cursor: pointer; justify-content: flex-start; align-items: center; }

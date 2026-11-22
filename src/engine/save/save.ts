@@ -104,7 +104,7 @@ export function loadSave(raw: unknown, content: Content): LoadResult {
   const { town } = gameState;
   if (town) {
     const map = content.towns[town.siteId];
-    const spots = map ? ['edge', ...map.buildings.map((b) => b.id), ...map.water.map((w) => w.id)] : [];
+    const spots = map ? ['edge', ...map.buildings.map((b) => b.id), ...map.water.map((w) => w.id), ...map.ends.map((e) => e.id)] : [];
     if (!map || (town.at !== null && !spots.includes(town.at))) return { ok: false, error: 'Save refers to an unknown town.' };
   }
   return { ok: true, save: parsed.data };

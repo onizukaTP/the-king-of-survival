@@ -38,7 +38,7 @@
   - New items: matchbox, can opener, sterilized bandage. Tinned food needs a can opener.
   - Save v6 with a migration from v5. 112 unit tests and 7 e2e tests pass; checked in the browser on desktop and phone width, including loading a v5 save.
 
-- **M5 Crafting (D-058)** — on `dev`, not released.
+- **M5 Crafting (D-058)** — live (released 2026-11-22).
   - Craft panel (top-bar button): cloth bandage, neem paste, neem–turmeric paste, salted dried meat; millet porridge at a fire. New item: turmeric. Weapon recipes wait for M7.
   - Acceptance: recipes use their inputs and make their outputs; missing materials are blocked with the reason. 119 unit tests and 8 e2e tests pass; checked in the browser on desktop and phone width.
 

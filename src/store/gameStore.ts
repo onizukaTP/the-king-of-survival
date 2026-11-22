@@ -98,7 +98,9 @@ export const useGameStore = create<GameStore>((set, get) => {
       return true;
     }
     const note = describe(result.events);
-    set({ game: result.state, hasSave: true, ...(note ? { message: note } : {}) });
+    // Clear the animation path: only the travel loop sets it, right after a leg. Left set, any later
+    // command (rest, eat) would replay the old leg on the marker.
+    set({ game: result.state, hasSave: true, lastLegPath: null, ...(note ? { message: note } : {}) });
     void autosave(result.state);
     return true;
   };

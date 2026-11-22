@@ -18,7 +18,7 @@
 - Nothing.
 
 ## Pending (unblocked)
-- M4 Scavenging — needs loot tables proposed and approved (plus the torch's search-speed bonus and where Madurai's fallout patches sit).
+- M4 Scavenging — proposed as P-013 (`docs/scavenging.md`); waiting for approval. M2 and M3 are held on `dev` until M4 is done (D-042).
 - M5 Crafting — needs recipes proposed and approved.
 
 ## Blocked

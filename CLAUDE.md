@@ -165,7 +165,8 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ world.md             # confirmed geography, setting decisions and prototype sites
 │  ├─ ui.md                # approved screen layouts
 │  ├─ items.md             # item list (D-026) and numbers (D-036)
-│  └─ vehicles.md          # vehicles (D-024, D-030 to D-034)
+│  ├─ vehicles.md          # vehicles (D-024, D-030 to D-034)
+│  └─ scavenging.md        # scavenging proposal (P-013)
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
@@ -261,6 +262,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-039 (answers Q3) **Injuries are part of Health:** an injury lowers Health, and Health cannot recover until the injury is cured. A **cloth bandage or neem–turmeric paste** cures an injury; painkillers only restore Health. Injuries come from combat and events (M6/M7).
 - D-040 (resolves T5) **Prabu and his mother came to the settlement from the north, and her sickness began there.**
 - D-041 **Inventory and meters layout** approved from the mockup: four meters and a Pack button in the top bar; the Pack in the side panel / bottom sheet. Spec in `docs/ui.md`.
+- D-042 **M2 and M3 stay on `dev` until M4 (scavenging) is ready.** A new run has no food or water and no way to find any before scavenging, so releasing them alone would make every run end in thirst.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -268,6 +270,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
+- P-013 Scavenging (M4): Search (1 h, or 45 min with the torch for 10% battery), Hunt in the forest, Fill bottles and Drink at the dam; per-site loot tables with depletion and regrowth; Madurai searches risk radiation that lowers maximum Health. In `docs/scavenging.md`, with four questions.
 
 ### Open — blocking (do not implement affected areas until answered)
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*
@@ -293,7 +296,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Done — live |
 | M2 | Time & survival: clock, decay, thresholds, death | M1, M3 | Done on `dev` (not yet released) |
 | M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Done on `dev` (not yet released) |
-| M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Not started (needs loot tables proposed and approved) |
+| M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Not started (proposal P-013 awaiting approval) |
 | M5 | Crafting | M3 | Not started |
 | M6 | Event system: data-driven events with choices/consequences | M2, M3 | Blocked |
 | M7 | Combat | M3, M6, Q4, Q5 | Blocked |

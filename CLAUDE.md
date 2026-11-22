@@ -166,7 +166,9 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ ui.md                # approved screen layouts
 │  ├─ items.md             # item list (D-026) and numbers (D-036)
 │  ├─ vehicles.md          # vehicles (D-024, D-030 to D-034)
-│  └─ scavenging.md        # scavenging proposal (P-013)
+│  ├─ scavenging.md        # scavenging (D-047)
+│  ├─ towns.md             # town maps proposal (P-014)
+│  └─ night.md             # night proposal (P-015)
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
@@ -268,6 +270,10 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-045 **Search finds:** the player chooses what to take; what stays behind remains **at that place for 96 hours**.
 - D-046 **Home** gives nothing until trading exists (its stores come with trading). **Hunting** is chance-based until combat (M7).
 - D-047 (approves P-013, with changes) **Scavenging:** Search 1 h, or 45 min with the torch for **5%** battery; **Hunt is a 1-hour roll**; loot tables as proposed, with depletion of 10 points a search (floor 10%) and **a full refresh 7 days after a place is first searched**; boiled water renamed **clean water**; **dropped items also stay on the ground 96 h**; the radiation zone is **drawn on the map in yellow with a radiation icon in the middle**. Spec in `docs/scavenging.md`.
+- D-048 **Night:** moving in the dark at night without a torch **greatly raises the chance of injury or ambush**, except on **full-moon nights**. Designed now (P-015); the injury chance comes with events (M6) and ambushes with combat (M7).
+- D-049 **Town maps:** each town has **its own map** with buildings to scavenge: **temples, garages, supermarkets, medical stores, apartments and independent houses**; **every building type has its own loot table**. Layouts are **hand-made, with real landmarks where they exist** (OpenStreetMap has too few buildings for these towns). Details proposed in P-014.
+- D-050 **Water at places:** ponds, lakes and **wells** are placed at places. **Well water is clean** (adds to D-044, where only flowing rivers were clean).
+- D-051 **M2–M4 wait for town maps** before release (extends D-042).
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -275,12 +281,15 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
+- P-014 Town maps (D-049, D-050): Srivilliputhur 10 buildings, Rajapalayam 12, Madurai 18; enter and leave a town; walk between buildings at road speed; search time, stock and a loot table per building type; wells clean; the 39 OpenStreetMap wells added to the world map; save v5. Spec in `docs/towns.md`.
+- P-015 Night (D-048): night 18:30–06:00; 30-day moon cycle with three full-moon nights; the torch switches on by itself when moving in the dark and uses 10% an hour; risk numbers come with M6/M7. Spec in `docs/night.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*
 - Q5 Enemy mix: animals / human bandits / mutants. Animals are largely mutated (D-029). *(blocks M7)*
 - Q6 Progression model. *(blocks M8)*
 - Q7 Opening narrative: playable prologue with mother alive, text intro after her death, or death mid-play. *(blocks M8)*
+- Q11 Madurai airport (D-015) is not one of the six building types: leave it out of the town map for now, or add an airport type? *(part of P-014)*
 - T1–T4 Timeline/character inconsistencies in §4.
 
 ### Open — non-blocking
@@ -300,9 +309,10 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Done — live |
 | M2 | Time & survival: clock, decay, thresholds, death | M1, M3 | Done on `dev` (not yet released) |
 | M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Done on `dev` (not yet released) |
-| M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Done on `dev` (not yet released; M2–M4 can now go out together, D-042) |
+| M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Done on `dev` (not yet released; M2–M4 go out with town maps, D-051) |
+| M4b | Town maps: buildings, per-type loot, wells (D-049, D-050) | M4 | Waiting for P-014 approval |
 | M5 | Crafting | M3 | Not started |
-| M6 | Event system: data-driven events with choices/consequences | M2, M3 | Blocked |
+| M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Blocked |
 | M7 | Combat | M3, M6, Q4, Q5 | Blocked |
 | M8 | Progression, opening narrative, journal | M7, Q6, Q7 | Blocked |
 | M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Blocked (needs vehicle numbers proposed and approved) |

@@ -26,7 +26,7 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 | R-13 | Prototype area ~25 km around the settlement, plus Madurai city ruins as the one far destination. | ✅ | D-012 |
 | R-14 | Discoverable places cover city ruins, water, hunting grounds, roads/rail/airport. | ✅ | D-013 |
 | R-15 | Specific sites and the exact settlement spot. | ✅ | D-015, `docs/world.md` |
-| R-16 | Madurai not struck directly; scattered low-level fallout patches. | ✅ | D-014 |
+| R-16 | Madurai not struck directly; no radiation there (the patches were dropped by D-043). | ✅ | D-014, D-043 |
 | R-17 | Where the fallout patches are. | ❓ | Q9 |
 | R-18 | Safe zones, hostile territories, other settlements, route system. | ❓ | Owner-only (§3) |
 
@@ -70,7 +70,9 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 | R-54 | Prototype vehicles: bullock cart (rare find), hand cart, cycle with trailer, auto-rickshaw; biodiesel scavenged; drop chances; wear faster off-road. | ✅ (numbers ❓) | D-031 to D-034 |
 | R-56 | Carry 25 kg freely, up to 50 kg with Food, Water and Rest draining up to ×2. | ✅ | D-036 |
 | R-57 | Injuries lower Health and block recovery until cured with a bandage or neem paste. | ✅ | D-039 |
-| R-55 | Radiation: heavy fallout in northern Tamil Nadu (outside the prototype); only Madurai's scattered patches in the prototype; radiation lowers maximum Health. | ✅ | D-025, D-035 |
+| R-55 | Radiation: a zone within 30 km of the Trichy–Villupuram line; none in the prototype area or Madurai; each hour inside has a 1-in-4 chance of +5 radiation, lowering maximum Health. | ✅ | D-025, D-035, D-043 |
+| R-58 | Water at any lake, tank, pond, reservoir or river; clean only from flowing rivers; unsafe water drinkable with risk until boiled or filtered. | ✅ | D-027, D-044 |
+| R-59 | Search finds: take or leave; leftovers stay 96 h. Home stores wait for trading. Hunting is chance-based until combat. | ✅ | D-045, D-046 |
 | R-45 | Content counts: 7 places + home (✅ D-015); ~20–25 items, 6–8 recipes, 3–4 enemies, 8–10 events (🟡). | ✅ / 🟡 | D-015, P-001 |
 
 ## Deferred (do not build)

@@ -44,6 +44,7 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-039 (answers Q3) **Injuries are part of Health:** an injury lowers Health, and Health cannot recover until the injury is cured. A **cloth bandage or neem–turmeric paste** cures an injury; painkillers only restore Health. Injuries come from combat and events (M6/M7).
 - D-040 (resolves T5) **Prabu and his mother came to the settlement from the north, and her sickness began there.**
 - D-041 **Inventory and meters layout** approved from the mockup: four meters and a Pack button in the top bar; the Pack in the side panel / bottom sheet. Spec in `docs/ui.md`.
+- D-042 **M2 and M3 stay on `dev` until M4 (scavenging) is ready.** A new run has no food or water and no way to find any before scavenging, so releasing them alone would make every run end in thirst.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -51,6 +52,7 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
+- P-013 Scavenging (M4): Search (1 h, or 45 min with the torch for 10% battery), Hunt in the forest, Fill bottles and Drink at the dam; per-site loot tables with depletion and regrowth; Madurai searches risk radiation that lowers maximum Health. In `docs/scavenging.md`, with four questions.
 
 ### Open — blocking (do not implement affected areas until answered)
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*

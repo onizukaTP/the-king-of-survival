@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import {
-  buildingTypeSchema, fireSchema, townSchema, type FireConfig, townStreetsSchema, type BuildingType, type Town, type TownStreets,
+  buildingTypeSchema, fireSchema, recipeSchema, townSchema, type FireConfig, type Recipe, townStreetsSchema, type BuildingType, type Town, type TownStreets,
   characterSchema, itemSchema, lootSchema, newGameSchema, outlineSchema, roadsSchema, scavengingSchema, siteSchema, survivalSchema, waterSchema, worldSchema,
   type Character, type Item, type Loot, type NewGameConfig, type Outline, type Roads, type ScavengingConfig, type Site, type SurvivalConfig, type Water, type WorldConfig,
 } from './schemas';
@@ -9,6 +9,7 @@ import items from './data/items.json';
 import loot from './data/loot.json';
 import scavenging from './data/scavenging.json';
 import fire from './data/fire.json';
+import recipes from './data/recipes.json';
 import water from './data/water.json';
 import buildingTypes from './data/building-types.json';
 import towns from './data/towns.json';
@@ -30,6 +31,7 @@ export interface Content {
   loot: Record<string, Loot>;
   scavenging: ScavengingConfig;
   fire: FireConfig;
+  recipes: Record<string, Recipe>;
   water: Water;
   buildingTypes: Record<string, BuildingType>;
   // Keyed by the town's site id.
@@ -49,6 +51,7 @@ export interface RawContent {
   loot: unknown;
   scavenging: unknown;
   fire: unknown;
+  recipes: unknown;
   water: unknown;
   buildingTypes: unknown;
   towns: unknown;
@@ -78,6 +81,7 @@ export function parseContent(raw: RawContent): Content {
     loot: Object.fromEntries(z.array(lootSchema).parse(raw.loot).map((l) => [l.siteId, l])),
     scavenging: scavengingSchema.parse(raw.scavenging),
     fire: fireSchema.parse(raw.fire),
+    recipes: byId(z.array(recipeSchema).parse(raw.recipes), 'recipe'),
     water: waterSchema.parse(raw.water),
     buildingTypes: byId(z.array(buildingTypeSchema).parse(raw.buildingTypes), 'building type'),
     towns: Object.fromEntries(z.array(townSchema).parse(raw.towns).map((t) => [t.siteId, t])),
@@ -114,6 +118,10 @@ export function parseContent(raw: RawContent): Content {
     if (m.itemId) item(m.itemId, `fire.json ${m.id}`);
   }
   for (const r of fire.recipes) for (const id of [r.from, r.to, ...(r.tool ? [r.tool] : [])]) item(id, `fire.json ${r.id}`);
+  for (const r of Object.values(content.recipes)) {
+    for (const id of [...r.inputs.map((i) => i.itemId), r.output.itemId, ...(r.tool ? [r.tool] : [])]) item(id, `recipes.json ${r.id}`);
+    if (fire.recipes.some((f) => f.id === r.id)) throw new Error(`recipes.json: ${r.id} is also a fire recipe`);
+  }
   for (const l of Object.values(content.loot)) {
     if (!content.sites[l.siteId]) throw new Error(`loot.json: unknown site ${l.siteId}`);
     for (const e of [...l.search, ...(l.hunt ?? [])]) {
@@ -150,5 +158,5 @@ export function parseContent(raw: RawContent): Content {
 }
 
 export function loadContent(): Content {
-  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame });
+  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame });
 }

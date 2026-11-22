@@ -52,6 +52,11 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
   - With a fire here, it shows "Burns for …", **Add firewood (+2 h)**, and Cook raw meat, Boil water and Sterilize rags with their batch and time. A recipe he can't do now is disabled with the reason ("Needs a cooking pot", "Add firewood first").
 - **Pack:** tinned food's Eat button is disabled without a can opener, with "Needs a can opener" on hover and in its card.
 
+## Craft panel (M5) — D-058
+
+- **Top bar:** a **Craft** button between Pack and Rest.
+- **Craft panel** (side panel / bottom sheet): one card per recipe with name, time, inputs as have/need ("Cloth rags 1/2"), the tool with ✓ or ✗, the output and a **Craft** button. Recipes he can make now come first; the rest have the button disabled and the reason ("Needs 1 more cloth rags", "Needs a hunting knife"). A line points to the Fire section for cooking.
+
 ## Numbers the map screen shows (D-017 to D-020)
 - Speeds: road 4.5 km/h, cross-country 3 km/h.
 - The game starts on Day 1 at 06:00.

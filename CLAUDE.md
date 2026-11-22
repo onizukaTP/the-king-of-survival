@@ -169,7 +169,8 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ scavenging.md        # scavenging (D-047)
 │  ├─ towns.md             # town maps (D-052)
 │  ├─ night.md             # night proposal (P-015)
-│  └─ fire.md              # fire and cooking (D-056, D-057)
+│  ├─ fire.md              # fire and cooking (D-056, D-057)
+│  └─ crafting.md          # crafting (D-058)
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
@@ -281,6 +282,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-055 **Pack:** sort **by kind, by name or by weight** (by price comes with trading); **double-clicking an item uses it**; every item that can be eaten, drunk or used has its **Eat / Drink / Use button on its row**.
 - D-056 **Fire:** made with a **matchbox, the lighter, flint and steel, or by rubbing two sticks** (slow). Over a fire Prabu can **cook raw meat, boil water, and boil rags into sterilized bandages**. **Tinned food needs a can opener**, a rare item. Firewood (already in the item list) is the fuel. Numbers in D-057.
 - D-057 (approves P-016) **Fire and cooking numbers:** 1 firewood + a way to light it (lighter or matchbox 5 min and one light, flint and steel 15 min, rubbing two sticks 90 min); a fire burns 2 h, +2 h per firewood added, one fire at a time; cook up to 3 raw meat, boil up to 4 bottles (pot), sterilize up to 3 rags with a pot and one bottle of water, 30 min each; new items matchbox (found with 3–10 matches), can opener (rare) and sterilized bandage (treats an injury, Health +20); no separate kindling; save v6. Spec in `docs/fire.md`.
+- D-058 (approves P-017, with changes) **Crafting (M5):** a Craft panel, craft anywhere; inputs used, tool kept (in the pack or the weapon slot), time passes. Recipes: cloth bandage (2 rags, 10 min), neem paste (3 neem leaves, 15 min, Health +15), **neem–turmeric paste** (3 neem leaves + 1 turmeric, 15 min, Health +25), salted dried meat (2 raw meat + 1 salt, knife, 1 h, makes 2); millet porridge at a fire (up to 2 millet, pot, 1 bottle of water, 30 min). **Weapon recipes (spear, bow, arrows) wait for M7.** **Turmeric** joins the item list (0.1 kg, about 8% in houses, provision stores, ration shops, supermarkets, hotels and places of worship). **Animal hide** stays for later. Spec in `docs/crafting.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -316,7 +318,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Done — live (released 2026-11-22) |
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Done — live (released 2026-11-22) |
 | M4b | Town maps: buildings, per-type loot, wells (D-049, D-050, D-052) | M4 | Done — live (released 2026-11-22) |
-| M5 | Crafting | M3 | Fire and cooking done — live (released 2026-11-22, D-057); other recipes need a proposal |
+| M5 | Crafting | M3 | Done on `dev` (not yet released); fire and cooking live (D-057); weapon recipes wait for M7 (D-058) |
 | M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Blocked |
 | M7 | Combat | M3, M6, Q4, Q5 | Blocked |
 | M8 | Progression, opening narrative, journal | M7, Q6, Q7 | Blocked |

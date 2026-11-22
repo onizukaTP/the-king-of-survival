@@ -2,6 +2,7 @@ import type { Content } from '../../content/loader';
 import { dropItem, equipItem, unequipItem, applyItem } from '../systems/inventory/inventory';
 import { drinkHere, fillBottles, hunt, search, takeFromGround, type Find } from '../systems/scavenging/scavenging';
 import { rest } from '../systems/survival/survival';
+import { craft } from '../systems/crafting/crafting';
 import { cook, feedFire, makeFire } from '../systems/fire/fire';
 import { enterTown, leaveTown, walkTo } from '../systems/town/town';
 import { advanceTravel, startTravel, stopTravel, type TravelTarget } from '../systems/travel/travel';
@@ -30,7 +31,9 @@ export type Command =
   // Fire and cooking (D-056): `method` and `recipeId` come from fire.json.
   | { type: 'fire.make'; method: string }
   | { type: 'fire.feed' }
-  | { type: 'fire.cook'; recipeId: string };
+  | { type: 'fire.cook'; recipeId: string }
+  // Crafting anywhere (M5): `recipeId` from recipes.json.
+  | { type: 'craft'; recipeId: string };
 
 export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst' | 'radiation';
 
@@ -60,7 +63,8 @@ export type GameEvent =
   | { type: 'walked'; spotId: string }
   | { type: 'fire_lit'; method: string }
   | { type: 'fire_fed' }
-  | { type: 'cooked'; recipeId: string; count: number };
+  | { type: 'cooked'; recipeId: string; count: number }
+  | { type: 'crafted'; recipeId: string; itemId: string; count: number };
 
 export type CommandError = {
   code:
@@ -148,6 +152,8 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return feedFire(state, content);
     case 'fire.cook':
       return cook(state, command.recipeId, content);
+    case 'craft':
+      return craft(state, command.recipeId, content);
     default:
       return { ok: false, error: { code: 'unknown_command', message: `Unknown command: ${(command as { type: string }).type}` } };
   }

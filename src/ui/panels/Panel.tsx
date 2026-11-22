@@ -5,6 +5,7 @@ import { HerePanel } from './HerePanel';
 import { SpotPanel } from './SpotPanel';
 import { PackPanel } from './PackPanel';
 import { RestPanel } from './RestPanel';
+import { CraftPanel } from './CraftPanel';
 
 /** Right-hand panel (bottom sheet on mobile): the trip under way, Pack, Rest, the selected place, or where Prabu stands. */
 export function Panel() {
@@ -39,6 +40,7 @@ export function Panel() {
 
   if (panel === 'pack') return <PackPanel />;
   if (panel === 'rest') return <RestPanel />;
+  if (panel === 'craft') return <CraftPanel />;
   if (game.town) return townSelection && townSelection !== game.town.at ? <SpotPanel spotId={townSelection} /> : <HerePanel />;
   // Nothing chosen, or the place he's standing at: show what he can do here (P-013).
   const hereSite = siteAt(game.player.position, content);

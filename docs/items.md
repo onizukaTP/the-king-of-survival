@@ -1,9 +1,9 @@
 # Items — approved (D-026, was P-010)
 
-The owner approved this list, with the starting kit, unsafe-water illness and spoilage rules added (D-026 to D-028). Weights, spoilage times and other numbers are still proposed (P-012, at the end).
+The owner approved this list, with the starting kit, unsafe-water illness and spoilage rules added (D-026 to D-028). The numbers at the end are approved (D-036), with the owner's change to the carry limit.
 Effects use the survival meters from D-023 (0–100) and the drain rates proposed in P-011; they are starting values for the balance pass (M9).
 
-**Prototype?** ✓ = in the prototype (32 items: the 29 approved plus the three starting-kit items from D-026). *Later* = good fit, but not needed yet.
+**Prototype?** ✓ = in the prototype (33 items: the 29 approved, the three starting-kit items from D-026, and lighter fuel from D-037). *Later* = good fit, but not needed yet.
 
 ## Food
 
@@ -65,7 +65,8 @@ Effects use the survival meters from D-023 (0–100) and the drain rates propose
 | item.arrow | Arrows | Ammo for the bow | Crafted: bamboo + scrap metal | ✓ |
 | item.flint | Flint and steel | Makes fire; never runs out | Scavenged | ✓ |
 | item.lighter | Lighter | Makes fire; uses fuel | Starting kit, half full (D-026) | ✓ |
-| item.torch | Torch | Light; uses battery | Starting kit, half charged (D-026) | ✓ |
+| item.torch | Torch | Faster searching, day and night (D-037); uses battery | Starting kit, half charged (D-026) | ✓ |
+| item.lighter_fuel | Lighter fuel | Refills the lighter | Scavenged, rare (D-037) | ✓ |
 | item.crank_charger | Charger / hand-crank charger | Recharges the torch | Scavenged | ✓ |
 | item.cooking_pot | Cooking pot | Needed to cook and boil | Home / ruins | ✓ |
 | item.slingshot | Slingshot (kavan) | Quiet ranged; small game | Crafted: wood + rubber tube | Later |
@@ -74,7 +75,7 @@ Effects use the survival meters from D-023 (0–100) and the drain rates propose
 | item.sleeping_mat | Grass sleeping mat (korai paai) | Rest recovers faster | Village ruins | Later |
 | item.jute_sack | Jute sack | Raises carry limit | Ruins | Later |
 
-## Vehicle parts and fuel (D-031 to D-034; proposed for the vehicles milestone, P-012)
+## Vehicle parts and fuel (D-031 to D-034, D-036; built in M10)
 
 | ID | Item | Use | Where it comes from |
 |---|---|---|---|
@@ -86,16 +87,18 @@ Effects use the survival meters from D-023 (0–100) and the drain rates propose
 
 Later: tyre, spark plug, battery, generator (very rare, D-032).
 
-## Proposed numbers — P-012 (awaiting approval)
+## Numbers — D-036 (approved P-012)
 
-**Carry limit on foot:** 25 kg. Picking up more than that is refused; carts and vehicles will add cargo space.
+**Carry limit on foot:** 25 kg without penalty, 50 kg at most; picking up past 50 kg is refused. Above 25 kg, Food, Water and Rest drain faster, gradually: ×1 at 25 kg, ×1.5 at 37.5 kg, ×2 at 50 kg. Carts and vehicles will add cargo space.
 
-**Weights (kg):** raw meat 1 · cooked meat 0.5 · dried meat 0.2 · millet 1 · porridge 0.5 · tender coconut 1.5 · tinned food 0.4 · salt 0.5 · empty bottle 0.1 · water bottle (either) 1.1 · bandage 0.1 · neem leaves 0.1 · neem paste 0.2 · pills 0.05 · firewood 2 · bamboo 1.5 · scrap metal 1 · cloth 0.2 · coir rope 0.5 · animal hide 2 · hunting knife 0.3 · aruval 0.8 · bamboo spear 1.2 · bow 0.8 · arrow 0.05 · flint 0.1 · cooking pot 1 · lighter 0.05 · torch 0.3 · charger 0.4.
+**Weights (kg):** raw meat 1 · cooked meat 0.5 · dried meat 0.2 · millet 1 · porridge 0.5 · tender coconut 1.5 · tinned food 0.4 · salt 0.5 · empty bottle 0.1 · water bottle (either) 1.1 · bandage 0.1 · neem leaves 0.1 · neem paste 0.2 · pills 0.05 · firewood 2 · bamboo 1.5 · scrap metal 1 · cloth 0.2 · coir rope 0.5 · animal hide 2 · hunting knife 0.3 · aruval 0.8 · bamboo spear 1.2 · bow 0.8 · arrow 0.05 · flint 0.1 · cooking pot 1 · lighter 0.05 · torch 0.3 · lighter fuel 0.1 · charger 0.4.
 
 **Spoilage (D-028, merciful):** raw meat 3 days · cooked meat 5 days · millet porridge 2 days · tender coconut 10 days. Everything else keeps. Spoiled food disappears with a message.
 
 **Unsafe water (D-027):** each drink has a 20% chance of a stomach illness that lasts 24 hours. While ill, Water drains twice as fast. Boiled water is always safe.
 
-**Lighter and torch:** the lighter holds 20 lights and starts with 10; each cooking or boiling uses one. The torch battery starts at 50%; cranking the charger for 30 minutes adds 25%.
+**Injuries (D-039):** a cloth bandage or neem–turmeric paste cures an injury; painkillers only restore Health.
+
+**Lighter and torch:** the lighter holds 20 lights and starts with 10; each cooking or boiling uses one. The torch battery starts at 50%; cranking the charger for 30 minutes adds 25%. A can of lighter fuel refills the lighter to 20.
 
 **Equip:** one weapon slot; the hunting knife starts equipped.

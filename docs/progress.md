@@ -13,19 +13,19 @@
 - **Double-click travel (D-022)** — on `dev`: clicking the selected place again or double-clicking a place or open ground starts the trip; e2e test added.
 
 ## Pending (unblocked)
-- M3 Items & inventory — item list approved (D-026); needs the numbers (P-012) and the inventory screen layout approved.
-- M2 Survival — design and numbers approved (D-023, D-035); best built right after M3, since food and water come from items.
+- M3 Items & inventory — items and numbers approved (D-026, D-036); needs the inventory screen layout approved.
+- M2 Survival — design and numbers approved (D-023, D-035, D-038 permadeath/autosave, D-039 injuries); best built right after M3, since food and water come from items.
 - M5 Crafting — needs recipes proposed and approved.
 
 ## Blocked
-- M10 Vehicles (needs vehicle numbers), M2's save-on-death behaviour (Q8), M4, M6, M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
+- M10 Vehicles (needs vehicle numbers), M4, M6, M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
 
 ## Technical choices made in M0 (Claude's authority)
 - `GameState` type is derived from its Zod schema, so save validation and the type can't drift.
 - `applyCommand` hands handlers a `structuredClone` of state and catches throws, so a failed command can never leave state half-changed.
 - No command handlers exist yet; the first real commands arrive with the first approved gameplay system.
 - Starting character comes from `src/content/data/new-game.json` (only Prabu's canon name and age; no stats invented).
-- One manual save slot, placeholder until Q8.
+- One manual save slot, placeholder until Q8 (now answered by D-038: autosave and permadeath, built with M2).
 - Vite `base: './'` so GitHub Pages works under any repo name.
 - JSON save export/import (§7) not built yet.
 

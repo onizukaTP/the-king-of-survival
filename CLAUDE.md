@@ -68,6 +68,8 @@ Inspirations (atmosphere and broad mechanics only — **never copy content, char
 | Recent years | — | Prabu becomes the settlement's hunter. Settlement struggles: too many mouths, failing crops, little clean water, declining cattle, almost no medicine. |
 | Recent | 27 | Mother's health fails (radiation + famine). Prabu stays home to care for her instead of hunting. She dies. |
 
+Prabu and his mother came to the settlement from the north, and her sickness began there (D-040).
+
 **Mother's final revelation:** she has discovered a *trace* of the missing younger brother. This is a major story driver.
 
 **Mother's final wish:** that Prabu (1) finds his younger brother, (2) finds love, (3) lives a good and happy life — not merely power or wealth. This contrasts with Prabu's grief-shaped ambition; the player may interpret or fulfil it in different ways.
@@ -162,7 +164,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ architecture.md      # how the built code works (engine, saves, content, CI)
 │  ├─ world.md             # confirmed geography, setting decisions and prototype sites
 │  ├─ ui.md                # approved screen layouts
-│  ├─ items.md             # item list (D-026) and proposed numbers (P-012)
+│  ├─ items.md             # item list (D-026) and numbers (D-036)
 │  └─ vehicles.md          # vehicles (D-024, D-030 to D-034)
 ├─ public/
 │  ├─ assets/              # placeholder art
@@ -203,7 +205,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 
 - Save = `{ saveVersion, createdAt, gameState }`.
 - Every GameState shape change bumps `saveVersion` and adds a migration. Old saves must keep loading.
-- Save model (manual / autosave / permadeath) is an open decision (Q8).
+- Save model: permadeath with autosave, one run; the save is deleted when Prabu dies (D-038).
 
 ### Code conventions
 
@@ -244,8 +246,8 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-024 **Vehicles** are planned, travelled with and built through crafting: cycle (cart upgrade), scooter (cart upgrade), bike (faster, low storage), moped (slow, more storage), sedan, XUV, tempo, mini van, big van, lorry, military vehicle; more later. When and how is Q10. List and suggestions in `docs/vehicles.md`.
 - D-025 (answers Q9) Heavy fallout lies in **northern Tamil Nadu**, outside the prototype area. In the prototype, radiation exists only as Madurai's scattered low-level patches (D-014); where they sit inside the ruins is proposed with M4.
 - D-026 (approves P-010) **Item list** in `docs/items.md`. **Starting kit:** hunting knife, lighter (half full), torch (half charged; recharged with a charger / hand-crank charger). Flint and steel becomes a scavenged item.
-- D-027 **Unsafe water** can cause diarrhoea, parasites or dysentery, which dehydrate him. Numbers in P-012.
-- D-028 **Food spoils**, mercifully at first ("we can crank it up later"). Numbers in P-012.
+- D-027 **Unsafe water** can cause diarrhoea, parasites or dysentery, which dehydrate him. Numbers in D-036.
+- D-028 **Food spoils**, mercifully at first ("we can crank it up later"). Numbers in D-036.
 - D-029 **Most animals are affected by radiation and many are mutated**, in the spirit of Fallout. Animals can be caught with traps; taming comes later.
 - D-030 Vehicles added from Claude's suggestions: **bullock cart** (costly to buy, a living animal), **hand cart, auto-rickshaw, tractor with trailer, small boat, e-rickshaw**. Details in `docs/vehicles.md`.
 - D-031 (Q10.1) **Prototype vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw.** In the prototype the bullock cart is a very rare find (an abandoned cart with a bull).
@@ -253,6 +255,11 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-033 (Q10.3) Items and vehicles have **drop chances**; some things are found only where they would likely be, and very rarely, because scavengers got there first. A cycle is found whole or built from parts.
 - D-034 (Q10.4) **Vehicle maintenance:** vehicles wear with use, slowly on roads and faster off-road.
 - D-035 (approves P-011; replaces P-009) **Survival numbers:** meters 0–100 starting at 100; Water −3/h, Food −1.5/h, Rest −5/h awake, sleep +12.5/h; Rest at 0 → Food and Water drain ×2; each of Food or Water at 0 → Health −5/h; Health +2/h while sleeping with Food and Water above 25; Rest action (1 h / 4 h / until rested) anywhere; Health 0 → game over; radiation lowers maximum Health. **Legs are at most 30 minutes**, and a trip stops by itself at the end of a leg when a meter falls to 25 or to 0.
+- D-036 (approves P-012, with a change) Item numbers in `docs/items.md`. **Carry limit:** 25 kg on foot without penalty, up to **50 kg** at most. Above 25 kg, Food, Water and Rest drain faster, **gradually**: ×1 at 25 kg, ×1.5 at 37.5 kg, ×2 at 50 kg.
+- D-037 The **torch makes searching faster**, by day and by night (numbers with M4). **Lighter fuel** is a rare scavenged item.
+- D-038 (answers Q8) **Permadeath with autosave:** one run; the game saves itself after every leg and action, and the Save button becomes "Save and quit". When Prabu dies, the run's save is deleted.
+- D-039 (answers Q3) **Injuries are part of Health:** an injury lowers Health, and Health cannot recover until the injury is cured. A **cloth bandage or neem–turmeric paste** cures an injury; painkillers only restore Health. Injuries come from combat and events (M6/M7).
+- D-040 (resolves T5) **Prabu and his mother came to the settlement from the north, and her sickness began there.**
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -260,23 +267,18 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
-- P-012 Numbers for items and vehicles: carry limit 25 kg on foot, item weights, spoilage times, a 20% chance of a 24-hour illness from unsafe water (Water drains ×2), lighter and torch charges, one weapon slot, and the cycle parts and biodiesel items. In `docs/items.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
-- Q3 (mostly answered by D-023 and D-035) Are injuries separate from Health? *(not blocking M2; assumed no until answered)*
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*
 - Q5 Enemy mix: animals / human bandits / mutants. Animals are largely mutated (D-029). *(blocks M7)*
 - Q6 Progression model. *(blocks M8)*
 - Q7 Opening narrative: playable prologue with mother alive, text intro after her death, or death mid-play. *(blocks M8)*
-- Q8 Death and save model: permadeath / manual saves / autosave. *(affects M0 save UX, M2)*
 - T1–T4 Timeline/character inconsistencies in §4.
-- T5 Canon says Prabu's mother fell ill from radiation, but D-025 puts no fallout near home (only far north and Madurai). Where did her exposure come from? Not blocking; affects the opening narrative (Q7).
 
 ### Open — non-blocking
 - Tamil localisation readiness.
 - Names: settlement, mother, father, brother.
 - Currency/bartering before the wealth arc (bullock cart buying and biodiesel selling wait on it).
-- What the torch is used for, and how the lighter is refilled.
 
 When the owner answers, move the item to **Confirmed** with a new D-number and update `docs/decisions.md`.
 
@@ -288,8 +290,8 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 |---|---|---|---|
 | M0 | Skeleton: Vite/React/TS, engine core, GameState, command dispatcher, seeded RNG, content loader + Zod, asset manifest, IndexedDB save/load, CI + deploy | — | Done — live at https://onizukatp.github.io/the-king-of-survival/ |
 | M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Done — live |
-| M2 | Time & survival: clock, decay, thresholds, death | M1, M3 | Ready after M3 (design approved, D-023/D-035; Q8 decides what happens to saves on death) |
-| M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Ready (items approved, D-026; needs P-012 numbers and the inventory screen layout) |
+| M2 | Time & survival: clock, decay, thresholds, death | M1, M3 | Ready after M3 (design approved: D-023, D-035, D-038, D-039) |
+| M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Ready (D-026, D-036; needs the inventory screen layout approved) |
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Blocked |
 | M5 | Crafting | M3 | Not started |
 | M6 | Event system: data-driven events with choices/consequences | M2, M3 | Blocked |

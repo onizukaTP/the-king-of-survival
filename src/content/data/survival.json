@@ -1,0 +1,12 @@
+{
+  "start": { "health": 100, "food": 100, "water": 100, "rest": 100 },
+  "drainPerHour": { "food": 1.5, "water": 3, "rest": 5 },
+  "sleepRestPerHour": 12.5,
+  "exhaustedDrainMultiplier": 2,
+  "emptyMeterHealthPerHour": 5,
+  "sleepHealthPerHour": 2,
+  "sleepHealAbove": 25,
+  "warnAt": 25,
+  "carry": { "freeKg": 25, "maxKg": 50, "multiplierAtMax": 2 },
+  "illness": { "minutes": 1440, "waterDrainMultiplier": 2 }
+}

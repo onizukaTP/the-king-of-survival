@@ -18,6 +18,15 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 - The map fills the screen, with a slim top bar showing time and a menu icon.
 - The place and travel panel is a bottom sheet with the same contents as the desktop side panel.
 
+## Survival meters, Pack and Rest (M2/M3) — D-041, approved from the mockup
+
+- **Top bar** adds four small bars, Health, Food, Water and Rest (amber at 25 or below, red label at 0; the exact value shows on hover), a **Pack** button showing the carried weight, a **Rest** button, and an "Ill" or "Injured" tag when they apply. The Menu now holds **Save and quit** (the game saves itself, D-038).
+- **Pack** opens in the side panel / bottom sheet: weight against 25 kg with marks at 25 and 50 kg and "Heavy: drains ×1.1 on the road" above 25 kg; the weapon slot with Unequip; items grouped as Food, Water, Medical, Weapons, Tools, Materials, with count, time left before spoiling, lighter lights or torch charge, and weight. Selecting an item shows a card with its effect and Eat / Drink / Use, Equip, Drop 1 and Drop all, each shown only when it does something.
+- **Rest** (not in the mockup; added in the same style): the Rest meter, whether Health will recover, and buttons for 1 hour, 4 hours and "Until rested" with the wake-up time.
+- **Game over** (not in the mockup): "Prabu has died", the cause and time, and Back to title.
+- **Title:** with a run in progress, New Game first asks "Your current run will be lost." with Start a new run / Keep my run.
+- **Phones:** the top bar wraps to three rows: clock and buttons, then status, then the four meters.
+
 ## Numbers the map screen shows (D-017 to D-020)
 - Speeds: road 4.5 km/h, cross-country 3 km/h.
 - The game starts on Day 1 at 06:00.

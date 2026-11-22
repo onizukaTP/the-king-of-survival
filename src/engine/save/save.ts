@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import type { Content } from '../../content/loader';
-import { gameStateSchema, startPosition, type GameState } from '../core/state';
+import { gameStateSchema, startingInventory, startingSurvival, startPosition, type GameState } from '../core/state';
 import { initialMap } from '../systems/travel/travel';
 
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 const saveSchema = z.object({
   saveVersion: z.literal(SAVE_VERSION),
@@ -30,6 +30,15 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
         map: initialMap(position, content),
         travel: null,
       },
+    };
+  },
+  // v2 (M1) → v3 (M2 + M3): full meters, the starting kit, alive.
+  2: (save, content) => {
+    const gs = save.gameState as { clockMinutes: number };
+    return {
+      ...save,
+      saveVersion: 3,
+      gameState: { ...gs, survival: startingSurvival(content), inventory: startingInventory(content, gs.clockMinutes), dead: false },
     };
   },
 };
@@ -64,5 +73,7 @@ export function loadSave(raw: unknown, content: Content): LoadResult {
   // The save must point at content this build knows about.
   if (!content.characters[gameState.player.characterId]) return { ok: false, error: 'Save refers to an unknown character.' };
   if (gameState.map.discoveredSiteIds.some((id) => !content.sites[id])) return { ok: false, error: 'Save refers to an unknown place.' };
+  const { stacks, weapon } = gameState.inventory;
+  if (stacks.some((st) => !content.items[st.itemId]) || (weapon && !content.items[weapon])) return { ok: false, error: 'Save refers to an unknown item.' };
   return { ok: true, save: parsed.data };
 }

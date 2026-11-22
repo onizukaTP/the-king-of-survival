@@ -17,6 +17,8 @@ export function formatDuration(minutes: number): string {
   return m ? `${h} h ${m} min` : `${h} h`;
 }
 
+export const formatKg = (kg: number) => `${Math.round(kg * 100) / 100} kg`;
+
 export const formatKm = (km: number) => `${km < 10 ? km.toFixed(1) : Math.round(km)} km`;
 
 export const kindLabel: Record<SiteKind, string> = {

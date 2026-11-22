@@ -41,10 +41,50 @@ export const outlineSchema = z.object({
   polygons: z.array(z.array(z.array(z.tuple([lon, lat])).min(4)).min(1)).min(1),
 });
 
+export const itemCategories = ['food', 'water', 'medical', 'material', 'weapon', 'tool'] as const;
+
+export const itemSchema = z.object({
+  id: slug('item'),
+  name: z.string().min(1),
+  category: z.enum(itemCategories),
+  weightKg: z.number().nonnegative(),
+  // Applied to the survival meters when used (eaten, drunk, applied).
+  effects: z.object({ food: z.number(), water: z.number(), health: z.number() }).partial().optional(),
+  curesInjury: z.boolean().optional(),
+  // Chance (0–1) that using it makes Prabu ill (D-027).
+  illnessChance: z.number().min(0).max(1).optional(),
+  // What is left after use, e.g. the empty bottle.
+  leaves: slug('item').optional(),
+  spoilsAfterMinutes: z.number().int().positive().optional(),
+  weapon: z.boolean().optional(),
+  // Items that run down: lighter lights, torch battery.
+  charge: z.object({ max: z.number().int().positive(), unit: z.enum(['count', 'percent']) }).optional(),
+  // Using this item refills another item's charge.
+  recharges: z.object({ itemId: slug('item'), amount: z.number().int().positive(), minutes: z.number().int().nonnegative(), consumed: z.boolean() }).optional(),
+});
+
+const meters = z.object({ health: z.number(), food: z.number(), water: z.number(), rest: z.number() });
+
+// D-023, D-035, D-036, D-027.
+export const survivalSchema = z.object({
+  start: meters,
+  drainPerHour: z.object({ food: z.number().nonnegative(), water: z.number().nonnegative(), rest: z.number().nonnegative() }),
+  sleepRestPerHour: z.number().positive(),
+  exhaustedDrainMultiplier: z.number().min(1),
+  emptyMeterHealthPerHour: z.number().nonnegative(),
+  sleepHealthPerHour: z.number().nonnegative(),
+  sleepHealAbove: z.number(),
+  warnAt: z.number(),
+  carry: z.object({ freeKg: z.number().positive(), maxKg: z.number().positive(), multiplierAtMax: z.number().min(1) }),
+  illness: z.object({ minutes: z.number().int().positive(), waterDrainMultiplier: z.number().min(1) }),
+});
+
 export const newGameSchema = z.object({
   startingCharacter: slug('character'),
   startSite: slug('loc'),
   startClockMinutes: z.number().int().nonnegative(),
+  startingWeapon: slug('item').nullable(),
+  startingKit: z.array(z.object({ itemId: slug('item'), count: z.number().int().positive(), charge: z.number().int().nonnegative().optional() })),
 });
 
 export type Character = z.infer<typeof characterSchema>;
@@ -53,4 +93,7 @@ export type SiteKind = Site['kind'];
 export type WorldConfig = z.infer<typeof worldSchema>;
 export type Roads = z.infer<typeof roadsSchema>;
 export type Outline = z.infer<typeof outlineSchema>;
+export type Item = z.infer<typeof itemSchema>;
+export type ItemCategory = Item['category'];
+export type SurvivalConfig = z.infer<typeof survivalSchema>;
 export type NewGameConfig = z.infer<typeof newGameSchema>;

@@ -1,18 +1,37 @@
 import type { Content } from '../../content/loader';
+import { dropItem, equipItem, unequipItem, applyItem } from '../systems/inventory/inventory';
+import { rest } from '../systems/survival/survival';
 import { advanceTravel, startTravel, stopTravel, type TravelTarget } from '../systems/travel/travel';
-import type { GameState } from './state';
+import type { GameState, Meter } from './state';
 
 export type Command =
   | { type: 'travel.start'; target: TravelTarget }
   | { type: 'travel.advance' }
-  | { type: 'travel.stop' };
+  | { type: 'travel.stop' }
+  | { type: 'rest'; minutes: number | 'until_rested' }
+  // `index` points into inventory.stacks.
+  | { type: 'item.use'; index: number }
+  | { type: 'item.drop'; index: number; count: number }
+  | { type: 'item.equip'; index: number }
+  | { type: 'item.unequip' };
+
+export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst';
 
 export type GameEvent =
   | { type: 'travel_started'; legs: number }
   | { type: 'leg_completed'; leg: number; of: number }
   | { type: 'site_discovered'; siteId: string }
   | { type: 'arrived'; siteId: string | null }
-  | { type: 'travel_stopped' };
+  // `meter`: the trip stopped by itself because a meter fell to the warning level or to 0 (D-035).
+  | { type: 'travel_stopped'; reason: 'player' | 'meter' }
+  | { type: 'rested'; minutes: number }
+  | { type: 'meter_low'; meter: Meter; empty: boolean }
+  | { type: 'fell_ill' }
+  | { type: 'recovered' }
+  | { type: 'injury_cured' }
+  | { type: 'item_used'; itemId: string }
+  | { type: 'item_spoiled'; itemId: string; count: number }
+  | { type: 'died'; cause: DeathCause };
 
 export type CommandError = {
   code:
@@ -23,7 +42,17 @@ export type CommandError = {
     | 'unknown_site'
     | 'outside_world'
     | 'already_there'
-    | 'no_route';
+    | 'no_route'
+    | 'dead'
+    | 'bad_item'
+    | 'cannot_use'
+    | 'injured'
+    | 'nothing_to_recharge'
+    | 'not_a_weapon'
+    | 'no_weapon'
+    | 'bad_duration'
+    | 'already_rested'
+    | 'too_heavy';
   message: string;
 };
 
@@ -32,6 +61,7 @@ export type CommandResult =
   | { ok: false; error: CommandError };
 
 function run(state: GameState, command: Command, content: Content): CommandResult {
+  if (state.dead) return { ok: false, error: { code: 'dead', message: 'Prabu is dead. This run is over.' } };
   switch (command.type) {
     case 'travel.start':
       return startTravel(state, command.target, content);
@@ -39,6 +69,16 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return advanceTravel(state, content);
     case 'travel.stop':
       return stopTravel(state);
+    case 'rest':
+      return rest(state, command.minutes, content);
+    case 'item.use':
+      return applyItem(state, command.index, content);
+    case 'item.drop':
+      return dropItem(state, command.index, command.count);
+    case 'item.equip':
+      return equipItem(state, command.index, content);
+    case 'item.unequip':
+      return unequipItem(state);
     default:
       return { ok: false, error: { code: 'unknown_command', message: `Unknown command: ${(command as { type: string }).type}` } };
   }

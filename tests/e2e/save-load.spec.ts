@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('travel to a known place, save, reload and continue restores identical state', async ({ page }) => {
+test('travel to a known place, reload and continue restores identical state (autosave, D-038)', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Continue' })).toBeDisabled();
 
@@ -18,17 +18,21 @@ test('travel to a known place, save, reload and continue restores identical stat
   await expect(page.getByTestId('status')).toHaveText('On the road');
   await expect(page.getByTestId('status')).toHaveText('At: Srivilliputhur town ruins', { timeout: 15_000 });
   await expect(page.getByTestId('clock')).not.toHaveText('Day 1 · 06:00');
+  // The walk drained the meters a little (D-035).
+  await expect(page.getByTestId('meter-water')).toHaveAttribute('aria-valuenow', '95');
 
   const state = page.getByTestId('game-state');
   const before = await state.textContent();
 
-  await page.getByRole('button', { name: 'Menu' }).click();
-  await page.getByRole('menuitem', { name: 'Save' }).click();
-  await expect(page.getByRole('status')).toHaveText('Game saved.');
-
+  // No save button: the game saved itself after every leg.
   await page.reload();
   await page.getByRole('button', { name: 'Continue' }).click();
   await expect(page.getByTestId('status')).toHaveText('At: Srivilliputhur town ruins');
+  await expect(state).toHaveText(before ?? '');
+
+  await page.getByRole('button', { name: 'Menu' }).click();
+  await page.getByRole('menuitem', { name: 'Save and quit' }).click();
+  await page.getByRole('button', { name: 'Continue' }).click();
   await expect(state).toHaveText(before ?? '');
 });
 
@@ -46,10 +50,48 @@ test('double-clicking a place or open ground starts the trip', async ({ page }) 
   await page.goto('/');
   await page.getByRole('button', { name: 'New Game' }).click();
   await page.getByRole('button', { name: 'Sanctuary forest' }).dblclick();
-  // A one-leg trip can finish before we look, so check the arrival rather than the road.
+  // A short trip can finish before we look, so check the arrival rather than the road.
   await expect(page.getByTestId('status')).toHaveText('At: Sanctuary forest', { timeout: 15_000 });
   await expect(page.getByTestId('clock')).not.toHaveText('Day 1 · 06:00');
 
   await page.locator('.map').dblclick({ position: { x: 60, y: 60 } });
   await expect(page.getByTestId('status')).toHaveText('On the road');
+});
+
+test('the pack shows the starting kit and equips, and rest passes time', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'New Game' }).click();
+
+  await page.getByRole('button', { name: /^Pack/ }).click();
+  await expect(page.locator('.panel h2')).toHaveText('Pack');
+  await expect(page.locator('.slot')).toContainText('Hunting knife');
+  await expect(page.locator('.panel')).toContainText('Lighter · 10/20');
+  await expect(page.locator('.panel')).toContainText('Torch · 50%');
+
+  await page.getByRole('button', { name: 'Unequip' }).click();
+  await expect(page.locator('.panel')).toContainText('Nothing equipped.');
+  await page.getByRole('button', { name: /Hunting knife/ }).click();
+  await page.getByTestId('item-card').getByRole('button', { name: 'Equip' }).click();
+  await expect(page.locator('.slot')).toContainText('Hunting knife');
+
+  await page.getByRole('button', { name: 'Rest', exact: true }).click();
+  await page.getByRole('button', { name: '4 hours' }).click();
+  await expect(page.getByTestId('clock')).toHaveText('Day 1 · 10:00');
+  await expect(page.getByTestId('meter-water')).toHaveAttribute('aria-valuenow', '88');
+});
+
+test('dying ends the run and deletes its save (D-038)', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'New Game' }).click();
+  await page.getByRole('button', { name: 'Rest', exact: true }).click();
+  // Water runs out after ~33 h, then Health falls 5 an hour: dead within about 53 h of sleep.
+  for (let i = 0; i < 20 && (await page.getByRole('button', { name: '4 hours' }).count()); i++) {
+    await page.getByRole('button', { name: '4 hours' }).click();
+  }
+  await expect(page.getByRole('heading', { name: 'Prabu has died' })).toBeVisible();
+  await expect(page.getByText('He died of thirst.')).toBeVisible();
+  await page.getByRole('button', { name: 'Back to title' }).click();
+  await expect(page.getByRole('button', { name: 'Continue' })).toBeDisabled();
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Continue' })).toBeDisabled();
 });

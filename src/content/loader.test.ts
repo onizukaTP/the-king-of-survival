@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { loadContent, parseContent, type RawContent } from './loader';
 import characters from './data/characters.json';
+import items from './data/items.json';
+import survival from './data/survival.json';
 import newGame from './data/new-game.json';
 import roads from './data/roads.json';
 import sites from './data/sites.json';
 import tamilNadu from './data/tamil-nadu.json';
 import world from './data/world.json';
 
-const raw: RawContent = { characters, sites, world, roads, outline: tamilNadu, newGame };
+const raw: RawContent = { characters, sites, items, world, survival, roads, outline: tamilNadu, newGame };
 const prabu = characters[0]!;
 const home = sites[0]!;
 
@@ -17,6 +19,8 @@ describe('content loader', () => {
     expect(content.characters['character.prabu']?.name).toBe('Prabu');
     expect(Object.keys(content.sites)).toHaveLength(8);
     expect(content.roads.nodes.length).toBeGreaterThan(1000);
+    // D-026 + D-037: the 28 approved items, the three starting-kit additions and lighter fuel.
+    expect(Object.keys(content.items)).toHaveLength(32);
   });
 
   it('rejects bad ids and duplicates', () => {
@@ -30,6 +34,9 @@ describe('content loader', () => {
   it('rejects dangling references', () => {
     expect(() => parseContent({ ...raw, newGame: { ...newGame, startingCharacter: 'character.ghost' } })).toThrow(/unknown character/);
     expect(() => parseContent({ ...raw, newGame: { ...newGame, startSite: 'loc.nowhere' } })).toThrow(/unknown site/);
+    expect(() => parseContent({ ...raw, newGame: { ...newGame, startingWeapon: 'item.salt' } })).toThrow(/not a weapon/);
+    expect(() => parseContent({ ...raw, newGame: { ...newGame, startingKit: [{ itemId: 'item.gold', count: 1 }] } })).toThrow(/unknown item/);
+    expect(() => parseContent({ ...raw, items: [...items, { id: 'item.x', name: 'X', category: 'tool', weightKg: 1, leaves: 'item.nothing' }] })).toThrow(/unknown item/);
     expect(() => parseContent({ ...raw, roads: { nodes: [[9.5, 77.6]], edges: [[0, 5, 1]] } })).toThrow(/points past/);
   });
 });

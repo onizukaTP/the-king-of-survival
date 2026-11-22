@@ -102,7 +102,7 @@ describe('travel commands', () => {
     state = ok(state, { type: 'travel.advance' }).state;
     const where = state.player.position;
     const stopped = ok(state, { type: 'travel.stop' });
-    expect(stopped.events).toEqual([{ type: 'travel_stopped' }]);
+    expect(stopped.events).toEqual([{ type: 'travel_stopped', reason: 'player' }]);
     expect(stopped.state.travel).toBeNull();
     expect(stopped.state.player.position).toEqual(where);
   });

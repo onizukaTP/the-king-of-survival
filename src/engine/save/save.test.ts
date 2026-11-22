@@ -29,6 +29,17 @@ describe('save/load', () => {
     expect(result.save.gameState).toEqual({ ...createNewGame(content, 42) });
   });
 
+  it('migrates an M1 (v2) save: keeps the trip state, adds full meters and the starting kit', () => {
+    const v2State: Record<string, unknown> = { ...state, clockMinutes: 2000 };
+    for (const key of ['survival', 'inventory', 'dead']) delete v2State[key];
+    const result = loadSave({ saveVersion: 2, createdAt: 'x', gameState: v2State }, content);
+    if (!result.ok) throw new Error(result.error);
+    expect(result.save.gameState.clockMinutes).toBe(2000);
+    expect(result.save.gameState.survival).toMatchObject({ health: 100, food: 100, water: 100, rest: 100 });
+    expect(result.save.gameState.inventory.weapon).toBe('item.hunting_knife');
+    expect(result.save.gameState.dead).toBe(false);
+  });
+
   it.each([
     ['null', null],
     ['a string', 'nope'],
@@ -38,6 +49,8 @@ describe('save/load', () => {
     ['a corrupted state', { saveVersion: SAVE_VERSION, createdAt: 'x', gameState: { ...state, clockMinutes: -5 } }],
     ['a broken v1 save', { saveVersion: 1, createdAt: 'x', gameState: null }],
     ['an unknown place', { saveVersion: SAVE_VERSION, createdAt: 'x', gameState: { ...state, map: { ...state.map, discoveredSiteIds: ['loc.atlantis'] } } }],
+    ['an unknown item', { saveVersion: SAVE_VERSION, createdAt: 'x', gameState: { ...state, inventory: { stacks: [{ itemId: 'item.gold', count: 1 }], weapon: null } } }],
+    ['a meter out of range', { saveVersion: SAVE_VERSION, createdAt: 'x', gameState: { ...state, survival: { ...state.survival, food: 140 } } }],
     ['an unknown character', { saveVersion: SAVE_VERSION, createdAt: 'x', gameState: { ...state, player: { ...state.player, characterId: 'character.ghost' } } }],
   ])('rejects %s', (_, raw) => {
     expect(loadSave(raw, content).ok).toBe(false);

@@ -43,6 +43,7 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-038 (answers Q8) **Permadeath with autosave:** one run; the game saves itself after every leg and action, and the Save button becomes "Save and quit". When Prabu dies, the run's save is deleted.
 - D-039 (answers Q3) **Injuries are part of Health:** an injury lowers Health, and Health cannot recover until the injury is cured. A **cloth bandage or neem–turmeric paste** cures an injury; painkillers only restore Health. Injuries come from combat and events (M6/M7).
 - D-040 (resolves T5) **Prabu and his mother came to the settlement from the north, and her sickness began there.**
+- D-041 **Inventory and meters layout** approved from the mockup: four meters and a Pack button in the top bar; the Pack in the side panel / bottom sheet. Spec in `docs/ui.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.

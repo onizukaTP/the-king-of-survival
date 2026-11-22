@@ -23,6 +23,7 @@ export function townSpots(town: Town, content: Content): Spot[] {
     { kind: 'edge', id: TOWN_EDGE, name: 'Edge of town', lat: site.lat, lon: site.lon },
     ...town.buildings.map((b) => ({ kind: 'building' as const, id: b.id, name: b.name, lat: b.lat, lon: b.lon, type: content.buildingTypes[b.typeId]! })),
     ...town.water.map((w) => ({ kind: 'water' as const, id: w.id, name: w.name, lat: w.lat, lon: w.lon, water: w.kind })),
+    ...town.ends.map((e) => ({ kind: 'edge' as const, id: e.id, name: e.name, lat: e.lat, lon: e.lon })),
   ];
 }
 
@@ -49,12 +50,15 @@ export function enterTown(state: GameState, content: Content): CommandResult {
   return { ok: true, state, events: [{ type: 'town_entered', siteId: site.id }] };
 }
 
-/** Back to the world map at the town's point, for no time, from the edge of town only (D-053). */
+/**
+ * Back to the world map for no time, only from the edge of town (D-053) or one of its
+ * north, south, east and west ends, which leave him at that end's spot (D-054).
+ */
 export function leaveTown(state: GameState, content: Content): CommandResult {
   if (!state.town) return fail('not_in_town', 'Prabu isn\'t in a town.');
-  if (state.town.at !== TOWN_EDGE) return fail('not_at_edge', 'Walk to the edge of town to leave.');
-  const site = content.sites[state.town.siteId]!;
-  state.player.position = { lat: site.lat, lon: site.lon };
+  const spot = spotHere(state, content);
+  if (spot?.kind !== 'edge') return fail('not_at_edge', 'Walk to the edge of town or one of its ends to leave.');
+  state.player.position = { lat: spot.lat, lon: spot.lon };
   state.town = null;
   return { ok: true, state, events: [{ type: 'town_left' }] };
 }

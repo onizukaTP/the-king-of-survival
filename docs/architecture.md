@@ -103,7 +103,7 @@ applyCommand(state, command, content) →
 | `ground.take { indexes }` | Takes piles from the ground here into the pack, all or nothing. | `bad_item` (not here), `too_heavy` |
 | `town.enter` | At a town's point: opens its town map at the edge. No time. | `travel_in_progress`, `in_town`, `no_town_here` |
 | `town.walk { spotId }` | Walks straight to a building, water point or the edge at road speed, in legs of up to 30 min; stops part-way after a leg where a meter fell low. | `not_in_town`, `unknown_spot`, `already_there` |
-| `town.leave` | Back to the world map at the town's point, from the edge of town only (D-053). No time. | `not_in_town`, `not_at_edge` |
+| `town.leave` | Back to the world map, from the edge of town (to the town's point, D-053) or a north/south/east/west end (to that end, D-054). No time. | `not_in_town`, `not_at_edge` |
 
 Every command is refused with `dead` once Prabu has died.
 
@@ -153,11 +153,11 @@ Events: `travel_started`, `leg_completed {leg, of}`, `site_discovered {siteId}`,
 - `systems/survival/radiation`: `inRadiationZone` is distance to the Trichy–Villupuram segment ≤ 30 km. `passTime` adds the minutes spent inside (a travel leg passes the share of its path inside) to `zoneMinutes`; each full hour rolls 1 in 4 for +5 radiation. Health is capped at `100 − radiation`; at 100 radiation he dies.
 - `systems/town` (D-049, D-052): `townSpots` (edge, buildings, water points), `spotHere`, `walkMinutes`, and the three town commands. A building's search uses its type from `building-types.json` and keeps its own stock in `state.sites` under the building id. Floor piles use the building's coordinates; spots are at least 100 m apart (checked at load), so piles never mix.
 - `waterHere(state)`: in a town, only the water point he stands at (well clean, tank unsafe); elsewhere `waterAt` on the world data, where mapped wells count as clean (D-050).
-- Content: `loot.json` (per site: `search` and `hunt` tables; towns have none), `scavenging.json` (times, torch, depletion, refresh, ground hours, water range, bottle and torch item ids, radiation zone), `water.json` (generated, with wells), `building-types.json`, `towns.json` (buildings and water points at real coordinates), `town-streets.json` (generated, drawn only).
+- Content: `loot.json` (per site: `search` and `hunt` tables; towns have none), `scavenging.json` (times, torch, depletion, refresh, ground hours, water range, bottle and torch item ids, radiation zone), `water.json` (generated, with wells), `building-types.json`, `towns.json` (buildings, water points and the four ends at real coordinates), `town-streets.json` (generated, drawn only).
 
 ## Map rendering
 
-- **Town map** (`src/map/TownMap.tsx`, D-052): an SVG plan in metres around the town's point, not MapLibre. Streets, buildings (fading as their stock runs low), water points, the edge and Prabu. Wheel or +/− to zoom, drag to pan; the first view frames everything within 3 km of the edge. Labels show once zoomed in past 120 px per km, and always for the selected spot and where he stands. Clicking a spot selects it; clicking it again walks there; clicking where he stands opens the Here panel.
+- **Town map** (`src/map/TownMap.tsx`, D-052): an SVG plan in metres around the town's point, not MapLibre. Streets, buildings (fading as their stock runs low), water points, the edge and Prabu. Wheel or +/− to zoom, drag to pan; zooming out stops at the whole town and panning keeps the view over it (D-054); the first view frames everything within 3 km of the edge. Labels show once zoomed in past 120 px per km, and always for the selected spot and where he stands. Clicking a spot selects it; clicking it again walks there; clicking where he stands opens the Here panel.
 
 - MapLibre GL with no tile server. The style is built in code from content:
   - Tamil Nadu fill and border, from `tamil-nadu.json`.

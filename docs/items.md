@@ -87,6 +87,8 @@ Effects use the survival meters from D-023 (0–100) and the drain rates propose
 
 Later: tyre, spark plug, battery, generator (very rare, D-032).
 
+Fire, cooking, the matchbox, the can opener and the sterilized bandage are proposed in `docs/fire.md` (P-016).
+
 ## Numbers — D-036 (approved P-012)
 
 **Carry limit on foot:** 25 kg without penalty, 50 kg at most; picking up past 50 kg is refused. Above 25 kg, Food, Water and Rest drain faster, gradually: ×1 at 25 kg, ×1.5 at 37.5 kg, ×2 at 50 kg. Carts and vehicles will add cargo space.

@@ -37,7 +37,7 @@ export function HerePanel() {
       </p>
       {game.town && (spot?.kind === 'edge'
         ? <button className="small leave-town" onClick={() => run({ type: 'town.leave' })}>Leave town</button>
-        : <p className="muted">Walk to the edge of town to leave.</p>)}
+        : <p className="muted">Walk to the edge of town or one of its ends to leave.</p>)}
       {canEnterTown && <button onClick={() => run({ type: 'town.enter' })}>Enter town</button>}
       {water && <p>{water === 'river' ? 'A flowing river: clean water.' : water === 'well' ? 'A well: clean water.' : 'Still water: unsafe to drink without boiling or filtering.'}</p>}
       {zone && <p className="warn-text">Radiation zone. Every hour here risks radiation.</p>}

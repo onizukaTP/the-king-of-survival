@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { maxHealth, type Meter } from '../../engine/core/state';
 import { carriedKg } from '../../engine/systems/inventory/inventory';
 import { siteAt } from '../../engine/systems/travel/travel';
-import { spotHere } from '../../engine/systems/town/town';
+import { spotHere, TOWN_EDGE } from '../../engine/systems/town/town';
 import { MapView } from '../../map/MapView';
 import { TownMap } from '../../map/TownMap';
 import { content, useGameStore } from '../../store/gameStore';
@@ -25,7 +25,7 @@ export function MapScreen() {
   const here = siteAt(game.player.position, content);
   const spot = spotHere(game, content);
   const status = game.town
-    ? `In ${content.sites[game.town.siteId]?.name}${spot && spot.kind !== 'edge' ? `: ${spot.name}` : ''}`
+    ? `In ${content.sites[game.town.siteId]?.name}${spot && spot.id !== TOWN_EDGE ? `: ${spot.name}` : ''}`
     : game.travel ? 'On the road' : here ? `At: ${here.name}` : 'In the open';
   const panelOpen = Boolean(selection || (game.town && townSelection) || game.travel || panel);
   const toggle = (p: 'pack' | 'rest') => openPanel(panel === p ? null : p);

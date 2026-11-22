@@ -120,7 +120,7 @@ export function parseContent(raw: RawContent): Content {
     if (!site) throw new Error(`towns.json: unknown site ${t.siteId}`);
     // A town's finds live in its buildings; a town-wide table as well would be a content mistake.
     if (content.loot[t.siteId]) throw new Error(`loot.json: ${t.siteId} has a town map, so it has no town-wide loot`);
-    const spots = [{ id: 'its edge', lat: site.lat, lon: site.lon }, ...t.buildings, ...t.water];
+    const spots = [{ id: 'its edge', lat: site.lat, lon: site.lon }, ...t.buildings, ...t.water, ...t.ends];
     for (const b of t.buildings) if (!content.buildingTypes[b.typeId]) throw new Error(`towns.json ${b.id}: unknown building type ${b.typeId}`);
     for (const [i, a] of spots.entries()) {
       if (i > 0 && spotIds.has(a.id)) throw new Error(`towns.json: duplicate id ${a.id}`);

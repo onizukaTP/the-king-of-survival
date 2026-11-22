@@ -307,10 +307,10 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 |---|---|---|---|
 | M0 | Skeleton: Vite/React/TS, engine core, GameState, command dispatcher, seeded RNG, content loader + Zod, asset manifest, IndexedDB save/load, CI + deploy | — | Done — live at https://onizukatp.github.io/the-king-of-survival/ |
 | M1 | World map: TN render, pan/zoom, locations, discovery/fog, travel with time cost | M0 | Done — live |
-| M2 | Time & survival: clock, decay, thresholds, death | M1, M3 | Done on `dev` (not yet released) |
-| M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Done on `dev` (not yet released) |
-| M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Done on `dev` (not yet released; M2–M4 go out with town maps, D-051) |
-| M4b | Town maps: buildings, per-type loot, wells (D-049, D-050, D-052) | M4 | Done on `dev` (not yet released; M2–M4b go out together, D-051) |
+| M2 | Time & survival: clock, decay, thresholds, death | M1, M3 | Done — live (released 2026-11-22) |
+| M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Done — live (released 2026-11-22) |
+| M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Done — live (released 2026-11-22) |
+| M4b | Town maps: buildings, per-type loot, wells (D-049, D-050, D-052) | M4 | Done — live (released 2026-11-22) |
 | M5 | Crafting | M3 | Not started |
 | M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Blocked |
 | M7 | Combat | M3, M6, Q4, Q5 | Blocked |

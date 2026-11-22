@@ -41,3 +41,15 @@ test('clicking unmarked ground offers a cross-country trip', async ({ page }) =>
   await page.getByRole('button', { name: 'Close' }).click();
   await expect(page.locator('.panel')).toContainText('Select a place');
 });
+
+test('double-clicking a place or open ground starts the trip', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'New Game' }).click();
+  await page.getByRole('button', { name: 'Sanctuary forest' }).dblclick();
+  // A one-leg trip can finish before we look, so check the arrival rather than the road.
+  await expect(page.getByTestId('status')).toHaveText('At: Sanctuary forest', { timeout: 15_000 });
+  await expect(page.getByTestId('clock')).not.toHaveText('Day 1 · 06:00');
+
+  await page.locator('.map').dblclick({ position: { x: 60, y: 60 } });
+  await expect(page.getByTestId('status')).toHaveText('On the road');
+});

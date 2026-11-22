@@ -10,6 +10,7 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 - **Side panel (right):**
   - *Place selected:* name, kind, discovered/known, distance, the road and cross-country split, total time, number of legs, and a **Travel** button.
   - *Empty ground selected:* the same panel, titled "Unmarked ground" (D-009: he can travel anywhere).
+  - *Shortcut (D-022):* clicking the selected place again, or double-clicking a place or open ground, starts the trip without pressing **Travel**.
   - *Travelling:* destination, current leg ("Leg 2 of 3") with a progress bar, arrival time, and a **Stop after this leg** button (D-010).
 - **No bottom navigation in M1.** P-007's Inventory, Crafting, Character and Journal buttons stay hidden until those features exist (no non-functional buttons).
 

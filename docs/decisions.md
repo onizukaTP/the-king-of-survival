@@ -55,6 +55,7 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-050 **Water at places:** ponds, lakes and **wells** are placed at places. **Well water is clean** (adds to D-044, where only flowing rivers were clean).
 - D-051 **M2–M4 wait for town maps** before release (extends D-042).
 - D-052 (approves P-014) **Town maps:** 16 building types; Srivilliputhur 13 buildings, Rajapalayam 16, Madurai 24 (with the airport); enter and leave a town for no time; walk between buildings at road speed; search time, stock loss and a loot table per type; town wells clean, tanks unsafe; the 39 OpenStreetMap wells on the world map; save v5. Spec in `docs/towns.md`.
+- D-053 (refines D-052) **Leave town only from the edge of town**, which returns Prabu to the town's point on the world map. Elsewhere in the town he must walk back to the edge first.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.

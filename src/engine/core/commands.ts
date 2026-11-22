@@ -82,6 +82,7 @@ export type CommandError = {
     | 'no_empty_bottles'
     | 'in_town'
     | 'not_in_town'
+    | 'not_at_edge'
     | 'no_town_here'
     | 'unknown_spot';
   message: string;

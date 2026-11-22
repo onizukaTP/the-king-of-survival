@@ -60,6 +60,7 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-055 **Pack:** sort **by kind, by name or by weight** (by price comes with trading); **double-clicking an item uses it**; every item that can be eaten, drunk or used has its **Eat / Drink / Use button on its row**.
 - D-056 **Fire:** made with a **matchbox, the lighter, flint and steel, or by rubbing two sticks** (slow). Over a fire Prabu can **cook raw meat, boil water, and boil rags into sterilized bandages**. **Tinned food needs a can opener**, a rare item. Firewood (already in the item list) is the fuel. Numbers in D-057.
 - D-057 (approves P-016) **Fire and cooking numbers:** 1 firewood + a way to light it (lighter or matchbox 5 min and one light, flint and steel 15 min, rubbing two sticks 90 min); a fire burns 2 h, +2 h per firewood added, one fire at a time; cook up to 3 raw meat, boil up to 4 bottles (pot), sterilize up to 3 rags with a pot and one bottle of water, 30 min each; new items matchbox (found with 3–10 matches), can opener (rare) and sterilized bandage (treats an injury, Health +20); no separate kindling; save v6. Spec in `docs/fire.md`.
+- D-058 (approves P-017, with changes) **Crafting (M5):** a Craft panel, craft anywhere; inputs used, tool kept (in the pack or the weapon slot), time passes. Recipes: cloth bandage (2 rags, 10 min), neem paste (3 neem leaves, 15 min, Health +15), **neem–turmeric paste** (3 neem leaves + 1 turmeric, 15 min, Health +25), salted dried meat (2 raw meat + 1 salt, knife, 1 h, makes 2); millet porridge at a fire (up to 2 millet, pot, 1 bottle of water, 30 min). **Weapon recipes (spear, bow, arrows) wait for M7.** **Turmeric** joins the item list (0.1 kg, about 8% in houses, provision stores, ration shops, supermarkets, hotels and places of worship). **Animal hide** stays for later. Spec in `docs/crafting.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -68,7 +69,6 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 - P-015 Night (D-048): night 18:30–06:00; 30-day moon cycle with three full-moon nights; the torch switches on by itself when moving in the dark and uses 10% an hour; risk numbers come with M6/M7. Spec in `docs/night.md`.
-- P-017 Crafting (M5): 7 recipes in a Craft panel, craft anywhere: cloth bandage, neem paste, salted dried meat, bamboo spear, bow, arrows, plus millet porridge at a fire; tools kept, inputs used, time passes; no save change. Spec in `docs/crafting.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*

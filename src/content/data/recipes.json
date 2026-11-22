@@ -1,0 +1,6 @@
+[
+  { "id": "recipe.cloth_bandage", "name": "Cloth bandage", "inputs": [{ "itemId": "item.cloth", "count": 2 }], "tool": null, "minutes": 10, "output": { "itemId": "item.cloth_bandage", "count": 1 } },
+  { "id": "recipe.neem_paste", "name": "Neem paste", "inputs": [{ "itemId": "item.neem_leaves", "count": 3 }], "tool": null, "minutes": 15, "output": { "itemId": "item.neem_paste", "count": 1 } },
+  { "id": "recipe.neem_turmeric_paste", "name": "Neem–turmeric paste", "inputs": [{ "itemId": "item.neem_leaves", "count": 3 }, { "itemId": "item.turmeric", "count": 1 }], "tool": null, "minutes": 15, "output": { "itemId": "item.neem_turmeric_paste", "count": 1 } },
+  { "id": "recipe.dried_meat", "name": "Salted dried meat", "inputs": [{ "itemId": "item.raw_meat", "count": 2 }, { "itemId": "item.salt", "count": 1 }], "tool": "item.hunting_knife", "minutes": 60, "output": { "itemId": "item.dried_meat", "count": 2 } }
+]

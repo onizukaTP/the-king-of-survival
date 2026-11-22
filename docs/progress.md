@@ -38,12 +38,15 @@
   - New items: matchbox, can opener, sterilized bandage. Tinned food needs a can opener.
   - Save v6 with a migration from v5. 112 unit tests and 7 e2e tests pass; checked in the browser on desktop and phone width, including loading a v5 save.
 
+- **M5 Crafting (D-058)** — on `dev`, not released.
+  - Craft panel (top-bar button): cloth bandage, neem paste, neem–turmeric paste, salted dried meat; millet porridge at a fire. New item: turmeric. Weapon recipes wait for M7.
+  - Acceptance: recipes use their inputs and make their outputs; missing materials are blocked with the reason. 119 unit tests and 8 e2e tests pass; checked in the browser on desktop and phone width.
+
 ## In progress
 - Nothing.
 
 ## Pending (unblocked)
 - Night and moonlight — proposed in `docs/night.md` (P-015); built with M6.
-- M5 Crafting — proposed in `docs/crafting.md` (P-017), awaiting approval.
 
 ## Blocked
 - M10 Vehicles (needs vehicle numbers), M6, M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.

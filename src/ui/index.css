@@ -114,3 +114,4 @@ label.item-row { cursor: pointer; justify-content: flex-start; align-items: cent
   .meters { order: 5; flex-basis: 100%; justify-content: space-between; }
   .meter-bar { width: 28px; }
 }
+.recipe-card .row { align-items: center; gap: 8px; }

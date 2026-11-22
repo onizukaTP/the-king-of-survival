@@ -43,7 +43,7 @@
 
 ## Pending (unblocked)
 - Night and moonlight — proposed in `docs/night.md` (P-015); built with M6.
-- M5 Crafting — needs recipes proposed and approved.
+- M5 Crafting — proposed in `docs/crafting.md` (P-017), awaiting approval.
 
 ## Blocked
 - M10 Vehicles (needs vehicle numbers), M6, M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.

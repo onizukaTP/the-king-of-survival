@@ -68,6 +68,7 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 - P-015 Night (D-048): night 18:30–06:00; 30-day moon cycle with three full-moon nights; the torch switches on by itself when moving in the dark and uses 10% an hour; risk numbers come with M6/M7. Spec in `docs/night.md`.
+- P-017 Crafting (M5): 7 recipes in a Craft panel, craft anywhere: cloth bandage, neem paste, salted dried meat, bamboo spear, bow, arrows, plus millet porridge at a fire; tools kept, inputs used, time passes; no save change. Spec in `docs/crafting.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*

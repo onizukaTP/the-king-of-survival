@@ -7,21 +7,21 @@
   - Tamil Nadu map (MapLibre, Natural Earth outline, OSM roads and rail), the 8 sites, fog with a 3 km sight radius, discovery, free travel by road and cross-country in legs of up to 60 min, clock, stop after this leg, save/load (save v2 with a migration from v1), desktop side panel and mobile bottom sheet.
   - Acceptance verified: travel between locations; time and discovery persist across save/load (e2e test); every visible control checked in the browser.
 
-- **Double-click travel (D-022)** — on `dev`, not released.
-- **M3 Items & inventory + M2 Survival** — built together on `dev`, not released.
+- **Double-click travel (D-022)** — live (released 2026-11-22).
+- **M3 Items & inventory + M2 Survival** — built together, live (released 2026-11-22).
   - 32 items as data; starting kit (knife equipped, lighter 10/20, torch 50%); stacking; 25 kg free, 50 kg maximum, drain ×1 → ×2 on the road; eat, drink, apply, crank the charger, refill the lighter; one weapon slot; drop.
   - Health, Food, Water, Rest with the approved rates; exhaustion; empty meters hurt; death; unsafe-water illness; spoilage; injuries block healing until treated; Rest action; 30-minute legs that stop on a low meter.
   - Autosave after every action; permadeath deletes the save; Save and quit; save v3 with a migration from v2.
   - Acceptance: M3 (use, equip, drop work; carry limit enforced in the engine; invalid actions rejected with a message) and M2 (meters change predictably; penalties apply; death → game over) are covered by 69 unit tests and 5 e2e tests, and were checked in the browser on desktop and at phone width.
 
-- **M4 Scavenging** — built on `dev`, not released.
+- **M4 Scavenging** — live (released 2026-11-22).
   - Search (1 h, or 45 min with the torch for 5%), Hunt (1 h) in the forest, per-site loot tables, depletion and 7-day refresh, take-or-leave with 96-hour ground piles (drops too).
   - Water from OpenStreetMap: fill bottles and drink at any lake, tank, pond, reservoir or river; clean only from flowing rivers. "Boiled water" is now "clean water".
   - Radiation zone 30 km around the Trichy–Villupuram line, drawn in yellow with an icon; 1-in-4 per hour inside for +5 radiation, lowering maximum Health.
   - Save v4 with a migration from v3. Acceptance: loot varies by place, places deplete, seeded tests reproducible; 86 unit tests and 7 e2e tests pass; checked in the browser on desktop and phone width.
   - Fixed while building: Prabu's marker was hidden under the marker of the place he stood at, so it couldn't be clicked.
 
-- **M4b Town maps** — built on `dev`, not released (D-051: M2–M4b go out together).
+- **M4b Town maps** — live (released 2026-11-22, with M2–M4, D-051).
   - Srivilliputhur (13 buildings), Rajapalayam (16) and Madurai (24, with the airport), 16 building types each with its own search time, stock loss and loot table; real streets from OpenStreetMap; landmarks on their real spots.
   - Enter town, click a building to see it and again to walk there (straight line at road speed, legs of up to 30 min that stop on a low meter), search, floor piles per building, wells (clean) and a tank (unsafe) in each town, Leave town from the edge of town only (D-053).
   - The 39 mapped wells on the world map give clean water (D-050). Towns no longer have a town-wide search.
@@ -31,7 +31,6 @@
 - Nothing.
 
 ## Pending (unblocked)
-- Release M2–M4b together (D-051), on the owner's go-ahead.
 - Night and moonlight — proposed in `docs/night.md` (P-015); built with M6.
 - M5 Crafting — needs recipes proposed and approved.
 

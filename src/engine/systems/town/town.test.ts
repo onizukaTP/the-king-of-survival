@@ -37,11 +37,18 @@ describe('entering and leaving a town (P-014)', () => {
     const s = inTown();
     expect(s.town).toEqual({ siteId: SRI, at: 'edge' });
     expect(s.clockMinutes).toBe(360);
-    const walked = ok(s, { type: 'town.walk', spotId: building('btype.hotel').id }).state;
-    const left = ok(walked, { type: 'town.leave' }).state;
+    const left = ok(s, { type: 'town.leave' }).state;
     expect(left.town).toBeNull();
     expect(left.player.position).toEqual({ lat: content.sites[SRI]!.lat, lon: content.sites[SRI]!.lon });
-    expect(left.clockMinutes).toBe(walked.clockMinutes);
+    expect(left.clockMinutes).toBe(360);
+  });
+
+  it('leaves only from the edge of town (D-053)', () => {
+    const walked = ok(inTown(), { type: 'town.walk', spotId: building('btype.hotel').id }).state;
+    expect(err(walked, { type: 'town.leave' })).toBe('not_at_edge');
+    const back = ok(walked, { type: 'town.walk', spotId: 'edge' }).state;
+    expect(back.clockMinutes).toBeGreaterThan(walked.clockMinutes);
+    expect(ok(back, { type: 'town.leave' }).state.town).toBeNull();
   });
 
   it('refuses away from a town, twice, or while travelling; no world travel from inside', () => {

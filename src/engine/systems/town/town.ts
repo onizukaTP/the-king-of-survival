@@ -49,9 +49,10 @@ export function enterTown(state: GameState, content: Content): CommandResult {
   return { ok: true, state, events: [{ type: 'town_entered', siteId: site.id }] };
 }
 
-/** Back to the world map at the town's point, for no time, from wherever he stands in it (P-014). */
+/** Back to the world map at the town's point, for no time, from the edge of town only (D-053). */
 export function leaveTown(state: GameState, content: Content): CommandResult {
   if (!state.town) return fail('not_in_town', 'Prabu isn\'t in a town.');
+  if (state.town.at !== TOWN_EDGE) return fail('not_at_edge', 'Walk to the edge of town to leave.');
   const site = content.sites[state.town.siteId]!;
   state.player.position = { lat: site.lat, lon: site.lon };
   state.town = null;

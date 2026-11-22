@@ -160,9 +160,15 @@ test('enter the town, walk to a building, search it; drops stay on its floor; le
   await page.getByRole('button', { name: /^Pack/ }).click();
   await expect(page.locator('.panel')).toContainText('Torch · 50%');
 
-  // Leave: back on the world map at the town.
+  // Leave only from the edge of town (D-053): walk back to it, then leave to the world map.
   await page.getByRole('button', { name: /^Pack/ }).click();
   await garage.click();
+  await expect(panel).toContainText('Walk to the edge of town to leave.');
+  await expect(panel.getByRole('button', { name: 'Leave town' })).toHaveCount(0);
+  const edge = page.getByRole('button', { name: 'Edge of town', exact: true });
+  await edge.click();
+  await edge.click();
+  await expect(page.getByTestId('status')).toHaveText('In Srivilliputhur town ruins');
   await panel.getByRole('button', { name: 'Leave town' }).click();
   await expect(page.getByTestId('status')).toHaveText('At: Srivilliputhur town ruins');
 });

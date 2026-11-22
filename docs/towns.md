@@ -25,7 +25,7 @@ Everything below was approved as P-014 (D-052) and is built (M4b), except where 
 3. **Moving:** it works like the world map. Click a building to select it, then click it again to walk there. Walking uses the straight-line distance at road speed (4.5 km/h, D-019), so 400 m takes about 5 minutes. Survival drains as on any trip.
 4. **At a building:** the panel shows **Search** (times below) and how much is left to find. Finds and drops work as in M4: you tick what to take, and the rest stays on that building's floor for 96 hours (D-045).
 5. **At a well or a tank:** **Fill bottles** and **Drink**, as in M4. A well gives clean water; a tank or pond gives unsafe water (D-044, D-050).
-6. **Leaving:** **Leave town** puts Prabu back on the world map at the town's point.
+6. **Leaving:** **Leave town** puts Prabu back on the world map at the town's point. He can leave **only from the edge of town** (D-053); elsewhere the panel says to walk to the edge.
 
 All buildings in a town are visible as soon as Prabu enters. There is no fog inside towns.
 
@@ -132,5 +132,5 @@ Town maps add Prabu's position inside a town, plus stock and floor piles for eac
   - Streets are grey lines. Buildings are blocks with a type icon and a short label.
   - Wells and tanks are blue, and Prabu is a marker.
   - Searched buildings fade as their stock runs low.
-- **Side panel / bottom sheet:** sits where it does on the world map. It shows the selected building (type, walking time, how much is left, Search) or the Here panel. **Leave town** sits at the top of the panel.
+- **Side panel / bottom sheet:** sits where it does on the world map. It shows the selected building (type, walking time, how much is left, Search) or the Here panel. **Leave town** sits at the top of the panel at the edge of town (D-053).
 - **On phones:** the same layout as the world map, with the plan full screen and the panel as a bottom sheet.

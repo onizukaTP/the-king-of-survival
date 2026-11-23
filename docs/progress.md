@@ -52,7 +52,7 @@
 - Nothing.
 
 ## Pending (unblocked)
-- M7 Combat — Q4 and Q5 answered (D-063, D-064); the combat numbers and enemy list need a proposal.
+- M7 Combat — Q4 and Q5 answered (D-063, D-064); your rules recorded as D-065; numbers proposed in `docs/combat.md` (P-019), awaiting approval.
 - Charms (D-062): 1 talisman, 2 rings and 2 bangles that lower risks or raise yields. To be drafted for approval.
 
 ## Later (owner's notes)

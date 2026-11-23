@@ -1,7 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+// Seed 2 meets no random event (D-059) on the trips these tests make, so they run the same every time.
+
 test('travel to a known place, reload and continue restores identical state (autosave, D-038)', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?seed=2');
   await expect(page.getByRole('button', { name: 'Continue' })).toBeDisabled();
 
   await page.getByRole('button', { name: 'New Game' }).click();
@@ -37,7 +39,7 @@ test('travel to a known place, reload and continue restores identical state (aut
 });
 
 test('clicking unmarked ground offers a cross-country trip', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?seed=2');
   await page.getByRole('button', { name: 'New Game' }).click();
   await page.locator('.map').click({ position: { x: 60, y: 60 } });
   await expect(page.locator('.panel h2')).toHaveText('Unmarked ground');
@@ -48,7 +50,7 @@ test('clicking unmarked ground offers a cross-country trip', async ({ page }) =>
 });
 
 test('double-clicking a place or open ground starts the trip', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?seed=2');
   await page.getByRole('button', { name: 'New Game' }).click();
   await page.getByRole('button', { name: 'Sanctuary forest' }).dblclick();
   // A short trip can finish before we look, so check the arrival rather than the road.
@@ -60,7 +62,7 @@ test('double-clicking a place or open ground starts the trip', async ({ page }) 
 });
 
 test('resting after a trip only passes time; Prabu stays put', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?seed=2');
   await page.getByRole('button', { name: 'New Game' }).click();
   await page.getByRole('button', { name: 'Sanctuary forest' }).dblclick();
   await expect(page.getByTestId('status')).toHaveText('At: Sanctuary forest', { timeout: 15_000 });
@@ -79,7 +81,7 @@ test('resting after a trip only passes time; Prabu stays put', async ({ page }) 
 });
 
 test('the pack shows the starting kit and equips, and rest passes time', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?seed=2');
   await page.getByRole('button', { name: 'New Game' }).click();
 
   await page.getByRole('button', { name: /^Pack/ }).click();
@@ -101,7 +103,7 @@ test('the pack shows the starting kit and equips, and rest passes time', async (
 });
 
 test('dying ends the run and deletes its save (D-038)', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?seed=2');
   await page.getByRole('button', { name: 'New Game' }).click();
   await page.getByRole('button', { name: 'Rest', exact: true }).click();
   // Water runs out after ~33 h, then Health falls 5 an hour: dead within about 53 h of sleep.
@@ -117,7 +119,7 @@ test('dying ends the run and deletes its save (D-038)', async ({ page }) => {
 });
 
 test('enter the town, walk to a building, search it; drops stay on its floor; leave (M4, P-014)', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?seed=2');
   await page.getByRole('button', { name: 'New Game' }).click();
   await page.getByRole('button', { name: 'Srivilliputhur town ruins' }).dblclick();
   await expect(page.getByTestId('status')).toHaveText('At: Srivilliputhur town ruins', { timeout: 15_000 });
@@ -174,7 +176,7 @@ test('enter the town, walk to a building, search it; drops stay on its floor; le
 });
 
 test('the Craft panel lists recipes and blocks what is missing (M5)', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?seed=2');
   await page.getByRole('button', { name: 'New Game' }).click();
   await page.getByRole('button', { name: 'Craft' }).click();
   const cards = page.getByTestId('recipe-card');
@@ -183,4 +185,38 @@ test('the Craft panel lists recipes and blocks what is missing (M5)', async ({ p
   await expect(cards.first()).toContainText('Needs 2 more cloth rags');
   await expect(cards.first().getByRole('button', { name: 'Craft' })).toBeDisabled();
   await expect(page.getByTestId('craft-panel')).toContainText('Tool: hunting knife ✓');
+});
+
+test('an event card must be answered, shows what happened, and leaves a condition (M6, D-059, D-061)', async ({ page }) => {
+  await page.goto('/?seed=2');
+  await page.getByRole('button', { name: 'New Game' }).click();
+  // Wait for the autosave, then rewrite the save with wild dogs met at 22:00 on Day 1.
+  await expect(page.getByTestId('clock')).toHaveText('Day 1 · 06:00');
+  const state = JSON.parse((await page.getByTestId('game-state').textContent()) ?? '{}');
+  const gameState = { ...state, clockMinutes: 1320, event: { id: 'event.wild_dogs', result: null } };
+  await page.evaluate((gs) => new Promise<void>((resolve, reject) => {
+    const req = indexedDB.open('king-of-survival', 1);
+    req.onsuccess = () => {
+      const tx = req.result.transaction('saves', 'readwrite');
+      tx.objectStore('saves').put({ saveVersion: 7, createdAt: 'e2e', gameState: gs }, 'manual');
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    };
+    req.onerror = () => reject(req.error);
+  }), gameState);
+  await page.reload();
+  await page.getByRole('button', { name: 'Continue' }).click();
+
+  const card = page.getByRole('dialog', { name: 'Wild dogs' });
+  await expect(card).toBeVisible();
+  await expect(page.getByTestId('moon')).toHaveText('● Dark night');
+  await expect(card.getByRole('button', { name: '[Meat] Throw them the meat' })).toBeDisabled();
+  await expect(card).toContainText('Needs raw meat or cooked meat');
+  // Nothing else works while the card is open.
+  await expect(card.getByRole('button', { name: 'Continue' })).toHaveCount(0);
+  await card.getByRole('button', { name: 'Back away slowly' }).click();
+  await expect(card).toContainText('Shaken');
+  await card.getByRole('button', { name: 'Continue' }).click();
+  await expect(card).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Shaken' })).toBeVisible();
 });

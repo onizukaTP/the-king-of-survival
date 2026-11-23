@@ -3,7 +3,7 @@ import type { Content } from '../../content/loader';
 import { gameStateSchema, startingInventory, startingSurvival, startPosition, type GameState } from '../core/state';
 import { initialMap } from '../systems/travel/travel';
 
-export const SAVE_VERSION = 6;
+export const SAVE_VERSION = 7;
 
 const saveSchema = z.object({
   saveVersion: z.literal(SAVE_VERSION),
@@ -66,6 +66,11 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
   },
   // v5 → v6 (fire, D-056): no fire burning.
   5: (save) => ({ ...save, saveVersion: 6, gameState: { ...(save.gameState as object), fire: null } }),
+  // v6 → v7 (events and conditions, D-059, D-061): no conditions, no event open, none yet.
+  6: (save) => {
+    const gs = save.gameState as { survival: object };
+    return { ...save, saveVersion: 7, gameState: { ...gs, survival: { ...gs.survival, conditions: [] }, event: null, lastEventAt: null } };
+  },
 };
 
 /** `createdAt` is passed in because the engine never reads the wall clock. */
@@ -103,6 +108,8 @@ export function loadSave(raw: unknown, content: Content): LoadResult {
   if (items.some((id) => !content.items[id])) return { ok: false, error: 'Save refers to an unknown item.' };
   const buildingIds = new Set(Object.values(content.towns).flatMap((t) => t.buildings.map((b) => b.id)));
   if (Object.keys(gameState.sites).some((id) => !content.sites[id] && !buildingIds.has(id))) return { ok: false, error: 'Save refers to an unknown place.' };
+  if (gameState.event && !content.events.events.some((e) => e.id === gameState.event!.id)) return { ok: false, error: 'Save refers to an unknown event.' };
+  if (gameState.survival.conditions.some((c) => !content.conditions[c.id])) return { ok: false, error: 'Save refers to an unknown condition.' };
   const { town } = gameState;
   if (town) {
     const map = content.towns[town.siteId];

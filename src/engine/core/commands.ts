@@ -5,6 +5,7 @@ import { rest } from '../systems/survival/survival';
 import { craft } from '../systems/crafting/crafting';
 import { cook, feedFire, makeFire } from '../systems/fire/fire';
 import { enterTown, leaveTown, walkTo } from '../systems/town/town';
+import { chooseEvent, closeEvent } from '../systems/events/events';
 import { advanceTravel, startTravel, stopTravel, type TravelTarget } from '../systems/travel/travel';
 import type { GameState, Meter } from './state';
 
@@ -33,9 +34,12 @@ export type Command =
   | { type: 'fire.feed' }
   | { type: 'fire.cook'; recipeId: string }
   // Crafting anywhere (M5): `recipeId` from recipes.json.
-  | { type: 'craft'; recipeId: string };
+  | { type: 'craft'; recipeId: string }
+  // Events (D-059): pick a choice on the open card, then close it.
+  | { type: 'event.choose'; choiceId: string }
+  | { type: 'event.close' };
 
-export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst' | 'radiation';
+export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst' | 'radiation' | 'injury';
 
 export type GameEvent =
   | { type: 'travel_started'; legs: number }
@@ -43,7 +47,7 @@ export type GameEvent =
   | { type: 'site_discovered'; siteId: string }
   | { type: 'arrived'; siteId: string | null }
   // `meter`: the trip stopped by itself because a meter fell to the warning level or to 0 (D-035).
-  | { type: 'travel_stopped'; reason: 'player' | 'meter' }
+  | { type: 'travel_stopped'; reason: 'player' | 'meter' | 'event' }
   | { type: 'rested'; minutes: number }
   | { type: 'meter_low'; meter: Meter; empty: boolean }
   | { type: 'fell_ill' }
@@ -64,7 +68,14 @@ export type GameEvent =
   | { type: 'fire_lit'; method: string }
   | { type: 'fire_fed' }
   | { type: 'cooked'; recipeId: string; count: number }
-  | { type: 'crafted'; recipeId: string; itemId: string; count: number };
+  | { type: 'crafted'; recipeId: string; itemId: string; count: number }
+  | { type: 'torch_flat' }
+  | { type: 'condition_added'; conditionId: string }
+  | { type: 'condition_ended'; conditionId: string }
+  | { type: 'condition_cured'; conditionId: string }
+  | { type: 'event_started'; eventId: string }
+  | { type: 'event_resolved'; eventId: string; choiceId: string; outcome: number }
+  | { type: 'event_closed' };
 
 export type CommandError = {
   code:
@@ -103,7 +114,10 @@ export type CommandError = {
     | 'fire_burning'
     | 'fire_too_low'
     | 'unknown_recipe'
-    | 'missing_item';
+    | 'missing_item'
+    | 'event_open'
+    | 'no_event'
+    | 'bad_choice';
   message: string;
 };
 
@@ -113,6 +127,10 @@ export type CommandResult =
 
 function run(state: GameState, command: Command, content: Content): CommandResult {
   if (state.dead) return { ok: false, error: { code: 'dead', message: 'Prabu is dead. This run is over.' } };
+  // An open event card must be answered before anything else (D-059).
+  if (state.event && command.type !== 'event.choose' && command.type !== 'event.close') {
+    return { ok: false, error: { code: 'event_open', message: 'Deal with what\'s in front of him first.' } };
+  }
   switch (command.type) {
     case 'travel.start':
       return startTravel(state, command.target, content);
@@ -154,6 +172,10 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return cook(state, command.recipeId, content);
     case 'craft':
       return craft(state, command.recipeId, content);
+    case 'event.choose':
+      return chooseEvent(state, command.choiceId, content);
+    case 'event.close':
+      return closeEvent(state);
     default:
       return { ok: false, error: { code: 'unknown_command', message: `Unknown command: ${(command as { type: string }).type}` } };
   }

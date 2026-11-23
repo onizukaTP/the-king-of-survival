@@ -8,6 +8,8 @@ import { passTime } from '../survival/survival';
 import { distanceKm, distanceToLineKm, insideRing, type LatLon } from '../travel/geo';
 import { spotHere } from '../town/town';
 import { siteAt } from '../travel/travel';
+import { conditionEffects } from '../conditions/conditions';
+import { maybeEvent } from '../events/events';
 
 const fail = (code: CommandError['code'], message: string) => ({ ok: false as const, error: { code, message } });
 // Ground piles within this distance count as "here" (same as being at a place).
@@ -126,7 +128,11 @@ export function search(state: GameState, useTorch: boolean, content: Content): C
   state.sites[target.id] = { richness: after, refreshAt };
 
   const events: GameEvent[] = [{ type: 'searched', finds, torch: useTorch }];
-  finish(state, useTorch ? target.torchMinutes : target.minutes, finds, content, events);
+  // Shaken hands search slower (D-061).
+  const minutes = Math.round((useTorch ? target.torchMinutes : target.minutes) * conditionEffects(state.survival, content).searchTime);
+  finish(state, minutes, finds, content, events);
+  const spot = spotHere(state, content);
+  if (!state.dead) maybeEvent(state, { on: 'search', buildingTypeId: spot?.kind === 'building' ? spot.type.id : null }, content, events);
   return { ok: true, state, events };
 }
 

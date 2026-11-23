@@ -47,6 +47,8 @@ const survivalStateSchema = z.object({
   radiation: z.number().min(0).max(100),
   // Minutes spent in the radiation zone not yet rolled for; every full hour rolls once (D-043).
   zoneMinutes: z.number().nonnegative(),
+  // Lasting modifiers (D-061); `until` is the game minute it ends, or null for "until treated or slept off".
+  conditions: z.array(z.object({ id: z.string(), until: z.number().int().nullable() })),
 });
 
 // Search depletion per site (P-013): missing sites are untouched (100%).
@@ -70,6 +72,24 @@ const townStateSchema = z.object({ siteId: z.string(), at: z.string().nullable()
 // The one fire burning, where it was lit, until the game minute it burns out (D-056, P-016).
 const fireStateSchema = z.object({ lat: z.number(), lon: z.number(), outAt: z.number().int() });
 
+const findSchema = z.object({ itemId: z.string(), count: z.number().int().positive(), charge: z.number().int().nonnegative().optional() });
+
+// The event card on screen (D-059). `result` is set once a choice is made, and kept until the player
+// closes the card, so a reload shows the same outcome rather than rolling again.
+const eventStateSchema = z.object({
+  id: z.string(),
+  result: z.object({
+    choiceId: z.string(),
+    outcome: z.number().int().nonnegative(),
+    // Finds that went into the pack, and those left on the ground because they were too heavy.
+    found: z.array(findSchema),
+    left: z.array(findSchema),
+    lost: z.array(z.string()),
+    conditions: z.array(z.string()),
+    siteId: z.string().nullable(),
+  }).nullable(),
+});
+
 // The schema is the single source of truth for GameState's shape; saves are validated against it.
 // Changing it means bumping SAVE_VERSION and adding a migration (src/engine/save/save.ts).
 export const gameStateSchema = z.object({
@@ -86,6 +106,9 @@ export const gameStateSchema = z.object({
   ground: z.array(groundPileSchema),
   town: townStateSchema.nullable(),
   fire: fireStateSchema.nullable(),
+  event: eventStateSchema.nullable(),
+  // Game minute the last event fired, for the cooldown (D-059).
+  lastEventAt: z.number().int().nullable(),
   // Permadeath (D-038): once true, every command is refused.
   dead: z.boolean(),
 });
@@ -99,11 +122,16 @@ export type Meter = 'health' | 'food' | 'water' | 'rest';
 export type GroundPile = z.infer<typeof groundPileSchema>;
 export type TownState = z.infer<typeof townStateSchema>;
 export type FireState = z.infer<typeof fireStateSchema>;
+export type EventState = z.infer<typeof eventStateSchema>;
 
-export const maxHealth = (s: SurvivalState) => Math.max(0, 100 - s.radiation);
+/** Radiation (D-035, D-043) and conditions such as Weak (D-061) lower maximum Health. */
+export function maxHealth(s: SurvivalState, content: Content): number {
+  const fromConditions = s.conditions.reduce((sum, c) => sum + (content.conditions[c.id]?.maxHealth ?? 0), 0);
+  return Math.max(0, 100 - s.radiation + fromConditions);
+}
 
 export function startingSurvival(content: Content): SurvivalState {
-  return { ...content.survival.start, injured: false, illUntil: null, radiation: 0, zoneMinutes: 0 };
+  return { ...content.survival.start, injured: false, illUntil: null, radiation: 0, zoneMinutes: 0, conditions: [] };
 }
 
 export function startingInventory(content: Content, clockMinutes: number): Inventory {
@@ -131,6 +159,8 @@ export function createNewGame(content: Content, seed: number): GameState {
     ground: [],
     town: null,
     fire: null,
+    event: null,
+    lastEventAt: null,
     dead: false,
   };
 }

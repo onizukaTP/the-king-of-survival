@@ -1,4 +1,5 @@
 import { townSpots, walkMinutes } from '../../engine/systems/town/town';
+import { conditionEffects } from '../../engine/systems/conditions/conditions';
 import { distanceKm } from '../../engine/systems/travel/geo';
 import { content, useGameStore } from '../../store/gameStore';
 import { formatDuration, formatKm } from '../format';
@@ -23,7 +24,7 @@ export function SpotPanel({ spotId }: { spotId: string }) {
       <p className="muted">{kind}</p>
       <hr />
       <div className="row"><span className="muted">Distance</span><span>{formatKm(distanceKm(game.player.position, spot))}</span></div>
-      <div className="row"><span className="muted">Walk</span><span>{formatDuration(walkMinutes(game.player.position, spot, content))}</span></div>
+      <div className="row"><span className="muted">Walk</span><span>{formatDuration(Math.max(1, Math.round(walkMinutes(game.player.position, spot, content) / conditionEffects(game.survival, content).speed)))}</span></div>
       {spot.kind === 'building' && (
         <>
           <div className="row"><span className="muted">Search</span><span>{formatDuration(spot.type.searchMinutes)}</span></div>

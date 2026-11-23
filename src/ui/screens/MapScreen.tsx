@@ -8,6 +8,9 @@ import { TownMap } from '../../map/TownMap';
 import { content, useGameStore } from '../../store/gameStore';
 import { formatClock, formatKg } from '../format';
 import { Panel } from '../panels/Panel';
+import { EventCard } from '../components/EventCard';
+import { isFullMoonNight, isNight } from '../../engine/systems/night/night';
+import { formatDuration } from '../format';
 
 const METERS: [Meter, string][] = [['health', 'Health'], ['food', 'Food'], ['water', 'Water'], ['rest', 'Rest']];
 
@@ -19,6 +22,7 @@ export function MapScreen() {
   const panel = useGameStore((s) => s.panel);
   const openPanel = useGameStore((s) => s.openPanel);
   const saveAndQuit = useGameStore((s) => s.saveAndQuit);
+  const note = useGameStore((s) => s.note);
   const [menuOpen, setMenuOpen] = useState(false);
   if (!game) return null;
 
@@ -30,22 +34,41 @@ export function MapScreen() {
   const panelOpen = Boolean(selection || (game.town && townSelection) || game.travel || panel);
   const toggle = (p: 'pack' | 'rest' | 'craft') => openPanel(panel === p ? null : p);
   const warnAt = content.survival.warnAt;
+  const nightCfg = content.world.night;
+  const night = isNight(game.clockMinutes, nightCfg);
+  const fullMoon = isFullMoonNight(game.clockMinutes, nightCfg);
 
   return (
     <div className="game">
       <header className="topbar">
         <span className="clock" data-testid="clock">{formatClock(game.clockMinutes)}</span>
         <span className="pill" data-testid="status">{status}</span>
+        {night && (
+          <span className="pill" data-testid="moon" title={fullMoon ? 'Full moon: light enough to travel.' : 'Dark: moving without a torch risks injury.'}>
+            {fullMoon ? '○ Full moon' : '● Dark night'}
+          </span>
+        )}
         {game.survival.illUntil !== null && <span className="pill warn">Ill</span>}
         {game.survival.injured && <span className="pill warn">Injured</span>}
         {game.survival.radiation > 0 && <span className="pill warn">Irradiated</span>}
+        {game.survival.conditions.map((c) => {
+          const def = content.conditions[c.id];
+          if (!def) return null;
+          const left = c.until !== null ? ` (${formatDuration(c.until - game.clockMinutes)} left)` : '';
+          const text = `${def.name}: ${def.description}${left}`;
+          return (
+            <button key={c.id} className={`pill condition ${def.good ? 'good' : 'warn'}`} title={text} onClick={() => note(text)}>
+              {def.name}
+            </button>
+          );
+        })}
         <span className="topbar-message" role="status">{message}</span>
         <div className="meters">
           {METERS.map(([meter, label]) => {
             const value = Math.round(game.survival[meter]);
             const level = value <= 0 ? 'empty' : value <= warnAt ? 'low' : '';
             // D-043: the part of Health lost to radiation shows as a dark end segment.
-            const lost = meter === 'health' ? 100 - maxHealth(game.survival) : 0;
+            const lost = meter === 'health' ? 100 - maxHealth(game.survival, content) : 0;
             return (
               <span key={meter} className={`meter ${level}`} title={`${label} ${value}${lost ? ` (max ${100 - lost})` : ''}`} role="meter" aria-label={label}
                 aria-valuenow={value} aria-valuemin={0} aria-valuemax={100} data-testid={`meter-${meter}`}>
@@ -75,6 +98,7 @@ export function MapScreen() {
           <Panel />
         </aside>
       </div>
+      <EventCard />
       {/* Read by the e2e test to compare state across save/load; not shown. */}
       <pre hidden data-testid="game-state">{JSON.stringify(game)}</pre>
     </div>

@@ -1,6 +1,6 @@
 # Combat (M7) — approved (D-066, was P-019) and built
 
-Approved on 2026-11-23 with these changes, and built on `dev`:
+Approved on 2026-11-23 with these changes, built and live (released 2026-11-23):
 
 - **ACC, Dodge, Hunting and Luck** are stats. The bow gives Hunting +15%.
 - **Luck** (base 0; items will raise it later) applies everywhere. Each point adds:

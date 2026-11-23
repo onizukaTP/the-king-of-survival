@@ -48,7 +48,7 @@
   - Night 18:30–06:00, full-moon nights, the torch switching on by itself on dark legs (10% an hour), a moon tag, and a warning when a trip runs into the dark without enough charge.
   - Save v7 with a migration from v6. 147 unit tests and 9 e2e tests pass; checked in the browser on desktop and phone width, including a reload with a card open.
 
-- **M7 Combat (D-063 to D-066)** — on `dev`, not released.
+- **M7 Combat (D-063 to D-066)** — live (released 2026-11-23).
   - Stats: ATK, DEF, SPD, crit rate, crit damage, ACC, Dodge, Hunting and Luck, from Prabu's base plus the weapon.
   - Fights:
     - The four weapons with damage and reach.

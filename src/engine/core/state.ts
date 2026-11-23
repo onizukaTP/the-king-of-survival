@@ -90,6 +90,35 @@ const eventStateSchema = z.object({
   }).nullable(),
 });
 
+const band = z.enum(['close', 'mid', 'far']);
+
+// What happened in a fight since Prabu last acted, for the combat screen. `actor`/`target`: -1 is Prabu, n is enemy n.
+const combatLogSchema = z.object({
+  actor: z.number().int(),
+  kind: z.enum(['hit', 'miss', 'move', 'aim', 'step_back', 'item', 'flee_failed', 'killed']),
+  target: z.number().int().optional(),
+  damage: z.number().int().optional(),
+  crit: z.boolean().optional(),
+  band: band.optional(),
+  itemId: z.string().optional(),
+});
+
+// A fight under way (M7, D-063). Saved between turns, so a reload goes back into it.
+const combatStateSchema = z.object({
+  enemies: z.array(z.object({ id: z.string(), hp: z.number().int(), band })),
+  round: z.number().int().positive(),
+  // Who still acts this round, in order; the first is acting now. -1 is Prabu.
+  order: z.array(z.number().int()),
+  aimed: z.boolean(),
+  arrowsShot: z.number().int().nonnegative(),
+  log: z.array(combatLogSchema),
+  result: z.object({
+    outcome: z.enum(['won', 'fled']),
+    found: z.array(findSchema),
+    left: z.array(findSchema),
+  }).nullable(),
+});
+
 // The schema is the single source of truth for GameState's shape; saves are validated against it.
 // Changing it means bumping SAVE_VERSION and adding a migration (src/engine/save/save.ts).
 export const gameStateSchema = z.object({
@@ -109,6 +138,7 @@ export const gameStateSchema = z.object({
   event: eventStateSchema.nullable(),
   // Game minute the last event fired, for the cooldown (D-059).
   lastEventAt: z.number().int().nullable(),
+  combat: combatStateSchema.nullable(),
   // Permadeath (D-038): once true, every command is refused.
   dead: z.boolean(),
 });
@@ -123,6 +153,8 @@ export type GroundPile = z.infer<typeof groundPileSchema>;
 export type TownState = z.infer<typeof townStateSchema>;
 export type FireState = z.infer<typeof fireStateSchema>;
 export type EventState = z.infer<typeof eventStateSchema>;
+export type CombatState = z.infer<typeof combatStateSchema>;
+export type CombatLog = z.infer<typeof combatLogSchema>;
 
 /** Radiation (D-035, D-043) and conditions such as Weak (D-061) lower maximum Health. */
 export function maxHealth(s: SurvivalState, content: Content): number {
@@ -161,6 +193,7 @@ export function createNewGame(content: Content, seed: number): GameState {
     fire: null,
     event: null,
     lastEventAt: null,
+    combat: null,
     dead: false,
   };
 }

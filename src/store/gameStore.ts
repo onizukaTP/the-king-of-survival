@@ -49,6 +49,8 @@ interface GameStore {
   act: (command: Command) => boolean;
   /** Closes the event card; a trip it paused carries on (D-059). */
   closeEvent: () => void;
+  /** Closes a finished fight; a trip it interrupted carries on (M7). */
+  closeCombat: () => void;
   /** Shows a line in the message area, e.g. what a condition does when its tag is tapped. */
   note: (message: string) => void;
 }
@@ -76,6 +78,7 @@ function describe(events: GameEvent[]): string | null {
     if (e.type === 'meter_low') notes.push(`${METER_NAMES[e.meter]} is ${e.empty ? 'empty' : 'low'}.`);
     if (e.type === 'travel_stopped' && e.reason !== 'player') notes.push('Trip stopped.');
     if (e.type === 'torch_flat') notes.push('The torch is flat.');
+    if (e.type === 'combat_ended') notes.push(e.outcome === 'won' ? 'He won the fight.' : 'He got away.');
     if (e.type === 'condition_added') notes.push(`${conditionName(e.conditionId)}.`);
     if (e.type === 'condition_ended') notes.push(`${conditionName(e.conditionId)} has passed.`);
     if (e.type === 'condition_cured') notes.push(`${conditionName(e.conditionId)} treated.`);
@@ -148,7 +151,7 @@ export const useGameStore = create<GameStore>((set, get) => {
   const runLegs = async () => {
     const run = ++currentRun;
     // An event card pauses the trip; closing it starts this loop again (D-059).
-    while (run === currentRun && get().game?.travel && !get().game?.event) {
+    while (run === currentRun && get().game?.travel && !get().game?.event && !get().game?.combat) {
       if (get().stopRequested) {
         dispatch({ type: 'travel.stop' });
         break;
@@ -201,7 +204,8 @@ export const useGameStore = create<GameStore>((set, get) => {
         if (!result.ok) return set({ message: `Could not load: ${result.error}` });
         set({ screen: 'game', game: result.save.gameState, ...reset });
         // A save made between legs resumes the trip.
-        if (result.save.gameState.travel && !result.save.gameState.event) void runLegs();
+        const g = result.save.gameState;
+        if (g.travel && !g.event && !g.combat) void runLegs();
       } catch (err) {
         set({ message: `Could not load: ${errorText(err)}` });
       }
@@ -231,6 +235,9 @@ export const useGameStore = create<GameStore>((set, get) => {
     act: dispatch,
     closeEvent: () => {
       if (dispatch({ type: 'event.close' }) && get().game?.travel) void runLegs();
+    },
+    closeCombat: () => {
+      if (dispatch({ type: 'combat.close' }) && get().game?.travel) void runLegs();
     },
     note: (message) => set({ message }),
   };

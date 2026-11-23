@@ -3,7 +3,7 @@ import type { SurvivalConfig } from '../../../content/schemas';
 import type { CommandError, CommandResult, GameEvent } from '../../core/commands';
 import { nextRandom } from '../../core/rng';
 import type { GameState, Inventory, Stack } from '../../core/state';
-import { leaveOnGround } from '../scavenging/scavenging';
+import { leaveOnGround, type Find } from '../scavenging/scavenging';
 import { passTime } from '../survival/survival';
 import { healingBlocked } from '../conditions/conditions';
 import { maxHealth } from '../../core/state';
@@ -50,6 +50,23 @@ export function addItems(state: GameState, itemId: string, count: number, conten
   }
   addStack(state.inventory, makeStack(itemId, count, state.clockMinutes, content));
   return { ok: true, state, events: [] };
+}
+
+/** Puts finds from an event or a fight into the pack; what would take him past 50 kg stays on the ground here. */
+export function stowFinds(state: GameState, finds: Find[], content: Content): { found: Find[]; left: Find[] } {
+  const found: Find[] = [];
+  const left: Find[] = [];
+  for (const f of finds) {
+    const stack = makeStack(f.itemId, f.count, state.clockMinutes, content, f.charge);
+    if (carriedKg(state.inventory, content) + content.items[f.itemId]!.weightKg * f.count <= content.survival.carry.maxKg + 1e-9) {
+      addStack(state.inventory, stack);
+      found.push(f);
+    } else {
+      leaveOnGround(state, stack, content);
+      left.push(f);
+    }
+  }
+  return { found, left };
 }
 
 /** Takes one item out of a stack, removing the stack when it empties. Returns the single item. */

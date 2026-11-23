@@ -4,6 +4,7 @@ import type { Stack } from '../../engine/core/state';
 import { carriedKg, loadMultiplier } from '../../engine/systems/inventory/inventory';
 import { content, useGameStore, type PackSort } from '../../store/gameStore';
 import { formatDuration, formatKg } from '../format';
+import { StatsBlock } from '../components/StatsBlock';
 
 const GROUPS: [ItemCategory, string][] = [
   ['food', 'Food'], ['water', 'Water'], ['medical', 'Medical'], ['weapon', 'Weapons'], ['tool', 'Tools'], ['material', 'Materials'],
@@ -129,6 +130,8 @@ export function PackPanel() {
           <button className="small" onClick={() => run({ type: 'item.unequip' })}>Unequip</button>
         </div>
       ) : <p className="muted">Nothing equipped.</p>}
+      <h3>Stats</h3>
+      <StatsBlock game={game} />
 
       {stacks.length > 0 && (
         <label className="pack-sort">

@@ -9,6 +9,7 @@ import { content, useGameStore } from '../../store/gameStore';
 import { formatClock, formatKg } from '../format';
 import { Panel } from '../panels/Panel';
 import { EventCard } from '../components/EventCard';
+import { CombatScreen } from './CombatScreen';
 import { isFullMoonNight, isNight } from '../../engine/systems/night/night';
 import { formatDuration } from '../format';
 
@@ -92,11 +93,15 @@ export function MapScreen() {
           )}
         </div>
       </header>
-      <div className={`main ${panelOpen ? 'panel-open' : ''}`}>
-        {game.town ? <TownMap key={game.town.siteId} /> : <MapView />}
-        <aside className="panel">
-          <Panel />
-        </aside>
+      <div className={`main ${panelOpen && !game.combat ? 'panel-open' : ''} ${game.combat ? 'in-combat' : ''}`}>
+        {game.combat ? <CombatScreen /> : (
+          <>
+            {game.town ? <TownMap key={game.town.siteId} /> : <MapView />}
+            <aside className="panel">
+              <Panel />
+            </aside>
+          </>
+        )}
       </div>
       <EventCard />
       {/* Read by the e2e test to compare state across save/load; not shown. */}

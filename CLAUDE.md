@@ -325,9 +325,9 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M3 | Items & inventory: definitions, stacking, weight, use, equip | M0 | Done — live (released 2026-11-22) |
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Done — live (released 2026-11-22) |
 | M4b | Town maps: buildings, per-type loot, wells (D-049, D-050, D-052) | M4 | Done — live (released 2026-11-22) |
-| M5 | Crafting | M3 | Done — live (released 2026-11-22); weapon recipes wait for M7 (D-058) |
+| M5 | Crafting | M3 | Done — live (released 2026-11-22); weapon recipes built with M7 (D-066) |
 | M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Done — live (released 2026-11-23); Fight choices wait for M7 (D-059) |
-| M7 | Combat | M3, M6 | Approved (D-065, D-066); in progress |
+| M7 | Combat | M3, M6 | Done on `dev` (not yet released) |
 | M8 | Progression, opening narrative, journal | M7, Q6, Q7 | Blocked |
 | M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Blocked (needs vehicle numbers proposed and approved) |
 | M9 | Integration, balance pass, playtest | All | Blocked |

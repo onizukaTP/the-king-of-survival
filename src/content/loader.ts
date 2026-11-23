@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import {
-  buildingTypeSchema, conditionSchema, eventsSchema, fireSchema, type Condition, type EventsConfig, recipeSchema, townSchema, type FireConfig, type Recipe, townStreetsSchema, type BuildingType, type Town, type TownStreets,
+  buildingTypeSchema, combatSchema, conditionSchema, enemySchema, eventsSchema, type CombatConfig, type Enemy, fireSchema, type Condition, type EventsConfig, recipeSchema, townSchema, type FireConfig, type Recipe, townStreetsSchema, type BuildingType, type Town, type TownStreets,
   characterSchema, itemSchema, lootSchema, newGameSchema, outlineSchema, roadsSchema, scavengingSchema, siteSchema, survivalSchema, waterSchema, worldSchema,
   type Character, type Item, type Loot, type NewGameConfig, type Outline, type Roads, type ScavengingConfig, type Site, type SurvivalConfig, type Water, type WorldConfig,
 } from './schemas';
@@ -12,6 +12,8 @@ import fire from './data/fire.json';
 import recipes from './data/recipes.json';
 import conditions from './data/conditions.json';
 import events from './data/events.json';
+import enemies from './data/enemies.json';
+import combat from './data/combat.json';
 import water from './data/water.json';
 import buildingTypes from './data/building-types.json';
 import towns from './data/towns.json';
@@ -36,6 +38,8 @@ export interface Content {
   recipes: Record<string, Recipe>;
   conditions: Record<string, Condition>;
   events: EventsConfig;
+  enemies: Record<string, Enemy>;
+  combat: CombatConfig;
   water: Water;
   buildingTypes: Record<string, BuildingType>;
   // Keyed by the town's site id.
@@ -58,6 +62,8 @@ export interface RawContent {
   recipes: unknown;
   conditions: unknown;
   events: unknown;
+  enemies: unknown;
+  combat: unknown;
   water: unknown;
   buildingTypes: unknown;
   towns: unknown;
@@ -90,6 +96,8 @@ export function parseContent(raw: RawContent): Content {
     recipes: byId(z.array(recipeSchema).parse(raw.recipes), 'recipe'),
     conditions: byId(z.array(conditionSchema).parse(raw.conditions), 'condition'),
     events: eventsSchema.parse(raw.events),
+    enemies: byId(z.array(enemySchema).parse(raw.enemies), 'enemy'),
+    combat: combatSchema.parse(raw.combat),
     water: waterSchema.parse(raw.water),
     buildingTypes: byId(z.array(buildingTypeSchema).parse(raw.buildingTypes), 'building type'),
     towns: Object.fromEntries(z.array(townSchema).parse(raw.towns).map((t) => [t.siteId, t])),
@@ -149,10 +157,20 @@ export function parseContent(raw: RawContent): Content {
       if (Math.abs(total - 1) > 1e-9) throw new Error(`${where} ${c.id}: outcome chances add up to ${total}, not 1`);
       for (const o of c.outcomes) {
         for (const id of o.conditions ?? []) condition(id, where);
+        for (const f of o.fight?.enemies ?? []) {
+          if (!content.enemies[f.enemyId]) throw new Error(`${where}: unknown enemy ${f.enemyId}`);
+          if (f.min > f.max) throw new Error(`${where}: ${f.enemyId} min is above max`);
+        }
         for (const id of o.lose?.items ?? []) item(id, where);
         for (const entry of o.loot?.entries ?? []) item(entry.itemId, where);
       }
     }
+  }
+  for (const it of Object.values(content.items)) if (it.combat?.ammo) item(it.combat.ammo, `items.json ${it.id} ammo`);
+  for (const e of Object.values(content.enemies)) {
+    for (const entry of e.loot) item(entry.itemId, `enemies.json ${e.id}`);
+    if (e.critCondition) condition(e.critCondition.conditionId, `enemies.json ${e.id}`);
+    if (e.damage[0] > e.damage[1]) throw new Error(`enemies.json ${e.id}: damage min is above max`);
   }
   for (const l of Object.values(content.loot)) {
     if (!content.sites[l.siteId]) throw new Error(`loot.json: unknown site ${l.siteId}`);
@@ -190,5 +208,5 @@ export function parseContent(raw: RawContent): Content {
 }
 
 export function loadContent(): Content {
-  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame });
+  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame });
 }

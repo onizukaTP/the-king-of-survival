@@ -25,8 +25,11 @@ function err(state: GameState, command: Command) {
 const craft = (recipeId: string): Command => ({ type: 'craft', recipeId });
 
 describe('crafting (M5, P-017)', () => {
-  it('ships the four recipes; weapons wait for M7', () => {
-    expect(Object.keys(content.recipes)).toEqual(['recipe.cloth_bandage', 'recipe.neem_paste', 'recipe.neem_turmeric_paste', 'recipe.dried_meat']);
+  it('ships the four recipes and the three primitive weapon recipes (D-058, D-066)', () => {
+    expect(Object.keys(content.recipes)).toEqual([
+      'recipe.cloth_bandage', 'recipe.neem_paste', 'recipe.neem_turmeric_paste', 'recipe.dried_meat',
+      'recipe.bamboo_spear', 'recipe.bamboo_bow', 'recipe.arrows',
+    ]);
   });
 
   it('uses the inputs, makes the output and passes the time', () => {

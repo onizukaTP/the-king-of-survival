@@ -6,6 +6,7 @@ import { craft } from '../systems/crafting/crafting';
 import { cook, feedFire, makeFire } from '../systems/fire/fire';
 import { enterTown, leaveTown, walkTo } from '../systems/town/town';
 import { chooseEvent, closeEvent } from '../systems/events/events';
+import { closeCombat, combatAct, type CombatAction } from '../systems/combat/combat';
 import { advanceTravel, startTravel, stopTravel, type TravelTarget } from '../systems/travel/travel';
 import type { GameState, Meter } from './state';
 
@@ -37,9 +38,12 @@ export type Command =
   | { type: 'craft'; recipeId: string }
   // Events (D-059): pick a choice on the open card, then close it.
   | { type: 'event.choose'; choiceId: string }
-  | { type: 'event.close' };
+  | { type: 'event.close' }
+  // Combat (M7): Prabu's action on his turn, then closing the result.
+  | { type: 'combat.act'; action: CombatAction; target?: number; index?: number }
+  | { type: 'combat.close' };
 
-export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst' | 'radiation' | 'injury';
+export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst' | 'radiation' | 'injury' | 'killed';
 
 export type GameEvent =
   | { type: 'travel_started'; legs: number }
@@ -75,7 +79,10 @@ export type GameEvent =
   | { type: 'condition_cured'; conditionId: string }
   | { type: 'event_started'; eventId: string }
   | { type: 'event_resolved'; eventId: string; choiceId: string; outcome: number }
-  | { type: 'event_closed' };
+  | { type: 'event_closed' }
+  | { type: 'combat_started'; enemies: number }
+  | { type: 'combat_ended'; outcome: 'won' | 'fled' }
+  | { type: 'combat_closed' };
 
 export type CommandError = {
   code:
@@ -117,7 +124,12 @@ export type CommandError = {
     | 'missing_item'
     | 'event_open'
     | 'no_event'
-    | 'bad_choice';
+    | 'bad_choice'
+    | 'in_combat'
+    | 'not_in_combat'
+    | 'out_of_reach'
+    | 'no_arrows'
+    | 'bad_target';
   message: string;
 };
 
@@ -128,6 +140,10 @@ export type CommandResult =
 function run(state: GameState, command: Command, content: Content): CommandResult {
   if (state.dead) return { ok: false, error: { code: 'dead', message: 'Prabu is dead. This run is over.' } };
   // An open event card must be answered before anything else (D-059).
+  // A fight must be finished first (M7).
+  if (state.combat && command.type !== 'combat.act' && command.type !== 'combat.close') {
+    return { ok: false, error: { code: 'in_combat', message: 'Prabu is fighting.' } };
+  }
   if (state.event && command.type !== 'event.choose' && command.type !== 'event.close') {
     return { ok: false, error: { code: 'event_open', message: 'Deal with what\'s in front of him first.' } };
   }
@@ -176,6 +192,10 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return chooseEvent(state, command.choiceId, content);
     case 'event.close':
       return closeEvent(state);
+    case 'combat.act':
+      return combatAct(state, command.action, command.target, command.index, content);
+    case 'combat.close':
+      return closeCombat(state);
     default:
       return { ok: false, error: { code: 'unknown_command', message: `Unknown command: ${(command as { type: string }).type}` } };
   }

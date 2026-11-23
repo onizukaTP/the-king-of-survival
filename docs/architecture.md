@@ -29,6 +29,8 @@ UI (React + MapLibre) ──store action──▶ store (Zustand) ──applyCom
 | `src/engine/systems/night/night.ts` | Night, the moon and dark minutes; `lightTheWay` switches the torch on for dark movement (D-060). |
 | `src/engine/systems/conditions/conditions.ts` | Conditions (D-061): add, end, expire, and their combined effects (speed, Rest drain, max Health, Health per hour, search time, healing). |
 | `src/engine/systems/events/events.ts` | Events (D-059): `maybeEvent` rolls after a leg, a town walk, a search or an hour of outdoor rest at night; `chooseEvent`, `closeEvent`, `choiceMissing`. |
+| `src/engine/systems/combat/stats.ts` | `playerStats` (base + weapon, D-066) and `weaponProfile`. |
+| `src/engine/systems/combat/combat.ts` | Fights (M7): `startFight`, `combatAct`, `closeCombat`, turn order, enemy turns, `fleeChance`, `attackOdds`, `attackBlocked`. |
 | `src/engine/save/save.ts` | Save format, version, migrations, `createSave`, `loadSave`. |
 | `src/content/schemas/` | Zod schemas for every content file. |
 | `src/content/data/` | All game content as JSON. **The only place content may live.** |
@@ -39,13 +41,15 @@ UI (React + MapLibre) ──store action──▶ store (Zustand) ──applyCom
 | `src/store/saveStorage.ts` | IndexedDB read/write (one manual slot). |
 | `src/ui/screens/` | `TitleScreen`, `MapScreen` (top bar, map, panel; D-016). |
 | `src/ui/panels/Panel.tsx` | Side panel / bottom sheet: selected place or trip under way (with the dark-trip warning). |
+| `src/ui/screens/CombatScreen.tsx` | The fight: enemies by band, turn order, Prabu and his stats, actions, log, result. Replaces the map. |
+| `src/ui/components/StatsBlock.tsx` | Prabu's stats and weapon, in the Pack and on the combat screen. |
 | `src/ui/components/EventCard.tsx` | The event dialog: choices (disabled with the reason), then the outcome and Continue. |
 | `src/ui/format.ts` | Clock, duration and distance formatting, site-kind labels (UI strings stay out of the engine). |
 | `scripts/geo/` | Overpass query and `build-geo.mjs`, which regenerate the map data. |
 | `public/geo/rail.json` | Rail lines; display only. |
 | `tests/e2e/` | Playwright smoke tests (run against the production build). |
 
-## Game state (save version 7)
+## Game state (save version 8)
 
 ```ts
 GameState = {
@@ -82,6 +86,12 @@ GameState = {
     result: null | { choiceId, outcome, found, left, lost, conditions, siteId },  // kept until closed, so a reload can't re-roll
   },
   lastEventAt: number | null,             // for the 2-hour cooldown
+  combat: null | {                        // a fight under way (M7); saved between turns
+    enemies: { id, hp, band: 'close' | 'mid' | 'far' }[],
+    round, order: number[],               // who still acts this round; -1 is Prabu
+    aimed, arrowsShot, log: { actor, kind, target?, damage?, crit?, band?, itemId? }[],
+    result: null | { outcome: 'won' | 'fled', found, left },
+  },
   dead: boolean,                          // permadeath: every command is refused (D-038)
 }
 ```
@@ -119,10 +129,12 @@ applyCommand(state, command, content) →
 | `fire.feed` | 1 firewood: the fire here burns 2 h longer. No time. | `no_fire`, `no_firewood` |
 | `craft { recipeId }` | Makes one batch of a `recipes.json` recipe anywhere: inputs used, tool kept, the recipe's time passes. | `travel_in_progress`, `unknown_recipe`, `missing_item`, `too_heavy` |
 | `event.choose { choiceId }` | Rolls the outcome of a choice on the open card and applies it (meters, injury, illness, conditions, items in or out, time, stopping the trip, revealing a place). | `no_event`, `bad_choice` (unknown or already decided), `missing_item` (the choice's need isn't met) |
+| `combat.act { action, target?, index? }` | Prabu's turn: `attack` (in reach; a bow uses an arrow), `aim`, `close_in`, `step_back`, `use_item`, `flee`; then the enemies act until his next turn or the end. | `not_in_combat`, `bad_choice` (fight over), `bad_target`, `out_of_reach`, `no_arrows`, `cannot_use` |
+| `combat.close` | Closes a finished fight; a paused trip can go on. | `not_in_combat`, `bad_choice` |
 | `event.close` | Closes the card after its outcome; a paused trip can go on. | `no_event`, `bad_choice` (nothing chosen yet) |
 | `fire.cook { recipeId }` | Turns up to the recipe's batch of its input into its output over the fire here (cook meat, boil water, sterilize rags; a pot and a water bottle where needed). 30 min. | `unknown_recipe`, `no_fire`, `fire_too_low`, `missing_item` |
 
-Every command is refused with `dead` once Prabu has died, and every command except `event.choose` and `event.close` with `event_open` while an event card is open.
+Every command is refused with `dead` once Prabu has died, every command except `event.choose` and `event.close` with `event_open` while an event card is open, and every command except `combat.act` and `combat.close` with `in_combat` during a fight. An event outcome with `fight` closes the card and starts the fight. `scavenge.hunt` rolls on the Hunting stat and can meet the boar; Luck scales search finds.
 
 **Events during other commands (D-059):** `travel.advance` rolls after the leg (the trip stays under way; the store's travel loop stops until the card is closed); `town.walk` rolls once per walk and stops part-way only if the outcome stops him; `scavenge.search` rolls after the search; `rest` rolls each full hour at night outdoors (not at home, in a town or beside a fire) and stops there. An event with one unlabelled choice (bad footing) resolves at once. Event finds go into the pack, or onto the ground if too heavy. `travel.advance` and `town.walk` also use torch charge for dark minutes and are slowed by a sprained ankle; `scavenge.search` is slowed by Shaken.
 
@@ -226,7 +238,7 @@ Raw downloads are not committed.
 ## Saves
 
 ```ts
-SaveFile = { saveVersion: 7, createdAt: ISO string, gameState }
+SaveFile = { saveVersion: 8, createdAt: ISO string, gameState }
 ```
 
 - `loadSave(unknown, content)`:
@@ -240,6 +252,7 @@ SaveFile = { saveVersion: 7, createdAt: ISO string, gameState }
   - **3 → 4** (M4): renames boiled water to clean water; adds radiation 0, `sites: {}` and `ground: []`.
   - **4 → 5** (town maps): adds `town: null` and drops the old town-wide stock of the three towns. Ground piles at a town's point stay at its edge.
   - **5 → 6** (fire): adds `fire: null`.
+  - **7 → 8** (combat): adds `combat: null`. Validation rejects unknown enemies.
   - **6 → 7** (events and conditions): adds `survival.conditions: []`, `event: null` and `lastEventAt: null`. Validation rejects unknown events and conditions.
   - Validation also rejects stock for unknown buildings and a `town` that points at an unknown town or spot.
 - Storage: IndexedDB database `king-of-survival`, store `saves`, key `manual` (the name dates from M0; it now holds the one run).
@@ -249,8 +262,8 @@ SaveFile = { saveVersion: 7, createdAt: ISO string, gameState }
 
 | Layer | Tool | Where | Covers now |
 |---|---|---|---|
-| Engine and content | Vitest | `src/**/*.test.ts` (147 tests) | RNG; content validation and cross-references; new game (start time, position, known places); geo (distance, Tamil Nadu boundary, sampling); routing (legs ≤ 60 min and joined end to end, uses roads, never slower than straight, no-roads fallback, deterministic); travel commands (leg by leg, clock, arrival, discovery, fog dedupe, stop, every rejection leaves state unchanged, unmarked ground); saves (round-trip including mid-trip, v1 → v2 → v3 migrations, rejection of bad saves including unknown items and out-of-range meters); survival (drain rates, exhaustion, overload on the road only, empty meters, death, warnings, illness, spoilage, rest and healing, no healing while injured or hungry, rest rejections, 30-minute legs, trips stopping on a low meter, death on the road); inventory (starting kit, stacking, 50 kg limit, load multiplier, eating, drinking and the bottle, unsafe-water illness rate and reproducibility, injury cure, painkillers refused while injured, charger and lighter fuel, bad uses, equip swap, drop); scavenging (search finds from the table onto the ground, reproducible, depletion and 7-day refresh, torch time and battery, refusals; hunting; take and leave, 96-hour expiry, only what's here, all-or-nothing weight; water at the dam, none at home, rivers; filling clean and unsafe; drinking and illness; radiation zone shape, hourly rolls, part-hours, healing capped, death; mapped wells clean); towns (enter, leave, refusals, no world travel inside, walk time and landing, stopping part-way on a low meter, building search uses its type's time, table and own stock, house depletion and torch time, nothing to search at the edge or water, floor piles stay per building, well clean and tank unsafe, data spacing, save round-trip and v4 → v5 migration, town ends); fire (each way's time and cost, the last match, refusals, feeding, the fire stays put, cooking batches, boiling needs a pot, sterilizing uses one bottle unsafe first, fire too low, the options list, save round-trip and v5 → v6); the can opener; crafting (each recipe, plain and turmeric paste, the knife equipped or missing, what's short, refusals, spoilage during a craft, porridge at a fire); night (night hours, full-moon nights, dark minutes, the torch on dark legs, by day and at full moon, running flat); events (rates per leg on road and cross-country and in the dark, cooldown, which events fit, a trip paused and resumed, refusals while a card is open, choice needs, bites, infection and Shaken at night, finds into the pack or onto the ground, revealing a place, bad footing resolving itself and stopping the trip, death by an outcome, the search event only in houses, rest events outdoors at night but not at home or by a fire, save round-trip with a card open, no re-roll after reload, v6 → v7); conditions (sprained ankle speed and expiry, timer restart, Weak max Health, infected wound drain, no healing, the right dressing cures it, death from a wound, Restless drain and the 4-hour sleep, Shaken search time and rest at home, Well rested at home only). |
-| End to end | Playwright | `tests/e2e/` | New game → travel to town → meters drained → reload → Continue restores identical state (autosave) → Save and quit → Continue. Unmarked ground panel. Double-click travel. Pack shows the starting kit; unequip and equip; Rest 4 hours moves the clock and drains Water. Resting until death → game over → Continue disabled after reload. Resting after a trip leaves the marker still. Search the town until something turns up → Take all → pack heavier → drop the torch → it's on the ground → take it back. The Craft panel lists the recipes and blocks what is missing. An event card (wild dogs at night, written into the save) must be answered: the meat choice is disabled with its reason, backing away shows the outcome and Shaken, Continue closes it and the Shaken tag shows. New games use `?seed=2`, which meets no random event on these trips. |
+| Engine and content | Vitest | `src/**/*.test.ts` (164 tests) | RNG; content validation and cross-references; new game (start time, position, known places); geo (distance, Tamil Nadu boundary, sampling); routing (legs ≤ 60 min and joined end to end, uses roads, never slower than straight, no-roads fallback, deterministic); travel commands (leg by leg, clock, arrival, discovery, fog dedupe, stop, every rejection leaves state unchanged, unmarked ground); saves (round-trip including mid-trip, v1 → v2 → v3 migrations, rejection of bad saves including unknown items and out-of-range meters); survival (drain rates, exhaustion, overload on the road only, empty meters, death, warnings, illness, spoilage, rest and healing, no healing while injured or hungry, rest rejections, 30-minute legs, trips stopping on a low meter, death on the road); inventory (starting kit, stacking, 50 kg limit, load multiplier, eating, drinking and the bottle, unsafe-water illness rate and reproducibility, injury cure, painkillers refused while injured, charger and lighter fuel, bad uses, equip swap, drop); scavenging (search finds from the table onto the ground, reproducible, depletion and 7-day refresh, torch time and battery, refusals; hunting; take and leave, 96-hour expiry, only what's here, all-or-nothing weight; water at the dam, none at home, rivers; filling clean and unsafe; drinking and illness; radiation zone shape, hourly rolls, part-hours, healing capped, death; mapped wells clean); towns (enter, leave, refusals, no world travel inside, walk time and landing, stopping part-way on a low meter, building search uses its type's time, table and own stock, house depletion and torch time, nothing to search at the edge or water, floor piles stay per building, well clean and tank unsafe, data spacing, save round-trip and v4 → v5 migration, town ends); fire (each way's time and cost, the last match, refusals, feeding, the fire stays put, cooking batches, boiling needs a pot, sterilizing uses one bottle unsafe first, fire too low, the options list, save round-trip and v5 → v6); the can opener; crafting (each recipe, plain and turmeric paste, the knife equipped or missing, what's short, refusals, spoilage during a craft, porridge at a fire); night (night hours, full-moon nights, dark minutes, the torch on dark legs, by day and at full moon, running flat); events (rates per leg on road and cross-country and in the dark, cooldown, which events fit, a trip paused and resumed, refusals while a card is open, choice needs, bites, infection and Shaken at night, finds into the pack or onto the ground, revealing a place, bad footing resolving itself and stopping the trip, death by an outcome, the search event only in houses, rest events outdoors at night but not at home or by a fire, save round-trip with a card open, no re-roll after reload, v6 → v7); conditions (sprained ankle speed and expiry, timer restart, Weak max Health, infected wound drain, no healing, the right dressing cures it, death from a wound, Restless drain and the 4-hour sleep, Shaken search time and rest at home, Well rested at home only); combat (stats with each weapon, the Fight choice opening a fight, ambush first round, reach per weapon and arrows, damage ranges with crits, DEF and Weak, aiming, closing in and stepping back, flee odds, fleeing and the free hits, winning loot and arrows, crit injuries and infected bites, death, a minute a round, reload mid-fight and v7 → v8); hunting and luck (40% and 55% success, hide on 75% of successes, Luck on hunting, fleeing and crits, the boar on about 1 hunt in 10). |
+| End to end | Playwright | `tests/e2e/` | New game → travel to town → meters drained → reload → Continue restores identical state (autosave) → Save and quit → Continue. Unmarked ground panel. Double-click travel. Pack shows the starting kit; unequip and equip; Rest 4 hours moves the clock and drains Water. Resting until death → game over → Continue disabled after reload. Resting after a trip leaves the marker still. Search the town until something turns up → Take all → pack heavier → drop the torch → it's on the ground → take it back. The Craft panel lists the recipes and blocks what is missing. An event card (wild dogs at night, written into the save) must be answered: the meat choice is disabled with its reason, backing away shows the outcome and Shaken, Continue closes it and the Shaken tag shows. A fight from the Wild dogs card: attack (or close in) until they are dead, take the meat, back to the map. New games use `?seed=2`, which meets no random event on these trips. |
 
 ## Build, CI and deploy
 

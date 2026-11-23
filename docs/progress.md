@@ -48,11 +48,24 @@
   - Night 18:30–06:00, full-moon nights, the torch switching on by itself on dark legs (10% an hour), a moon tag, and a warning when a trip runs into the dark without enough charge.
   - Save v7 with a migration from v6. 147 unit tests and 9 e2e tests pass; checked in the browser on desktop and phone width, including a reload with a card open.
 
+- **M7 Combat (D-063 to D-066)** — on `dev`, not released.
+  - Stats: ATK, DEF, SPD, crit rate, crit damage, ACC, Dodge, Hunting and Luck, from Prabu's base plus the weapon.
+  - Fights:
+    - The four weapons with damage and reach.
+    - Wild dogs, the mutated boar, and raiders with a blade and with a bow.
+    - Turn order by SPD plus a roll; Close, Mid and Far bands.
+    - Attack, aim, close in, step back, use an item, flee.
+  - Where fights come from: Fight choices on Wild dogs and Roadblock, and the new Mutated boar and Ambush in the dark events.
+  - Hunting by the Hunting stat.
+  - The spear, bow and arrow recipes.
+  - The combat screen and the Stats block.
+  - Save v8.
+  - Checks: 164 unit tests and 10 e2e tests pass; checked in the browser on desktop and phone width, including a reload mid-fight.
+
 ## In progress
 - Nothing.
 
 ## Pending (unblocked)
-- M7 Combat — Q4 and Q5 answered (D-063, D-064); your rules recorded as D-065; numbers proposed in `docs/combat.md` (P-019), awaiting approval.
 - Charms (D-062): 1 talisman, 2 rings and 2 bangles that lower risks or raise yields. To be drafted for approval.
 
 ## Later (owner's notes)

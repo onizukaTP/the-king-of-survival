@@ -10,6 +10,7 @@ import { spotHere } from '../town/town';
 import { siteAt } from '../travel/travel';
 import { conditionEffects } from '../conditions/conditions';
 import { maybeEvent } from '../events/events';
+import { playerStats } from '../combat/stats';
 
 const fail = (code: CommandError['code'], message: string) => ({ ok: false as const, error: { code, message } });
 // Ground piles within this distance count as "here" (same as being at a place).
@@ -112,10 +113,12 @@ export function search(state: GameState, useTorch: boolean, content: Content): C
   }
 
   const rich = richness(state, target.id);
+  // D-066: each point of Luck adds 1% to every find chance.
+  const luck = 1 + (playerStats(state, content).luck * content.combat.luck.searchPercent) / 100;
   const finds: Find[] = [];
   for (let d = 0; d < cfg.drawsPerSearch; d++) {
     for (const entry of target.entries) {
-      if (roll(state) < entry.chance * (rich / 100)) {
+      if (roll(state) < entry.chance * (rich / 100) * luck) {
         const find: Find = { itemId: entry.itemId, count: quantity(state, entry) };
         if (entry.charge) find.charge = entry.charge[0] + Math.floor(roll(state) * (entry.charge[1] - entry.charge[0] + 1));
         finds.push(find);
@@ -136,16 +139,22 @@ export function search(state: GameState, useTorch: boolean, content: Content): C
   return { ok: true, state, events };
 }
 
-/** One hour of hunting (D-046): every entry rolls on its own. Chance-based until combat (M7). */
+/**
+ * One hour of hunting (D-065, D-066): it succeeds with Prabu's Hunting chance (plus Luck); on success
+ * every entry rolls on its own. A boar may turn up (an event).
+ */
 export function hunt(state: GameState, content: Content): CommandResult {
   if (state.travel) return fail('travel_in_progress', 'Prabu can\'t hunt while travelling.');
   const site = state.town ? undefined : siteAt(state.player.position, content);
   const entries = site ? content.loot[site.id]?.hunt : undefined;
   if (!site || !entries?.length) return fail('cannot_hunt_here', 'There\'s no game to hunt here.');
+  const stats = playerStats(state, content);
+  const success = roll(state) * 100 < stats.hunting + stats.luck * content.combat.luck.hunting;
   const finds: Find[] = [];
-  for (const entry of entries) if (roll(state) < entry.chance) finds.push({ itemId: entry.itemId, count: quantity(state, entry) });
+  if (success) for (const entry of entries) if (roll(state) < entry.chance) finds.push({ itemId: entry.itemId, count: quantity(state, entry) });
   const events: GameEvent[] = [{ type: 'hunted', finds }];
   finish(state, content.scavenging.huntMinutes, finds, content, events);
+  if (!state.dead) maybeEvent(state, { on: 'hunt' }, content, events);
   return { ok: true, state, events };
 }
 

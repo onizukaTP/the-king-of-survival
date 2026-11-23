@@ -5,7 +5,7 @@ You play Prabu, a hunter from a struggling settlement on the forest edge near Sr
 
 **Play the current build:** https://onizukatp.github.io/the-king-of-survival/
 
-> Status: early prototype. M0–M6 are live: skeleton, world map and travel, items and inventory, survival, scavenging, town maps, fire and cooking, crafting, events, conditions and night. M7 (combat) is on `dev`. See [docs/progress.md](docs/progress.md).
+> Status: early prototype. M0–M7 are live: skeleton, world map and travel, items and inventory, survival, scavenging, town maps, fire and cooking, crafting, events, conditions, night and combat. See [docs/progress.md](docs/progress.md).
 
 ## Docs
 

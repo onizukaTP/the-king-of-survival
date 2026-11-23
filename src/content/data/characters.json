@@ -1,3 +1,4 @@
 [
-  { "id": "character.prabu", "name": "Prabu", "age": 27, "portrait": "portrait.character.prabu" }
+  { "id": "character.prabu", "name": "Prabu", "age": 27, "portrait": "portrait.character.prabu",
+    "stats": { "atk": 2, "def": 0, "spd": 4, "critRate": 5, "critDamage": 150, "acc": 85, "dodge": 10, "hunting": 40, "luck": 0 } }
 ]

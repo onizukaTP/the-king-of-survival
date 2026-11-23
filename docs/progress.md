@@ -48,6 +48,20 @@
   - Night 18:30–06:00, full-moon nights, the torch switching on by itself on dark legs (10% an hour), a moon tag, and a warning when a trip runs into the dark without enough charge.
   - Save v7 with a migration from v6. 147 unit tests and 9 e2e tests pass; checked in the browser on desktop and phone width, including a reload with a card open.
 
+- **M7 Combat (D-063 to D-066)** — on `dev`, not released.
+  - Stats: ATK, DEF, SPD, crit rate, crit damage, ACC, Dodge, Hunting and Luck, from Prabu's base plus the weapon.
+  - Fights:
+    - The four weapons with damage and reach.
+    - Wild dogs, the mutated boar, and raiders with a blade and with a bow.
+    - Turn order by SPD plus a roll; Close, Mid and Far bands.
+    - Attack, aim, close in, step back, use an item, flee.
+  - Where fights come from: Fight choices on Wild dogs and Roadblock, and the new Mutated boar and Ambush in the dark events.
+  - Hunting by the Hunting stat.
+  - The spear, bow and arrow recipes.
+  - The combat screen and the Stats block.
+  - Save v8.
+  - Checks: 164 unit tests and 10 e2e tests pass; checked in the browser on desktop and phone width, including a reload mid-fight.
+
 ## In progress
 - Nothing.
 
@@ -58,7 +72,7 @@
 - **Item tooltips** (owner, 2026-11-23): every item gets a tooltip saying what it does, for example how much Food, Water or Health it restores. Today that text shows only in the Pack's item card.
 
 ## Blocked
-- M10 Vehicles (needs vehicle numbers), M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
+- M10 Vehicles (needs vehicle numbers), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
 
 ## Technical choices made in M0 (Claude's authority)
 - `GameState` type is derived from its Zod schema, so save validation and the type can't drift.

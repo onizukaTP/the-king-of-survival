@@ -63,7 +63,7 @@ Each event has a **weight**, conditions (road or cross-country, day or night, wh
 - **Saves:** the open event is saved; reloading the page brings the same card back with the same result. Closing the tab can't be used to re-roll.
 - **Messages:** the outcome also goes into the message line, like other actions.
 
-No **Fight** choice appears until combat exists (M7). Threats are handled by backing off, bribing, scaring or running.
+**Fights (M7, D-066):** Wild dogs and Roadblock have a **Fight** choice, and two events were added, Mutated boar (cross-country or while hunting) and Ambush in the dark (moving in the dark without light; the raiders start at Close and strike first). Choosing Fight closes the card and opens the combat screen (`docs/combat.md`). That makes 14 events.
 
 ## Outcomes
 
@@ -127,7 +127,6 @@ M6 builds `docs/night.md` as proposed: night 18:30–06:00, a 30-day moon with t
 
 ## Not included
 
-- **Fights:** threat events get a Fight choice with M7 (Q4, Q5 still open).
 - **Story events:** the brother's trace, the mother, the settlement's people. These wait for the opening narrative (Q7) and M8.
 - **Karma or reputation** from choices (deferred, §6).
 - **Trading** with people met on the road (deferred, §6).

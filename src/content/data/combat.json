@@ -1,0 +1,40 @@
+{
+  "unarmed": {
+    "damage": [
+      1,
+      3
+    ],
+    "reach": "close"
+  },
+  "dieSides": 8,
+  "hitChance": [
+    5,
+    95
+  ],
+  "defCap": 75,
+  "aim": {
+    "acc": 15,
+    "critRate": 10
+  },
+  "minutesPerRound": 1,
+  "arrowRecovery": 0.5,
+  "flee": {
+    "base": 50,
+    "mid": 10,
+    "far": 25,
+    "hurtAtHealth": 25,
+    "hurt": -15,
+    "loadedOverKg": 25,
+    "loaded": -15,
+    "range": [
+      10,
+      90
+    ]
+  },
+  "luck": {
+    "searchPercent": 1,
+    "hunting": 1,
+    "flee": 0.5,
+    "critRate": 0.25
+  }
+}

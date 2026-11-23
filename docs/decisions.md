@@ -65,20 +65,22 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-060 (approves P-015) **Night and the moon** as proposed in `docs/night.md`, built with M6.
 - D-061 **Conditions:** events leave lasting modifiers on Prabu. Six approved: **Sprained ankle** (walk speed ×0.7, 12 h), **Restless** (Rest drains ×1.5 until a 4-hour sleep), **Weak** (max Health −10 for 24 h; in M7 also −25% damage), **Shaken** (searches take 25% longer, 8 h; ends after 1 h of rest at home or by a fire), **Infected wound** (Health −1/h and no healing until treated with a sterilized bandage or neem–turmeric paste), **Well rested** (after sleeping to full Rest at home or by a fire: Rest drains ×0.75 for 12 h). The same condition again restarts its timer; no stacking. Spec in `docs/events.md`.
 - D-062 **Charms (later):** special items that lower risks or raise yields; Prabu can wear **1 talisman, 2 rings and 2 bangles**. To be drafted and approved later; not built in M6.
+- D-063 (answers Q4 and T4) **Combat setup:** Prabu **fights alone** in the prototype, but the engine supports any number of fighters on each side so companions can join once team building is approved. **Range bands:** each enemy is Close, Mid or Far; knives and the aruval hit Close, the spear reaches Mid, the bow hits any band and uses arrows; moving a band costs a turn. **Fleeing** is a chance roll that uses his turn: easier from Far, harder when he is hurt or heavily loaded; if it fails, the enemies get a free hit.
+- D-064 (answers Q5) **Prototype enemies:** **mutated animals** (such as the wild dog pack, D-029) and **nameless human raiders** (such as the roadblock). No other mutated creatures in the prototype.
+- D-065 **Combat rules (owner):** every fighter has **ATK, DEF, SPD, crit rate and crit damage**; items and attire will raise or lower them later. **Turn order** is SPD plus a roll, as in Darkest Dungeon. Prototype enemies: **wild dogs, mutated animals and raiders**. **Fights come from random encounters.** **Hunting** stays a success roll driven by a hunting stat, which hunting items will raise later. **Weapons stay primitive** for now; guns, crossbows, compound bows, sniper rifles and so on come later. Numbers proposed in P-019.
+- D-066 (approves P-019, with changes) **Combat numbers (M7)** as in `docs/combat.md`, plus **ACC, Dodge, Hunting and Luck** stats. The bow gives Hunting +15%. **Luck** (base 0, raised later by items) is used for everything: each point adds 1% to search find chances, +1 to hunting success, +0.5 to the flee chance and +0.25 to crit rate. The combat screen and the Stats block in the Pack are approved; later the combat screen will look more like Darkest Dungeon's.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
-- P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
+- P-005 Combat (solo, range bands and fleeing are now D-063): 1–3 enemies, speed-based turn order; actions: attack, aim, move band, use item, flee. Numbers to be proposed.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 
 ### Open — blocking (do not implement affected areas until answered)
-- Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*
-- Q5 Enemy mix: animals / human bandits / mutants. Animals are largely mutated (D-029). *(blocks M7)*
 - Q6 Progression model. *(blocks M8)*
 - Q7 Opening narrative: playable prologue with mother alive, text intro after her death, or death mid-play. *(blocks M8)*
-- T1–T4 Timeline/character inconsistencies in §4.
+- T1–T3 Timeline/character inconsistencies in §4 (T4 is answered by D-063).
 
 ### Open — non-blocking
 - Tamil localisation readiness.

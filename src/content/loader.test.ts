@@ -9,6 +9,8 @@ import fire from './data/fire.json';
 import recipes from './data/recipes.json';
 import conditions from './data/conditions.json';
 import events from './data/events.json';
+import enemies from './data/enemies.json';
+import combat from './data/combat.json';
 import water from './data/water.json';
 import buildingTypes from './data/building-types.json';
 import towns from './data/towns.json';
@@ -19,7 +21,7 @@ import sites from './data/sites.json';
 import tamilNadu from './data/tamil-nadu.json';
 import world from './data/world.json';
 
-const raw: RawContent = { characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame };
+const raw: RawContent = { characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame };
 const prabu = characters[0]!;
 const home = sites[0]!;
 
@@ -35,8 +37,9 @@ describe('content loader', () => {
     expect(Object.keys(content.buildingTypes)).toHaveLength(16);
     expect(Object.values(content.towns).map((t) => t.buildings.length)).toEqual([13, 16, 24]);
     expect(content.water.wells).toHaveLength(39);
-    // D-059, D-061: the 12 starter events and 6 conditions.
-    expect(content.events.events).toHaveLength(12);
+    // D-059, D-061, D-066: the 12 starter events plus the boar and the ambush; 6 conditions; 4 enemies.
+    expect(content.events.events).toHaveLength(14);
+    expect(Object.keys(content.enemies)).toHaveLength(4);
     expect(Object.keys(content.conditions)).toHaveLength(6);
   });
 

@@ -4,9 +4,10 @@ import type { CommandError, CommandResult, GameEvent } from '../../core/commands
 import { nextRandom } from '../../core/rng';
 import { maxHealth, type GameState } from '../../core/state';
 import { addCondition, healingBlocked } from '../conditions/conditions';
-import { addStack, carriedKg, makeStack, takeOne } from '../inventory/inventory';
+import { stowFinds, takeOne } from '../inventory/inventory';
+import { startFight } from '../combat/combat';
 import { isNight } from '../night/night';
-import { leaveOnGround, type Find } from '../scavenging/scavenging';
+import type { Find } from '../scavenging/scavenging';
 import { passTime } from '../survival/survival';
 import { spotHere } from '../town/town';
 import { distanceKm } from '../travel/geo';
@@ -20,7 +21,8 @@ export type Trigger =
   | { on: 'travel'; minutes: number; crossShare: number; unlit: boolean }
   | { on: 'walk'; minutes: number; unlit: boolean }
   | { on: 'search'; buildingTypeId: string | null }
-  | { on: 'rest' };
+  | { on: 'rest' }
+  | { on: 'hunt' };
 
 function roll(state: GameState): number {
   const [value, next] = nextRandom(state.rngState);
@@ -38,7 +40,9 @@ export function crossShare(leg: Leg, world: WorldConfig): number {
 
 function fits(e: GameEventDef, t: Trigger, state: GameState, night: boolean, content: Content): boolean {
   if (!e.on.includes(t.on)) return false;
-  if (e.ground && (t.on !== 'travel' || (t.crossShare >= 0.5 ? 'cross' : 'road') !== e.ground)) return false;
+  // Ground only matters on the road; a town walk has none, and hunting is always off the road.
+  if (e.ground && t.on === 'walk') return false;
+  if (e.ground && t.on === 'travel' && (t.crossShare >= 0.5 ? 'cross' : 'road') !== e.ground) return false;
   if ((e.when === 'day' && night) || (e.when === 'night' && !night)) return false;
   if (e.unlit && !('unlit' in t && t.unlit)) return false;
   if (e.hours) {
@@ -71,7 +75,7 @@ export function maybeEvent(state: GameState, t: Trigger, content: Content, event
   let chance =
     t.on === 'travel' ? (road + t.crossShare * (cross - road)) * legShare(t.minutes)
       : t.on === 'walk' ? road * legShare(t.minutes)
-        : t.on === 'search' ? cfg.searchChance : cfg.restChancePerHour;
+        : t.on === 'search' ? cfg.searchChance : t.on === 'hunt' ? cfg.huntChance : cfg.restChancePerHour;
   if ((t.on === 'travel' || t.on === 'walk') && t.unlit) chance *= cfg.unlitMultiplier;
   const weight = (e: GameEventDef) => (night && e.nightWeight ? e.nightWeight : e.weight);
   const total = pool.reduce((sum, e) => sum + weight(e), 0);
@@ -180,17 +184,9 @@ function resolve(state: GameState, def: GameEventDef, choice: EventChoice, conte
     const f = draw(state, spot.type.search);
     if (f) finds.push(f);
   }
-  for (const f of finds) {
-    const stack = makeStack(f.itemId, f.count, state.clockMinutes, content, f.charge);
-    const kg = content.items[f.itemId]!.weightKg * f.count;
-    if (carriedKg(inv, content) + kg <= content.survival.carry.maxKg + 1e-9) {
-      addStack(inv, stack);
-      result.found.push(f);
-    } else {
-      leaveOnGround(state, stack, content);
-      result.left.push(f);
-    }
-  }
+  const stowed = stowFinds(state, finds, content);
+  result.found.push(...stowed.found);
+  result.left.push(...stowed.left);
   if (o.revealNearest) {
     const here = state.player.position;
     const site = Object.values(content.sites)
@@ -213,6 +209,12 @@ function resolve(state: GameState, def: GameEventDef, choice: EventChoice, conte
   if (o.stopTravel && state.travel) {
     state.travel = null;
     events.push({ type: 'travel_stopped', reason: 'event' });
+  }
+  // A fight (M7) takes over from the card: the combat screen shows instead.
+  if (o.fight) {
+    state.event = null;
+    startFight(state, o.fight, content, events);
+    return;
   }
   if (o.minutes) {
     const before = events.length;

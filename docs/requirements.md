@@ -36,7 +36,7 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 |---|---|---|---|
 | R-20 | Prabu, 27, hunter, ~20-person settlement; no preset moral alignment. | ✅ | §4 |
 | R-21 | Canon timeline, the mother's revelation and her final wish, as written in §4. No sister. | ✅ | §4 |
-| R-22 | Timeline inconsistencies T1–T4. | ❓ | §4 |
+| R-22 | Timeline inconsistencies T1–T3 (T4 answered). | ❓ | §4, D-063 |
 | R-23 | Opening narrative format. | ❓ | Q7 |
 | R-24 | Names of the settlement, mother, father, brother. | ❓ | §8 non-blocking |
 
@@ -54,7 +54,7 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 | R-37 | Scavenging with loot tables and depletion. | ✅ (contents 🟡) | D-006, P-001 |
 | R-38 | Small crafting system. | ✅ (recipes 🟡) | D-006, P-001 |
 | R-39 | One real turn-based tactical combat encounter; not Darkest Dungeon's 4-rank formation. | ✅ | D-003, D-006 |
-| R-40 | Combat design details. | 🟡 / ❓ | P-005, Q4, Q5 |
+| R-40 | Combat design details: solo, range bands, fleeing (✅); mutated animals and raiders (✅); numbers (🟡). | ✅ / 🟡 | D-063, D-064, P-005 |
 | R-41 | Basic progression. | 🟡 / ❓ | P-006, Q6 |
 | R-42 | Data-driven events with choices. | ✅ (contents 🟡) | D-006, P-001 |
 | R-43 | Screen flow and layout: map screen ✅ (D-016, `docs/ui.md`); other screens 🟡. | ✅ / 🟡 | D-016, P-007 |

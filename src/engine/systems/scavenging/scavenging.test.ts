@@ -191,7 +191,7 @@ describe('radiation zone (D-043)', () => {
     expect(hits).toBeGreaterThan(30);
     expect(hits).toBeLessThan(70);
     expect(s.survival.radiation).toBe(Math.min(100, hits * 5));
-    expect(s.survival.health).toBeLessThanOrEqual(maxHealth(s.survival));
+    expect(s.survival.health).toBeLessThanOrEqual(maxHealth(s.survival, content));
   });
 
   it('carries part-hours over, and sleeping cannot heal past the maximum', () => {

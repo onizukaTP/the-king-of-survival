@@ -1,0 +1,8 @@
+[
+  { "id": "condition.sprained_ankle", "name": "Sprained ankle", "description": "Walks at 70% speed.", "minutes": 720, "speedMultiplier": 0.7 },
+  { "id": "condition.restless", "name": "Restless", "description": "Rest drains 50% faster until he sleeps 4 hours.", "minutes": null, "restDrainMultiplier": 1.5, "endsAfterSleepMinutes": 240 },
+  { "id": "condition.weak", "name": "Weak", "description": "Maximum Health −10.", "minutes": 1440, "maxHealth": -10 },
+  { "id": "condition.shaken", "name": "Shaken", "description": "Searches take 25% longer. An hour's rest at home or by a fire ends it.", "minutes": 480, "searchTimeMultiplier": 1.25, "endsAfterShelteredRestMinutes": 60 },
+  { "id": "condition.infected_wound", "name": "Infected wound", "description": "Health −1 an hour and no healing until treated with a sterilized bandage or neem–turmeric paste.", "minutes": null, "healthPerHour": -1, "blocksHealing": true, "curedBy": ["item.sterile_bandage", "item.neem_turmeric_paste"] },
+  { "id": "condition.well_rested", "name": "Well rested", "description": "Rest drains 25% slower.", "good": true, "minutes": 720, "restDrainMultiplier": 0.75 }
+]

@@ -57,6 +57,14 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 - **Top bar:** a **Craft** button between Pack and Rest.
 - **Craft panel** (side panel / bottom sheet): one card per recipe with name, time, inputs as have/need ("Cloth rags 1/2"), the tool with ✓ or ✗, the output and a **Craft** button. Recipes he can make now come first; the rest have the button disabled and the reason ("Needs 1 more cloth rags", "Needs a hunting knife"). A line points to the Fire section for cooking.
 
+## Events, conditions and night (M6) — D-059 to D-061
+
+- **Event card:** a card in the middle of the screen over a dimmed map on desktop, a bottom sheet on phones. Title, game time and text, then one button per choice. A choice that needs something shows its tag in brackets (**[Meat] Throw them the meat**); if he lacks it, the button is disabled with the reason under it ("Needs raw meat or cooked meat"). After a choice: the outcome in bold, a list of what changed (Health −15, Injured, Shaken, Found: coir rope, 30 min passed), and **Continue**. It can't be closed without choosing. A trip waits while it is open.
+- **Condition tags** in the top bar after Ill / Injured / Irradiated: amber for bad, green for Well rested. Hovering or tapping one shows what it does and the time left.
+- **Night tag** next to the status at night: "● Dark night" or "○ Full moon".
+- **Dark-trip warning** in the place panel, above Travel, when the trip would run into the dark with too little torch charge.
+- Trip and walk times in the panels include a sprained ankle's slower pace.
+
 ## Numbers the map screen shows (D-017 to D-020)
 - Speeds: road 4.5 km/h, cross-country 3 km/h.
 - The game starts on Day 1 at 06:00.

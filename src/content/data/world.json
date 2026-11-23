@@ -2,5 +2,6 @@
   "roadSpeedKmh": 4.5,
   "crossCountrySpeedKmh": 3,
   "sightRadiusKm": 3,
-  "legMaxMinutes": 30
+  "legMaxMinutes": 30,
+  "night": { "startMinute": 1110, "endMinute": 360, "moonCycleDays": 30, "fullMoonDays": [14, 15, 16], "torchChargePerHour": 10 }
 }

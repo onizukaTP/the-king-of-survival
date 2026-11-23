@@ -4,6 +4,9 @@ import type { CommandError, CommandResult, GameEvent } from '../../core/commands
 import type { GameState, MapState } from '../../core/state';
 import { distanceKm, insideOutline, samplePath, type LatLon } from './geo';
 import { zoneShare } from '../survival/radiation';
+import { conditionEffects } from '../conditions/conditions';
+import { crossShare, maybeEvent } from '../events/events';
+import { lightTheWay } from '../night/night';
 import { passTime } from '../survival/survival';
 import { planRoute, type RoutePlan } from './route';
 
@@ -92,8 +95,11 @@ export function advanceTravel(state: GameState, content: Content): CommandResult
   const leg = travel?.legs[travel.nextLeg];
   if (!travel || !leg) return fail('not_travelling', 'Prabu isn\'t travelling.');
   const events: GameEvent[] = [];
+  // A sprained ankle slows him (D-061); the torch lights the dark part of the leg (P-015).
+  const minutes = Math.max(1, Math.round(leg.minutes / conditionEffects(state.survival, content).speed));
+  const unlit = lightTheWay(state, minutes, content, events);
   state.player.position = leg.path[leg.path.length - 1]!;
-  passTime(state, leg.minutes, 'travel', content, events, zoneShare(leg.path, content));
+  passTime(state, minutes, 'travel', content, events, zoneShare(leg.path, content));
   reveal(state.map, samplePath(leg.path, REVEAL_STEP_KM), content, events);
   travel.nextLeg += 1;
   events.unshift({ type: 'leg_completed', leg: travel.nextLeg, of: travel.legs.length });
@@ -107,6 +113,8 @@ export function advanceTravel(state: GameState, content: Content): CommandResult
     state.travel = null;
     events.push({ type: 'travel_stopped', reason: 'meter' });
   }
+  // D-059: an event may meet him at the end of the leg; the trip waits until its card is closed.
+  if (!state.dead) maybeEvent(state, { on: 'travel', minutes, crossShare: crossShare(leg, content.world), unlit }, content, events);
   return { ok: true, state, events };
 }
 

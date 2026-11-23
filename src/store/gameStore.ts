@@ -47,12 +47,17 @@ interface GameStore {
   requestStop: () => void;
   /** Runs one command from the UI (rest, items); returns whether it was accepted. */
   act: (command: Command) => boolean;
+  /** Closes the event card; a trip it paused carries on (D-059). */
+  closeEvent: () => void;
+  /** Shows a line in the message area, e.g. what a condition does when its tag is tapped. */
+  note: (message: string) => void;
 }
 
 const errorText = (err: unknown) => (err instanceof Error ? err.message : String(err));
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const itemName = (id: string) => content.items[id]?.name ?? id;
 const METER_NAMES = { health: 'Health', food: 'Food', water: 'Water', rest: 'Rest' } as const;
+const conditionName = (id: string) => content.conditions[id]?.name ?? id;
 
 function describe(events: GameEvent[]): string | null {
   const notes: string[] = [];
@@ -69,7 +74,16 @@ function describe(events: GameEvent[]): string | null {
     if (e.type === 'injury_cured') notes.push('Injury treated.');
     if (e.type === 'item_spoiled') notes.push(`${itemName(e.itemId)} ×${e.count} spoiled.`);
     if (e.type === 'meter_low') notes.push(`${METER_NAMES[e.meter]} is ${e.empty ? 'empty' : 'low'}.`);
-    if (e.type === 'travel_stopped' && e.reason === 'meter') notes.push('Trip stopped.');
+    if (e.type === 'travel_stopped' && e.reason !== 'player') notes.push('Trip stopped.');
+    if (e.type === 'torch_flat') notes.push('The torch is flat.');
+    if (e.type === 'condition_added') notes.push(`${conditionName(e.conditionId)}.`);
+    if (e.type === 'condition_ended') notes.push(`${conditionName(e.conditionId)} has passed.`);
+    if (e.type === 'condition_cured') notes.push(`${conditionName(e.conditionId)} treated.`);
+    if (e.type === 'event_resolved') {
+      const def = content.events.events.find((x) => x.id === e.eventId);
+      const text = def?.choices.find((c) => c.id === e.choiceId)?.outcomes[e.outcome]?.text;
+      if (text) notes.push(text);
+    }
     if (e.type === 'searched' || e.type === 'hunted') {
       const finds = e.finds.map((f) => `${itemName(f.itemId).toLowerCase()}${f.count > 1 ? ` ×${f.count}` : ''}`);
       notes.push(finds.length ? `Found: ${finds.join(', ')}. It's on the ground here.` : 'Found nothing.');
@@ -133,7 +147,8 @@ export const useGameStore = create<GameStore>((set, get) => {
   /** Resolves legs one at a time with a short animation between them, until arrival or a stop. */
   const runLegs = async () => {
     const run = ++currentRun;
-    while (run === currentRun && get().game?.travel) {
+    // An event card pauses the trip; closing it starts this loop again (D-059).
+    while (run === currentRun && get().game?.travel && !get().game?.event) {
       if (get().stopRequested) {
         dispatch({ type: 'travel.stop' });
         break;
@@ -165,7 +180,9 @@ export const useGameStore = create<GameStore>((set, get) => {
     },
 
     newGame: () => {
-      const [seed = 0] = crypto.getRandomValues(new Uint32Array(1));
+      // `?seed=N` starts a reproducible run; the e2e tests use it so random events don't vary between runs.
+      const fixed = Number(new URLSearchParams(window.location.search).get('seed'));
+      const [seed = 0] = Number.isInteger(fixed) && fixed > 0 ? [fixed] : crypto.getRandomValues(new Uint32Array(1));
       const game = createNewGame(content, seed);
       currentRun += 1;
       set({ screen: 'game', game, hasSave: true, ...reset });
@@ -184,7 +201,7 @@ export const useGameStore = create<GameStore>((set, get) => {
         if (!result.ok) return set({ message: `Could not load: ${result.error}` });
         set({ screen: 'game', game: result.save.gameState, ...reset });
         // A save made between legs resumes the trip.
-        if (result.save.gameState.travel) void runLegs();
+        if (result.save.gameState.travel && !result.save.gameState.event) void runLegs();
       } catch (err) {
         set({ message: `Could not load: ${errorText(err)}` });
       }
@@ -212,5 +229,9 @@ export const useGameStore = create<GameStore>((set, get) => {
 
     requestStop: () => set({ stopRequested: true }),
     act: dispatch,
+    closeEvent: () => {
+      if (dispatch({ type: 'event.close' }) && get().game?.travel) void runLegs();
+    },
+    note: (message) => set({ message }),
   };
 });

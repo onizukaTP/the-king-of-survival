@@ -1,4 +1,6 @@
 import { previewTravel, siteAt } from '../../engine/systems/travel/travel';
+import { conditionEffects } from '../../engine/systems/conditions/conditions';
+import { darkMinutes, torchChargeFor } from '../../engine/systems/night/night';
 import { content, useGameStore } from '../../store/gameStore';
 import { formatClock, formatDuration, formatKm, kindLabel } from '../format';
 import { HerePanel } from './HerePanel';
@@ -18,10 +20,12 @@ export function Panel() {
   const panel = useGameStore((s) => s.panel);
   const townSelection = useGameStore((s) => s.townSelection);
   if (!game) return null;
+  // A sprained ankle slows every leg (D-061); the times shown include it.
+  const slow = (minutes: number) => Math.round(minutes / conditionEffects(game.survival, content).speed);
 
   if (game.travel) {
     const t = game.travel;
-    const remaining = t.legs.slice(t.nextLeg).reduce((sum, l) => sum + l.minutes, 0);
+    const remaining = t.legs.slice(t.nextLeg).reduce((sum, l) => sum + slow(l.minutes), 0);
     const name = t.siteId ? content.sites[t.siteId]?.name : 'Unmarked ground';
     return (
       <div className="panel-body">
@@ -48,6 +52,11 @@ export function Panel() {
 
   const site = 'siteId' in selection ? content.sites[selection.siteId] : undefined;
   const preview = previewTravel(game, selection, content);
+  // P-015: warn when the trip runs into the dark with too little torch charge for it.
+  const tripMinutes = preview.ok ? slow(preview.plan.minutes) : 0;
+  const need = torchChargeFor(darkMinutes(game.clockMinutes, tripMinutes, content.world.night), content.world.night);
+  const charge = Math.max(0, ...game.inventory.stacks.filter((s) => s.itemId === content.scavenging.torchItemId).map((s) => s.charge ?? 0));
+  const unlit = need > charge;
   return (
     <div className="panel-body">
       <div className="panel-head">
@@ -63,8 +72,9 @@ export function Panel() {
           <Row label="Distance" value={formatKm(preview.plan.roadKm + preview.plan.crossKm)} />
           <Row label="Road" value={formatKm(preview.plan.roadKm)} />
           <Row label="Cross-country" value={formatKm(preview.plan.crossKm)} />
-          <Row label="Time" value={formatDuration(preview.plan.minutes)} />
+          <Row label="Time" value={formatDuration(tripMinutes)} />
           <Row label="Legs" value={String(preview.plan.legs.length)} />
+          {unlit && <p className="warn-text" data-testid="dark-warning">This trip runs into the dark without enough torch charge. Moving in the dark risks injury.</p>}
           <button className="panel-action" onClick={() => void travel()}>Travel</button>
         </>
       ) : (

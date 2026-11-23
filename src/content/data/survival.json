@@ -8,5 +8,6 @@
   "sleepHealAbove": 25,
   "warnAt": 25,
   "carry": { "freeKg": 25, "maxKg": 50, "multiplierAtMax": 2 },
-  "illness": { "minutes": 1440, "waterDrainMultiplier": 2 }
+  "illness": { "minutes": 1440, "waterDrainMultiplier": 2 },
+  "shelteredSleepCondition": "condition.well_rested"
 }

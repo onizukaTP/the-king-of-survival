@@ -1,6 +1,8 @@
-# Events (M6) — proposed (P-018), awaiting approval
+# Events and conditions (M6) — approved (D-059, D-061, was P-018) and built
 
-Everything below is a proposal. Nothing here is built.
+The owner approved this on 2026-11-23: threats are handled without fighting for now (a Fight choice comes with M7), the nameless roadblock is fine, the numbers and the 12 events stay, and night (P-015) is approved with it (D-060). The owner added **conditions** (D-061, below): events leave lasting modifiers on Prabu. Built on `dev`. Events are data in `src/content/data/events.json`, conditions in `conditions.json`.
+
+**Later (D-062):** charms, special items that lower risks or raise yields, worn as 1 talisman, 2 rings and 2 bangles. To be drafted and approved; not built.
 
 M6 adds **events**: short text scenes that interrupt travel, searching or resting, give the player a choice, and change the state of the game. It also builds **night and the moon** (P-015, `docs/night.md`), because the night risk (D-048) is delivered through events.
 
@@ -95,6 +97,21 @@ P-001 proposed 8–10 text events. This proposes 12, because night and searching
 | 11 | **Unsteady floor** (curio) | Search in an independent house or apartment block | Leave it · **[Charged torch]** reach in carefully: one extra find from the building's table · Reach in blind: 50% extra find, 50% injured (−10) |
 | 12 | **Something moving in the dark** | Rest outdoors at night | Keep watch (the hour gives no Rest) · Ignore it: 80% nothing, 20% one food item is gone from the pack |
 
+## Conditions (D-061)
+
+Events leave lasting modifiers on Prabu. Each shows as a tag in the top bar; tapping it says what it does and how long is left. The same condition again restarts its timer; they don't stack.
+
+| Condition | Comes from | Effect | Ends |
+|---|---|---|---|
+| **Sprained ankle** | Bad footing (twisted ankle) | Walks at 70% speed, on the world map and in towns | After 12 h |
+| **Restless** | Something moving in the dark (keeping watch, or food taken) | Rest drains 50% faster while awake | After one sleep of 4 h or more, undisturbed |
+| **Weak** | Caught at the roadblock; pushing on in the midday heat (50%) | Maximum Health −10 (and −25% damage in M7) | After 24 h |
+| **Shaken** | Any threat event at night (dogs, roadblock, something in the dark) | Searches take 25% longer | After 8 h, or 1 h of rest at home or beside a fire |
+| **Infected wound** | A dirty dog bite (30% of bites); cutting his arm reaching in blind (30% of cuts) | Health −1 an hour; no healing | Treated with a sterilized bandage or neem–turmeric paste (a cloth bandage treats the injury but not the infection) |
+| **Well rested** (good) | Sleeping to full Rest at home or beside a fire, undisturbed | Rest drains 25% slower while awake | After 12 h |
+
+A wound can kill: with food and water left, death by Health reaching 0 is "His wounds killed him."
+
 ## Night and the moon (P-015)
 
 M6 builds `docs/night.md` as proposed: night 18:30–06:00, a 30-day moon with three full-moon nights, the torch switching on by itself on dark legs (10% battery an hour), a moon icon by the clock, and a warning in the trip panel when a trip will run into the dark without light. The risk numbers it left open are the ones above: ×2 event chance and *Bad footing* in the dark.
@@ -115,10 +132,11 @@ M6 builds `docs/night.md` as proposed: night 18:30–06:00, a 30-day moon with t
 - **Karma or reputation** from choices (deferred, §6).
 - **Trading** with people met on the road (deferred, §6).
 
-## Choices for the owner
+## Built choices (Claude's, technical or small)
 
-1. **Threats before combat:** handle dogs and raiders with non-fight choices now (recommended), or hold all threat events until M7?
-2. **Raiders:** is a nameless roadblock in the prototype area all right? (The category is approved; where hostile people are is an owner decision.)
-3. **Numbers:** 5% road / 10% cross-country per leg, ×2 in the dark, 2-hour cooldown. Too many, too few?
-4. **The 12 events:** keep, cut or change any? Event text is placeholder either way.
-5. **Night (P-015):** approve `docs/night.md` as written along with this?
+- **Event finds go into the pack**, or onto the ground where he stands if they would take him past 50 kg. (Search finds still go on the ground, D-045; on a trip he would walk away from them.)
+- **Town walks:** at most one event per walk. If its outcome stops him (a sprained ankle), he stays where it happened; otherwise he walks on and the card shows on arrival.
+- **Rest events** roll at the end of each full hour; one stops the rest there.
+- **Chance per leg** scales with the leg's length (a 15-minute leg is half the chance of a 30-minute one), and a leg's road or cross-country share is worked out from its length and time.
+- **Item healing** is now capped at maximum Health (it was capped at 100, which let painkillers go past the radiation limit).
+- The e2e tests start games with `?seed=2` so random events don't make them flaky.

@@ -115,3 +115,24 @@ label.item-row { cursor: pointer; justify-content: flex-start; align-items: cent
   .meter-bar { width: 28px; }
 }
 .recipe-card .row { align-items: center; gap: 8px; }
+
+/* Conditions (D-061) are tags in the top bar; tapping one says what it does. */
+.pill.condition { border: 0; font: inherit; font-size: 14px; cursor: help; }
+.pill.good { color: #7fc48a; }
+
+/* The event card (D-059): centred over a dimmed map; a bottom sheet on phones. */
+.event-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+.event-card { width: min(460px, 100%); max-height: 100%; overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+.event-card .row { align-items: baseline; gap: 8px; }
+.event-card h2 { margin: 0; }
+.event-choices { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.event-choices button { width: 100%; text-align: left; }
+.event-choices .warn-text { display: block; margin-top: 2px; }
+.event-tag { color: var(--accent); }
+.event-outcome { font-weight: 600; }
+.event-effects { margin: 0; padding-left: 18px; color: var(--muted); }
+.event-card .panel-action { width: 100%; }
+@media (max-width: 720px) {
+  .event-overlay { align-items: flex-end; padding: 0; }
+  .event-card { width: 100%; max-height: 80%; border-radius: 12px 12px 0 0; padding: 16px; }
+}

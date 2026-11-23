@@ -168,7 +168,8 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ vehicles.md          # vehicles (D-024, D-030 to D-034)
 │  ├─ scavenging.md        # scavenging (D-047)
 │  ├─ towns.md             # town maps (D-052)
-│  ├─ night.md             # night proposal (P-015)
+│  ├─ night.md             # night and the moon (D-060)
+│  ├─ events.md            # events and conditions (D-059, D-061)
 │  ├─ fire.md              # fire and cooking (D-056, D-057)
 │  └─ crafting.md          # crafting (D-058)
 ├─ public/
@@ -283,6 +284,10 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-056 **Fire:** made with a **matchbox, the lighter, flint and steel, or by rubbing two sticks** (slow). Over a fire Prabu can **cook raw meat, boil water, and boil rags into sterilized bandages**. **Tinned food needs a can opener**, a rare item. Firewood (already in the item list) is the fuel. Numbers in D-057.
 - D-057 (approves P-016) **Fire and cooking numbers:** 1 firewood + a way to light it (lighter or matchbox 5 min and one light, flint and steel 15 min, rubbing two sticks 90 min); a fire burns 2 h, +2 h per firewood added, one fire at a time; cook up to 3 raw meat, boil up to 4 bottles (pot), sterilize up to 3 rags with a pot and one bottle of water, 30 min each; new items matchbox (found with 3–10 matches), can opener (rare) and sterilized bandage (treats an injury, Health +20); no separate kindling; save v6. Spec in `docs/fire.md`.
 - D-058 (approves P-017, with changes) **Crafting (M5):** a Craft panel, craft anywhere; inputs used, tool kept (in the pack or the weapon slot), time passes. Recipes: cloth bandage (2 rags, 10 min), neem paste (3 neem leaves, 15 min, Health +15), **neem–turmeric paste** (3 neem leaves + 1 turmeric, 15 min, Health +25), salted dried meat (2 raw meat + 1 salt, knife, 1 h, makes 2); millet porridge at a fire (up to 2 millet, pot, 1 bottle of water, 30 min). **Weapon recipes (spear, bow, arrows) wait for M7.** **Turmeric** joins the item list (0.1 kg, about 8% in houses, provision stores, ration shops, supermarkets, hotels and places of worship). **Animal hide** stays for later. Spec in `docs/crafting.md`.
+- D-059 (approves P-018) **Events (M6)** as proposed in `docs/events.md`: rolls on travel legs (5% road, 10% cross-country), searches (10%) and outdoor rest at night (5%/h, none by a fire); ×2 in the dark without light; ×1.5 for threats at Rest 0; 2-hour cooldown; the 12 starter events; a dialog that must be answered, with item-tagged choices shown disabled with the reason. **Threats are handled without fighting for now; a Fight choice comes with M7.** A nameless raiders' roadblock is fine in the prototype area.
+- D-060 (approves P-015) **Night and the moon** as proposed in `docs/night.md`, built with M6.
+- D-061 **Conditions:** events leave lasting modifiers on Prabu. Six approved: **Sprained ankle** (walk speed ×0.7, 12 h), **Restless** (Rest drains ×1.5 until a 4-hour sleep), **Weak** (max Health −10 for 24 h; in M7 also −25% damage), **Shaken** (searches take 25% longer, 8 h; ends after 1 h of rest at home or by a fire), **Infected wound** (Health −1/h and no healing until treated with a sterilized bandage or neem–turmeric paste), **Well rested** (after sleeping to full Rest at home or by a fire: Rest drains ×0.75 for 12 h). The same condition again restarts its timer; no stacking. Spec in `docs/events.md`.
+- D-062 **Charms (later):** special items that lower risks or raise yields; Prabu can wear **1 talisman, 2 rings and 2 bangles**. To be drafted and approved later; not built in M6.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -290,7 +295,6 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-005 Combat: Prabu solo vs 1–3 enemies, range bands (close/mid/far), speed-based turn order; actions: attack, aim, move band, use item, flee.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
-- P-015 Night (D-048): night 18:30–06:00; 30-day moon cycle with three full-moon nights; the torch switches on by itself when moving in the dark and uses 10% an hour; risk numbers come with M6/M7. Spec in `docs/night.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*
@@ -319,7 +323,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Done — live (released 2026-11-22) |
 | M4b | Town maps: buildings, per-type loot, wells (D-049, D-050, D-052) | M4 | Done — live (released 2026-11-22) |
 | M5 | Crafting | M3 | Done — live (released 2026-11-22); weapon recipes wait for M7 (D-058) |
-| M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Blocked |
+| M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Done on `dev` (not yet released); Fight choices wait for M7 (D-059) |
 | M7 | Combat | M3, M6, Q4, Q5 | Blocked |
 | M8 | Progression, opening narrative, journal | M7, Q6, Q7 | Blocked |
 | M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Blocked (needs vehicle numbers proposed and approved) |

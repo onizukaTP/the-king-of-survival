@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import {
-  buildingTypeSchema, fireSchema, recipeSchema, townSchema, type FireConfig, type Recipe, townStreetsSchema, type BuildingType, type Town, type TownStreets,
+  buildingTypeSchema, conditionSchema, eventsSchema, fireSchema, type Condition, type EventsConfig, recipeSchema, townSchema, type FireConfig, type Recipe, townStreetsSchema, type BuildingType, type Town, type TownStreets,
   characterSchema, itemSchema, lootSchema, newGameSchema, outlineSchema, roadsSchema, scavengingSchema, siteSchema, survivalSchema, waterSchema, worldSchema,
   type Character, type Item, type Loot, type NewGameConfig, type Outline, type Roads, type ScavengingConfig, type Site, type SurvivalConfig, type Water, type WorldConfig,
 } from './schemas';
@@ -10,6 +10,8 @@ import loot from './data/loot.json';
 import scavenging from './data/scavenging.json';
 import fire from './data/fire.json';
 import recipes from './data/recipes.json';
+import conditions from './data/conditions.json';
+import events from './data/events.json';
 import water from './data/water.json';
 import buildingTypes from './data/building-types.json';
 import towns from './data/towns.json';
@@ -32,6 +34,8 @@ export interface Content {
   scavenging: ScavengingConfig;
   fire: FireConfig;
   recipes: Record<string, Recipe>;
+  conditions: Record<string, Condition>;
+  events: EventsConfig;
   water: Water;
   buildingTypes: Record<string, BuildingType>;
   // Keyed by the town's site id.
@@ -52,6 +56,8 @@ export interface RawContent {
   scavenging: unknown;
   fire: unknown;
   recipes: unknown;
+  conditions: unknown;
+  events: unknown;
   water: unknown;
   buildingTypes: unknown;
   towns: unknown;
@@ -82,6 +88,8 @@ export function parseContent(raw: RawContent): Content {
     scavenging: scavengingSchema.parse(raw.scavenging),
     fire: fireSchema.parse(raw.fire),
     recipes: byId(z.array(recipeSchema).parse(raw.recipes), 'recipe'),
+    conditions: byId(z.array(conditionSchema).parse(raw.conditions), 'condition'),
+    events: eventsSchema.parse(raw.events),
     water: waterSchema.parse(raw.water),
     buildingTypes: byId(z.array(buildingTypeSchema).parse(raw.buildingTypes), 'building type'),
     towns: Object.fromEntries(z.array(townSchema).parse(raw.towns).map((t) => [t.siteId, t])),
@@ -122,6 +130,30 @@ export function parseContent(raw: RawContent): Content {
     for (const id of [...r.inputs.map((i) => i.itemId), r.output.itemId, ...(r.tool ? [r.tool] : [])]) item(id, `recipes.json ${r.id}`);
     if (fire.recipes.some((f) => f.id === r.id)) throw new Error(`recipes.json: ${r.id} is also a fire recipe`);
   }
+  const condition = (id: string, where: string) => {
+    if (!content.conditions[id]) throw new Error(`${where}: unknown condition ${id}`);
+  };
+  for (const c of Object.values(content.conditions)) for (const id of c.curedBy ?? []) item(id, `conditions.json ${c.id} curedBy`);
+  condition(content.survival.shelteredSleepCondition, 'survival.json shelteredSleepCondition');
+  condition(content.events.nightThreatCondition, 'events.json nightThreatCondition');
+  byId(content.events.events, 'event');
+  for (const e of content.events.events) {
+    const where = `events.json ${e.id}`;
+    for (const id of e.buildingTypes ?? []) if (!content.buildingTypes[id]) throw new Error(`${where}: unknown building type ${id}`);
+    byId(e.choices, `${where} choice`);
+    // A choice with no label resolves by itself, so it must be the only one.
+    if (e.choices.some((c) => !c.label) && e.choices.length > 1) throw new Error(`${where}: an unlabelled choice must be the only one`);
+    for (const c of e.choices) {
+      for (const n of c.needs ?? []) for (const id of n.items ?? []) item(id, where);
+      const total = c.outcomes.reduce((sum, o) => sum + o.chance, 0);
+      if (Math.abs(total - 1) > 1e-9) throw new Error(`${where} ${c.id}: outcome chances add up to ${total}, not 1`);
+      for (const o of c.outcomes) {
+        for (const id of o.conditions ?? []) condition(id, where);
+        for (const id of o.lose?.items ?? []) item(id, where);
+        for (const entry of o.loot?.entries ?? []) item(entry.itemId, where);
+      }
+    }
+  }
   for (const l of Object.values(content.loot)) {
     if (!content.sites[l.siteId]) throw new Error(`loot.json: unknown site ${l.siteId}`);
     for (const e of [...l.search, ...(l.hunt ?? [])]) {
@@ -158,5 +190,5 @@ export function parseContent(raw: RawContent): Content {
 }
 
 export function loadContent(): Content {
-  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame });
+  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame });
 }

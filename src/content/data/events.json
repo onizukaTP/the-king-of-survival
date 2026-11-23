@@ -1,0 +1,200 @@
+{
+  "travelChancePerLeg": { "road": 0.05, "cross": 0.1 },
+  "searchChance": 0.1,
+  "restChancePerHour": 0.05,
+  "unlitMultiplier": 2,
+  "exhaustedThreatMultiplier": 1.5,
+  "cooldownMinutes": 120,
+  "nightThreatCondition": "condition.shaken",
+  "events": [
+    {
+      "id": "event.bad_footing", "title": "Bad footing",
+      "text": "In the dark the ground gives way under his foot.",
+      "on": ["travel", "walk"], "unlit": true, "weight": 3,
+      "choices": [
+        { "id": "auto", "label": "", "outcomes": [
+          { "chance": 0.5, "text": "His ankle twists hard. He has to stop.", "health": -10, "injure": true, "conditions": ["condition.sprained_ankle"], "stopTravel": true },
+          { "chance": 0.5, "text": "He catches himself, only a scrape.", "health": -3 }
+        ] }
+      ]
+    },
+    {
+      "id": "event.wild_dogs", "title": "Wild dogs",
+      "text": "Five lean dogs step out of the scrub ahead. Patchy fur, too many teeth. They have not decided about him yet.",
+      "on": ["travel"], "ground": "cross", "threat": true, "weight": 2, "nightWeight": 4,
+      "choices": [
+        { "id": "back_away", "label": "Back away slowly", "outcomes": [
+          { "chance": 0.6, "text": "They watch him go." },
+          { "chance": 0.28, "text": "One of them darts in and catches his leg.", "health": -15, "injure": true },
+          { "chance": 0.12, "text": "One of them darts in and catches his leg. The bite looks dirty.", "health": -15, "injure": true, "conditions": ["condition.infected_wound"] }
+        ] },
+        { "id": "throw_meat", "label": "Throw them the meat", "tag": "Meat", "needs": [{ "items": ["item.raw_meat"] }, { "items": ["item.cooked_meat"] }], "outcomes": [
+          { "chance": 1, "text": "They fight over it. He walks on.", "lose": { "items": ["item.raw_meat", "item.cooked_meat"] } }
+        ] },
+        { "id": "flame", "label": "Wave a flame at them", "tag": "Fire or torch", "needs": [{ "items": ["item.lighter"] }, { "items": ["item.matchbox"] }, { "items": ["item.torch"], "night": true }], "outcomes": [
+          { "chance": 0.85, "text": "They scatter into the scrub." },
+          { "chance": 0.15, "text": "One is braver than the rest and bites before they scatter.", "health": -15, "injure": true }
+        ] },
+        { "id": "run", "label": "Run", "outcomes": [
+          { "chance": 0.5, "text": "He outruns them, lungs burning.", "rest": -10 },
+          { "chance": 0.35, "text": "They catch him before he reaches the road.", "rest": -10, "health": -15, "injure": true },
+          { "chance": 0.15, "text": "They catch him before he reaches the road. The bite looks dirty.", "rest": -10, "health": -15, "injure": true, "conditions": ["condition.infected_wound"] }
+        ] }
+      ]
+    },
+    {
+      "id": "event.snake", "title": "Snake in the path",
+      "text": "A thick snake lies across the path, warming itself in the sun.",
+      "on": ["travel"], "ground": "cross", "when": "day", "weight": 2,
+      "choices": [
+        { "id": "step_around", "label": "Step around it", "outcomes": [
+          { "chance": 1, "text": "He gives it a wide berth.", "minutes": 10, "activity": "travel" }
+        ] },
+        { "id": "pin", "label": "Pin it", "tag": "Weapon", "needs": [{ "weapon": true }], "outcomes": [
+          { "chance": 0.7, "text": "One clean strike. Meat for later.", "loot": { "draws": 1, "entries": [{ "itemId": "item.raw_meat", "chance": 1, "min": 1, "max": 1 }] } },
+          { "chance": 0.3, "text": "It is faster than him. The bite burns and his stomach turns.", "health": -10, "injure": true, "ill": true }
+        ] },
+        { "id": "turn_back", "label": "Turn back", "outcomes": [
+          { "chance": 1, "text": "He stops and lets it be.", "stopTravel": true }
+        ] }
+      ]
+    },
+    {
+      "id": "event.abandoned_vehicle", "title": "Abandoned vehicle",
+      "text": "A rusted car sits on the shoulder, doors hanging open, tyres long gone.",
+      "on": ["travel"], "ground": "road", "weight": 2,
+      "choices": [
+        { "id": "search", "label": "Search it (30 min)", "outcomes": [
+          { "chance": 1, "text": "He goes through the seats and the boot.", "minutes": 30, "loot": { "draws": 1, "entries": [
+            { "itemId": "item.scrap_metal", "chance": 0.35, "min": 1, "max": 1 },
+            { "itemId": "item.cloth", "chance": 0.385, "min": 1, "max": 2 },
+            { "itemId": "item.coir_rope", "chance": 0.5, "min": 1, "max": 1 },
+            { "itemId": "item.unsafe_water", "chance": 1, "min": 1, "max": 1 }
+          ] } }
+        ] },
+        { "id": "leave", "label": "Leave it", "outcomes": [{ "chance": 1, "text": "He walks past." }] }
+      ]
+    },
+    {
+      "id": "event.dead_traveller", "title": "Dead traveller's bundle",
+      "text": "Bones in rags beside the path, and a cloth bundle still tied at the neck.",
+      "on": ["travel"], "weight": 2,
+      "choices": [
+        { "id": "search", "label": "Open the bundle (10 min)", "outcomes": [
+          { "chance": 0.5, "text": "Not much, but something.", "minutes": 10, "loot": { "draws": 1, "entries": [
+            { "itemId": "item.cloth", "chance": 0.4, "min": 1, "max": 2 },
+            { "itemId": "item.unsafe_water", "chance": 0.4, "min": 1, "max": 1 },
+            { "itemId": "item.old_pills", "chance": 0.3, "min": 1, "max": 1 },
+            { "itemId": "item.matchbox", "chance": 1, "min": 1, "max": 1, "charge": [1, 5] }
+          ] } },
+          { "chance": 0.5, "text": "Whoever this was had packed with care.", "minutes": 10, "loot": { "draws": 2, "entries": [
+            { "itemId": "item.cloth", "chance": 0.4, "min": 1, "max": 2 },
+            { "itemId": "item.unsafe_water", "chance": 0.4, "min": 1, "max": 1 },
+            { "itemId": "item.old_pills", "chance": 0.3, "min": 1, "max": 1 },
+            { "itemId": "item.matchbox", "chance": 1, "min": 1, "max": 1, "charge": [1, 5] }
+          ] } }
+        ] },
+        { "id": "leave", "label": "Leave it", "outcomes": [{ "chance": 1, "text": "He leaves the dead in peace." }] }
+      ]
+    },
+    {
+      "id": "event.dust_storm", "title": "Dust storm",
+      "text": "A brown wall of dust rolls in from the plains. The sun goes dim.",
+      "on": ["travel"], "when": "day", "weight": 1.5,
+      "choices": [
+        { "id": "shelter", "label": "Shelter and wait (1 h)", "outcomes": [
+          { "chance": 1, "text": "He wraps his face and waits it out.", "minutes": 60, "water": -5 }
+        ] },
+        { "id": "push_on", "label": "Push on", "outcomes": [
+          { "chance": 1, "text": "He walks blind through the dust, slow and parched.", "minutes": 30, "activity": "travel", "water": -10, "rest": -10 }
+        ] }
+      ]
+    },
+    {
+      "id": "event.midday_heat", "title": "Midday heat",
+      "text": "The sun is straight overhead. His head pounds and his mouth is dry.",
+      "on": ["travel"], "hours": [11, 15], "waterBelow": 50, "weight": 3,
+      "choices": [
+        { "id": "shade", "label": "Rest in the shade (1 h)", "outcomes": [
+          { "chance": 1, "text": "He sits out the worst of it under a tree.", "minutes": 60, "rest": 5 }
+        ] },
+        { "id": "push_on", "label": "Push on", "outcomes": [
+          { "chance": 0.5, "text": "He keeps going, sweating it out.", "water": -10, "rest": -10 },
+          { "chance": 0.5, "text": "He keeps going, but the heat takes something out of him.", "water": -10, "rest": -10, "conditions": ["condition.weak"] }
+        ] }
+      ]
+    },
+    {
+      "id": "event.distant_smoke", "title": "Distant smoke",
+      "text": "A thin line of smoke rises somewhere off the path.",
+      "on": ["travel"], "weight": 1.5,
+      "choices": [
+        { "id": "look", "label": "Go and look (30 min)", "outcomes": [
+          { "chance": 0.5, "text": "A dead campfire. Someone left wood behind.", "minutes": 30, "activity": "travel", "loot": { "draws": 1, "entries": [{ "itemId": "item.firewood", "chance": 1, "min": 2, "max": 2 }] } },
+          { "chance": 0.3, "text": "Only smouldering brush. Nothing here.", "minutes": 30, "activity": "travel" },
+          { "chance": 0.2, "text": "Ashes, and tracks leading off somewhere he hasn't been.", "minutes": 30, "activity": "travel", "revealNearest": true }
+        ] },
+        { "id": "avoid", "label": "Avoid it", "outcomes": [{ "chance": 1, "text": "Smoke means people. He keeps away." }] }
+      ]
+    },
+    {
+      "id": "event.stray_goat", "title": "Stray goat",
+      "text": "A goat picks at dry thorn bushes, alone. No herder in sight.",
+      "on": ["travel"], "ground": "cross", "nearTownKm": 10, "weight": 2,
+      "choices": [
+        { "id": "catch", "label": "Try to catch it (30 min)", "outcomes": [
+          { "chance": 0.4, "text": "He corners it against a wall.", "minutes": 30, "loot": { "draws": 1, "entries": [{ "itemId": "item.raw_meat", "chance": 1, "min": 3, "max": 3 }] } },
+          { "chance": 0.6, "text": "It bounds away over the rocks.", "minutes": 30, "rest": -5 }
+        ] },
+        { "id": "leave", "label": "Leave it", "outcomes": [{ "chance": 1, "text": "He lets it be." }] }
+      ]
+    },
+    {
+      "id": "event.roadblock", "title": "Roadblock",
+      "text": "Oil drums and a felled tree across the road. Figures wait behind them, watching.",
+      "on": ["travel"], "ground": "road", "threat": true, "weight": 0.5,
+      "choices": [
+        { "id": "go_round", "label": "Go round cross-country (45 min)", "outcomes": [
+          { "chance": 1, "text": "He leaves the road and circles wide.", "minutes": 45, "activity": "travel" }
+        ] },
+        { "id": "hand_over", "label": "Hand over food or water", "tag": "Food or water", "needs": [{ "categories": ["food", "water"] }], "outcomes": [
+          { "chance": 1, "text": "They take it and wave him through.", "lose": { "categories": ["food", "water"] } }
+        ] },
+        { "id": "slip_past", "label": "Slip past in the dark", "tag": "Night", "needs": [{ "night": true }], "outcomes": [
+          { "chance": 0.6, "text": "He creeps by unseen." },
+          { "chance": 0.4, "text": "They catch him, beat him and take what they want.", "health": -15, "injure": true, "lose": { "categories": ["food"] }, "conditions": ["condition.weak"] }
+        ] }
+      ]
+    },
+    {
+      "id": "event.unsteady_floor", "title": "Unsteady floor",
+      "text": "Half the floor has fallen into the room below. Something glints under the broken slab.",
+      "on": ["search"], "buildingTypes": ["btype.house", "btype.apartment_block"], "weight": 1,
+      "choices": [
+        { "id": "leave", "label": "Leave it", "outcomes": [{ "chance": 1, "text": "Not worth his neck." }] },
+        { "id": "careful", "label": "Reach in carefully", "tag": "Torch", "needs": [{ "items": ["item.torch"] }], "outcomes": [
+          { "chance": 1, "text": "With the torch he sees where to put his hands.", "extraFind": true }
+        ] },
+        { "id": "blind", "label": "Reach in blind", "outcomes": [
+          { "chance": 0.5, "text": "His fingers close on something.", "extraFind": true },
+          { "chance": 0.35, "text": "The slab shifts and cuts his arm.", "health": -10, "injure": true },
+          { "chance": 0.15, "text": "The slab shifts and cuts his arm on rusted steel.", "health": -10, "injure": true, "conditions": ["condition.infected_wound"] }
+        ] }
+      ]
+    },
+    {
+      "id": "event.moving_in_dark", "title": "Something moving in the dark",
+      "text": "He wakes. Something is moving out there, close.",
+      "on": ["rest"], "when": "night", "threat": true, "weight": 1,
+      "choices": [
+        { "id": "watch", "label": "Keep watch", "outcomes": [
+          { "chance": 1, "text": "He sits up till it goes. The hour gives him no rest.", "rest": -12.5, "conditions": ["condition.restless"] }
+        ] },
+        { "id": "ignore", "label": "Ignore it", "outcomes": [
+          { "chance": 0.8, "text": "Whatever it was, it moves on." },
+          { "chance": 0.2, "text": "In the morning some of his food is gone.", "lose": { "categories": ["food"] }, "conditions": ["condition.restless"] }
+        ] }
+      ]
+    }
+  ]
+}

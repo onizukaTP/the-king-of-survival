@@ -5,6 +5,8 @@ import { nextRandom } from '../../core/rng';
 import type { GameState, Inventory, Stack } from '../../core/state';
 import { leaveOnGround } from '../scavenging/scavenging';
 import { passTime } from '../survival/survival';
+import { healingBlocked } from '../conditions/conditions';
+import { maxHealth } from '../../core/state';
 
 const fail = (code: CommandError['code'], message: string) => ({ ok: false as const, error: { code, message } });
 
@@ -83,6 +85,7 @@ export function applyItem(state: GameState, index: number, content: Content): Co
   }
 
   const fx = item.effects ?? {};
+  const cures = s.conditions.filter((c) => content.conditions[c.id]?.curedBy?.includes(item.id));
   if (!item.effects && !item.curesInjury) return fail('cannot_use', `${item.name} can't be used on its own.`);
   // D-056: tinned food needs a can opener in the pack; the opener is kept.
   if (item.needsItem && !state.inventory.stacks.some((t) => t.itemId === item.needsItem)) {
@@ -92,15 +95,23 @@ export function applyItem(state: GameState, index: number, content: Content): Co
   if (s.injured && !item.curesInjury && fx.health && !fx.food && !fx.water) {
     return fail('injured', 'Treat the injury first, with a bandage or neem paste.');
   }
+  if (healingBlocked(s, content) && !cures.length && !item.curesInjury && fx.health && !fx.food && !fx.water) {
+    return fail('injured', 'Treat the infected wound first, with a sterilized bandage or neem–turmeric paste.');
+  }
 
   takeOne(state.inventory, index);
   if (item.curesInjury && s.injured) {
     s.injured = false;
     events.push({ type: 'injury_cured' });
   }
+  // D-061: the right dressing treats an infected wound.
+  for (const c of cures) {
+    s.conditions = s.conditions.filter((x) => x.id !== c.id);
+    events.push({ type: 'condition_cured', conditionId: c.id });
+  }
   s.food = Math.min(100, s.food + (fx.food ?? 0));
   s.water = Math.min(100, s.water + (fx.water ?? 0));
-  if (!s.injured) s.health = Math.min(100, s.health + (fx.health ?? 0));
+  if (!healingBlocked(s, content)) s.health = Math.min(maxHealth(s, content), s.health + (fx.health ?? 0));
   if (item.illnessChance) {
     const [roll, rngState] = nextRandom(state.rngState);
     state.rngState = rngState;

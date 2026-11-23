@@ -6,7 +6,9 @@ import { distanceKm } from './geo';
 import { planRoute } from './route';
 import { fogCell, previewTravel, siteAt } from './travel';
 
-const content = loadContent();
+// Events (M6) have their own tests; here they would only interrupt the trips under test.
+const loaded = loadContent();
+const content = { ...loaded, events: { ...loaded.events, events: [] } };
 const home = { lat: 9.5599, lon: 77.6251 };
 
 function ok(state: GameState, command: Command) {

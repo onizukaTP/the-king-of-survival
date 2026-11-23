@@ -1,3 +1,4 @@
+import { conditionEffects } from '../../engine/systems/conditions/conditions';
 import { content, useGameStore } from '../../store/gameStore';
 import { formatClock, formatDuration } from '../format';
 
@@ -8,7 +9,8 @@ export function RestPanel() {
   const openPanel = useGameStore((s) => s.openPanel);
   const { rest, food, water, injured } = game.survival;
   const untilRested = Math.ceil(((100 - rest) / content.survival.sleepRestPerHour) * 60);
-  const heals = !injured && food > content.survival.sleepHealAbove && water > content.survival.sleepHealAbove;
+  const infected = conditionEffects(game.survival, content).blocksHealing;
+  const heals = !injured && !infected && food > content.survival.sleepHealAbove && water > content.survival.sleepHealAbove;
 
   return (
     <div className="panel-body">
@@ -18,7 +20,7 @@ export function RestPanel() {
       </div>
       <p className="muted">Sleep where he stands. Food and Water keep draining.</p>
       <div className="row"><span className="muted">Rest</span><span>{Math.round(rest)}</span></div>
-      <p className="muted">{heals ? 'Health recovers while he sleeps.' : injured ? 'Health won\'t recover until the injury is treated.' : 'Health won\'t recover: Food and Water must be above 25.'}</p>
+      <p className="muted">{heals ? 'Health recovers while he sleeps.' : injured ? 'Health won\'t recover until the injury is treated.' : infected ? 'Health won\'t recover until the infected wound is treated.' : 'Health won\'t recover: Food and Water must be above 25.'}</p>
       <div className="card-actions">
         <button onClick={() => act({ type: 'rest', minutes: 60 })}>1 hour</button>
         <button onClick={() => act({ type: 'rest', minutes: 240 })}>4 hours</button>

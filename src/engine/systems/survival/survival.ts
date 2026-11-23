@@ -3,6 +3,11 @@ import type { CommandResult, DeathCause, GameEvent } from '../../core/commands';
 import { nextRandom } from '../../core/rng';
 import { maxHealth, type GameState, type Meter } from '../../core/state';
 import { carriedKg, loadMultiplier } from '../inventory/inventory';
+import { addCondition, conditionEffects, expireConditions, removeCondition } from '../conditions/conditions';
+import { maybeEvent } from '../events/events';
+import { fireMinutesLeft } from '../fire/fire';
+import { isNight } from '../night/night';
+import { siteAt } from '../travel/travel';
 import { inRadiationZone } from './radiation';
 
 /** What Prabu is doing while time passes: only travel carries the overload cost, only sleep restores Rest. */
@@ -25,6 +30,7 @@ export function passTime(
   const s = state.survival;
   const before = { ...s };
   const load = activity === 'travel' ? loadMultiplier(carriedKg(state.inventory, content), cfg.carry) : 1;
+  let fx = conditionEffects(s, content);
 
   // Stepping by the minute keeps every threshold (Rest hitting 0, a meter emptying) exact, and is cheap.
   for (let i = 0; i < minutes; i++) {
@@ -32,21 +38,23 @@ export function passTime(
     const ill = s.illUntil !== null ? cfg.illness.waterDrainMultiplier : 1;
     s.food = clamp(s.food - (cfg.drainPerHour.food / 60) * exhausted * load);
     s.water = clamp(s.water - (cfg.drainPerHour.water / 60) * exhausted * load * ill);
-    s.rest = activity === 'sleep' ? clamp(s.rest + cfg.sleepRestPerHour / 60) : clamp(s.rest - (cfg.drainPerHour.rest / 60) * load);
+    s.rest = activity === 'sleep' ? clamp(s.rest + cfg.sleepRestPerHour / 60) : clamp(s.rest - (cfg.drainPerHour.rest / 60) * load * fx.restDrain);
 
     const emptyMeters = (s.food <= 0 ? 1 : 0) + (s.water <= 0 ? 1 : 0);
-    s.health = clamp(s.health - (cfg.emptyMeterHealthPerHour / 60) * emptyMeters);
-    const canHeal = activity === 'sleep' && !s.injured && s.food > cfg.sleepHealAbove && s.water > cfg.sleepHealAbove;
-    if (canHeal) s.health = Math.min(maxHealth(s), clamp(s.health + cfg.sleepHealthPerHour / 60));
+    s.health = clamp(s.health - (cfg.emptyMeterHealthPerHour / 60) * emptyMeters + fx.healthPerHour / 60);
+    const canHeal = activity === 'sleep' && !s.injured && !fx.blocksHealing && s.food > cfg.sleepHealAbove && s.water > cfg.sleepHealAbove;
+    if (canHeal) s.health = Math.min(maxHealth(s, content), clamp(s.health + cfg.sleepHealthPerHour / 60));
 
     state.clockMinutes += 1;
     if (s.illUntil !== null && state.clockMinutes >= s.illUntil) {
       s.illUntil = null;
       events.push({ type: 'recovered' });
     }
+    if (s.conditions.length && expireConditions(state, events)) fx = conditionEffects(s, content);
     if (s.health <= 0) {
       state.dead = true;
-      const cause: DeathCause = s.food <= 0 && s.water <= 0 ? 'hunger_and_thirst' : s.food <= 0 ? 'hunger' : 'thirst';
+      // With food and water left, it was a wound (D-061) that killed him.
+      const cause: DeathCause = s.food <= 0 && s.water <= 0 ? 'hunger_and_thirst' : s.food <= 0 ? 'hunger' : s.water <= 0 ? 'thirst' : 'injury';
       events.push({ type: 'died', cause });
       return;
     }
@@ -61,7 +69,7 @@ export function passTime(
     state.rngState = next;
     if (value < rad.chancePerHour) {
       s.radiation = Math.min(100, s.radiation + rad.amount);
-      s.health = Math.min(s.health, maxHealth(s));
+      s.health = Math.min(s.health, maxHealth(s, content));
       events.push({ type: 'irradiated', amount: rad.amount });
     }
   }
@@ -101,7 +109,29 @@ export function rest(state: GameState, minutes: number | 'until_rested', content
   }
   const events: GameEvent[] = [];
   const start = state.clockMinutes;
-  passTime(state, duration, 'sleep', content, events);
-  events.unshift({ type: 'rested', minutes: state.clockMinutes - start });
+  const home = !state.town && siteAt(state.player.position, content)?.id === content.newGame.startSite;
+  // At home or beside a fire he sleeps sheltered (D-061); outdoors at night something may come (D-059).
+  const sheltered = home || fireMinutesLeft(state) > 0;
+  // A night disturbance spoils the sleep: it neither ends Restless nor leaves him well rested.
+  let interrupted = false;
+  for (let slept = 0; slept < duration && !state.dead;) {
+    const hour = Math.min(60, duration - slept);
+    passTime(state, hour, 'sleep', content, events);
+    slept += hour;
+    const outdoors = !state.town && !home && fireMinutesLeft(state) === 0;
+    if (hour === 60 && !state.dead && outdoors && isNight(state.clockMinutes, content.world.night) && maybeEvent(state, { on: 'rest' }, content, events)) {
+      interrupted = true;
+      break;
+    }
+  }
+  const slept = state.clockMinutes - start;
+  events.unshift({ type: 'rested', minutes: slept });
+  if (state.dead) return { ok: true, state, events };
+  for (const c of [...state.survival.conditions]) {
+    const def = content.conditions[c.id]!;
+    if (!interrupted && def.endsAfterSleepMinutes && slept >= def.endsAfterSleepMinutes) removeCondition(state, c.id, events);
+    if (sheltered && def.endsAfterShelteredRestMinutes && slept >= def.endsAfterShelteredRestMinutes) removeCondition(state, c.id, events);
+  }
+  if (sheltered && !interrupted && state.survival.rest >= 100) addCondition(state, content.survival.shelteredSleepCondition, content, events);
   return { ok: true, state, events };
 }

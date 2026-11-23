@@ -5,7 +5,7 @@ import { siteAt } from '../../engine/systems/travel/travel';
 import { spotHere, TOWN_EDGE } from '../../engine/systems/town/town';
 import { MapView } from '../../map/MapView';
 import { TownMap } from '../../map/TownMap';
-import { content, useGameStore } from '../../store/gameStore';
+import { content, DEBUG, useGameStore } from '../../store/gameStore';
 import { formatClock, formatKg } from '../format';
 import { Panel } from '../panels/Panel';
 import { EventCard } from '../components/EventCard';
@@ -33,7 +33,7 @@ export function MapScreen() {
     ? `In ${content.sites[game.town.siteId]?.name}${spot && spot.id !== TOWN_EDGE ? `: ${spot.name}` : ''}`
     : game.travel ? 'On the road' : here ? `At: ${here.name}` : 'In the open';
   const panelOpen = Boolean(selection || (game.town && townSelection) || game.travel || panel);
-  const toggle = (p: 'pack' | 'rest' | 'craft') => openPanel(panel === p ? null : p);
+  const toggle = (p: 'pack' | 'rest' | 'craft' | 'test') => openPanel(panel === p ? null : p);
   const warnAt = content.survival.warnAt;
   const nightCfg = content.world.night;
   const night = isNight(game.clockMinutes, nightCfg);
@@ -84,6 +84,7 @@ export function MapScreen() {
         </button>
         <button className="small" aria-pressed={panel === 'craft'} onClick={() => toggle('craft')}>Craft</button>
         <button className="small" aria-pressed={panel === 'rest'} onClick={() => toggle('rest')}>Rest</button>
+        {DEBUG && <button className="small" aria-pressed={panel === 'test'} onClick={() => toggle('test')}>Test</button>}
         <div className="menu">
           <button className="small" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>Menu</button>
           {menuOpen && (

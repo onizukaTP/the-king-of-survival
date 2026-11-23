@@ -12,9 +12,12 @@ export const content = loadContent();
 // How long each leg's marker animation plays (D-010: cosmetic only, the leg is already resolved).
 export const LEG_ANIMATION_MS = 600;
 
+/** Testing tools (D-068) show only when the address has ?debug=1. */
+export const DEBUG = new URLSearchParams(window.location.search).get('debug') === '1';
+
 type Screen = 'title' | 'game' | 'gameover';
 /** What the side panel shows when no trip is under way (D-016 plus the approved Pack layout). */
-export type PanelMode = 'pack' | 'rest' | 'craft' | 'here' | null;
+export type PanelMode = 'pack' | 'rest' | 'craft' | 'here' | 'test' | null;
 /** Pack order: grouped by kind, or a flat list by name or heaviest first. Price joins with trading. */
 export type PackSort = 'type' | 'name' | 'weight';
 

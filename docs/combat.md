@@ -8,7 +8,8 @@ Approved on 2026-11-23 with these changes, built and live (released 2026-11-23):
   - +1 to hunting success;
   - +0.5 to the flee chance;
   - +0.25 to crit rate.
-- **Screens:** the combat screen and the Stats block are approved. Later the combat screen will look more like Darkest Dungeon's.
+- **Screens:** the combat screen and the Stats block are approved.
+- **Side view (D-067, 2026-11-23):** the screen now shows Prabu on the left facing the enemies on the right in Close, Mid and Far columns. D-003 and the bands stay. Spec in `docs/ui.md`.
 
 Data:
 - Stats are in `characters.json`.

@@ -7,6 +7,7 @@ import { cook, feedFire, makeFire } from '../systems/fire/fire';
 import { enterTown, leaveTown, walkTo } from '../systems/town/town';
 import { chooseEvent, closeEvent } from '../systems/events/events';
 import { closeCombat, combatAct, type CombatAction } from '../systems/combat/combat';
+import { debugEvent, debugFight, debugNight } from '../systems/debug/debug';
 import { advanceTravel, startTravel, stopTravel, type TravelTarget } from '../systems/travel/travel';
 import type { GameState, Meter } from './state';
 
@@ -41,7 +42,11 @@ export type Command =
   | { type: 'event.close' }
   // Combat (M7): Prabu's action on his turn, then closing the result.
   | { type: 'combat.act'; action: CombatAction; target?: number; index?: number }
-  | { type: 'combat.close' };
+  | { type: 'combat.close' }
+  // Testing tools (D-068), offered by the UI only with ?debug=1.
+  | { type: 'debug.event'; eventId: string }
+  | { type: 'debug.fight'; enemies: { enemyId: string; count: number }[]; ambush: boolean }
+  | { type: 'debug.night' };
 
 export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst' | 'radiation' | 'injury' | 'killed';
 
@@ -196,6 +201,12 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return combatAct(state, command.action, command.target, command.index, content);
     case 'combat.close':
       return closeCombat(state);
+    case 'debug.event':
+      return debugEvent(state, command.eventId, content);
+    case 'debug.fight':
+      return debugFight(state, command.enemies, command.ambush, content);
+    case 'debug.night':
+      return debugNight(state);
     default:
       return { ok: false, error: { code: 'unknown_command', message: `Unknown command: ${(command as { type: string }).type}` } };
   }

@@ -52,13 +52,14 @@
 - Nothing.
 
 ## Pending (unblocked)
+- M7 Combat — Q4 and Q5 answered (D-063, D-064); the combat numbers and enemy list need a proposal.
 - Charms (D-062): 1 talisman, 2 rings and 2 bangles that lower risks or raise yields. To be drafted for approval.
 
 ## Later (owner's notes)
 - **Item tooltips** (owner, 2026-11-23): every item gets a tooltip saying what it does, for example how much Food, Water or Health it restores. Today that text shows only in the Pack's item card.
 
 ## Blocked
-- M10 Vehicles (needs vehicle numbers), M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
+- M10 Vehicles (needs vehicle numbers), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
 
 ## Technical choices made in M0 (Claude's authority)
 - `GameState` type is derived from its Zod schema, so save validation and the type can't drift.

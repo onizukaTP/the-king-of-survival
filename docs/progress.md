@@ -42,7 +42,7 @@
   - Craft panel (top-bar button): cloth bandage, neem paste, neem–turmeric paste, salted dried meat; millet porridge at a fire. New item: turmeric. Weapon recipes wait for M7.
   - Acceptance: recipes use their inputs and make their outputs; missing materials are blocked with the reason. 119 unit tests and 8 e2e tests pass; checked in the browser on desktop and phone width.
 
-- **M6 Events, conditions and night (D-059 to D-061)** — on `dev`, not released.
+- **M6 Events, conditions and night (D-059 to D-061)** — live (released 2026-11-23).
   - Events roll on travel legs (5% road, 10% cross-country), searches (10%) and outdoor rest at night (5% an hour); ×2 in the dark without light; 2-hour cooldown. 12 events as data, an event card that must be answered, choices that need an item shown disabled with the reason, and the trip paused until Continue.
   - Conditions: sprained ankle, restless, weak, shaken, infected wound, well rested, as top-bar tags.
   - Night 18:30–06:00, full-moon nights, the torch switching on by itself on dark legs (10% an hour), a moon tag, and a warning when a trip runs into the dark without enough charge.

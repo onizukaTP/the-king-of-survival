@@ -65,6 +65,19 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 - **Dark-trip warning** in the place panel, above Travel, when the trip would run into the dark with too little torch charge.
 - Trip and walk times in the panels include a sprained ankle's slower pace.
 
+## Combat screen and Stats (M7) — D-066
+
+- **Combat screen** in place of the map, with the top bar kept:
+  - **Head:** the round number and who acts next.
+  - **Enemies:** three rows (Far, Mid, Close), with an enemy card per enemy showing its name, an HP bar and HP. Tapping a card selects it as the target.
+  - **Prabu's card:** Health, the weapon, the arrows left and the Stats block.
+  - **Actions:** Attack (with the hit chance), Aim, Close in, Step back, Use item (opens a list of what he can eat, drink or apply) and Flee (with its chance). Actions he can't take are greyed out with the reason, for example "Out of reach: the hunting knife reaches Close only."
+  - **Log:** what happened since his last action.
+  - **Result:** "He won the fight" or "He got away", with the finds, then Continue.
+  - **Phone:** the same layout in one column, with the actions two to a row.
+- **Stats block** in the Pack under the weapon slot: damage and reach, then ATK, DEF, SPD, Crit, Crit dmg, ACC, Dodge, Hunting and Luck.
+- **Later:** the combat screen will look more like Darkest Dungeon's (D-066).
+
 ## Numbers the map screen shows (D-017 to D-020)
 - Speeds: road 4.5 km/h, cross-country 3 km/h.
 - The game starts on Day 1 at 06:00.

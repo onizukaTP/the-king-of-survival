@@ -5,11 +5,30 @@ const assetId = z.string().min(1);
 const lat = z.number().min(-90).max(90);
 const lon = z.number().min(-180).max(180);
 
+// Fighting and luck stats (D-065, D-066). Percentages are whole numbers (crit rate 5 = 5%).
+export const statsSchema = z.object({
+  atk: z.number(), def: z.number(), spd: z.number(), critRate: z.number(), critDamage: z.number(),
+  acc: z.number(), dodge: z.number(), hunting: z.number(), luck: z.number(),
+});
+export const bands = ['close', 'mid', 'far'] as const;
+
 export const characterSchema = z.object({
   id: slug('character'),
   name: z.string().min(1),
   age: z.number().int().nonnegative(),
   portrait: assetId,
+  stats: statsSchema,
+});
+
+// How a weapon fights (D-063, D-066): damage roll, the farthest band it reaches, and what it adds to the stats.
+const weaponProfile = z.object({
+  damage: z.tuple([z.number().int().nonnegative(), z.number().int().nonnegative()]),
+  reach: z.enum(bands),
+  // Uses one of this item a shot (arrows).
+  ammo: z.string().optional(),
+  // ACC change when the target is Close (the bow).
+  accAtClose: z.number().optional(),
+  bonus: statsSchema.partial().optional(),
 });
 
 export const siteKinds = ['home', 'hunting', 'ruins', 'rail', 'road', 'water', 'city'] as const;
@@ -71,6 +90,7 @@ export const itemSchema = z.object({
   recharges: z.object({ itemId: slug('item'), amount: z.number().int().positive(), minutes: z.number().int().nonnegative(), consumed: z.boolean() }).optional(),
   // A tool that must be in the pack to use this item, e.g. the can opener for tinned food (D-056).
   needsItem: slug('item').optional(),
+  combat: weaponProfile.optional(),
 });
 
 const meters = z.object({ health: z.number(), food: z.number(), water: z.number(), rest: z.number() });
@@ -203,6 +223,8 @@ export const conditionSchema = z.object({
   maxHealth: z.number().optional(),
   healthPerHour: z.number().optional(),
   searchTimeMultiplier: z.number().positive().optional(),
+  // Multiplies damage he deals in a fight (Weak, D-061).
+  damageMultiplier: z.number().positive().optional(),
   blocksHealing: z.boolean().optional(),
   curedBy: z.array(slug('item')).optional(),
   // Ends after one rest at least this long.
@@ -240,6 +262,11 @@ const eventOutcome = z.object({
   // Takes one item from the pack: the first of these items, or else of these kinds.
   lose: z.object({ items: z.array(slug('item')).optional(), categories: z.array(z.enum(itemCategories)).optional() }).optional(),
   stopTravel: z.boolean().optional(),
+  // Starts a fight (M7). An ambush puts the enemies at Close and gives them the first round.
+  fight: z.object({
+    enemies: z.array(z.object({ enemyId: slug('enemy'), min: z.number().int().positive(), max: z.number().int().positive() })).min(1),
+    ambush: z.boolean().optional(),
+  }).optional(),
   // Reveals the nearest place he hasn't found yet.
   revealNearest: z.boolean().optional(),
 });
@@ -248,7 +275,7 @@ export const eventSchema = z.object({
   id: slug('event'),
   title: z.string().min(1),
   text: z.string().min(1),
-  on: z.array(z.enum(['travel', 'walk', 'search', 'rest'])).min(1),
+  on: z.array(z.enum(['travel', 'walk', 'search', 'rest', 'hunt'])).min(1),
   // Travel only: the ground most of the leg was on.
   ground: z.enum(['road', 'cross']).optional(),
   when: z.enum(['day', 'night']).optional(),
@@ -277,12 +304,47 @@ export const eventsSchema = z.object({
   travelChancePerLeg: z.object({ road: z.number().min(0).max(1), cross: z.number().min(0).max(1) }),
   searchChance: z.number().min(0).max(1),
   restChancePerHour: z.number().min(0).max(1),
+  huntChance: z.number().min(0).max(1),
   unlitMultiplier: z.number().min(1),
   exhaustedThreatMultiplier: z.number().min(1),
   cooldownMinutes: z.number().int().nonnegative(),
   // Threat events at night leave this condition (D-061).
   nightThreatCondition: slug('condition'),
   events: z.array(eventSchema).min(1),
+});
+
+// An enemy type (D-064, D-066). Every loot entry rolls on its own.
+export const enemySchema = z.object({
+  id: slug('enemy'),
+  name: z.string().min(1),
+  hp: z.number().int().positive(),
+  damage: z.tuple([z.number().int().nonnegative(), z.number().int().nonnegative()]),
+  def: z.number(), spd: z.number(), acc: z.number(), dodge: z.number(), critRate: z.number(), critDamage: z.number(),
+  // Bands it may start in, picked at random.
+  start: z.array(z.enum(bands)).min(1),
+  // melee: closes in, then attacks. archer: shoots from Mid or Far, steps back when Close.
+  behaviour: z.enum(['melee', 'archer']),
+  // A crit by this enemy may leave a condition (a dirty dog bite).
+  critCondition: z.object({ conditionId: slug('condition'), chance: z.number().min(0).max(1) }).optional(),
+  loot: z.array(lootEntry),
+});
+
+// Combat numbers (D-063, D-066).
+export const combatSchema = z.object({
+  unarmed: weaponProfile,
+  dieSides: z.number().int().positive(),
+  hitChance: z.tuple([z.number(), z.number()]),
+  defCap: z.number().min(0).max(100),
+  aim: z.object({ acc: z.number(), critRate: z.number() }),
+  minutesPerRound: z.number().int().positive(),
+  arrowRecovery: z.number().min(0).max(1),
+  flee: z.object({
+    base: z.number(), mid: z.number(), far: z.number(),
+    hurtAtHealth: z.number(), hurt: z.number(), loadedOverKg: z.number(), loaded: z.number(),
+    range: z.tuple([z.number(), z.number()]),
+  }),
+  // What each point of Luck adds (D-066).
+  luck: z.object({ searchPercent: z.number(), hunting: z.number(), flee: z.number(), critRate: z.number() }),
 });
 
 // Generated by scripts/geo/build-town-streets.mjs: street lines per town, [lon, lat]; drawn only.
@@ -308,6 +370,11 @@ export type ItemCategory = Item['category'];
 export type SurvivalConfig = z.infer<typeof survivalSchema>;
 export type NewGameConfig = z.infer<typeof newGameSchema>;
 export type Condition = z.infer<typeof conditionSchema>;
+export type Stats = z.infer<typeof statsSchema>;
+export type Band = (typeof bands)[number];
+export type WeaponProfile = z.infer<typeof weaponProfile>;
+export type Enemy = z.infer<typeof enemySchema>;
+export type CombatConfig = z.infer<typeof combatSchema>;
 export type EventsConfig = z.infer<typeof eventsSchema>;
 export type GameEventDef = z.infer<typeof eventSchema>;
 export type EventChoice = GameEventDef['choices'][number];

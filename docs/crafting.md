@@ -2,7 +2,7 @@
 
 The owner approved this with three changes, and it is built and live (released 2026-11-22):
 
-- **Weapon recipes wait for M7.** The bamboo spear, bow and arrows below are not built.
+- **Weapon recipes** were held for M7 and are now built with it (D-066): the bamboo spear, bow and arrows below.
 - **Turmeric** joins the item list (0.1 kg; about 8% in houses, provision stores, ration shops, supermarkets, hotels and places of worship). It is an optional booster: **Neem paste** (3 neem leaves, Health +15) or **Neem–turmeric paste** (3 neem leaves + 1 turmeric, Health +25). The old item `item.neem_paste` keeps its id and is now called "Neem paste".
 - **Animal hide** stays for later.
 
@@ -26,9 +26,9 @@ Fire recipes are approved and built already (D-056, D-057): cooked meat, clean w
 | Neem paste | 3 neem leaves | — | 15 min | 1 neem paste (treats an injury, Health +15) |
 | Neem–turmeric paste | 3 neem leaves + 1 turmeric | — | 15 min | 1 neem–turmeric paste (treats an injury, Health +25) |
 | Salted dried meat | 2 raw meat + 1 salt | Hunting knife | 1 h | 2 salted dried meat (Food +20, 0.2 kg, never spoils) |
-| *(M7)* Bamboo spear | 1 bamboo + 1 scrap metal | Hunting knife | 45 min | 1 bamboo spear |
-| *(M7)* Bamboo bow | 1 bamboo + 1 coir rope | Hunting knife | 1 h | 1 bamboo bow |
-| *(M7)* Arrows | 1 bamboo + 1 scrap metal | Hunting knife | 30 min | 5 arrows |
+| Bamboo spear | 1 bamboo + 1 scrap metal | Hunting knife | 45 min | 1 bamboo spear |
+| Bamboo bow | 1 bamboo + 1 coir rope | Hunting knife | 1 h | 1 bamboo bow |
+| Arrows | 1 bamboo + 1 scrap metal | Hunting knife | 30 min | 5 arrows |
 
 **At a fire** (one more recipe, built like the approved fire recipes):
 

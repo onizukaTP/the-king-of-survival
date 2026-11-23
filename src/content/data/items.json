@@ -27,10 +27,10 @@
   { "id": "item.coir_rope", "name": "Coir rope", "category": "material", "weightKg": 0.5 },
   { "id": "item.animal_hide", "name": "Animal hide", "category": "material", "weightKg": 2 },
 
-  { "id": "item.hunting_knife", "name": "Hunting knife", "category": "weapon", "weightKg": 0.3, "weapon": true },
-  { "id": "item.aruval", "name": "Aruval", "category": "weapon", "weightKg": 0.8, "weapon": true },
-  { "id": "item.bamboo_spear", "name": "Bamboo spear", "category": "weapon", "weightKg": 1.2, "weapon": true },
-  { "id": "item.bow", "name": "Bamboo bow", "category": "weapon", "weightKg": 0.8, "weapon": true },
+  { "id": "item.hunting_knife", "name": "Hunting knife", "category": "weapon", "weightKg": 0.3, "weapon": true, "combat": { "damage": [4, 7], "reach": "close", "bonus": { "spd": 1, "critRate": 5 } } },
+  { "id": "item.aruval", "name": "Aruval", "category": "weapon", "weightKg": 0.8, "weapon": true, "combat": { "damage": [7, 11], "reach": "close", "bonus": { "spd": -1 } } },
+  { "id": "item.bamboo_spear", "name": "Bamboo spear", "category": "weapon", "weightKg": 1.2, "weapon": true, "combat": { "damage": [5, 9], "reach": "mid", "bonus": { "acc": 5, "hunting": 10 } } },
+  { "id": "item.bow", "name": "Bamboo bow", "category": "weapon", "weightKg": 0.8, "weapon": true, "combat": { "damage": [5, 8], "reach": "far", "ammo": "item.arrow", "accAtClose": -10, "bonus": { "critRate": 5, "hunting": 15 } } },
   { "id": "item.arrow", "name": "Arrow", "category": "weapon", "weightKg": 0.05 },
 
   { "id": "item.flint", "name": "Flint and steel", "category": "tool", "weightKg": 0.1 },

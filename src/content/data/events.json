@@ -2,6 +2,7 @@
   "travelChancePerLeg": { "road": 0.05, "cross": 0.1 },
   "searchChance": 0.1,
   "restChancePerHour": 0.05,
+  "huntChance": 0.1,
   "unlitMultiplier": 2,
   "exhaustedThreatMultiplier": 1.5,
   "cooldownMinutes": 120,
@@ -23,6 +24,9 @@
       "text": "Five lean dogs step out of the scrub ahead. Patchy fur, too many teeth. They have not decided about him yet.",
       "on": ["travel"], "ground": "cross", "threat": true, "weight": 2, "nightWeight": 4,
       "choices": [
+        { "id": "fight", "label": "Fight", "outcomes": [
+          { "chance": 1, "text": "He sets his feet and raises his weapon.", "fight": { "enemies": [{ "enemyId": "enemy.wild_dog", "min": 2, "max": 4 }] } }
+        ] },
         { "id": "back_away", "label": "Back away slowly", "outcomes": [
           { "chance": 0.6, "text": "They watch him go." },
           { "chance": 0.28, "text": "One of them darts in and catches his leg.", "health": -15, "injure": true },
@@ -154,6 +158,9 @@
       "text": "Oil drums and a felled tree across the road. Figures wait behind them, watching.",
       "on": ["travel"], "ground": "road", "threat": true, "weight": 0.5,
       "choices": [
+        { "id": "fight", "label": "Fight", "outcomes": [
+          { "chance": 1, "text": "He walks straight at them.", "fight": { "enemies": [{ "enemyId": "enemy.raider_blade", "min": 1, "max": 1 }, { "enemyId": "enemy.raider_bow", "min": 1, "max": 1 }] } }
+        ] },
         { "id": "go_round", "label": "Go round cross-country (45 min)", "outcomes": [
           { "chance": 1, "text": "He leaves the road and circles wide.", "minutes": 45, "activity": "travel" }
         ] },
@@ -163,6 +170,30 @@
         { "id": "slip_past", "label": "Slip past in the dark", "tag": "Night", "needs": [{ "night": true }], "outcomes": [
           { "chance": 0.6, "text": "He creeps by unseen." },
           { "chance": 0.4, "text": "They catch him, beat him and take what they want.", "health": -15, "injure": true, "lose": { "categories": ["food"] }, "conditions": ["condition.weak"] }
+        ] }
+      ]
+    },
+    {
+      "id": "event.mutated_boar", "title": "Mutated boar",
+      "text": "A boar the size of a calf lifts its head from the scrub. Its tusks have grown through its own jaw.",
+      "on": ["travel", "hunt"], "ground": "cross", "threat": true, "weight": 1.5,
+      "choices": [
+        { "id": "fight", "label": "Fight", "outcomes": [
+          { "chance": 1, "text": "It lowers its head and comes for him.", "fight": { "enemies": [{ "enemyId": "enemy.mutated_boar", "min": 1, "max": 1 }] } }
+        ] },
+        { "id": "back_off", "label": "Back off", "outcomes": [
+          { "chance": 0.75, "text": "He backs away until it loses interest." },
+          { "chance": 0.25, "text": "It charges and clips him before he gets clear.", "health": -8, "injure": true }
+        ] }
+      ]
+    },
+    {
+      "id": "event.ambush", "title": "Ambush in the dark",
+      "text": "Shapes rise out of the dark on both sides of him.",
+      "on": ["travel"], "unlit": true, "threat": true, "weight": 1,
+      "choices": [
+        { "id": "auto", "label": "", "outcomes": [
+          { "chance": 1, "text": "Raiders. They were waiting for someone without a light.", "fight": { "enemies": [{ "enemyId": "enemy.raider_blade", "min": 1, "max": 2 }], "ambush": true } }
         ] }
       ]
     },

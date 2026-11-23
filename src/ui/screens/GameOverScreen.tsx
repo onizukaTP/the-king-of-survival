@@ -8,6 +8,7 @@ const CAUSE: Record<DeathCause, string> = {
   hunger_and_thirst: 'He died of hunger and thirst.',
   radiation: 'Radiation killed him.',
   injury: 'His wounds killed him.',
+  killed: 'He was killed in a fight.',
 };
 
 /** Permadeath (D-038): the run is over and its save is gone. */

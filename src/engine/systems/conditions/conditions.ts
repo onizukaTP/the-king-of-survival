@@ -4,7 +4,7 @@ import { maxHealth, type GameState, type SurvivalState } from '../../core/state'
 
 /** The combined effect of every condition Prabu has (D-061). */
 export function conditionEffects(s: SurvivalState, content: Content) {
-  const fx = { speed: 1, restDrain: 1, healthPerHour: 0, searchTime: 1, blocksHealing: false };
+  const fx = { speed: 1, restDrain: 1, healthPerHour: 0, searchTime: 1, damage: 1, blocksHealing: false };
   for (const c of s.conditions) {
     const def = content.conditions[c.id];
     if (!def) continue;
@@ -12,6 +12,7 @@ export function conditionEffects(s: SurvivalState, content: Content) {
     fx.restDrain *= def.restDrainMultiplier ?? 1;
     fx.healthPerHour += def.healthPerHour ?? 0;
     fx.searchTime *= def.searchTimeMultiplier ?? 1;
+    fx.damage *= def.damageMultiplier ?? 1;
     fx.blocksHealing ||= Boolean(def.blocksHealing);
   }
   return fx;

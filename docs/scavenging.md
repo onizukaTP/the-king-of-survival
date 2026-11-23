@@ -8,7 +8,7 @@ Confirmed by the owner: D-043 (radiation zone), D-044 (water), D-045 (take or le
 |---|---|---|---|
 | **Search** | Every site except home | 1 h | Two draws from the site's loot table. |
 | **Search with torch** | Same, if the torch has 5% charge | 45 min | Same draws, 25% faster; uses 5% of the torch battery (D-037, D-047). |
-| **Hunt** | Sanctuary forest | 1 h | One roll per hour: 40% chance of raw meat ×2–3, 30% chance of animal hide. Chance-based until combat (M7) (D-046, D-047). |
+| **Hunt** | Sanctuary forest | 1 h | One success roll per hour on Prabu's Hunting chance (40% base, +15% with the bow, +10% with the spear, plus Luck; D-065, D-066). On success: raw meat ×2–3, and animal hide 75% of the time. A mutated boar turns up on about 1 hunt in 10. |
 | **Fill bottles** | At any water (D-044) | 5 min per bottle | Each empty bottle is filled: **clean water** at a river, **unsafe water** anywhere else. |
 | **Drink** | At any water | 10 min | Water to 100. From a river it's safe; anywhere else it carries the 1-in-5 illness chance (D-027). |
 

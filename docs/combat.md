@@ -1,4 +1,21 @@
-# Combat (M7) — proposed (P-019), awaiting approval
+# Combat (M7) — approved (D-066, was P-019) and built
+
+Approved on 2026-11-23 with these changes, and built on `dev`:
+
+- **ACC, Dodge, Hunting and Luck** are stats. The bow gives Hunting +15%.
+- **Luck** (base 0; items will raise it later) applies everywhere. Each point adds:
+  - 1% to search find chances;
+  - +1 to hunting success;
+  - +0.5 to the flee chance;
+  - +0.25 to crit rate.
+- **Screens:** the combat screen and the Stats block are approved. Later the combat screen will look more like Darkest Dungeon's.
+
+Data:
+- Stats are in `characters.json`.
+- Weapon profiles are on the weapon items in `items.json`.
+- Enemies are in `enemies.json`.
+- Combat numbers are in `combat.json`.
+- Fights start from `events.json`.
 
 ## Already decided
 
@@ -19,7 +36,7 @@
 - **D-061:** Weak gives −25% damage in combat.
 - **D-039:** combat can injure Prabu.
 
-Everything below is a proposal. All numbers are starting values for the balance pass (M9).
+All numbers are starting values for the balance pass (M9).
 
 ## Stats
 
@@ -161,12 +178,11 @@ That brings the events to 14.
 - **Companions:** the engine allows them (D-063), but none are added.
 - **Enemies running away or surrendering.**
 
-## Choices for you
+## Built choices (Claude's, technical or small)
 
-1. **Extra stats:** add **ACC, Dodge and Hunting** as above? I recommend all three:
-   - ACC and Dodge are what make the bow worse up close and dogs hard to hit.
-   - Hunting is the stat your hunting rule needs.
-2. **The numbers:** do Prabu's base stats, the four weapons and the four enemies look right as a start? Roughly, a pack of 3 dogs costs a knife-armed Prabu 25–40 Health.
-3. **The two new events** (Mutated boar, Ambush in the dark) and the Fight choices on Wild dogs and Roadblock: approve?
-4. **The weapon recipes** as listed: approve?
-5. **Screens:** the combat screen and the Stats block in the Pack: approve?
+- **Log:** the combat screen's log shows everything since Prabu's last action, so it can cover the end of one round and the start of the next.
+- **Fleeing:** a successful escape still takes a minute.
+- **Failed escape:** after the free hits, the round goes on as usual.
+- **Fight loot:** goes into the pack like event finds. Two dogs give one line, "raw meat ×2".
+- **Using an item in a fight:** allowed only for things eaten, drunk or applied at once. Cranking the charger takes 30 minutes, so it isn't allowed.
+- **Order ties:** when Prabu and an enemy roll the same, Prabu goes first.

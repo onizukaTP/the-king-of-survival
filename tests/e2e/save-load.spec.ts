@@ -180,11 +180,51 @@ test('the Craft panel lists recipes and blocks what is missing (M5)', async ({ p
   await page.getByRole('button', { name: 'New Game' }).click();
   await page.getByRole('button', { name: 'Craft' }).click();
   const cards = page.getByTestId('recipe-card');
-  await expect(cards).toHaveCount(4);
+  await expect(cards).toHaveCount(7);
   await expect(cards.first()).toContainText('Cloth rags 0/2');
   await expect(cards.first()).toContainText('Needs 2 more cloth rags');
   await expect(cards.first().getByRole('button', { name: 'Craft' })).toBeDisabled();
   await expect(page.getByTestId('craft-panel')).toContainText('Tool: hunting knife ✓');
+});
+
+/** Starts a new game, then rewrites its save so this event's card is open, and continues it. */
+async function facingEvent(page: import('@playwright/test').Page, eventId: string, clockMinutes = 360) {
+  await page.goto('/?seed=2');
+  await page.getByRole('button', { name: 'New Game' }).click();
+  await expect(page.getByTestId('clock')).toHaveText('Day 1 · 06:00');
+  const state = JSON.parse((await page.getByTestId('game-state').textContent()) ?? '{}');
+  const gameState = { ...state, clockMinutes, event: { id: eventId, result: null } };
+  await page.evaluate((gs) => new Promise<void>((resolve, reject) => {
+    const req = indexedDB.open('king-of-survival', 1);
+    req.onsuccess = () => {
+      const tx = req.result.transaction('saves', 'readwrite');
+      tx.objectStore('saves').put({ saveVersion: 8, createdAt: 'e2e', gameState: gs }, 'manual');
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    };
+    req.onerror = () => reject(req.error);
+  }), gameState);
+  await page.reload();
+  await page.getByRole('button', { name: 'Continue' }).click();
+}
+
+test('a fight from the wild dogs card: attack until they are dead, take the meat (M7)', async ({ page }) => {
+  await facingEvent(page, 'event.wild_dogs');
+  await page.getByRole('dialog', { name: 'Wild dogs' }).getByRole('button', { name: 'Fight' }).click();
+  const combat = page.getByTestId('combat');
+  await expect(combat).toBeVisible();
+  await expect(combat).toContainText('Round 1');
+  await expect(combat.getByTestId('stats')).toContainText('ATK');
+  const result = page.getByRole('dialog', { name: 'He won the fight' });
+  for (let i = 0; i < 40 && !(await result.count()); i++) {
+    const attack = combat.getByRole('button', { name: /^Attack/ });
+    if (await attack.isEnabled()) await attack.click();
+    else await combat.getByRole('button', { name: 'Close in' }).click();
+  }
+  await expect(result).toContainText('Found: raw meat');
+  await result.getByRole('button', { name: 'Continue' }).click();
+  await expect(combat).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /^Pack/ })).not.toHaveText('Pack 0.65 kg');
 });
 
 test('an event card must be answered, shows what happened, and leaves a condition (M6, D-059, D-061)', async ({ page }) => {
@@ -198,7 +238,7 @@ test('an event card must be answered, shows what happened, and leaves a conditio
     const req = indexedDB.open('king-of-survival', 1);
     req.onsuccess = () => {
       const tx = req.result.transaction('saves', 'readwrite');
-      tx.objectStore('saves').put({ saveVersion: 7, createdAt: 'e2e', gameState: gs }, 'manual');
+      tx.objectStore('saves').put({ saveVersion: 8, createdAt: 'e2e', gameState: gs }, 'manual');
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
     };

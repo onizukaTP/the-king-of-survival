@@ -169,6 +169,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ scavenging.md        # scavenging (D-047)
 │  ├─ towns.md             # town maps (D-052)
 │  ├─ night.md             # night proposal (P-015)
+│  ├─ events.md            # events proposal (P-018)
 │  ├─ fire.md              # fire and cooking (D-056, D-057)
 │  └─ crafting.md          # crafting (D-058)
 ├─ public/
@@ -291,6 +292,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 - P-015 Night (D-048): night 18:30–06:00; 30-day moon cycle with three full-moon nights; the torch switches on by itself when moving in the dark and uses 10% an hour; risk numbers come with M6/M7. Spec in `docs/night.md`.
+- P-018 Events (M6): data-driven text events with choices on travel legs (5% road, 10% cross-country), searches (10%) and outdoor rest at night (5%/h, none by a fire); ×2 in the dark without light; 2-hour cooldown; a dialog that can't be dismissed, item-tagged choices shown disabled with the reason; 12 starter events; no Fight choice until M7; builds night (P-015); save v7. Spec in `docs/events.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
 - Q4 Combat: solo or companion; positioning model; can the player flee? *(blocks M7)*
@@ -319,7 +321,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M4 | Locations & scavenging: loot tables, depletion, time cost | M2, M3 | Done — live (released 2026-11-22) |
 | M4b | Town maps: buildings, per-type loot, wells (D-049, D-050, D-052) | M4 | Done — live (released 2026-11-22) |
 | M5 | Crafting | M3 | Done — live (released 2026-11-22); weapon recipes wait for M7 (D-058) |
-| M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Blocked |
+| M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Proposed (P-018, `docs/events.md`); awaiting approval |
 | M7 | Combat | M3, M6, Q4, Q5 | Blocked |
 | M8 | Progression, opening narrative, journal | M7, Q6, Q7 | Blocked |
 | M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Blocked (needs vehicle numbers proposed and approved) |

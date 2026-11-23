@@ -46,10 +46,14 @@
 - Nothing.
 
 ## Pending (unblocked)
+- M6 Events — proposed in `docs/events.md` (P-018); awaiting the owner's approval.
 - Night and moonlight — proposed in `docs/night.md` (P-015); built with M6.
 
+## Later (owner's notes)
+- **Item tooltips** (owner, 2026-11-23): every item gets a tooltip saying what it does, for example how much Food, Water or Health it restores. Today that text shows only in the Pack's item card.
+
 ## Blocked
-- M10 Vehicles (needs vehicle numbers), M6, M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
+- M10 Vehicles (needs vehicle numbers), M7 (Q4, Q5), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
 
 ## Technical choices made in M0 (Claude's authority)
 - `GameState` type is derived from its Zod schema, so save validation and the type can't drift.

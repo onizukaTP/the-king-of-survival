@@ -3,10 +3,12 @@ import type { Band } from '../../content/schemas';
 import type { CombatLog, GameState } from '../../engine/core/state';
 import { attackBlocked, attackOdds, fleeChance } from '../../engine/systems/combat/combat';
 import { weaponProfile } from '../../engine/systems/combat/stats';
+import { resolveAsset } from '../../assets/resolve';
+import { maxHealth } from '../../engine/core/state';
 import { content, useGameStore } from '../../store/gameStore';
 import { StatsBlock } from '../components/StatsBlock';
 
-const BANDS: [Band, string][] = [['far', 'Far'], ['mid', 'Mid'], ['close', 'Close']];
+const BANDS: [Band, string][] = [['close', 'Close'], ['mid', 'Mid'], ['far', 'Far']];
 const itemName = (id: string) => content.items[id]?.name ?? id;
 
 /** "Wild dog A", "Wild dog B" when there are several of a kind; the bare name otherwise. */
@@ -31,6 +33,28 @@ function logLine(l: CombatLog, names: string[]): string {
     case 'flee_failed': return 'Prabu tries to run, but can\'t get away.';
     case 'killed': return `${who(l.target)} is dead.`;
   }
+}
+
+/** Damage this fighter took since Prabu last acted (-1 is Prabu), shown as a number by the figure. */
+const hurtBy = (log: CombatLog[], who: number) => log.reduce((n, l) => n + (l.kind === 'hit' && l.target === who ? l.damage ?? 0 : 0), 0);
+
+type FigureProps = { art: string; name: string; hp: number; max: number; enemy?: boolean; active?: boolean; selected?: boolean; hurt: number; onClick?: () => void };
+
+/** One fighter on the stage: placeholder art from the asset manifest, name and health. Enemies face left. */
+function Figure({ art, name, hp, max, enemy, active, selected, hurt, onClick }: FigureProps) {
+  const body = (
+    <>
+      {hurt > 0 && <span className="hurt">−{hurt}</span>}
+      <img className="figure-art" src={art} alt="" />
+      <span className="figure-name">{name}</span>
+      <span className="hp-bar" aria-hidden="true"><span style={{ width: `${(hp / max) * 100}%` }} /></span>
+      <span className="tiny muted">{hp}/{max}</span>
+    </>
+  );
+  const cls = `figure ${enemy ? 'enemy' : 'ally'} ${active ? 'active' : ''} ${selected ? 'selected' : ''}`;
+  return onClick
+    ? <button className={cls} aria-pressed={selected} aria-label={`${name}, ${hp} of ${max}`} onClick={onClick}>{body}</button>
+    : <div className={cls} aria-label={`${name}, ${hp} of ${max}`}>{body}</div>;
 }
 
 /** The fight (M7, D-063, D-066): enemies by band, the turn order, Prabu and his actions. Replaces the map. */
@@ -60,25 +84,30 @@ export function CombatScreen() {
         <strong>Round {c.round}</strong>
         <span className="muted tiny">Next: {c.order.map((who) => (who === -1 ? 'Prabu' : names[who])).join(' → ') || '—'}</span>
       </div>
-      {BANDS.map(([band, label]) => (
-        <div key={band} className="combat-band">
-          <span className="band-label muted">{label}</span>
-          <div className="band-enemies">
-            {c.enemies.map((e, i) => (e.hp > 0 && e.band === band ? (
-              <button key={i} className={`enemy-card ${i === target ? 'selected' : ''}`} aria-pressed={i === target} onClick={() => setPicked(i)}>
-                <span>{names[i]}</span>
-                <span className="hp-bar" aria-hidden="true"><span style={{ width: `${(e.hp / content.enemies[e.id]!.hp) * 100}%` }} /></span>
-                <span className="tiny muted">{e.hp}/{content.enemies[e.id]!.hp}</span>
-              </button>
-            ) : null))}
-          </div>
+      {/* D-067: Prabu (and later his team) on the left, facing the enemies on the right by band. */}
+      <div className="stage">
+        <div className="side side-left">
+          <Figure art={resolveAsset(`figure.${game.player.characterId}`)} name="Prabu" hp={Math.round(game.survival.health)} max={maxHealth(game.survival, content)}
+            active={myTurn} hurt={hurtBy(c.log, -1)} />
         </div>
-      ))}
+        <div className="side side-right">
+          {BANDS.map(([band, label]) => (
+            <div key={band} className="band-column">
+              <div className="band-figures">
+                {c.enemies.map((e, i) => (e.hp > 0 && e.band === band ? (
+                  <Figure key={i} enemy art={resolveAsset(`figure.${e.id}`)} name={names[i]!} hp={e.hp} max={content.enemies[e.id]!.hp}
+                    selected={i === target} hurt={hurtBy(c.log, i)} onClick={() => setPicked(i)} />
+                ) : null))}
+              </div>
+              <span className="band-label muted">{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
       <div className="combat-prabu">
         <div className="row">
-          <strong>Prabu</strong>
-          <span>Health {Math.round(game.survival.health)}</span>
-          <span className="muted">{game.inventory.weapon ? itemName(game.inventory.weapon) : 'Bare hands'}{w.ammo && ` · ${game.inventory.stacks.filter((s) => s.itemId === w.ammo).reduce((n, s) => n + s.count, 0)} ${itemName(w.ammo).toLowerCase()}s`}</span>
+          <strong>{game.inventory.weapon ? itemName(game.inventory.weapon) : 'Bare hands'}</strong>
+          {w.ammo && <span className="muted">{game.inventory.stacks.filter((s) => s.itemId === w.ammo).reduce((n, s) => n + s.count, 0)} {itemName(w.ammo).toLowerCase()}s</span>}
         </div>
         <StatsBlock game={game} />
       </div>

@@ -260,3 +260,27 @@ test('an event card must be answered, shows what happened, and leaves a conditio
   await expect(card).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Shaken' })).toBeVisible();
 });
+
+test('the Test button shows only with ?debug=1 and opens events and fights (D-068)', async ({ page }) => {
+  await page.goto('/?seed=2');
+  await page.getByRole('button', { name: 'New Game' }).click();
+  await expect(page.getByRole('button', { name: 'Test' })).toHaveCount(0);
+
+  await page.goto('/?seed=2&debug=1');
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await page.getByRole('button', { name: 'Test' }).click();
+  const panel = page.getByTestId('test-panel');
+  await panel.getByLabel('Event').selectOption({ label: 'Snake in the path' });
+  await panel.getByRole('button', { name: 'Open' }).click();
+  await expect(page.getByRole('dialog', { name: 'Snake in the path' })).toBeVisible();
+  await page.getByRole('button', { name: 'Step around it' }).click();
+  await page.getByRole('button', { name: 'Continue' }).click();
+
+  await page.getByRole('button', { name: 'Test' }).click();
+  await panel.getByRole('button', { name: 'Start an ambush' }).click();
+  const combat = page.getByTestId('combat');
+  await expect(combat).toBeVisible();
+  // D-067: Prabu on the left, the raiders on the right at Close.
+  await expect(combat.locator('.side-left')).toContainText('Prabu');
+  await expect(combat.locator('.side-right')).toContainText('Raider with a blade');
+});

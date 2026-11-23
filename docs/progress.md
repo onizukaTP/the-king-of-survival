@@ -62,6 +62,11 @@
   - Save v8.
   - Checks: 164 unit tests and 10 e2e tests pass; checked in the browser on desktop and phone width, including a reload mid-fight.
 
+- **Combat side view and testing tools (D-067, D-068)** — on `dev`, not released.
+  - **Side view:** Prabu on the left facing the enemies on the right in Close, Mid and Far columns, with placeholder figures from the asset manifest.
+  - **Test button:** shown only with `?debug=1`; it opens any event, starts an ambush or any fight, and jumps to 22:00.
+  - **Checks:** 167 unit tests and 11 e2e tests pass; checked in the browser on desktop and phone width.
+
 ## In progress
 - Nothing.
 

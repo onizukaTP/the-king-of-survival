@@ -1,3 +1,8 @@
 {
-  "placeholder": "assets/placeholder.svg"
+  "placeholder": "assets/placeholder.svg",
+  "figure.character.prabu": "assets/figure-person.svg",
+  "figure.enemy.wild_dog": "assets/figure-beast.svg",
+  "figure.enemy.mutated_boar": "assets/figure-beast.svg",
+  "figure.enemy.raider_blade": "assets/figure-person.svg",
+  "figure.enemy.raider_bow": "assets/figure-person.svg"
 }

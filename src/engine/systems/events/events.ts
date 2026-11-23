@@ -87,16 +87,21 @@ export function maybeEvent(state: GameState, t: Trigger, content: Content, event
   for (const e of pool) {
     acc += (chance * weight(e) / total) * (e.threat && exhausted ? cfg.exhaustedThreatMultiplier : 1);
     if (r < acc) {
-      state.event = { id: e.id, result: null };
-      state.lastEventAt = state.clockMinutes;
-      events.push({ type: 'event_started', eventId: e.id });
-      // An event with one unlabelled choice has nothing to decide: it resolves at once.
-      const only = e.choices[0]!;
-      if (e.choices.length === 1 && !only.label) resolve(state, e, only, content, events);
+      openEvent(state, e, content, events);
       return true;
     }
   }
   return false;
+}
+
+/** Puts an event's card on screen. Mutates `state`. */
+export function openEvent(state: GameState, e: GameEventDef, content: Content, events: GameEvent[]) {
+  state.event = { id: e.id, result: null };
+  state.lastEventAt = state.clockMinutes;
+  events.push({ type: 'event_started', eventId: e.id });
+  // An event with one unlabelled choice has nothing to decide: it resolves at once.
+  const only = e.choices[0]!;
+  if (e.choices.length === 1 && !only.label) resolve(state, e, only, content, events);
 }
 
 function hasItem(state: GameState, itemId: string, content: Content): boolean {

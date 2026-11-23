@@ -171,7 +171,8 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ night.md             # night and the moon (D-060)
 │  ├─ events.md            # events and conditions (D-059, D-061)
 │  ├─ fire.md              # fire and cooking (D-056, D-057)
-│  └─ crafting.md          # crafting (D-058)
+│  ├─ crafting.md          # crafting (D-058)
+│  └─ combat.md            # combat proposal (P-019)
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
@@ -290,6 +291,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-062 **Charms (later):** special items that lower risks or raise yields; Prabu can wear **1 talisman, 2 rings and 2 bangles**. To be drafted and approved later; not built in M6.
 - D-063 (answers Q4 and T4) **Combat setup:** Prabu **fights alone** in the prototype, but the engine supports any number of fighters on each side so companions can join once team building is approved. **Range bands:** each enemy is Close, Mid or Far; knives and the aruval hit Close, the spear reaches Mid, the bow hits any band and uses arrows; moving a band costs a turn. **Fleeing** is a chance roll that uses his turn: easier from Far, harder when he is hurt or heavily loaded; if it fails, the enemies get a free hit.
 - D-064 (answers Q5) **Prototype enemies:** **mutated animals** (such as the wild dog pack, D-029) and **nameless human raiders** (such as the roadblock). No other mutated creatures in the prototype.
+- D-065 **Combat rules (owner):** every fighter has **ATK, DEF, SPD, crit rate and crit damage**; items and attire will raise or lower them later. **Turn order** is SPD plus a roll, as in Darkest Dungeon. Prototype enemies: **wild dogs, mutated animals and raiders**. **Fights come from random encounters.** **Hunting** stays a success roll driven by a hunting stat, which hunting items will raise later. **Weapons stay primitive** for now; guns, crossbows, compound bows, sniper rifles and so on come later. Numbers proposed in P-019.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -297,6 +299,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-005 Combat (solo, range bands and fleeing are now D-063): 1–3 enemies, speed-based turn order; actions: attack, aim, move band, use item, flee. Numbers to be proposed.
 - P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
+- P-019 Combat numbers (M7): stats plus suggested ACC, Dodge and Hunting; Prabu's base stats; knife, aruval, spear and bow; wild dog, mutated boar, raider with a blade, raider with a bow; actions attack, aim, close in, step back, use item, flee; Fight choices on wild dogs and the roadblock; new events Mutated boar and Ambush in the dark; hunting by the Hunting stat; the spear, bow and arrow recipes; a combat screen and a Stats block in the Pack; save v8. Spec in `docs/combat.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
 - Q6 Progression model. *(blocks M8)*
@@ -324,7 +327,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M4b | Town maps: buildings, per-type loot, wells (D-049, D-050, D-052) | M4 | Done — live (released 2026-11-22) |
 | M5 | Crafting | M3 | Done — live (released 2026-11-22); weapon recipes wait for M7 (D-058) |
 | M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Done — live (released 2026-11-23); Fight choices wait for M7 (D-059) |
-| M7 | Combat | M3, M6 | Unblocked (D-063, D-064); needs combat numbers proposed and approved |
+| M7 | Combat | M3, M6 | Proposed (P-019, `docs/combat.md`); awaiting approval |
 | M8 | Progression, opening narrative, journal | M7, Q6, Q7 | Blocked |
 | M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Blocked (needs vehicle numbers proposed and approved) |
 | M9 | Integration, balance pass, playtest | All | Blocked |

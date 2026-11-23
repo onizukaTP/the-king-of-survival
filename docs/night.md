@@ -2,7 +2,7 @@
 
 Confirmed by the owner (D-048): moving in the dark at night without a torch greatly raises the chance of being injured or ambushed, except on full-moon nights. The injury chance arrives with events (M6) and ambushes with combat (M7). Night, the moon and torch use are designed now and built with M6.
 
-Everything below is approved (D-060) and built with M6 on `dev`. The risk numbers it left open are in `docs/events.md`: in the dark without light, events are twice as likely and *Bad footing* can happen.
+Everything below is approved (D-060) and built with M6 and live (released 2026-11-23). The risk numbers it left open are in `docs/events.md`: in the dark without light, events are twice as likely and *Bad footing* can happen.
 
 ## When it is dark
 

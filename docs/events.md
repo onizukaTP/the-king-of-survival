@@ -1,6 +1,6 @@
 # Events and conditions (M6) — approved (D-059, D-061, was P-018) and built
 
-The owner approved this on 2026-11-23: threats are handled without fighting for now (a Fight choice comes with M7), the nameless roadblock is fine, the numbers and the 12 events stay, and night (P-015) is approved with it (D-060). The owner added **conditions** (D-061, below): events leave lasting modifiers on Prabu. Built on `dev`. Events are data in `src/content/data/events.json`, conditions in `conditions.json`.
+The owner approved this on 2026-11-23: threats are handled without fighting for now (a Fight choice comes with M7), the nameless roadblock is fine, the numbers and the 12 events stay, and night (P-015) is approved with it (D-060). The owner added **conditions** (D-061, below): events leave lasting modifiers on Prabu. Built and live (released 2026-11-23). Events are data in `src/content/data/events.json`, conditions in `conditions.json`.
 
 **Later (D-062):** charms, special items that lower risks or raise yields, worn as 1 talisman, 2 rings and 2 bangles. To be drafted and approved; not built.
 

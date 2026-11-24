@@ -12,13 +12,16 @@ describe('testing tools (D-068)', () => {
     expect(r.ok && r.state.event).toEqual({ id: 'event.snake', result: null });
     const ambush = run({ type: 'debug.event', eventId: 'event.ambush' });
     expect(ambush.ok && ambush.state.event).toBeNull();
-    expect(ambush.ok && ambush.state.combat?.enemies.every((e) => e.id === 'enemy.raider_blade')).toBe(true);
+    expect(ambush.ok && ambush.state.combat?.combatants.filter((c) => c.side === 'enemy').every((c) => c.defId === 'enemy.raider_blade')).toBe(true);
     expect(run({ type: 'debug.event', eventId: 'event.dragon' })).toMatchObject({ ok: false });
   });
 
   it('starts any fight, ambush or not, and refuses an empty one', () => {
     const r = run({ type: 'debug.fight', enemies: [{ enemyId: 'enemy.wild_dog', count: 2 }, { enemyId: 'enemy.mutated_boar', count: 1 }], ambush: false });
-    expect(r.ok && r.state.combat!.enemies.map((e) => e.id)).toEqual(['enemy.wild_dog', 'enemy.wild_dog', 'enemy.mutated_boar']);
+    // Two dogs and the boar (two ranks) fill the four enemy ranks exactly; they may have moved before Prabu's first turn.
+    const enemies = r.ok ? r.state.combat!.combatants.filter((c) => c.side === 'enemy') : [];
+    expect(enemies.map((c) => c.defId).sort()).toEqual(['enemy.mutated_boar', 'enemy.wild_dog', 'enemy.wild_dog']);
+    expect(enemies.flatMap((c) => Array.from({ length: c.size }, (_, i) => c.rank + i)).sort()).toEqual([1, 2, 3, 4]);
     const a = run({ type: 'debug.fight', enemies: [{ enemyId: 'enemy.raider_bow', count: 1 }], ambush: true });
     expect(a.ok && a.state.combat!.round).toBe(2);
     expect(run({ type: 'debug.fight', enemies: [{ enemyId: 'enemy.wild_dog', count: 0 }], ambush: false })).toMatchObject({ ok: false, error: { code: 'bad_target' } });

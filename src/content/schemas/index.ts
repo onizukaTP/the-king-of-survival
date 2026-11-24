@@ -5,12 +5,17 @@ const assetId = z.string().min(1);
 const lat = z.number().min(-90).max(90);
 const lon = z.number().min(-180).max(180);
 
-// Fighting and luck stats (D-065, D-066). Percentages are whole numbers (crit rate 5 = 5%).
-export const statsSchema = z.object({
+// Combat stats every fighter has (D-065, D-066, D-069). Percentages are whole numbers (crit rate 5 = 5%).
+// Resistances are % chances to shrug off an effect; deathblowRes is the chance to survive a blow at Death's Door.
+export const combatStatsSchema = z.object({
   atk: z.number(), def: z.number(), spd: z.number(), critRate: z.number(), critDamage: z.number(),
-  acc: z.number(), dodge: z.number(), hunting: z.number(), luck: z.number(),
+  acc: z.number(), dodge: z.number(),
+  stunRes: z.number(), bleedRes: z.number(), blightRes: z.number(), debuffRes: z.number(), moveRes: z.number(), deathblowRes: z.number(),
 });
-export const bands = ['close', 'mid', 'far'] as const;
+// A player-side character also has the survival stats (D-066).
+export const statsSchema = combatStatsSchema.extend({ hunting: z.number(), luck: z.number() });
+
+const rank = z.number().int().min(1).max(4);
 
 export const characterSchema = z.object({
   id: slug('character'),
@@ -18,17 +23,57 @@ export const characterSchema = z.object({
   age: z.number().int().nonnegative(),
   portrait: assetId,
   stats: statsSchema,
+  // Abilities the character always has, whatever the weapon (D-069).
+  abilities: z.array(slug('ability')),
 });
 
-// How a weapon fights (D-063, D-066): damage roll, the farthest band it reaches, and what it adds to the stats.
+// How a weapon fights (D-066, D-069): its damage roll, the abilities it gives and what it adds to the stats.
 const weaponProfile = z.object({
   damage: z.tuple([z.number().int().nonnegative(), z.number().int().nonnegative()]),
-  reach: z.enum(bands),
-  // Uses one of this item a shot (arrows).
+  abilities: z.array(slug('ability')).min(1),
+  // Abilities marked `ammo` use one of this item a use (arrows).
   ammo: z.string().optional(),
-  // ACC change when the target is Close (the bow).
-  accAtClose: z.number().optional(),
   bonus: statsSchema.partial().optional(),
+});
+
+// An effect an ability applies (D-069). `kind` is a status from combat.json, or a movement
+// (push, pull, shuffle) or `cleanse`. `chance` is the base chance before the target's resistance.
+const abilityEffect = z.object({
+  kind: z.string().min(1),
+  chance: z.number().min(0).max(200).optional(),
+  // Damage a turn (bleed, blight), the stat change (buff, debuff) or ranks moved (push, pull).
+  amount: z.number().optional(),
+  stat: z.string().optional(),
+  rounds: z.number().int().positive().optional(),
+  // Applies to the user instead of the target.
+  onSelf: z.boolean().optional(),
+});
+
+// A combat ability (D-069): where it can be used from, what it can hit, and what it does.
+export const abilitySchema = z.object({
+  id: slug('ability'),
+  name: z.string().min(1),
+  description: z.string().min(1),
+  usableFrom: z.array(rank).min(1),
+  target: z.object({
+    side: z.enum(['enemy', 'ally', 'self']),
+    ranks: z.array(rank),
+    // single: one chosen target; all: everyone standing in those ranks (each hit once).
+    mode: z.enum(['single', 'all']),
+    // Can also hit enemy corpses (to clear them).
+    corpses: z.boolean().optional(),
+  }),
+  // Multiplies the user's damage roll + ATK; absent means the ability deals no damage.
+  damage: z.number().nonnegative().optional(),
+  heal: z.tuple([z.number().int().nonnegative(), z.number().int().nonnegative()]).optional(),
+  accuracy: z.number().optional(),
+  crit: z.number().optional(),
+  ammo: z.boolean().optional(),
+  // Extra damage (a multiplier added) and crit against a marked target.
+  vsMarked: z.object({ damage: z.number().optional(), crit: z.number().optional() }).optional(),
+  effects: z.array(abilityEffect).optional(),
+  // After use the user moves this many ranks: positive forward (towards rank 1), negative back.
+  selfMove: z.number().int().optional(),
 });
 
 export const siteKinds = ['home', 'hunting', 'ruins', 'rail', 'road', 'water', 'city'] as const;
@@ -313,33 +358,54 @@ export const eventsSchema = z.object({
   events: z.array(eventSchema).min(1),
 });
 
-// An enemy type (D-064, D-066). Every loot entry rolls on its own.
+// An enemy type (D-064, D-069). Every loot entry rolls on its own.
 export const enemySchema = z.object({
   id: slug('enemy'),
   name: z.string().min(1),
   hp: z.number().int().positive(),
+  // Its damage roll, which its abilities multiply.
   damage: z.tuple([z.number().int().nonnegative(), z.number().int().nonnegative()]),
-  def: z.number(), spd: z.number(), acc: z.number(), dodge: z.number(), critRate: z.number(), critDamage: z.number(),
-  // Bands it may start in, picked at random.
-  start: z.array(z.enum(bands)).min(1),
-  // melee: closes in, then attacks. archer: shoots from Mid or Far, steps back when Close.
-  behaviour: z.enum(['melee', 'archer']),
+  stats: combatStatsSchema,
+  // Ranks it takes up: 2 for big enemies such as the boar.
+  size: z.number().int().min(1).max(2),
+  // Where it likes to stand; it is placed there at the start and moves back there when it has nothing to do.
+  preferredRanks: z.array(rank).min(1),
+  abilities: z.array(z.object({ id: slug('ability'), weight: z.number().positive() })).min(1),
+  // How it picks a target: at random, the weakest, a marked one first, or the one nearest the front.
+  ai: z.object({ target: z.enum(['random', 'lowest_hp', 'marked', 'front']) }),
+  turnsPerRound: z.number().int().min(1).max(3).optional(),
+  // Its remains keep its ranks until cleared; null leaves nothing and the rest close up.
+  corpse: z.object({ hp: z.number().int().positive() }).nullable(),
   // A crit by this enemy may leave a condition (a dirty dog bite).
   critCondition: z.object({ conditionId: slug('condition'), chance: z.number().min(0).max(1) }).optional(),
   loot: z.array(lootEntry),
 });
 
-// Combat numbers (D-063, D-066).
+// Combat numbers (D-066, D-069).
 export const combatSchema = z.object({
   unarmed: weaponProfile,
   dieSides: z.number().int().positive(),
   hitChance: z.tuple([z.number(), z.number()]),
   defCap: z.number().min(0).max(100),
-  aim: z.object({ acc: z.number(), critRate: z.number() }),
   minutesPerRound: z.number().int().positive(),
   arrowRecovery: z.number().min(0).max(1),
+  // Status kinds the engine knows, by behaviour, so new ones are data (D-069).
+  statuses: z.record(z.string(), z.object({
+    name: z.string().min(1),
+    // The stat that resists it, or null when it always lands (buffs, marks).
+    resist: z.string().nullable(),
+    damagePerTurn: z.boolean().optional(),
+    skipsTurn: z.boolean().optional(),
+    modifiesStat: z.boolean().optional(),
+  })),
+  // After a stun wears off: a short boost to stun resistance so he can't be stun-locked.
+  stunGuard: z.object({ amount: z.number(), rounds: z.number().int().positive() }),
+  // The stat that resists push, pull and shuffle.
+  moveResist: z.string(),
+  // Penalties at Death's Door (player side only), and Health after a fight won at Death's Door.
+  deathsDoor: z.object({ acc: z.number(), spd: z.number(), damageMultiplier: z.number().positive(), afterFightHealth: z.number().positive() }),
   flee: z.object({
-    base: z.number(), mid: z.number(), far: z.number(),
+    base: z.number(), frontClear: z.number(),
     hurtAtHealth: z.number(), hurt: z.number(), loadedOverKg: z.number(), loaded: z.number(),
     range: z.tuple([z.number(), z.number()]),
   }),
@@ -371,7 +437,9 @@ export type SurvivalConfig = z.infer<typeof survivalSchema>;
 export type NewGameConfig = z.infer<typeof newGameSchema>;
 export type Condition = z.infer<typeof conditionSchema>;
 export type Stats = z.infer<typeof statsSchema>;
-export type Band = (typeof bands)[number];
+export type CombatStats = z.infer<typeof combatStatsSchema>;
+export type Ability = z.infer<typeof abilitySchema>;
+export type AbilityEffect = z.infer<typeof abilityEffect>;
 export type WeaponProfile = z.infer<typeof weaponProfile>;
 export type Enemy = z.infer<typeof enemySchema>;
 export type CombatConfig = z.infer<typeof combatSchema>;

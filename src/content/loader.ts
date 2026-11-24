@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import {
-  buildingTypeSchema, combatSchema, conditionSchema, enemySchema, eventsSchema, type CombatConfig, type Enemy, fireSchema, type Condition, type EventsConfig, recipeSchema, townSchema, type FireConfig, type Recipe, townStreetsSchema, type BuildingType, type Town, type TownStreets,
+  abilitySchema, buildingTypeSchema, combatSchema, statsSchema, type Ability, conditionSchema, enemySchema, eventsSchema, type CombatConfig, type Enemy, fireSchema, type Condition, type EventsConfig, recipeSchema, townSchema, type FireConfig, type Recipe, townStreetsSchema, type BuildingType, type Town, type TownStreets,
   characterSchema, itemSchema, lootSchema, newGameSchema, outlineSchema, roadsSchema, scavengingSchema, siteSchema, survivalSchema, waterSchema, worldSchema,
   type Character, type Item, type Loot, type NewGameConfig, type Outline, type Roads, type ScavengingConfig, type Site, type SurvivalConfig, type Water, type WorldConfig,
 } from './schemas';
@@ -13,6 +13,7 @@ import recipes from './data/recipes.json';
 import conditions from './data/conditions.json';
 import events from './data/events.json';
 import enemies from './data/enemies.json';
+import abilities from './data/abilities.json';
 import combat from './data/combat.json';
 import water from './data/water.json';
 import buildingTypes from './data/building-types.json';
@@ -39,6 +40,7 @@ export interface Content {
   conditions: Record<string, Condition>;
   events: EventsConfig;
   enemies: Record<string, Enemy>;
+  abilities: Record<string, Ability>;
   combat: CombatConfig;
   water: Water;
   buildingTypes: Record<string, BuildingType>;
@@ -63,6 +65,7 @@ export interface RawContent {
   conditions: unknown;
   events: unknown;
   enemies: unknown;
+  abilities: unknown;
   combat: unknown;
   water: unknown;
   buildingTypes: unknown;
@@ -97,6 +100,7 @@ export function parseContent(raw: RawContent): Content {
     conditions: byId(z.array(conditionSchema).parse(raw.conditions), 'condition'),
     events: eventsSchema.parse(raw.events),
     enemies: byId(z.array(enemySchema).parse(raw.enemies), 'enemy'),
+    abilities: byId(z.array(abilitySchema).parse(raw.abilities), 'ability'),
     combat: combatSchema.parse(raw.combat),
     water: waterSchema.parse(raw.water),
     buildingTypes: byId(z.array(buildingTypeSchema).parse(raw.buildingTypes), 'building type'),
@@ -166,8 +170,30 @@ export function parseContent(raw: RawContent): Content {
       }
     }
   }
-  for (const it of Object.values(content.items)) if (it.combat?.ammo) item(it.combat.ammo, `items.json ${it.id} ammo`);
+  // D-069: abilities, statuses and stats must all point at things that exist.
+  const statKeys = new Set(Object.keys(statsSchema.shape));
+  const { statuses } = content.combat;
+  const movements = new Set(['push', 'pull', 'shuffle', 'cleanse', 'extra_turn']);
+  if (!statKeys.has(content.combat.moveResist)) throw new Error(`combat.json: moveResist ${content.combat.moveResist} is not a stat`);
+  for (const [kind, st] of Object.entries(statuses)) if (st.resist && !statKeys.has(st.resist)) throw new Error(`combat.json: ${kind} resisted by unknown stat ${st.resist}`);
+  for (const a of Object.values(content.abilities)) {
+    for (const e of a.effects ?? []) {
+      if (!statuses[e.kind] && !movements.has(e.kind)) throw new Error(`abilities.json ${a.id}: unknown effect ${e.kind}`);
+      if (statuses[e.kind]?.modifiesStat && (!e.stat || !statKeys.has(e.stat))) throw new Error(`abilities.json ${a.id}: ${e.kind} needs a known stat`);
+    }
+    if (a.target.side !== 'self' && !a.target.ranks.length) throw new Error(`abilities.json ${a.id}: no target ranks`);
+  }
+  const ability = (id: string, where: string) => {
+    if (!content.abilities[id]) throw new Error(`${where}: unknown ability ${id}`);
+  };
+  for (const ch of Object.values(content.characters)) for (const id of ch.abilities) ability(id, `characters.json ${ch.id}`);
+  for (const id of content.combat.unarmed.abilities) ability(id, 'combat.json unarmed');
+  for (const it of Object.values(content.items)) {
+    if (it.combat?.ammo) item(it.combat.ammo, `items.json ${it.id} ammo`);
+    for (const id of it.combat?.abilities ?? []) ability(id, `items.json ${it.id}`);
+  }
   for (const e of Object.values(content.enemies)) {
+    for (const a of e.abilities) ability(a.id, `enemies.json ${e.id}`);
     for (const entry of e.loot) item(entry.itemId, `enemies.json ${e.id}`);
     if (e.critCondition) condition(e.critCondition.conditionId, `enemies.json ${e.id}`);
     if (e.damage[0] > e.damage[1]) throw new Error(`enemies.json ${e.id}: damage min is above max`);
@@ -208,5 +234,5 @@ export function parseContent(raw: RawContent): Content {
 }
 
 export function loadContent(): Content {
-  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame });
+  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame });
 }

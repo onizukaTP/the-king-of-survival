@@ -4,7 +4,9 @@
       1,
       3
     ],
-    "reach": "close"
+    "abilities": [
+      "ability.punch"
+    ]
   },
   "dieSides": 8,
   "hitChance": [
@@ -12,16 +14,53 @@
     95
   ],
   "defCap": 75,
-  "aim": {
-    "acc": 15,
-    "critRate": 10
-  },
   "minutesPerRound": 1,
   "arrowRecovery": 0.5,
+  "statuses": {
+    "bleed": {
+      "name": "Bleed",
+      "resist": "bleedRes",
+      "damagePerTurn": true
+    },
+    "blight": {
+      "name": "Blight",
+      "resist": "blightRes",
+      "damagePerTurn": true
+    },
+    "stun": {
+      "name": "Stunned",
+      "resist": "stunRes",
+      "skipsTurn": true
+    },
+    "mark": {
+      "name": "Marked",
+      "resist": null
+    },
+    "buff": {
+      "name": "Buff",
+      "resist": null,
+      "modifiesStat": true
+    },
+    "debuff": {
+      "name": "Debuff",
+      "resist": "debuffRes",
+      "modifiesStat": true
+    }
+  },
+  "stunGuard": {
+    "amount": 50,
+    "rounds": 2
+  },
+  "moveResist": "moveRes",
+  "deathsDoor": {
+    "acc": -10,
+    "spd": -2,
+    "damageMultiplier": 0.8,
+    "afterFightHealth": 1
+  },
   "flee": {
     "base": 50,
-    "mid": 10,
-    "far": 25,
+    "frontClear": 25,
     "hurtAtHealth": 25,
     "hurt": -15,
     "loadedOverKg": 25,

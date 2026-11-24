@@ -10,6 +10,7 @@ import recipes from './data/recipes.json';
 import conditions from './data/conditions.json';
 import events from './data/events.json';
 import enemies from './data/enemies.json';
+import abilities from './data/abilities.json';
 import combat from './data/combat.json';
 import water from './data/water.json';
 import buildingTypes from './data/building-types.json';
@@ -21,7 +22,7 @@ import sites from './data/sites.json';
 import tamilNadu from './data/tamil-nadu.json';
 import world from './data/world.json';
 
-const raw: RawContent = { characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame };
+const raw: RawContent = { characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame };
 const prabu = characters[0]!;
 const home = sites[0]!;
 

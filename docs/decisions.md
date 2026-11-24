@@ -81,6 +81,7 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat (solo, range bands and fleeing are now D-063): 1–3 enemies, speed-based turn order; actions: attack, aim, move band, use item, flee. Numbers to be proposed.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
+- P-020 Progression, opening and journal (M8): XP from fights (per enemy), hunts 10, discoveries 15, finds 2, first crafts 5, some events; 10 levels (100 to 2,700 XP) with fixed stat gains; a 4-screen text intro (draft) with three options for the mother's clue; a Journal with the brother entry, the wish and automatic notes; save v10. Spec in `docs/progression.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
 - T1–T3 Timeline/character inconsistencies in §4 (T4 is answered by D-063).

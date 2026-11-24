@@ -79,7 +79,7 @@
 - Nothing.
 
 ## Pending (unblocked)
-- M8 Progression and opening — Q6 and Q7 answered (D-070 to D-072); needs a proposal: XP sources and amounts, level thresholds and gains, the intro draft with clue options, the journal.
+- M8 Progression and opening — proposed in `docs/progression.md` (P-020), with the intro draft and three clue options; awaiting approval.
 - Charms (D-062): 1 talisman, 2 rings and 2 bangles that lower risks or raise yields. To be drafted for approval.
 
 ## Later (owner's notes)

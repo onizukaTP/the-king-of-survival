@@ -90,26 +90,60 @@ const eventStateSchema = z.object({
   }).nullable(),
 });
 
-const band = z.enum(['close', 'mid', 'far']);
-
-// What happened in a fight since Prabu last acted, for the combat screen. `actor`/`target`: -1 is Prabu, n is enemy n.
-const combatLogSchema = z.object({
-  actor: z.number().int(),
-  kind: z.enum(['hit', 'miss', 'move', 'aim', 'step_back', 'item', 'flee_failed', 'killed']),
-  target: z.number().int().optional(),
-  damage: z.number().int().optional(),
-  crit: z.boolean().optional(),
-  band: band.optional(),
-  itemId: z.string().optional(),
+// A status on a fighter (D-069): bleed, blight, stun, mark, buff, debuff and any kind added to combat.json.
+const statusSchema = z.object({
+  kind: z.string(),
+  // Damage a turn, or the stat change.
+  amount: z.number().optional(),
+  stat: z.string().optional(),
+  // Turns left: counted down at the start of each of the holder's turns.
+  rounds: z.number().int().nonnegative(),
 });
 
-// A fight under way (M7, D-063). Saved between turns, so a reload goes back into it.
+// A fighter in the formation (D-069). The protagonist's Health is the real Health meter, so `hp` is
+// kept only for the others. Rank 1 is the front; a fighter of size 2 takes ranks rank and rank + 1.
+const combatantSchema = z.object({
+  uid: z.string(),
+  side: z.enum(['player', 'enemy']),
+  // A character id (player side) or an enemy id.
+  defId: z.string(),
+  protagonist: z.boolean(),
+  hp: z.number().int(),
+  rank: z.number().int().min(1).max(4),
+  size: z.number().int().min(1).max(2),
+  statuses: z.array(statusSchema),
+  deathsDoor: z.boolean(),
+  // Dead but its remains still hold its ranks; `hp` is then the corpse's.
+  corpse: z.boolean(),
+});
+
+// What happened since the player last acted, for the combat screen and its numbers. Kinds:
+// ability, hit, miss, heal, status, resisted, dot, move, stunned, expired, deaths_door, deathblow,
+// killed, corpse_cleared, pass, item, flee_failed.
+const combatLogSchema = z.object({
+  kind: z.string(),
+  actor: z.string().optional(),
+  target: z.string().optional(),
+  abilityId: z.string().optional(),
+  amount: z.number().optional(),
+  crit: z.boolean().optional(),
+  status: z.string().optional(),
+  survived: z.boolean().optional(),
+  itemId: z.string().optional(),
+  // Who it was, for lines about fighters no longer on the field.
+  defId: z.string().optional(),
+});
+
+// A fight under way (D-069). Saved between turns, so a reload goes back into the same turn.
 const combatStateSchema = z.object({
-  enemies: z.array(z.object({ id: z.string(), hp: z.number().int(), band })),
+  combatants: z.array(combatantSchema),
   round: z.number().int().positive(),
-  // Who still acts this round, in order; the first is acting now. -1 is Prabu.
-  order: z.array(z.number().int()),
-  aimed: z.boolean(),
+  // Turns still to come this round, in initiative order; the first is acting now.
+  queue: z.array(z.string()),
+  // Whether the first in the queue has begun its turn (its bleed and stun already resolved).
+  turnStarted: z.boolean(),
+  // The enemies defeated so far, for the loot.
+  defeated: z.array(z.string()),
   arrowsShot: z.number().int().nonnegative(),
   log: z.array(combatLogSchema),
   result: z.object({
@@ -155,6 +189,8 @@ export type FireState = z.infer<typeof fireStateSchema>;
 export type EventState = z.infer<typeof eventStateSchema>;
 export type CombatState = z.infer<typeof combatStateSchema>;
 export type CombatLog = z.infer<typeof combatLogSchema>;
+export type Combatant = z.infer<typeof combatantSchema>;
+export type CombatStatus = z.infer<typeof statusSchema>;
 
 /** Radiation (D-035, D-043) and conditions such as Weak (D-061) lower maximum Health. */
 export function maxHealth(s: SurvivalState, content: Content): number {

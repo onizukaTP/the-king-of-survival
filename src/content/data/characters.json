@@ -1,4 +1,6 @@
 [
   { "id": "character.prabu", "name": "Prabu", "age": 27, "portrait": "portrait.character.prabu",
-    "stats": { "atk": 2, "def": 0, "spd": 4, "critRate": 5, "critDamage": 150, "acc": 85, "dodge": 10, "hunting": 40, "luck": 0 } }
+    "stats": { "atk": 2, "def": 0, "spd": 4, "critRate": 5, "critDamage": 150, "acc": 85, "dodge": 10,
+      "stunRes": 30, "bleedRes": 30, "blightRes": 30, "debuffRes": 30, "moveRes": 40, "deathblowRes": 60, "hunting": 40, "luck": 0 },
+    "abilities": ["ability.take_aim", "ability.brace", "ability.shove"] }
 ]

@@ -65,19 +65,17 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 - **Dark-trip warning** in the place panel, above Travel, when the trip would run into the dark with too little torch charge.
 - Trip and walk times in the panels include a sprained ankle's slower pace.
 
-## Combat screen and Stats (M7) — D-066
+## Combat screen (D-069) and Stats
 
-- **Combat screen** in place of the map, with the top bar kept:
-  - **Head:** the round number and who acts next.
-  - **Stage, side view (D-067):** Prabu (and later his team) stands on the left. The enemies stand on the right in three columns, Close, Mid and Far going away from him; a crowded band widens and wraps.
-  - **Figures:** each fighter is a placeholder figure (art from the asset manifest, so real art replaces it later) with its name, an HP bar and HP. Enemies face left. The damage each took since Prabu last acted shows as "−8" by the figure.
-  - **Selection and turn:** tapping an enemy targets it (blue outline). Prabu's figure is outlined in amber on his turn.
-  - **Weapon card:** below the stage, the weapon, the arrows left and the Stats block.
-  - **Actions:** Attack (with the hit chance), Aim, Close in, Step back, Use item (opens a list of what he can eat, drink or apply) and Flee (with its chance). Actions he can't take are greyed out with the reason, for example "Out of reach: the hunting knife reaches Close only."
-  - **Log:** what happened since his last action.
-  - **Result:** "He won the fight" or "He got away", with the finds, then Continue.
-  - **Phone:** the same layout in one column, with the actions two to a row.
-- **Stats block** in the Pack under the weapon slot: damage and reach, then ATK, DEF, SPD, Crit, Crit dmg, ACC, Dodge, Hunting and Luck.
+The four-rank battlefield replaced the band screen (D-067's columns) on 2026-11-24. The full description is in `docs/combat.md` → "The screen". In short:
+- **Battlefield:** Prabu's ranks 4 → 1 on the left, the enemy's ranks 1 → 4 on the right. Fighters show placeholder figures, health, status badges, Death's Door, a turn outline and floating numbers.
+- **Turn queue** across the top.
+- **Acting character's card** with live stats.
+- **Ability buttons:** each shows its hit chance and usable ranks, or the reason it's disabled. Choosing one highlights the valid targets; abilities on himself or on everyone in their ranks go at once.
+- **Other actions:** Move forward and back, Pass, Use item, Flee.
+- **The log**, and a result card at the end.
+
+- **Stats block** in the Pack under the weapon slot: the damage roll, then ATK, DEF, SPD, Crit, Crit dmg, ACC, Dodge, the six resistances, Hunting and Luck.
 - **Later:** more skills for Prabu and his team (D-067).
 - **Test button (D-068):** only with `?debug=1` in the address, a **Test** button in the top bar opens a Test panel:
   - **Event:** pick any event and open its card.

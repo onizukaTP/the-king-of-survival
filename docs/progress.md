@@ -67,6 +67,14 @@
   - **Test button:** shown only with `?debug=1`; it opens any event, starts an ambush or any fight, and jumps to 22:00.
   - **Checks:** 167 unit tests and 11 e2e tests pass; checked in the browser on desktop and phone width.
 
+- **Four-rank tactical combat (D-069)** — on `dev`, not released.
+  - Replaces the band combat: formations of four ranks, position-dependent abilities from data (Prabu's own three plus two per weapon), initiative SPD + 1–8, resistances and a status engine (bleed, blight, stun with stun guard, mark, buffs, debuffs, push, pull, shuffle, cleanse).
+  - Death's Door and Deathblow; remains; enemy AI from each enemy's data; the boar takes two ranks.
+  - The four-rank battlefield screen with target highlighting.
+  - Save v9 with a migration from v8 fights.
+  - 188 unit tests and 12 e2e tests pass; checked in the browser on desktop and phone width, including Death's Door.
+  - Starting values chosen by Claude are listed for review in `docs/combat.md`.
+
 ## In progress
 - Nothing.
 

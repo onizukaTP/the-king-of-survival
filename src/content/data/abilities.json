@@ -1,0 +1,62 @@
+[
+  { "id": "ability.take_aim", "name": "Take aim", "description": "Steadies his breath: ACC +15 and crit +10% until after his next turn.",
+    "usableFrom": [1, 2, 3, 4], "target": { "side": "self", "ranks": [], "mode": "single" },
+    "effects": [{ "kind": "buff", "stat": "acc", "amount": 15, "rounds": 2, "onSelf": true }, { "kind": "buff", "stat": "critRate", "amount": 10, "rounds": 2, "onSelf": true }] },
+  { "id": "ability.brace", "name": "Brace", "description": "Sets his feet and guards: DEF +20% for two turns.",
+    "usableFrom": [1, 2, 3, 4], "target": { "side": "self", "ranks": [], "mode": "single" },
+    "effects": [{ "kind": "buff", "stat": "def", "amount": 20, "rounds": 3, "onSelf": true }] },
+  { "id": "ability.shove", "name": "Shove", "description": "A hard shove that knocks the front enemy back a rank.",
+    "usableFrom": [1], "target": { "side": "enemy", "ranks": [1], "mode": "single" },
+    "damage": 0.3, "accuracy": 5, "effects": [{ "kind": "push", "amount": 1, "chance": 100 }] },
+
+  { "id": "ability.punch", "name": "Punch", "description": "Bare fists.",
+    "usableFrom": [1, 2], "target": { "side": "enemy", "ranks": [1, 2], "mode": "single", "corpses": true }, "damage": 1 },
+
+  { "id": "ability.stab", "name": "Stab", "description": "A quick knife thrust.",
+    "usableFrom": [1, 2], "target": { "side": "enemy", "ranks": [1, 2], "mode": "single", "corpses": true }, "damage": 1, "crit": 5 },
+  { "id": "ability.open_vein", "name": "Open a vein", "description": "A shallow cut that bleeds: 2 a turn for 3 turns.",
+    "usableFrom": [1, 2], "target": { "side": "enemy", "ranks": [1, 2], "mode": "single" },
+    "damage": 0.5, "effects": [{ "kind": "bleed", "amount": 2, "rounds": 3, "chance": 100 }] },
+
+  { "id": "ability.hack", "name": "Hack", "description": "A heavy chop with the aruval.",
+    "usableFrom": [1, 2], "target": { "side": "enemy", "ranks": [1, 2], "mode": "single", "corpses": true }, "damage": 1 },
+  { "id": "ability.sweep", "name": "Sweep", "description": "A wide swing that catches everything in the first two ranks.",
+    "usableFrom": [1], "target": { "side": "enemy", "ranks": [1, 2], "mode": "all" }, "damage": 0.6, "accuracy": -5 },
+
+  { "id": "ability.thrust", "name": "Thrust", "description": "The spear's reach: hits the first three ranks.",
+    "usableFrom": [1, 2, 3], "target": { "side": "enemy", "ranks": [1, 2, 3], "mode": "single", "corpses": true }, "damage": 1 },
+  { "id": "ability.hook", "name": "Hook", "description": "Hooks an enemy further back and drags it a rank forward.",
+    "usableFrom": [1, 2], "target": { "side": "enemy", "ranks": [2, 3], "mode": "single" },
+    "damage": 0.5, "effects": [{ "kind": "pull", "amount": 1, "chance": 100 }] },
+
+  { "id": "ability.shoot", "name": "Shoot", "description": "An arrow at any rank. Uses an arrow.",
+    "usableFrom": [1, 2, 3, 4], "target": { "side": "enemy", "ranks": [1, 2, 3, 4], "mode": "single", "corpses": true }, "damage": 1, "ammo": true },
+  { "id": "ability.pinning_shot", "name": "Pinning shot", "description": "From the back, a shot that can stun. Uses an arrow.",
+    "usableFrom": [2, 3, 4], "target": { "side": "enemy", "ranks": [1, 2, 3, 4], "mode": "single" },
+    "damage": 0.6, "ammo": true, "effects": [{ "kind": "stun", "chance": 100 }] },
+
+  { "id": "ability.dog_bite", "name": "Bite", "description": "Teeth.",
+    "usableFrom": [1, 2], "target": { "side": "enemy", "ranks": [1, 2], "mode": "single" }, "damage": 1 },
+  { "id": "ability.dog_hamstring", "name": "Hamstring", "description": "Goes for the legs: bleeds 2 a turn for 3 turns.",
+    "usableFrom": [1], "target": { "side": "enemy", "ranks": [1], "mode": "single" },
+    "damage": 0.5, "effects": [{ "kind": "bleed", "amount": 2, "rounds": 3, "chance": 100 }] },
+
+  { "id": "ability.boar_gore", "name": "Gore", "description": "Tusks grown wrong: the wound festers (blight 2 a turn for 3 turns).",
+    "usableFrom": [1, 2], "target": { "side": "enemy", "ranks": [1], "mode": "single" },
+    "damage": 1.2, "effects": [{ "kind": "blight", "amount": 2, "rounds": 3, "chance": 90 }] },
+  { "id": "ability.boar_trample", "name": "Trample", "description": "Charges through the first two ranks; can stun.",
+    "usableFrom": [1, 2], "target": { "side": "enemy", "ranks": [1, 2], "mode": "all" },
+    "damage": 0.7, "accuracy": -5, "effects": [{ "kind": "stun", "chance": 70 }] },
+
+  { "id": "ability.raider_cut", "name": "Cut", "description": "A blade, hard and dirty; deadlier on a marked target.",
+    "usableFrom": [1, 2], "target": { "side": "enemy", "ranks": [1, 2], "mode": "single" },
+    "damage": 1, "vsMarked": { "damage": 0.5, "crit": 10 } },
+  { "id": "ability.raider_rend", "name": "Rend", "description": "A ragged slash: bleeds 3 a turn for 3 turns.",
+    "usableFrom": [1], "target": { "side": "enemy", "ranks": [1], "mode": "single" },
+    "damage": 0.6, "effects": [{ "kind": "bleed", "amount": 3, "rounds": 3, "chance": 100 }] },
+  { "id": "ability.raider_shoot", "name": "Shoot", "description": "An arrow from the back ranks.",
+    "usableFrom": [2, 3, 4], "target": { "side": "enemy", "ranks": [1, 2, 3, 4], "mode": "single" }, "damage": 1, "vsMarked": { "crit": 10 } },
+  { "id": "ability.raider_spot", "name": "Call the target", "description": "Picks out a target for the others (marked for 3 turns) and lowers its guard (DEF −10).",
+    "usableFrom": [2, 3, 4], "target": { "side": "enemy", "ranks": [1, 2, 3, 4], "mode": "single" },
+    "accuracy": 10, "effects": [{ "kind": "mark", "rounds": 3, "chance": 100 }, { "kind": "debuff", "stat": "def", "amount": -10, "rounds": 3, "chance": 100 }] }
+]

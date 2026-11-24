@@ -198,7 +198,7 @@ async function facingEvent(page: import('@playwright/test').Page, eventId: strin
     const req = indexedDB.open('king-of-survival', 1);
     req.onsuccess = () => {
       const tx = req.result.transaction('saves', 'readwrite');
-      tx.objectStore('saves').put({ saveVersion: 8, createdAt: 'e2e', gameState: gs }, 'manual');
+      tx.objectStore('saves').put({ saveVersion: 9, createdAt: 'e2e', gameState: gs }, 'manual');
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
     };
@@ -217,9 +217,14 @@ test('a fight from the wild dogs card: attack until they are dead, take the meat
   await expect(combat.getByTestId('stats')).toContainText('ATK');
   const result = page.getByRole('dialog', { name: 'He won the fight' });
   for (let i = 0; i < 40 && !(await result.count()); i++) {
-    const attack = combat.getByRole('button', { name: /^Attack/ });
-    if (await attack.isEnabled()) await attack.click();
-    else await combat.getByRole('button', { name: 'Close in' }).click();
+    // D-069: pick an ability, then one of the highlighted targets; pass when nothing is in reach.
+    const stab = combat.getByRole('button', { name: /^Stab/ });
+    if (await stab.isEnabled()) {
+      await stab.click();
+      await combat.locator('.figure.targetable').first().click();
+    } else {
+      await combat.getByRole('button', { name: 'Pass' }).click();
+    }
   }
   await expect(result).toContainText('Found: raw meat');
   await result.getByRole('button', { name: 'Continue' }).click();
@@ -238,7 +243,7 @@ test('an event card must be answered, shows what happened, and leaves a conditio
     const req = indexedDB.open('king-of-survival', 1);
     req.onsuccess = () => {
       const tx = req.result.transaction('saves', 'readwrite');
-      tx.objectStore('saves').put({ saveVersion: 8, createdAt: 'e2e', gameState: gs }, 'manual');
+      tx.objectStore('saves').put({ saveVersion: 9, createdAt: 'e2e', gameState: gs }, 'manual');
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
     };
@@ -280,7 +285,38 @@ test('the Test button shows only with ?debug=1 and opens events and fights (D-06
   await panel.getByRole('button', { name: 'Start an ambush' }).click();
   const combat = page.getByTestId('combat');
   await expect(combat).toBeVisible();
-  // D-067: Prabu on the left, the raiders on the right at Close.
-  await expect(combat.locator('.side-left')).toContainText('Prabu');
-  await expect(combat.locator('.side-right')).toContainText('Raider with a blade');
+  // D-069: both formations on one battlefield, Prabu in his rank 1 and the raiders in theirs.
+  const field = combat.getByRole('group', { name: 'Battlefield' });
+  await expect(field.locator('.figure.ally')).toContainText('Prabu');
+  await expect(field.locator('.figure.enemy').first()).toContainText('Raider with a blade');
+  await expect(field.locator('.rank-slot')).toHaveCount(8);
+});
+
+test('a four-rank fight with mixed roles plays to the end through the screen (D-069)', async ({ page }) => {
+  await page.goto('/?seed=2&debug=1');
+  await page.getByRole('button', { name: 'New Game' }).click();
+  await page.getByRole('button', { name: 'Test' }).click();
+  const panel = page.getByTestId('test-panel');
+  await panel.getByLabel('Wild dog count').fill('1');
+  await panel.getByLabel('Raider with a blade count').fill('1');
+  await panel.getByLabel('Raider with a bow count').fill('1');
+  await panel.getByRole('button', { name: 'Start fight' }).click();
+  const combat = page.getByTestId('combat');
+  await expect(combat.getByRole('list', { name: 'Turn order' })).toBeVisible();
+  // The bow raider stands in rank 3: Stab (ranks 1–2) can't pick it.
+  await combat.getByRole('button', { name: /^Stab/ }).click();
+  await expect(combat.locator('.figure.targetable')).toHaveCount(2);
+  await expect(combat.locator('button.figure', { hasText: 'Raider with a bow' })).toBeDisabled();
+  await combat.locator('.figure.targetable').first().click();
+  const over = page.getByRole('dialog', { name: /He won the fight|He got away/ }).or(page.getByRole('heading', { name: 'Prabu has died' }));
+  for (let i = 0; i < 60 && !(await over.count()); i++) {
+    const stab = combat.getByRole('button', { name: /^Stab/ });
+    if (await stab.isEnabled()) {
+      await stab.click();
+      await combat.locator('.figure.targetable').first().click();
+    } else {
+      await combat.getByRole('button', { name: 'Pass' }).click();
+    }
+  }
+  await expect(over).toBeVisible();
 });

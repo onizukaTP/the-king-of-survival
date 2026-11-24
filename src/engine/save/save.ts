@@ -3,7 +3,7 @@ import type { Content } from '../../content/loader';
 import { gameStateSchema, startingInventory, startingSurvival, startPosition, type GameState } from '../core/state';
 import { initialMap } from '../systems/travel/travel';
 
-export const SAVE_VERSION = 8;
+export const SAVE_VERSION = 9;
 
 const saveSchema = z.object({
   saveVersion: z.literal(SAVE_VERSION),
@@ -73,6 +73,34 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
   },
   // v7 → v8 (combat, M7): no fight under way.
   7: (save) => ({ ...save, saveVersion: 8, gameState: { ...(save.gameState as object), combat: null } }),
+  // v8 → v9 (four-rank combat, D-069): a band fight under way becomes a formation. Prabu holds
+  // rank 1; the enemies still standing line up nearest first (Close, Mid, Far), as many as four ranks
+  // take; those already dead count as defeated for the loot. It is Prabu's turn.
+  8: (save, content) => {
+    type OldEnemy = { id: string; hp: number; band: 'close' | 'mid' | 'far' };
+    type OldCombat = { enemies: OldEnemy[]; round: number; arrowsShot: number; result: unknown };
+    const gs = save.gameState as { combat: OldCombat | null; survival: { health: number }; player: { characterId: string } };
+    const old = gs.combat;
+    if (!old) return { ...save, saveVersion: 9 };
+    const order = { close: 0, mid: 1, far: 2 };
+    const standing = old.enemies.filter((e) => e.hp > 0).sort((a, b) => order[a.band] - order[b.band]);
+    const combatants: unknown[] = [{
+      uid: 'p0', side: 'player', defId: gs.player.characterId, protagonist: true, hp: Math.round(gs.survival.health),
+      rank: 1, size: 1, statuses: [], deathsDoor: false, corpse: false,
+    }];
+    let rank = 1;
+    standing.forEach((e, i) => {
+      const size = content.enemies[e.id]?.size ?? 1;
+      if (rank + size - 1 > 4) return;
+      combatants.push({ uid: `e${i}`, side: 'enemy', defId: e.id, protagonist: false, hp: e.hp, rank, size, statuses: [], deathsDoor: false, corpse: false });
+      rank += size;
+    });
+    const combat = {
+      combatants, round: old.round, queue: ['p0'], turnStarted: true,
+      defeated: old.enemies.filter((e) => e.hp <= 0).map((e) => e.id), arrowsShot: old.arrowsShot, log: [], result: old.result,
+    };
+    return { ...save, saveVersion: 9, gameState: { ...gs, combat } };
+  },
 };
 
 /** `createdAt` is passed in because the engine never reads the wall clock. */
@@ -112,7 +140,7 @@ export function loadSave(raw: unknown, content: Content): LoadResult {
   if (Object.keys(gameState.sites).some((id) => !content.sites[id] && !buildingIds.has(id))) return { ok: false, error: 'Save refers to an unknown place.' };
   if (gameState.event && !content.events.events.some((e) => e.id === gameState.event!.id)) return { ok: false, error: 'Save refers to an unknown event.' };
   if (gameState.survival.conditions.some((c) => !content.conditions[c.id])) return { ok: false, error: 'Save refers to an unknown condition.' };
-  if (gameState.combat?.enemies.some((e) => !content.enemies[e.id])) return { ok: false, error: 'Save refers to an unknown enemy.' };
+  if (gameState.combat?.combatants.some((c) => (c.side === 'enemy' ? !content.enemies[c.defId] : !content.characters[c.defId]))) return { ok: false, error: 'Save refers to an unknown fighter.' };
   const { town } = gameState;
   if (town) {
     const map = content.towns[town.siteId];

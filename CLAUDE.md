@@ -172,7 +172,8 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ events.md            # events and conditions (D-059, D-061)
 │  ├─ fire.md              # fire and cooking (D-056, D-057)
 │  ├─ crafting.md          # crafting (D-058)
-│  └─ combat.md            # combat (D-063 to D-066)
+│  ├─ combat.md            # four-rank combat (D-069)
+│  └─ combat-m7.md         # the first combat, superseded (history)
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
@@ -229,7 +230,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 ### Confirmed
 - D-001 Browser-first, single-player; desktop primary, responsive mobile browser where practical.
 - D-002 Tamil Nadu only, real geography, continuous map.
-- D-003 Combat is turn-based and tactical; must NOT reproduce Darkest Dungeon's 4-rank formation.
+- D-003 Combat is turn-based and tactical; must NOT reproduce Darkest Dungeon's 4-rank formation. *(Superseded by D-069: four-rank formations.)*
 - D-004 Placeholder art only, centrally managed.
 - D-005 Client-side architecture, stack as in §7 (Claude's authority per owner).
 - D-006 Prototype systems as listed in §5; deferred list in §6.
@@ -264,7 +265,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-035 (approves P-011; replaces P-009) **Survival numbers:** meters 0–100 starting at 100; Water −3/h, Food −1.5/h, Rest −5/h awake, sleep +12.5/h; Rest at 0 → Food and Water drain ×2; each of Food or Water at 0 → Health −5/h; Health +2/h while sleeping with Food and Water above 25; Rest action (1 h / 4 h / until rested) anywhere; Health 0 → game over; radiation lowers maximum Health. **Legs are at most 30 minutes**, and a trip stops by itself at the end of a leg when a meter falls to 25 or to 0.
 - D-036 (approves P-012, with a change) Item numbers in `docs/items.md`. **Carry limit:** 25 kg on foot without penalty, up to **50 kg** at most. Above 25 kg, Food, Water and Rest drain faster, **gradually**: ×1 at 25 kg, ×1.5 at 37.5 kg, ×2 at 50 kg.
 - D-037 The **torch makes searching faster**, by day and by night (numbers with M4). **Lighter fuel** is a rare scavenged item.
-- D-038 (answers Q8) **Permadeath with autosave:** one run; the game saves itself after every leg and action, and the Save button becomes "Save and quit". When Prabu dies, the run's save is deleted.
+- D-038 (answers Q8) **Permadeath with autosave:** one run; the game saves itself after every leg and action, and the Save button becomes "Save and quit". When Prabu dies, the run's save is deleted. *(Refined by D-069: in a fight, Prabu first reaches Death's Door; a failed Deathblow check kills him, and permadeath follows as before.)*
 - D-039 (answers Q3) **Injuries are part of Health:** an injury lowers Health, and Health cannot recover until the injury is cured. A **cloth bandage or neem–turmeric paste** cures an injury; painkillers only restore Health. Injuries come from combat and events (M6/M7).
 - D-040 (resolves T5) **Prabu and his mother came to the settlement from the north, and her sickness began there.**
 - D-041 **Inventory and meters layout** approved from the mockup: four meters and a Pack button in the top bar; the Pack in the side panel / bottom sheet. Spec in `docs/ui.md`.
@@ -289,12 +290,13 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-060 (approves P-015) **Night and the moon** as proposed in `docs/night.md`, built with M6.
 - D-061 **Conditions:** events leave lasting modifiers on Prabu. Six approved: **Sprained ankle** (walk speed ×0.7, 12 h), **Restless** (Rest drains ×1.5 until a 4-hour sleep), **Weak** (max Health −10 for 24 h; in M7 also −25% damage), **Shaken** (searches take 25% longer, 8 h; ends after 1 h of rest at home or by a fire), **Infected wound** (Health −1/h and no healing until treated with a sterilized bandage or neem–turmeric paste), **Well rested** (after sleeping to full Rest at home or by a fire: Rest drains ×0.75 for 12 h). The same condition again restarts its timer; no stacking. Spec in `docs/events.md`.
 - D-062 **Charms (later):** special items that lower risks or raise yields; Prabu can wear **1 talisman, 2 rings and 2 bangles**. To be drafted and approved later; not built in M6.
-- D-063 (answers Q4 and T4) **Combat setup:** Prabu **fights alone** in the prototype, but the engine supports any number of fighters on each side so companions can join once team building is approved. **Range bands:** each enemy is Close, Mid or Far; knives and the aruval hit Close, the spear reaches Mid, the bow hits any band and uses arrows; moving a band costs a turn. **Fleeing** is a chance roll that uses his turn: easier from Far, harder when he is hurt or heavily loaded; if it fails, the enemies get a free hit.
+- D-063 (answers Q4 and T4) **Combat setup:** Prabu **fights alone** in the prototype, but the engine supports any number of fighters on each side so companions can join once team building is approved. **Range bands:** each enemy is Close, Mid or Far; knives and the aruval hit Close, the spear reaches Mid, the bow hits any band and uses arrows; moving a band costs a turn. **Fleeing** is a chance roll that uses his turn: easier from Far, harder when he is hurt or heavily loaded; if it fails, the enemies get a free hit. *(Bands, band movement and reach superseded by D-069: four-rank formations and abilities. Solo Prabu, fleeing and the free hits on failure stay.)*
 - D-064 (answers Q5) **Prototype enemies:** **mutated animals** (such as the wild dog pack, D-029) and **nameless human raiders** (such as the roadblock). No other mutated creatures in the prototype.
 - D-065 **Combat rules (owner):** every fighter has **ATK, DEF, SPD, crit rate and crit damage**; items and attire will raise or lower them later. **Turn order** is SPD plus a roll, as in Darkest Dungeon. Prototype enemies: **wild dogs, mutated animals and raiders**. **Fights come from random encounters.** **Hunting** stays a success roll driven by a hunting stat, which hunting items will raise later. **Weapons stay primitive** for now; guns, crossbows, compound bows, sniper rifles and so on come later. Numbers proposed in P-019.
 - D-066 (approves P-019, with changes) **Combat numbers (M7)** as in `docs/combat.md`, plus **ACC, Dodge, Hunting and Luck** stats. The bow gives Hunting +15%. **Luck** (base 0, raised later by items) is used for everything: each point adds 1% to search find chances, +1 to hunting success, +0.5 to the flee chance and +0.25 to crit rate. The combat screen and the Stats block in the Pack are approved; later the combat screen will look more like Darkest Dungeon's.
-- D-067 **Combat screen, side view:** Prabu (and later his team) on the **left**, facing the enemies on the **right**, who stand in Close, Mid and Far columns. D-003 (no 4-rank formation) and the bands (D-063) stay; only the screen changes, with placeholder figures and an original look. More skills for Prabu and his team come later.
+- D-067 **Combat screen, side view:** Prabu (and later his team) on the **left**, facing the enemies on the **right**, who stand in Close, Mid and Far columns. D-003 (no 4-rank formation) and the bands (D-063) stay; only the screen changes, with placeholder figures and an original look. More skills for Prabu and his team come later. *(The Close/Mid/Far columns are superseded by D-069: four ranks per side.)*
 - D-068 **Testing tools:** a Test button, shown only when the address has `?debug=1` (live and local), that can open any event, start an ambush, start any fight, and jump the clock to night.
+- D-069 (owner's combat redesign, 2026-11-24) **Four-rank tactical combat:** two formations of four ranks (rank 1 front, rank 4 back); position-dependent, data-driven **abilities** (usable ranks, target ranks, ally/enemy/self/corpse, single or all, damage, ACC and crit modifiers, status and movement effects); initiative SPD + 1–8 each round; resistances (stun, bleed, blight, debuff, move, deathblow); a status engine (bleed, blight, stun with stun protection, mark, buffs and debuffs, push, pull, shuffle); **Death's Door and Deathblow** for player-side characters; corpses; enemy AI driven by each enemy's data; multi-rank enemies; a party of 1–4 (Prabu alone for now, no placeholder companions). **Supersedes** D-003 (no 4-rank formation), the Close/Mid/Far bands, band movement and targeting of D-063 and D-067, and the immediate combat death of D-038 (permadeath itself stays). Weapons, ammunition, hunting and Luck stay. **Stress and psychological mechanics are deferred.** Spec and numbers in `docs/combat.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -329,7 +331,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M4b | Town maps: buildings, per-type loot, wells (D-049, D-050, D-052) | M4 | Done — live (released 2026-11-22) |
 | M5 | Crafting | M3 | Done — live (released 2026-11-22); weapon recipes built with M7 (D-066) |
 | M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Done — live (released 2026-11-23); Fight choices wait for M7 (D-059) |
-| M7 | Combat | M3, M6 | Done — live (released 2026-11-23) |
+| M7 | Combat | M3, M6 | Done — live (released 2026-11-23); four-rank redesign (D-069) on `dev`, not yet released |
 | M8 | Progression, opening narrative, journal | M7, Q6, Q7 | Blocked |
 | M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Blocked (needs vehicle numbers proposed and approved) |
 | M9 | Integration, balance pass, playtest | All | Blocked |

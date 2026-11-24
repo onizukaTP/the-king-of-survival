@@ -41,7 +41,7 @@ export type Command =
   | { type: 'event.choose'; choiceId: string }
   | { type: 'event.close' }
   // Combat (M7): Prabu's action on his turn, then closing the result.
-  | { type: 'combat.act'; action: CombatAction; target?: number; index?: number }
+  | { type: 'combat.act'; action: CombatAction; abilityId?: string; target?: string; index?: number; steps?: number }
   | { type: 'combat.close' }
   // Testing tools (D-068), offered by the UI only with ?debug=1.
   | { type: 'debug.event'; eventId: string }
@@ -133,6 +133,7 @@ export type CommandError = {
     | 'in_combat'
     | 'not_in_combat'
     | 'out_of_reach'
+    | 'wrong_rank'
     | 'no_arrows'
     | 'bad_target';
   message: string;
@@ -198,7 +199,7 @@ function run(state: GameState, command: Command, content: Content): CommandResul
     case 'event.close':
       return closeEvent(state);
     case 'combat.act':
-      return combatAct(state, command.action, command.target, command.index, content);
+      return combatAct(state, command.action, command, content);
     case 'combat.close':
       return closeCombat(state);
     case 'debug.event':

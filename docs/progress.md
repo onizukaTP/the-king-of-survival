@@ -67,7 +67,7 @@
   - **Test button:** shown only with `?debug=1`; it opens any event, starts an ambush or any fight, and jumps to 22:00.
   - **Checks:** 167 unit tests and 11 e2e tests pass; checked in the browser on desktop and phone width.
 
-- **Four-rank tactical combat (D-069)** — on `dev`, not released.
+- **Four-rank tactical combat (D-069)** — live (released 2026-11-24). An old mid-fight save on the live site migrated and played on.
   - Replaces the band combat: formations of four ranks, position-dependent abilities from data (Prabu's own three plus two per weapon), initiative SPD + 1–8, resistances and a status engine (bleed, blight, stun with stun guard, mark, buffs, debuffs, push, pull, shuffle, cleanse).
   - Death's Door and Deathblow; remains; enemy AI from each enemy's data; the boar takes two ranks.
   - The four-rank battlefield screen with target highlighting.

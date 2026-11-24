@@ -172,6 +172,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ events.md            # events and conditions (D-059, D-061)
 │  ├─ fire.md              # fire and cooking (D-056, D-057)
 │  ├─ crafting.md          # crafting (D-058)
+│  ├─ progression.md       # M8 proposal (P-020)
 │  ├─ combat.md            # four-rank combat (D-069)
 │  └─ combat-m7.md         # the first combat, superseded (history)
 ├─ public/
@@ -306,6 +307,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat (solo, range bands and fleeing are now D-063): 1–3 enemies, speed-based turn order; actions: attack, aim, move band, use item, flee. Numbers to be proposed.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
+- P-020 Progression, opening and journal (M8): XP from fights (per enemy), hunts 10, discoveries 15, finds 2, first crafts 5, some events; 10 levels (100 to 2,700 XP) with fixed stat gains; a 4-screen text intro (draft) with three options for the mother's clue; a Journal with the brother entry, the wish and automatic notes; save v10. Spec in `docs/progression.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
 - T1–T3 Timeline/character inconsistencies in §4 (T4 is answered by D-063).
@@ -332,7 +334,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M5 | Crafting | M3 | Done — live (released 2026-11-22); weapon recipes built with M7 (D-066) |
 | M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Done — live (released 2026-11-23); Fight choices wait for M7 (D-059) |
 | M7 | Combat | M3, M6 | Done — live; four-rank redesign (D-069) live (released 2026-11-24) |
-| M8 | Progression, opening narrative, journal | M7 | Unblocked (D-070 to D-072); needs XP and level numbers and the intro draft proposed |
+| M8 | Progression, opening narrative, journal | M7 | Proposed (P-020, `docs/progression.md`); awaiting approval |
 | M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Blocked (needs vehicle numbers proposed and approved) |
 | M9 | Integration, balance pass, playtest | All | Blocked |
 

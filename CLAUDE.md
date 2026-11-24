@@ -297,17 +297,17 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-067 **Combat screen, side view:** Prabu (and later his team) on the **left**, facing the enemies on the **right**, who stand in Close, Mid and Far columns. D-003 (no 4-rank formation) and the bands (D-063) stay; only the screen changes, with placeholder figures and an original look. More skills for Prabu and his team come later. *(The Close/Mid/Far columns are superseded by D-069: four ranks per side.)*
 - D-068 **Testing tools:** a Test button, shown only when the address has `?debug=1` (live and local), that can open any event, start an ambush, start any fight, and jump the clock to night.
 - D-069 (owner's combat redesign, 2026-11-24) **Four-rank tactical combat:** two formations of four ranks (rank 1 front, rank 4 back); position-dependent, data-driven **abilities** (usable ranks, target ranks, ally/enemy/self/corpse, single or all, damage, ACC and crit modifiers, status and movement effects); initiative SPD + 1–8 each round; resistances (stun, bleed, blight, debuff, move, deathblow); a status engine (bleed, blight, stun with stun protection, mark, buffs and debuffs, push, pull, shuffle); **Death's Door and Deathblow** for player-side characters; corpses; enemy AI driven by each enemy's data; multi-rank enemies; a party of 1–4 (Prabu alone for now, no placeholder companions). **Supersedes** D-003 (no 4-rank formation), the Close/Mid/Far bands, band movement and targeting of D-063 and D-067, and the immediate combat death of D-038 (permadeath itself stays). Weapons, ammunition, hunting and Luck stay. **Stress and psychological mechanics are deferred.** Spec and numbers in `docs/combat.md`.
+- D-070 (answers Q6; approves P-006) **Progression: XP and levels.** Fights, hunts, finds and events give XP; each level gives a small stat gain; perks stay deferred. Numbers to be proposed with M8.
+- D-071 (answers Q7) **Opening: a short text intro after his mother's death** (who Prabu is, her death, her clue, her wish); then the run starts at home as now.
+- D-072 **Story text:** Claude drafts the mother's final scene and two or three options for the nature of her clue; nothing ships until the owner approves or rewrites it (§4 still applies: no names, clue or dialogue are invented into the game without approval).
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat (solo, range bands and fleeing are now D-063): 1–3 enemies, speed-based turn order; actions: attack, aim, move band, use item, flee. Numbers to be proposed.
-- P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 
 ### Open — blocking (do not implement affected areas until answered)
-- Q6 Progression model. *(blocks M8)*
-- Q7 Opening narrative: playable prologue with mother alive, text intro after her death, or death mid-play. *(blocks M8)*
 - T1–T3 Timeline/character inconsistencies in §4 (T4 is answered by D-063).
 
 ### Open — non-blocking
@@ -332,7 +332,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M5 | Crafting | M3 | Done — live (released 2026-11-22); weapon recipes built with M7 (D-066) |
 | M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Done — live (released 2026-11-23); Fight choices wait for M7 (D-059) |
 | M7 | Combat | M3, M6 | Done — live; four-rank redesign (D-069) live (released 2026-11-24) |
-| M8 | Progression, opening narrative, journal | M7, Q6, Q7 | Blocked |
+| M8 | Progression, opening narrative, journal | M7 | Unblocked (D-070 to D-072); needs XP and level numbers and the intro draft proposed |
 | M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Blocked (needs vehicle numbers proposed and approved) |
 | M9 | Integration, balance pass, playtest | All | Blocked |
 

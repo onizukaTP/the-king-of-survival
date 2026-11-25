@@ -1,4 +1,4 @@
-# Progression, intro and journal (M8) — approved (D-070 to D-076), built
+# Progression, intro and journal (M8) — approved (D-070 to D-076), live
 
 Approved on 2026-11-25:
 - **D-076 (P-020, with changes):** the XP table, the 10 levels with fixed gains and the Journal, as proposed below.

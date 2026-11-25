@@ -4,7 +4,7 @@ Approved on 2026-11-25:
 - **D-076 (P-020, with changes):** the XP table, the 10 levels with fixed gains and the Journal, as proposed below.
 - **The intro is the owner's text** (Prabu's first-person monologue), replacing Claude's draft, with two corrections the owner chose.
 - **The story changed at the same time:**
-  - **D-073:** the missing sibling is a **younger sister**, whose name is revealed later. The **father is dead**, but Prabu doesn't know it yet.
+  - **D-073:** the missing sibling is a **younger sister**, whose name is revealed later (*superseded by D-081: Prabu knows her name, Nila, from the start*). The **father is dead**, but Prabu doesn't know it yet.
   - **D-074:** the mother's clue **came to her in a dream**. She was a devotee of **Lord Vishnu** and believed her daughter is still alive.
   - **D-075:** a run starts on **Day 1 at 12:00**, the moment she dies, during a **solar eclipse**. It sets the scene only; daylight rules apply.
 
@@ -105,12 +105,12 @@ Level 1 at the start, **level 10 at most**. Each level gives a **fixed** gain; t
 ## The journal
 
 - **Where:** a **Journal** button in the top bar opens a panel like Pack and Craft.
-- **"Find my sister":** the quest entry, opened by the intro. Its draft text (D-072, for approval): "Mother saw her in a dream. A devotee of Lord Vishnu to the last, she believed her daughter is still alive."
+- **"Find my sister":** the quest entry, opened by the intro. Its draft text (D-072, for approval): "Mother heard Nila's name in a dream. A devotee of Lord Vishnu to the last, she believed her daughter is still alive."
   - It gives no place and no direction (D-074).
 - **"My mother's wish":** her three wishes as a reminder (find my sister, find someone to love, live a good and happy life). Nothing is scored.
 - **Notes:** kept automatically: places discovered, fights won, levels gained, each with the day and time. The last 30 are kept.
 - **Level and XP:** the panel's header shows Level and XP to the next level; the Stats block shows them too.
-- **Names:** the entry says "my sister"; her name, Nila (D-080), appears only when the story reveals it.
+- **Names:** Prabu knows his sister's name from the start (D-081), so the journal can call her Nila. The intro keeps the owner's wording, "my sister".
 - **Later:** no quest steps beyond the sister entry until the story is designed further.
 - **Outlook (D-078):** the intro is Prabu's starting resolve; the journal doesn't judge him.
 

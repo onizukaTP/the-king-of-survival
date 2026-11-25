@@ -75,14 +75,16 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-070 (answers Q6; approves P-006) **Progression: XP and levels.** Fights, hunts, finds and events give XP; each level gives a small stat gain; perks stay deferred. Numbers to be proposed with M8.
 - D-071 (answers Q7) **Opening: a short text intro after his mother's death** (who Prabu is, her death, her clue, her wish); then the run starts at home as now.
 - D-072 **Story text:** Claude drafts the mother's final scene and two or three options for the nature of her clue; nothing ships until the owner approves or rewrites it (§4 still applies: no names, clue or dialogue are invented into the game without approval).
-- D-073 (owner, 2026-11-25; supersedes "There is no sister" in §4) **The missing sibling is a younger sister**, not a brother; her name is revealed later. **The father is dead**, but Prabu doesn't know it yet; it is revealed later in the story.
+- D-073 (owner, 2026-11-25; supersedes "There is no sister" in §4) **The missing sibling is a younger sister**, not a brother; her name is revealed later *(superseded by D-081: Prabu knows it from the start)*. **The father is dead**, but Prabu doesn't know it yet; it is revealed later in the story.
 - D-074 **The mother's clue came to her in a dream.** She was a devotee of Lord Vishnu and believed her daughter is still alive. There is no direction or place.
 - D-075 (supersedes D-020's 06:00) **A run starts on Day 1 at 12:00**, the moment his mother dies, during a **solar eclipse**. The eclipse sets the scene only; daylight rules apply. (Day 1 is a new moon in the moon cycle, D-060, which fits a solar eclipse.)
 - D-076 (approves P-020, with changes) **M8:** the XP table, 10 levels with fixed gains and the Journal as proposed; the journal entry is **"Find my sister"** with the dream as the clue. **The intro is the owner's text** (Prabu's first-person monologue), with "Twenty-seven years have passed" and "my father or my sister may still be alive". Spec in `docs/progression.md`.
 - D-077 **Intro:** "Svarga Loka" becomes **"Vaikuntha"**, Lord Vishnu's abode, fitting his mother's devotion (D-074).
 - D-078 (answers T3) **Prabu's outlook:** the intro's ruthless resolve is his **starting** frame of mind; through the journey he changes with the decisions the player makes. He has no fixed alignment.
 - D-079 (answers T1 and T2) **The family:** the father stayed with the family until the migration; the **father and the sister were lost there**. The sister is **5 years younger** than Prabu (born about 22 years ago; about 12 at the migration; 22 now).
-- D-080 **Names:** mother **Divya**, father **Vishnu**, sister **Nila**; the settlement is **Kottayam**. *(Nila's name is still revealed to the player later in the story, D-073; game text says "my sister" until then. Kottayam is also the name of a real town in Kerala; recorded as given.)*
+- D-080 **Names:** mother **Divya**, father **Vishnu**, sister **Nila**; the settlement is **Kottayam**. *(Superseded in part: Prabu knows Nila's name from the start, D-081; the settlement is Kottai Nagar, D-082.)*
+- D-081 (owner, 2026-11-25; supersedes the "revealed later" parts of D-073 and D-080) **In her dream, the mother heard Nila's name.** Prabu knows his sister's name **from the start**, so game text may call her Nila from the intro on.
+- D-082 (supersedes "Kottayam" in D-080 and "~20 people" in §1 and §4) **The settlement is Kottai Nagar, home to about 200 people.** The map's home place is named **Kottai Nagar**.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.

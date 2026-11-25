@@ -5,6 +5,7 @@ import { carriedKg, loadMultiplier } from '../../engine/systems/inventory/invent
 import { content, useGameStore, type PackSort } from '../../store/gameStore';
 import { formatDuration, formatKg } from '../format';
 import { StatsBlock } from '../components/StatsBlock';
+import { effectText, ItemName, itemTip } from '../components/ItemName';
 import { playerStats, weaponProfile } from '../../engine/systems/combat/stats';
 import { nextLevel } from '../../engine/systems/progression/progression';
 
@@ -16,25 +17,6 @@ function chargeText(stack: Stack) {
   const charge = content.items[stack.itemId]!.charge;
   if (!charge || stack.charge === undefined) return null;
   return charge.unit === 'percent' ? `${stack.charge}%` : `${stack.charge}/${charge.max}`;
-}
-
-function effectText(itemId: string) {
-  const item = content.items[itemId]!;
-  const parts: string[] = [];
-  const fx = item.effects ?? {};
-  if (fx.food) parts.push(`Food +${fx.food}`);
-  if (fx.water) parts.push(`Water +${fx.water}`);
-  if (fx.health) parts.push(`Health +${fx.health}`);
-  if (item.curesInjury) parts.push('Treats injuries');
-  if (item.illnessChance) parts.push('May make you ill');
-  if (item.recharges) {
-    const target = content.items[item.recharges.itemId]!.name.toLowerCase();
-    parts.push(item.recharges.consumed ? `Refills the ${target}` : `Charges the ${target} +${item.recharges.amount}% (${item.recharges.minutes} min)`);
-  }
-  if (item.weapon) parts.push('Weapon');
-  const fallback = { food: 'Cooking ingredient', weapon: 'Ammunition', tool: 'Tool' } as Partial<Record<ItemCategory, string>>;
-  if (!parts.length) parts.push(fallback[item.category] ?? 'Crafting material');
-  return parts.join(' · ');
 }
 
 const verb = { food: 'Eat', water: 'Drink' } as Partial<Record<ItemCategory, string>>;
@@ -92,6 +74,7 @@ export function PackPanel() {
         <button
           className={`item-row ${selected === i ? 'selected' : ''}`}
           aria-pressed={selected === i}
+          title={itemTip(def.id)}
           onClick={() => setSelected(selected === i ? null : i)}
           // Double-click uses a consumable straight away.
           onDoubleClick={() => usable(def.id) && !why && use()}
@@ -127,7 +110,7 @@ export function PackPanel() {
       <h3>Weapon</h3>
       {weapon ? (
         <div className="slot">
-          <span>{content.items[weapon]!.name}</span>
+          <ItemName id={weapon} />
           <span className="muted">{formatKg(content.items[weapon]!.weightKg)}</span>
           <button className="small" onClick={() => run({ type: 'item.unequip' })}>Unequip</button>
         </div>

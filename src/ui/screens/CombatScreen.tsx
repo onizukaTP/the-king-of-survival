@@ -9,6 +9,7 @@ import { sideOf } from '../../engine/systems/combat/formation';
 import { weaponProfile } from '../../engine/systems/combat/stats';
 import { content, useGameStore } from '../../store/gameStore';
 import { StatsBlock } from '../components/StatsBlock';
+import { ItemName, itemTip } from '../components/ItemName';
 import { STAT_LABELS } from '../format';
 
 const itemName = (id: string) => content.items[id]?.name ?? id;
@@ -157,7 +158,7 @@ export function CombatScreen() {
           <div className="row">
             <strong>{names[me.uid]} · Rank {me.rank}</strong>
             <span>Health {Math.round(hpOf(game, me))}{me.deathsDoor ? " · Death's Door" : ''}</span>
-            <span className="muted">{me.protagonist && game.inventory.weapon ? itemName(game.inventory.weapon) : 'Bare hands'}
+            <span className="muted">{me.protagonist && game.inventory.weapon ? <ItemName id={game.inventory.weapon} /> : 'Bare hands'}
               {w.ammo && ` · ${game.inventory.stacks.filter((s) => s.itemId === w.ammo).reduce((n, s) => n + s.count, 0)} ${itemName(w.ammo).toLowerCase()}s`}</span>
           </div>
           <StatsBlock stats={statsOf(game, me, content)} damage={damageRangeOf(game, me, content)} ammo={w.ammo} />
@@ -193,7 +194,7 @@ export function CombatScreen() {
           {items && (
             <div className="combat-items">
               {usable.map(({ i, s, it }) => (
-                <button key={i} className="small" onClick={() => send({ type: 'combat.act', action: 'use_item', index: i })}>{it.name}{s.count > 1 ? ` ×${s.count}` : ''}</button>
+                <button key={i} className="small" title={itemTip(s.itemId)} onClick={() => send({ type: 'combat.act', action: 'use_item', index: i })}>{it.name}{s.count > 1 ? ` ×${s.count}` : ''}</button>
               ))}
             </div>
           )}
@@ -209,8 +210,8 @@ export function CombatScreen() {
           <div className="event-card" role="dialog" aria-modal="true" aria-labelledby="combat-result">
             <h2 id="combat-result">{c.result.outcome === 'won' ? 'He won the fight' : 'He got away'}</h2>
             <ul className="event-effects">
-              {c.result.found.map((f, i) => <li key={`f${i}`}>Found: {itemName(f.itemId).toLowerCase()}{f.count > 1 ? ` ×${f.count}` : ''}</li>)}
-              {c.result.left.map((f, i) => <li key={`l${i}`}>Too heavy, left on the ground: {itemName(f.itemId).toLowerCase()}</li>)}
+              {c.result.found.map((f, i) => <li key={`f${i}`}>Found: <ItemName id={f.itemId} count={f.count} lower /></li>)}
+              {c.result.left.map((f, i) => <li key={`l${i}`}>Too heavy, left on the ground: <ItemName id={f.itemId} lower /></li>)}
               <li>Health {Math.round(game.survival.health)}</li>
             </ul>
             <button className="panel-action" autoFocus onClick={closeCombat}>Continue</button>

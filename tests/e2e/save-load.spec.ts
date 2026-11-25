@@ -99,6 +99,9 @@ test('the pack shows the starting kit and equips, and rest passes time', async (
   await expect(page.locator('.slot')).toContainText('Hunting knife');
   await expect(page.locator('.panel')).toContainText('Lighter · 10/20');
   await expect(page.locator('.panel')).toContainText('Torch · 50%');
+  // Item tooltips come from the item's data.
+  await expect(page.locator('.slot .item-name')).toHaveAttribute('title', /Damage 4–7 · SPD \+1, Crit \+5%\nAbilities: Stab, Open a vein/);
+  await expect(page.getByRole('button', { name: /^Lighter/ })).toHaveAttribute('title', /Up to 20 uses/);
 
   await page.getByRole('button', { name: 'Unequip' }).click();
   await expect(page.locator('.panel')).toContainText('Nothing equipped.');

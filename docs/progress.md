@@ -82,6 +82,7 @@
   - Save v10 with a migration from v9 (level 1, intro marked seen).
   - 200 unit tests and 13 e2e tests pass; checked in the browser on desktop and phone width.
   - Waiting on the owner: the sister entry's text is Claude's draft (D-072).
+- **Item tooltips** (owner, 2026-11-25; on `dev`): hovering an item anywhere (Pack rows and weapon slot, ground piles, Craft inputs, tool and output, combat items and finds, event finds and losses) shows its name, what it does, weapon damage, bonuses and abilities, charge, what it needs, spoiling time and weight. Built only from the item data. Native browser tooltips, so they don't show on touch screens.
 
 ## In progress
 - Nothing.
@@ -90,7 +91,7 @@
 - Charms (D-062): 1 talisman, 2 rings and 2 bangles that lower risks or raise yields. To be drafted for approval.
 
 ## Later (owner's notes)
-- **Item tooltips** (owner, 2026-11-23): every item gets a tooltip saying what it does, for example how much Food, Water or Health it restores. Today that text shows only in the Pack's item card.
+- Nothing.
 
 ## Blocked
 - M10 Vehicles (needs vehicle numbers), M9 — see CLAUDE.md §8.

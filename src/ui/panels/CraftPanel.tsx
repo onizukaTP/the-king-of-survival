@@ -1,6 +1,7 @@
 import { recipeStatus } from '../../engine/systems/crafting/crafting';
 import { content, useGameStore } from '../../store/gameStore';
 import { formatDuration } from '../format';
+import { ItemName } from '../components/ItemName';
 
 /** The Craft panel (M5, P-017): every recipe with what he has against what it needs; ready ones first. */
 export function CraftPanel() {
@@ -29,11 +30,11 @@ export function CraftPanel() {
             <span className="muted">{formatDuration(r.minutes)}</span>
           </div>
           <span className="muted">
-            {r.inputs.map((i) => `${name(i.itemId)} ${Math.min(have(i.itemId), i.count)}/${i.count}`).join(' · ')}
+            {r.inputs.map((i, k) => <span key={i.itemId}>{k > 0 && ' · '}<ItemName id={i.itemId} /> {Math.min(have(i.itemId), i.count)}/{i.count}</span>)}
           </span>
-          {r.tool && <span className="muted">Tool: {name(r.tool).toLowerCase()} {missing?.includes(name(r.tool).toLowerCase()) ? '✗' : '✓'}</span>}
+          {r.tool && <span className="muted">Tool: <ItemName id={r.tool} lower /> {missing?.includes(name(r.tool).toLowerCase()) ? '✗' : '✓'}</span>}
           <div className="row">
-            <span>→ {name(r.output.itemId)}{r.output.count > 1 && ` ×${r.output.count}`}</span>
+            <span>→ <ItemName id={r.output.itemId} count={r.output.count} /></span>
             <button className="small" disabled={Boolean(missing)} onClick={() => act({ type: 'craft', recipeId: r.id })}>Craft</button>
           </div>
           {missing && <span className="warn-text tiny">{missing}</span>}

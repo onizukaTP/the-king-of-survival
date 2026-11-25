@@ -9,7 +9,7 @@ export const PERCENT_STATS = new Set(['def', 'critRate', 'critDamage', 'stunRes'
 
 /** A level's gains (D-076) → "ACC +3, Dodge +2". */
 export function formatGains(gains: Partial<Stats>): string {
-  return Object.entries(gains).map(([k, v]) => `${STAT_LABELS[k] ?? k} +${v}${PERCENT_STATS.has(k) ? '%' : ''}`).join(', ');
+  return Object.entries(gains).map(([k, v]) => `${STAT_LABELS[k] ?? k} ${v < 0 ? '−' : '+'}${Math.abs(v)}${PERCENT_STATS.has(k) ? '%' : ''}`).join(', ');
 }
 
 const pad = (n: number) => String(n).padStart(2, '0');

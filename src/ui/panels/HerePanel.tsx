@@ -5,6 +5,7 @@ import { spotHere } from '../../engine/systems/town/town';
 import { inRadiationZone } from '../../engine/systems/survival/radiation';
 import { content, useGameStore } from '../../store/gameStore';
 import { formatDuration, formatKg, kindLabel } from '../format';
+import { itemTip } from '../components/ItemName';
 
 /** Where Prabu stands (P-013): search, hunt, water, and what's on the ground here (D-045). */
 export function HerePanel() {
@@ -105,7 +106,7 @@ export function HerePanel() {
               const item = content.items[pile.itemId]!;
               return (
                 <li key={i}>
-                  <label className="item-row">
+                  <label className="item-row" title={itemTip(pile.itemId)}>
                     <input type="checkbox" checked={picked.includes(i)} onChange={() => toggle(i)} />
                     <span className="pile-name">
                       {item.name}{pile.count > 1 && ` ×${pile.count}`}

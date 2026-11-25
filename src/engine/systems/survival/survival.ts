@@ -9,6 +9,8 @@ import { fireMinutesLeft } from '../fire/fire';
 import { isNight } from '../night/night';
 import { siteAt } from '../travel/travel';
 import { inRadiationZone } from './radiation';
+import { carryLimits, charmEffects } from '../charms/charms';
+import { riddenDef } from '../vehicles/ridden';
 
 /** What Prabu is doing while time passes: only travel carries the overload cost, only sleep restores Rest. */
 export type Activity = 'travel' | 'sleep' | 'work';
@@ -29,8 +31,10 @@ export function passTime(
   const cfg = content.survival;
   const s = state.survival;
   const before = { ...s };
-  const load = activity === 'travel' ? loadMultiplier(carriedKg(state.inventory, content), cfg.carry) : 1;
+  // Moving: the pack's weight (D-036) and the effort of pushing or pedalling a vehicle (P-021).
+  const load = activity === 'travel' ? loadMultiplier(carriedKg(state.inventory, content), carryLimits(state, content)) * (riddenDef(state, content)?.effort ?? 1) : 1;
   let fx = conditionEffects(s, content);
+  const charmRest = charmEffects(state.inventory, content).restDrain;
 
   // Stepping by the minute keeps every threshold (Rest hitting 0, a meter emptying) exact, and is cheap.
   for (let i = 0; i < minutes; i++) {
@@ -38,7 +42,7 @@ export function passTime(
     const ill = s.illUntil !== null ? cfg.illness.waterDrainMultiplier : 1;
     s.food = clamp(s.food - (cfg.drainPerHour.food / 60) * exhausted * load);
     s.water = clamp(s.water - (cfg.drainPerHour.water / 60) * exhausted * load * ill);
-    s.rest = activity === 'sleep' ? clamp(s.rest + cfg.sleepRestPerHour / 60) : clamp(s.rest - (cfg.drainPerHour.rest / 60) * load * fx.restDrain);
+    s.rest = activity === 'sleep' ? clamp(s.rest + cfg.sleepRestPerHour / 60) : clamp(s.rest - (cfg.drainPerHour.rest / 60) * load * fx.restDrain * charmRest);
 
     const emptyMeters = (s.food <= 0 ? 1 : 0) + (s.water <= 0 ? 1 : 0);
     s.health = clamp(s.health - (cfg.emptyMeterHealthPerHour / 60) * emptyMeters + fx.healthPerHour / 60);
@@ -84,11 +88,14 @@ export function passTime(
     else if (before[meter] > cfg.warnAt && s[meter] <= cfg.warnAt) events.push({ type: 'meter_low', meter, empty: false });
   }
 
-  state.inventory.stacks = state.inventory.stacks.filter((stack) => {
+  const fresh = (stack: { itemId: string; count: number; spoilsAt?: number }) => {
     if (stack.spoilsAt === undefined || stack.spoilsAt > state.clockMinutes) return true;
     events.push({ type: 'item_spoiled', itemId: stack.itemId, count: stack.count });
     return false;
-  });
+  };
+  state.inventory.stacks = state.inventory.stacks.filter(fresh);
+  // Food in a vehicle's cargo spoils too.
+  for (const v of state.vehicles.list) v.cargo = v.cargo.filter(fresh);
   // Things left on the ground vanish after 96 hours (D-045), and food there spoils as usual.
   state.ground = state.ground.filter((p) => p.expiresAt > state.clockMinutes && (p.spoilsAt === undefined || p.spoilsAt > state.clockMinutes));
 }
@@ -127,10 +134,13 @@ export function rest(state: GameState, minutes: number | 'until_rested', content
   const slept = state.clockMinutes - start;
   events.unshift({ type: 'rested', minutes: slept });
   if (state.dead) return { ok: true, state, events };
+  const time = charmEffects(state.inventory, content).conditionTime;
   for (const c of [...state.survival.conditions]) {
     const def = content.conditions[c.id]!;
-    if (!interrupted && def.endsAfterSleepMinutes && slept >= def.endsAfterSleepMinutes) removeCondition(state, c.id, events);
-    if (sheltered && def.endsAfterShelteredRestMinutes && slept >= def.endsAfterShelteredRestMinutes) removeCondition(state, c.id, events);
+    // The rudraksha halves the rest some conditions need (P-022).
+    const t = time[c.id] ?? 1;
+    if (!interrupted && def.endsAfterSleepMinutes && slept >= def.endsAfterSleepMinutes * t) removeCondition(state, c.id, events);
+    if (sheltered && def.endsAfterShelteredRestMinutes && slept >= def.endsAfterShelteredRestMinutes * t) removeCondition(state, c.id, events);
   }
   if (sheltered && !interrupted && state.survival.rest >= 100) addCondition(state, content.survival.shelteredSleepCondition, content, events);
   return { ok: true, state, events };

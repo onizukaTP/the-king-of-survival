@@ -193,10 +193,13 @@ test('the Craft panel lists recipes and blocks what is missing (M5)', async ({ p
   await newGame(page);
   await page.getByRole('button', { name: 'Craft' }).click();
   const cards = page.getByTestId('recipe-card');
-  await expect(cards).toHaveCount(7);
-  await expect(cards.first()).toContainText('Cloth rags 0/2');
-  await expect(cards.first()).toContainText('Needs 2 more cloth rags');
-  await expect(cards.first().getByRole('button', { name: 'Craft' })).toBeDisabled();
+  // Seven recipes and the cycle trailer (D-085).
+  await expect(cards).toHaveCount(8);
+  const bandage = cards.filter({ hasText: 'Cloth bandage' });
+  await expect(bandage).toContainText('Cloth rags 0/2');
+  await expect(bandage).toContainText('Needs 2 more cloth rags');
+  await expect(bandage.getByRole('button', { name: 'Craft' })).toBeDisabled();
+  await expect(cards.filter({ hasText: 'Cycle trailer' })).toContainText('Needs a cycle here');
   await expect(page.getByTestId('craft-panel')).toContainText('Tool: hunting knife ✓');
 });
 
@@ -360,4 +363,57 @@ test('the intro reads through to the map once, and the Journal opens on the sist
   await page.getByRole('button', { name: 'Continue' }).click();
   await expect(page.getByTestId('clock')).toBeVisible();
   await expect(page.getByTestId('intro')).toHaveCount(0);
+});
+
+test('vehicles and charms (M10): build the cycle trailer, repair it, park it, wear a charm', async ({ page }) => {
+  await page.goto('/?seed=2');
+  await newGame(page);
+  const state = JSON.parse((await page.getByTestId('game-state').textContent()) ?? '{}');
+  const { lat, lon } = state.player.position;
+  state.inventory.stacks.push(
+    { itemId: 'item.coir_rope', count: 2 }, { itemId: 'item.scrap_metal', count: 2 }, { itemId: 'item.copper_ring', count: 1 },
+  );
+  state.vehicles = {
+    list: [
+      { uid: 'v1', vehicleId: 'vehicle.cycle', lat, lon, durability: 50, fuel: null, cargo: [] },
+      { uid: 'v2', vehicleId: 'vehicle.hand_cart', lat, lon, durability: 70, fuel: null, cargo: [{ itemId: 'item.firewood', count: 2 }] },
+    ],
+    riding: 'v1', seq: 2,
+  };
+  await page.evaluate((gs) => new Promise<void>((resolve, reject) => {
+    const req = indexedDB.open('king-of-survival', 1);
+    req.onsuccess = () => {
+      const tx = req.result.transaction('saves', 'readwrite');
+      tx.objectStore('saves').put({ saveVersion: 11, createdAt: 'e2e', gameState: gs }, 'manual');
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    };
+    req.onerror = () => reject(req.error);
+  }), state);
+  await page.reload();
+  await page.getByRole('button', { name: 'Continue' }).click();
+
+  await expect(page.getByTestId('vehicle-button')).toHaveText('Vehicle: Cycle 50%');
+  await page.getByRole('button', { name: 'Craft' }).click();
+  const trailer = page.getByTestId('recipe-card').filter({ hasText: 'Cycle trailer' });
+  await expect(trailer).toContainText('Cycle + Hand cart here');
+  await trailer.getByRole('button', { name: 'Craft' }).click();
+  await expect(page.getByTestId('vehicle-button')).toHaveText('Vehicle: Cycle with trailer 50%');
+
+  await page.getByTestId('vehicle-button').click();
+  const panel = page.getByTestId('vehicle-panel');
+  await expect(panel).toContainText('4 kg of 60 kg');
+  await panel.getByRole('button', { name: /^Repair: 1 scrap metal → 70/ }).click();
+  await expect(page.getByTestId('vehicle-button')).toHaveText('Vehicle: Cycle with trailer 70%');
+  await panel.getByRole('button', { name: 'Get off' }).click();
+  await expect(panel).toContainText('On foot.');
+  await expect(page.locator('.vehicle-marker')).toHaveCount(1);
+  await panel.getByRole('button', { name: 'Get on' }).click();
+  await expect(panel).toContainText('Riding: Cycle with trailer');
+
+  await page.getByRole('button', { name: /^Pack/ }).click();
+  await page.getByRole('button', { name: /^Copper ring/ }).click();
+  await page.getByTestId('item-card').getByRole('button', { name: 'Wear' }).click();
+  await expect(page.getByTestId('charm-slots')).toContainText('RingCopper ring');
+  await expect(page.getByTestId('charm-slots').locator('.item-name')).toHaveAttribute('title', /illness chance 50% lower/);
 });

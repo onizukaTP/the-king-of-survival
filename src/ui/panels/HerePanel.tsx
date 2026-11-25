@@ -6,6 +6,8 @@ import { inRadiationZone } from '../../engine/systems/survival/radiation';
 import { content, useGameStore } from '../../store/gameStore';
 import { formatDuration, formatKg, kindLabel } from '../format';
 import { itemTip } from '../components/ItemName';
+import { vehiclesHere } from '../../engine/systems/vehicles/vehicles';
+import { ridden } from '../../engine/systems/vehicles/ridden';
 
 /** Where Prabu stands (P-013): search, hunt, water, and what's on the ground here (D-045). */
 export function HerePanel() {
@@ -23,6 +25,8 @@ export function HerePanel() {
   const here = groundHere(game);
   const fire = fireOptions(game, content);
   const { lat, lon } = game.player.position;
+  const parked = vehiclesHere(game);
+  const riding = ridden(game);
 
   const run = (command: Parameters<typeof act>[0]) => {
     if (act(command)) setPicked([]);
@@ -44,6 +48,19 @@ export function HerePanel() {
       {canEnterTown && <button onClick={() => run({ type: 'town.enter' })}>Enter town</button>}
       {water && <p>{water === 'river' ? 'A flowing river: clean water.' : water === 'well' ? 'A well: clean water.' : 'Still water: unsafe to drink without boiling or filtering.'}</p>}
       {zone && <p className="warn-text">Radiation zone. Every hour here risks radiation.</p>}
+      {parked.length > 0 && (
+        <div data-testid="vehicles-here">
+          <p className="muted">Vehicles here:</p>
+          <ul className="items">
+            {parked.map((v) => (
+              <li key={v.uid} className="item-line">
+                <span className="item-row static"><span>{content.vehicles.byId[v.vehicleId]?.name}</span><span className="muted">{v.durability !== null ? Math.round(v.durability) : ''}</span></span>
+                <button className="small row-use" onClick={() => run({ type: 'vehicle.board', uid: v.uid })}>Get on</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <hr />
 
       {(canSearch || canHunt || water) && (
@@ -121,6 +138,11 @@ export function HerePanel() {
           <div className="card-actions">
             {picked.length > 0 && <button className="small" onClick={() => run({ type: 'ground.take', indexes: picked })}>Take selected</button>}
             <button className="small" onClick={() => run({ type: 'ground.take', indexes: here })}>Take all</button>
+            {riding && (
+              <button className="small" onClick={() => run({ type: 'ground.take', indexes: picked.length ? picked : here, toCargo: true })}>
+                Load {picked.length ? 'selected' : 'all'} into cargo
+              </button>
+            )}
           </div>
         </section>
       )}

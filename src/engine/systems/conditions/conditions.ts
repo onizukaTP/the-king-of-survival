@@ -1,6 +1,7 @@
 import type { Content } from '../../../content/loader';
 import type { GameEvent } from '../../core/commands';
 import { maxHealth, type GameState, type SurvivalState } from '../../core/state';
+import { charmEffects } from '../charms/charms';
 
 /** The combined effect of every condition Prabu has (D-061). */
 export function conditionEffects(s: SurvivalState, content: Content) {
@@ -24,7 +25,9 @@ export const hasCondition = (s: SurvivalState, id: string) => s.conditions.some(
 export function addCondition(state: GameState, id: string, content: Content, events: GameEvent[]) {
   const def = content.conditions[id]!;
   const s = state.survival;
-  const until = def.minutes === null ? null : state.clockMinutes + def.minutes;
+  // Charms can shorten a condition (the rudraksha, P-022).
+  const time = charmEffects(state.inventory, content).conditionTime[id] ?? 1;
+  const until = def.minutes === null ? null : state.clockMinutes + Math.round(def.minutes * time);
   const had = s.conditions.find((c) => c.id === id);
   if (had) had.until = until;
   else s.conditions.push({ id, until });

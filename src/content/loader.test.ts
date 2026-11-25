@@ -19,12 +19,14 @@ import townStreets from './data/town-streets.json';
 import newGame from './data/new-game.json';
 import progression from './data/progression.json';
 import story from './data/story.json';
+import charms from './data/charms.json';
+import vehicles from './data/vehicles.json';
 import roads from './data/roads.json';
 import sites from './data/sites.json';
 import tamilNadu from './data/tamil-nadu.json';
 import world from './data/world.json';
 
-const raw: RawContent = { characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame, progression, story };
+const raw: RawContent = { characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame, progression, story, charms, vehicles };
 const prabu = characters[0]!;
 const home = sites[0]!;
 
@@ -34,8 +36,11 @@ describe('content loader', () => {
     expect(content.characters['character.prabu']?.name).toBe('Prabu');
     expect(Object.keys(content.sites)).toHaveLength(8);
     expect(content.roads.nodes.length).toBeGreaterThan(1000);
-    // D-026 + D-037: the 28 approved items, the three starting-kit additions and lighter fuel.
-    expect(Object.keys(content.items)).toHaveLength(37);
+    // D-026 + D-037: the 28 approved items, the three starting-kit additions and lighter fuel (37 with D-057, D-058);
+    // M10 adds biodiesel and the 13 charms (P-021, P-022).
+    expect(Object.keys(content.items)).toHaveLength(51);
+    expect(Object.values(content.items).filter((i) => i.charm)).toHaveLength(13);
+    expect(Object.keys(content.vehicles.byId)).toEqual(['vehicle.hand_cart', 'vehicle.cycle', 'vehicle.cycle_trailer', 'vehicle.auto_rickshaw', 'vehicle.bullock_cart']);
     // P-014: 16 building types; 13, 16 and 24 buildings; 39 mapped wells.
     expect(Object.keys(content.buildingTypes)).toHaveLength(16);
     expect(Object.values(content.towns).map((t) => t.buildings.length)).toEqual([13, 16, 24]);

@@ -1,6 +1,6 @@
-# Charms — D-062, D-086; P-022 proposed, awaiting approval
+# Charms — D-062, D-086, D-088 (approved P-022), built with M10
 
-D-062: charms are special items that **lower risks or raise yields**. D-086 (owner, 2026-11-25) sets the slots: **one necklace, two bangles, two rings, one set of earrings and a waist cord**. Charms **never break**, and the names stay as drafted. A **set bonus** comes later in development. Below is the draft, revised for those rulings. Nothing here is built until the owner approves it.
+D-062: charms are special items that **lower risks or raise yields**. D-086 (owner, 2026-11-25) sets the slots: **one necklace, two bangles, two rings, one set of earrings and a waist cord**. Charms **never break**, and the names stay as drafted. A **set bonus** comes later in development. The owner approved this draft as D-088, and it is built.
 
 ## Rules
 

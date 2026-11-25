@@ -89,14 +89,15 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-084 **Combat numbers approved for now** (`docs/combat.md`); the owner may change them after testing for balance.
 - D-085 (owner's rulings for M10) **Vehicles:** durability on every vehicle **except the bullock cart**; repairs use **scrap metal**, and **oil** joins later as a repair tool; **a cycle is found whole, with no parts**, and a **recipe attaches a cart to the cycle** (supersedes "built from parts" in D-033); the **bull's grain and water are deferred**. Numbers proposed in P-021.
 - D-086 (owner, 2026-11-25; refines D-062) **Charms:** Prabu can wear at most **one necklace, two bangles, two rings, one set of earrings and a waist cord** (replaces D-062's 1 talisman, 2 rings and 2 bangles). Charms **never break**; the drafted names stay; **stainless steel bangles** replace glass bangles. **Set bonuses** come later in development.
+- D-087 (approves P-021) **Vehicle numbers** as in `docs/vehicles.md`: speeds, cargo, effort, durability and wear, repair with scrap metal, the cycle trailer recipe (cycle + hand cart + 2 coir rope + 1 scrap metal, 1 h), the auto-rickshaw's fuel, and the rarity table.
+- D-088 (approves P-022) **Charms** as in `docs/charms.md`: 13 charms across the necklace, earrings, waist cord, rings and bangles, their effects and where they are found.
+- D-089 **Vehicle screens:** a Vehicle button and panel; parked vehicles on the map; Get on in the Here panel; Load into cargo for ground finds; the trailer as a Craft recipe. Spec in `docs/ui.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat (solo, range bands and fleeing are now D-063): 1–3 enemies, speed-based turn order; actions: attack, aim, move band, use item, flee. Numbers to be proposed.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
-- P-021 **Vehicle numbers (M10):** speed, cargo, effort, durability and wear, repair with scrap metal, the cycle trailer recipe, auto-rickshaw fuel and a rarity table. In `docs/vehicles.md`.
-- P-022 **Charms (D-062, D-086):** 13 charms across the necklace, earrings, waist cord, rings and bangles, their effects and where they are found. In `docs/charms.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
 

@@ -1,0 +1,44 @@
+{
+  "warnAt": 25,
+  "repair": { "itemId": "item.scrap_metal", "tool": "item.hunting_knife" },
+  "vehicles": [
+    { "id": "vehicle.hand_cart", "name": "Hand cart", "roadKmh": 4, "crossKmh": 2, "cargoKg": 100, "effort": 1.25,
+      "durability": { "wearRoadPerKm": 0.2, "wearCrossPerKm": 0.6, "foundAt": [40, 80], "repairPerItem": 25, "repairMinutes": 20 },
+      "finds": [
+        { "at": "loc.srivilliputhur_station", "chance": 0.05 },
+        { "at": "btype.provision_store", "chance": 0.04 },
+        { "at": "btype.ration_shop", "chance": 0.04 },
+        { "at": "btype.hardware_store", "chance": 0.04 },
+        { "at": "btype.textile", "chance": 0.03 }
+      ] },
+    { "id": "vehicle.cycle", "name": "Cycle", "roadKmh": 12, "crossKmh": 5, "cargoKg": 10, "effort": 1.25,
+      "durability": { "wearRoadPerKm": 0.15, "wearCrossPerKm": 0.5, "foundAt": [30, 70], "repairPerItem": 20, "repairMinutes": 30 },
+      "finds": [
+        { "at": "btype.garage", "chance": 0.03 },
+        { "at": "btype.house", "chance": 0.02 },
+        { "at": "btype.apartment_block", "chance": 0.02 },
+        { "at": "loc.srivilliputhur_station", "chance": 0.02 },
+        { "at": "btype.bus_stand", "chance": 0.02 }
+      ] },
+    { "id": "vehicle.cycle_trailer", "name": "Cycle with trailer", "roadKmh": 10, "crossKmh": 4, "cargoKg": 60, "effort": 1.5,
+      "durability": { "wearRoadPerKm": 0.2, "wearCrossPerKm": 0.6, "foundAt": [30, 70], "repairPerItem": 20, "repairMinutes": 30 },
+      "finds": [],
+      "build": { "name": "Cycle trailer", "vehicles": ["vehicle.cycle", "vehicle.hand_cart"],
+        "inputs": [{ "itemId": "item.coir_rope", "count": 2 }, { "itemId": "item.scrap_metal", "count": 1 }], "tool": "item.hunting_knife", "minutes": 60 } },
+    { "id": "vehicle.auto_rickshaw", "name": "Auto-rickshaw", "roadKmh": 25, "crossKmh": 8, "cargoKg": 200, "effort": 1,
+      "durability": { "wearRoadPerKm": 0.1, "wearCrossPerKm": 0.4, "foundAt": [10, 40], "repairPerItem": 10, "repairMinutes": 30 },
+      "fuel": { "itemId": "item.biodiesel", "litresPerItem": 5, "tankLitres": 10, "foundWith": [0, 2], "kmPerLitreRoad": 25, "kmPerLitreCross": 12 },
+      "finds": [
+        { "at": "btype.garage", "chance": 0.01 },
+        { "at": "btype.bus_stand", "chance": 0.01 },
+        { "at": "btype.petrol_bunk", "chance": 0.007 },
+        { "at": "loc.srivilliputhur_station", "chance": 0.007 },
+        { "at": "loc.nh744", "chance": 0.005 }
+      ] },
+    { "id": "vehicle.bullock_cart", "name": "Bullock cart", "roadKmh": 4, "crossKmh": 3, "cargoKg": 300, "effort": 1,
+      "finds": [
+        { "at": "loc.pilavakkal_dam", "chance": 0.005 },
+        { "at": "loc.nh744", "chance": 0.005 }
+      ] }
+  ]
+}

@@ -1,4 +1,5 @@
 import { recipeStatus } from '../../engine/systems/crafting/crafting';
+import { buildStatus } from '../../engine/systems/vehicles/vehicles';
 import { content, useGameStore } from '../../store/gameStore';
 import { formatDuration } from '../format';
 import { ItemName } from '../components/ItemName';
@@ -23,6 +24,28 @@ export function CraftPanel() {
         <button className="icon" aria-label="Close" onClick={() => openPanel(null)}>×</button>
       </div>
       <p className="muted">Cooking, boiling and sterilizing are done at a fire, in the Here panel.</p>
+      {Object.values(content.vehicles.byId).filter((v) => v.build).map((v) => {
+        const b = v.build!;
+        const { missing } = buildStatus(game, v, content);
+        return (
+          <div key={v.id} className="item-card recipe-card" data-testid="recipe-card">
+            <div className="row">
+              <strong>{b.name}</strong>
+              <span className="muted">{formatDuration(b.minutes)}</span>
+            </div>
+            <span className="muted">
+              {b.vehicles.map((id) => content.vehicles.byId[id]!.name).join(' + ')} here
+              {b.inputs.map((i) => <span key={i.itemId}> · <ItemName id={i.itemId} /> {Math.min(have(i.itemId), i.count)}/{i.count}</span>)}
+            </span>
+            {b.tool && <span className="muted">Tool: <ItemName id={b.tool} lower /></span>}
+            <div className="row">
+              <span>→ {v.name}</span>
+              <button className="small" disabled={Boolean(missing)} onClick={() => act({ type: 'vehicle.build', vehicleId: v.id })}>Craft</button>
+            </div>
+            {missing && <span className="warn-text tiny">{missing}</span>}
+          </div>
+        );
+      })}
       {recipes.map(({ r, missing }) => (
         <div key={r.id} className="item-card recipe-card" data-testid="recipe-card">
           <div className="row">

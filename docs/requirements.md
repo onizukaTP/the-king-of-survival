@@ -34,11 +34,11 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 
 | ID | Requirement | Status | Source |
 |---|---|---|---|
-| R-20 | Prabu, 27, hunter, ~20-person settlement; no preset moral alignment. | ✅ | §4 |
+| R-20 | Prabu, 27, hunter, ~200-person settlement (Kottai Nagar); no preset moral alignment. | ✅ | §4, D-082 |
 | R-21 | Canon timeline, the mother's revelation and her final wish, as written in §4. No sister. | ✅ | §4 |
 | R-22 | Timeline inconsistencies T1–T4: all answered. | ✅ | D-063, D-078, D-079 |
 | R-23 | Opening narrative format. | ❓ | Q7 |
-| R-24 | Names of the settlement, mother, father, sister: Kottayam, Divya, Vishnu, Nila (Nila revealed later in play). | ✅ | D-080 |
+| R-24 | Names of the settlement, mother, father, sister: Kottai Nagar, Divya, Vishnu, Nila (known to Prabu from the start). | ✅ | D-080 to D-082 |
 
 ## Prototype systems
 

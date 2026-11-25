@@ -8,7 +8,7 @@ test('travel to a known place, reload and continue restores identical state (aut
 
   await page.getByRole('button', { name: 'New Game' }).click();
   await expect(page.getByTestId('clock')).toHaveText('Day 1 · 06:00');
-  await expect(page.getByTestId('status')).toHaveText('At: Home');
+  await expect(page.getByTestId('status')).toHaveText('At: Kottai Nagar');
 
   // D-017: nearby places are known from the start; far ones are not.
   await expect(page.getByRole('button', { name: 'Srivilliputhur town ruins' })).toBeVisible();
@@ -46,7 +46,7 @@ test('clicking unmarked ground offers a cross-country trip', async ({ page }) =>
   await expect(page.getByRole('button', { name: 'Travel', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Close' }).click();
   // With nothing selected the panel shows where Prabu stands.
-  await expect(page.locator('.panel h2')).toHaveText('Home');
+  await expect(page.locator('.panel h2')).toHaveText('Kottai Nagar');
 });
 
 test('double-clicking a place or open ground starts the trip', async ({ page }) => {

@@ -36,7 +36,7 @@ Coordinates come from OpenStreetMap and live in `src/content/data/sites.json`. D
 
 | # | Site (game name) | Kind | Lat, lon | Distance | Walk | Known at start |
 |---|---|---|---|---|---|---|
-| 0 | Home | Home | 9.5599, 77.6251 | — | — | yes |
+| 0 | Kottai Nagar (home) | Home | 9.5599, 77.6251 | — | — | yes |
 | 1 | Sanctuary forest (Grizzled Squirrel Wildlife Sanctuary) | Hunting ground | 9.5793, 77.6137 | 2.5 km | 50 min | yes |
 | 2 | Srivilliputhur town ruins | Ruins | 9.5081, 77.6336 | 5.8 km | 1 h 42 min | yes |
 | 3 | Srivilliputhur railway station | Rail | 9.4978, 77.6451 | 7.2 km | 2 h 12 min | yes |
@@ -49,7 +49,7 @@ That makes 7 discoverable places plus home, settling the locations part of P-001
 
 ### Not decided (owner only)
 - Safe zones, hostile territories and any other settlements in the area: none are proposed here.
-- *(Decided by D-080: the settlement is Kottayam; the family is Divya, Vishnu and Nila.)*
+- *(Decided by D-080 and D-082: the settlement is Kottai Nagar, about 200 people; the family is Divya, Vishnu and Nila.)*
 
 ## Sources
 - Site coordinates, roads and rail: © OpenStreetMap contributors (ODbL), queried in Nov 2026; see `scripts/geo/`.

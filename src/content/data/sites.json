@@ -1,5 +1,5 @@
 [
-  { "id": "loc.home", "name": "Home", "kind": "home", "lat": 9.5599, "lon": 77.6251, "knownAtStart": true },
+  { "id": "loc.home", "name": "Kottai Nagar", "kind": "home", "lat": 9.5599, "lon": 77.6251, "knownAtStart": true },
   { "id": "loc.sanctuary_forest", "name": "Sanctuary forest", "kind": "hunting", "lat": 9.5793, "lon": 77.6137, "knownAtStart": true },
   { "id": "loc.srivilliputhur", "name": "Srivilliputhur town ruins", "kind": "ruins", "lat": 9.5081, "lon": 77.6336, "knownAtStart": true },
   { "id": "loc.srivilliputhur_station", "name": "Srivilliputhur railway station", "kind": "rail", "lat": 9.4978, "lon": 77.6451, "knownAtStart": true },

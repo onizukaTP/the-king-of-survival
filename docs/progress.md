@@ -75,6 +75,14 @@
   - 188 unit tests and 12 e2e tests pass; checked in the browser on desktop and phone width, including Death's Door.
   - Starting values chosen by Claude are listed for review in `docs/combat.md`.
 
+- **M8 Progression, intro and journal (D-070 to D-076, D-081)** — live (released 2026-11-25).
+  - XP from fights won, successful hunts, discoveries, searches with finds, first crafts and some event outcomes; 10 levels with fixed stat gains that count in fights, hunts and searches.
+  - The owner's intro (five screens, Skip and Next), once per run; a run now starts on Day 1 at 12:00.
+  - The Journal: Level and XP, "Find my sister", the mother's wish, and the last 30 notes. Level and XP also show in the Pack.
+  - Save v10 with a migration from v9 (level 1, intro marked seen).
+  - 200 unit tests and 13 e2e tests pass; checked in the browser on desktop and phone width.
+  - Waiting on the owner: the sister entry's text is Claude's draft (D-072).
+
 ## In progress
 - Nothing.
 
@@ -85,7 +93,7 @@
 - **Item tooltips** (owner, 2026-11-23): every item gets a tooltip saying what it does, for example how much Food, Water or Health it restores. Today that text shows only in the Pack's item card.
 
 ## Blocked
-- M10 Vehicles (needs vehicle numbers), M8 (Q6, Q7), M9 — see CLAUDE.md §8.
+- M10 Vehicles (needs vehicle numbers), M9 — see CLAUDE.md §8.
 
 ## Technical choices made in M0 (Claude's authority)
 - `GameState` type is derived from its Zod schema, so save validation and the type can't drift.

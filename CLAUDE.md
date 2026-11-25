@@ -6,7 +6,7 @@ This file is the standing brief for any Claude session on this repository. Read 
 
 ## 1. Project in one paragraph
 
-A single-player, browser-based, post-apocalyptic survival RPG set in **Tamil Nadu, India, 27 years after total nuclear annihilation**. The player controls **Prabu**, a 27-year-old hunter from a struggling settlement of ~20 people. Core loop: explore a large real-geography map → travel → discover locations → scavenge → manage survival → craft → fight turn-based tactical encounters → progress. Long term, Prabu can rise from survivor to a regional power (wealth, settlements, trade, military, rebuilding civilisation) while his personal story — the missing brother, the unresolved father, and his mother's dying wish — pulls in a different direction. The player decides who Prabu becomes.
+A single-player, browser-based, post-apocalyptic survival RPG set in **Tamil Nadu, India, 27 years after total nuclear annihilation**. The player controls **Prabu**, a 27-year-old hunter from a struggling settlement of ~200 people, Kottai Nagar. Core loop: explore a large real-geography map → travel → discover locations → scavenge → manage survival → craft → fight turn-based tactical encounters → progress. Long term, Prabu can rise from survivor to a regional power (wealth, settlements, trade, military, rebuilding civilisation) while his personal story — the missing sister, the father he doesn't know is dead, and his mother's dying wish — pulls in a different direction. The player decides who Prabu becomes.
 
 Inspirations (atmosphere and broad mechanics only — **never copy content, characters, assets, locations, UI or names**): Day R Survival (map-based survival), Fallout (post-nuclear worldbuilding, factions, moral choice), Darkest Dungeon (tactical turn-based combat).
 
@@ -57,39 +57,35 @@ Inspirations (atmosphere and broad mechanics only — **never copy content, char
 
 ## 4. Prabu and the canonical timeline
 
-**Prabu** — 27, hunter, member of a ~20-person settlement. No predetermined moral alignment; personality and morality are shaped by player decisions. Has suffered major loss. Wants to become better, wealthy, powerful, and able to change the world; does not particularly care if people call him a tyrant.
+**Prabu** — 27, hunter, member of a ~200-person settlement, **Kottai Nagar** (D-082). No predetermined moral alignment; personality and morality are shaped by player decisions. The intro's ruthless resolve is his starting frame of mind, and he changes with the player's decisions (D-078). Has suffered major loss. Wants to become better, wealthy, powerful, and able to change the world; does not particularly care if people call him a tyrant.
 
 | When | Prabu's age | Event |
 |---|---|---|
-| 27 years ago | 0 | The Great Annihilation. Prabu is born the same day. Father survives and stays with the family. |
-| ~22 years ago | ~5 | Mother becomes pregnant. |
-| ~21 years ago | ~6 | Younger brother born. |
-| ~10 years ago | ~17 | Drought/famine → mass migration. A chaotic scuffle separates the family: Prabu + mother lose the father and younger brother (brother ~10). Whereabouts unknown. |
+| 27 years ago | 0 | The Great Annihilation. Prabu is born the same day. Father (**Vishnu**) survives and stays with the family until the migration (D-079). Mother: **Divya** (D-080). |
+| ~22 years ago | 5 | Younger sister (**Nila**) born, 5 years younger than Prabu (D-073, D-079, D-080; she was a brother before). |
+| ~10 years ago | ~17 | Drought/famine → mass migration. A chaotic scuffle separates the family: Prabu + mother lose the father and younger sister (sister ~12), who are lost there together (D-079). The father has since died, but Prabu doesn't know it yet (D-073); the sister's whereabouts are unknown. |
 | Recent years | — | Prabu becomes the settlement's hunter. Settlement struggles: too many mouths, failing crops, little clean water, declining cattle, almost no medicine. |
-| Recent | 27 | Mother's health fails (radiation + famine). Prabu stays home to care for her instead of hunting. She dies. |
+| Day 1, 12:00 | 27 | Mother's health fails (radiation + famine). Prabu stays home to care for her instead of hunting. She dies at midday, during a solar eclipse; the run starts then (D-075). |
 
 Prabu and his mother came to the settlement from the north, and her sickness began there (D-040).
 
-**Mother's final revelation:** she has discovered a *trace* of the missing younger brother. This is a major story driver.
+**Mother's final revelation:** she believes her daughter is still alive. It came to her **in a dream**, in which she heard Nila's name (D-081); she was a devotee of **Lord Vishnu** (D-074). This is a major story driver.
 
-**Mother's final wish:** that Prabu (1) finds his younger brother, (2) finds love, (3) lives a good and happy life — not merely power or wealth. This contrasts with Prabu's grief-shaped ambition; the player may interpret or fulfil it in different ways.
+**Mother's final wish:** that Prabu (1) finds his younger sister, (2) finds love, (3) lives a good and happy life — not merely power or wealth. This contrasts with Prabu's grief-shaped ambition; the player may interpret or fulfil it in different ways.
 
-**There is no sister.** Any reference to a sister is wrong.
+**The missing sibling is a younger sister** (D-073, 2026-11-25). *(This supersedes the earlier rule "There is no sister"; any reference to a missing younger brother is now wrong.)* Her name is **Nila** (D-080). In her dream the mother heard Nila's name, and Prabu knows it from the start (D-081).
+
+**The intro** (D-076) is the owner's own text, in Prabu's voice: `docs/progression.md`.
 
 ### Not yet established — do NOT invent
 
-- How the family was separated, and what happened to the father and brother afterwards.
-- The nature of the mother's clue (no letter/photo/witness/location without approval).
-- Whether finding the father is a separate quest or part of the brother's storyline.
-- Exact dialogue of the mother's final scene.
-- Names of the mother, father, brother, and settlement.
+- How the family was separated; how and when the father died, and how Prabu learns it.
+- What the mother's dream showed, beyond her belief that her daughter lives (no letter/photo/witness/location without approval).
+- Exact dialogue of the mother's final scene (the intro is Prabu's monologue after it).
 
 ### Flagged inconsistencies (awaiting owner ruling)
 
-- **T1** Brother born when Prabu ~6; migration ~10 years ago (Prabu ~17) → brother would be ~11, not ~10.
-- **T2** "Father remains present during his first five years" vs. separation at the migration (~17). Assumed present until the migration — unconfirmed.
-- **T3** "Doesn't care if called a tyrant" vs. "no predetermined alignment" — fixed starting disposition, or one possible path?
-- ~~**T4**~~ Answered by D-063: he fights alone in the prototype; combat supports companions later.
+None open. Answered: ~~T1~~ and ~~T2~~ by D-079 (the sister is 5 years younger; the father stayed until the migration), ~~T3~~ by D-078 (a starting frame of mind, changed by the player's decisions), ~~T4~~ by D-063.
 
 ---
 
@@ -172,6 +168,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ events.md            # events and conditions (D-059, D-061)
 │  ├─ fire.md              # fire and cooking (D-056, D-057)
 │  ├─ crafting.md          # crafting (D-058)
+│  ├─ progression.md       # progression, intro, journal (D-076)
 │  ├─ combat.md            # four-rank combat (D-069)
 │  └─ combat-m7.md         # the first combat, superseded (history)
 ├─ public/
@@ -247,7 +244,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-017 At the start Prabu **already knows** home, Shenbagathoppu forest, Srivilliputhur town ruins, the NH 744 stretch and Srivilliputhur railway station. Watrap/Pilavakkal, Rajapalayam and Madurai must be discovered.
 - D-018 **Discovery:** fog clears in a ~3 km sight radius along Prabu's path; any site inside that radius is discovered.
 - D-019 **Walking speeds:** road 4.5 km/h, cross-country 3 km/h.
-- D-020 A new game starts on **Day 1 at 06:00** (dawn). May be revisited when the opening narrative (Q7) is decided.
+- D-020 A new game starts on **Day 1 at 06:00** (dawn). May be revisited when the opening narrative (Q7) is decided. *(Superseded by D-075: Day 1 at 12:00.)*
 - D-021 (owner chose option C when the OSM data showed the clash) The settlement sits at the sanctuary's **north-east forest edge, ~6 km north-west of Srivilliputhur town** (9.5599, 77.6251), not at Shenbagathoppu. Shenbagathoppu turned out nearer Rajapalayam (~9 km) than the town (~14 km), which clashed with D-017. The hunting ground is the sanctuary forest beside home; the water site is the Pilavakkal (Periyar) dam. Real coordinates and distances are in `docs/world.md`.
 - D-022 **Click again to travel:** clicking the place that is already selected (so also double-clicking it) starts the trip; double-clicking open ground travels there. Double-click no longer zooms (wheel, pinch and +/− still do).
 - D-023 (answers most of Q3; replaces P-002) **Survival meters: Health, Food, Water, Rest.** Health starts at 100. When Food or Water is at 0, Health drops. When Rest is at 0, Food and Water drain faster and the chance of meeting enemies rises (encounters arrive with M6/M7). Radiation can lower Health, in the spirit of Fallout (how is open; where is Q9). Rates are proposed in P-011.
@@ -297,22 +294,30 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-067 **Combat screen, side view:** Prabu (and later his team) on the **left**, facing the enemies on the **right**, who stand in Close, Mid and Far columns. D-003 (no 4-rank formation) and the bands (D-063) stay; only the screen changes, with placeholder figures and an original look. More skills for Prabu and his team come later. *(The Close/Mid/Far columns are superseded by D-069: four ranks per side.)*
 - D-068 **Testing tools:** a Test button, shown only when the address has `?debug=1` (live and local), that can open any event, start an ambush, start any fight, and jump the clock to night.
 - D-069 (owner's combat redesign, 2026-11-24) **Four-rank tactical combat:** two formations of four ranks (rank 1 front, rank 4 back); position-dependent, data-driven **abilities** (usable ranks, target ranks, ally/enemy/self/corpse, single or all, damage, ACC and crit modifiers, status and movement effects); initiative SPD + 1–8 each round; resistances (stun, bleed, blight, debuff, move, deathblow); a status engine (bleed, blight, stun with stun protection, mark, buffs and debuffs, push, pull, shuffle); **Death's Door and Deathblow** for player-side characters; corpses; enemy AI driven by each enemy's data; multi-rank enemies; a party of 1–4 (Prabu alone for now, no placeholder companions). **Supersedes** D-003 (no 4-rank formation), the Close/Mid/Far bands, band movement and targeting of D-063 and D-067, and the immediate combat death of D-038 (permadeath itself stays). Weapons, ammunition, hunting and Luck stay. **Stress and psychological mechanics are deferred.** Spec and numbers in `docs/combat.md`.
+- D-070 (answers Q6; approves P-006) **Progression: XP and levels.** Fights, hunts, finds and events give XP; each level gives a small stat gain; perks stay deferred. Numbers to be proposed with M8.
+- D-071 (answers Q7) **Opening: a short text intro after his mother's death** (who Prabu is, her death, her clue, her wish); then the run starts at home as now.
+- D-072 **Story text:** Claude drafts the mother's final scene and two or three options for the nature of her clue; nothing ships until the owner approves or rewrites it (§4 still applies: no names, clue or dialogue are invented into the game without approval).
+- D-073 (owner, 2026-11-25; supersedes "There is no sister" in §4) **The missing sibling is a younger sister**, not a brother; her name is revealed later *(superseded by D-081: Prabu knows it from the start)*. **The father is dead**, but Prabu doesn't know it yet; it is revealed later in the story.
+- D-074 **The mother's clue came to her in a dream.** She was a devotee of Lord Vishnu and believed her daughter is still alive. There is no direction or place.
+- D-075 (supersedes D-020's 06:00) **A run starts on Day 1 at 12:00**, the moment his mother dies, during a **solar eclipse**. The eclipse sets the scene only; daylight rules apply. (Day 1 is a new moon in the moon cycle, D-060, which fits a solar eclipse.)
+- D-076 (approves P-020, with changes) **M8:** the XP table, 10 levels with fixed gains and the Journal as proposed; the journal entry is **"Find my sister"** with the dream as the clue. **The intro is the owner's text** (Prabu's first-person monologue), with "Twenty-seven years have passed" and "my father or my sister may still be alive". Spec in `docs/progression.md`.
+- D-077 **Intro:** "Svarga Loka" becomes **"Vaikuntha"**, Lord Vishnu's abode, fitting his mother's devotion (D-074).
+- D-078 (answers T3) **Prabu's outlook:** the intro's ruthless resolve is his **starting** frame of mind; through the journey he changes with the decisions the player makes. He has no fixed alignment.
+- D-079 (answers T1 and T2) **The family:** the father stayed with the family until the migration; the **father and the sister were lost there**. The sister is **5 years younger** than Prabu (born about 22 years ago; about 12 at the migration; 22 now).
+- D-080 **Names:** mother **Divya**, father **Vishnu**, sister **Nila**; the settlement is **Kottayam**. *(Superseded in part: Prabu knows Nila's name from the start, D-081; the settlement is Kottai Nagar, D-082.)*
+- D-081 (owner, 2026-11-25; supersedes the "revealed later" parts of D-073 and D-080) **In her dream, the mother heard Nila's name.** Prabu knows his sister's name **from the start**, so game text may call her Nila from the intro on.
+- D-082 (supersedes "Kottayam" in D-080 and "~20 people" in §1 and §4) **The settlement is Kottai Nagar, home to about 200 people.** The map's home place is named **Kottai Nagar**.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat (solo, range bands and fleeing are now D-063): 1–3 enemies, speed-based turn order; actions: attack, aim, move band, use item, flee. Numbers to be proposed.
-- P-006 Progression: XP → levels with small stat gains; perks deferred.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 
 ### Open — blocking (do not implement affected areas until answered)
-- Q6 Progression model. *(blocks M8)*
-- Q7 Opening narrative: playable prologue with mother alive, text intro after her death, or death mid-play. *(blocks M8)*
-- T1–T3 Timeline/character inconsistencies in §4 (T4 is answered by D-063).
 
 ### Open — non-blocking
 - Tamil localisation readiness.
-- Names: settlement, mother, father, brother.
 - Currency/bartering before the wealth arc (bullock cart buying and biodiesel selling wait on it).
 
 When the owner answers, move the item to **Confirmed** with a new D-number and update `docs/decisions.md`.
@@ -332,7 +337,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M5 | Crafting | M3 | Done — live (released 2026-11-22); weapon recipes built with M7 (D-066) |
 | M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Done — live (released 2026-11-23); Fight choices wait for M7 (D-059) |
 | M7 | Combat | M3, M6 | Done — live; four-rank redesign (D-069) live (released 2026-11-24) |
-| M8 | Progression, opening narrative, journal | M7, Q6, Q7 | Blocked |
+| M8 | Progression, opening narrative, journal | M7 | Done — live (released 2026-11-25); the journal's sister text is Claude's draft, awaiting approval (D-072) |
 | M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Blocked (needs vehicle numbers proposed and approved) |
 | M9 | Integration, balance pass, playtest | All | Blocked |
 
@@ -347,7 +352,7 @@ Keep this table and `docs/progress.md` current at the end of every work session.
 - **M5** Recipes consume inputs/produce outputs; missing materials clearly blocked.
 - **M6** Events fire during travel/exploration; outcomes change state.
 - **M7** A full encounter is playable: win, lose and (if approved) flee, with results carried into the world.
-- **M8** Progression works; the approved opening plays; brother quest appears in journal.
+- **M8** Progression works; the approved opening plays; sister quest appears in journal (D-073).
 - **M9** A complete 30–60 minute session works on desktop and a mobile browser.
 
 ---

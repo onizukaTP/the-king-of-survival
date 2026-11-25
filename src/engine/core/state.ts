@@ -153,6 +153,22 @@ const combatStateSchema = z.object({
   }).nullable(),
 });
 
+// Experience and level (D-070, D-076), and the recipes made at least once (the first craft gives XP).
+const progressionStateSchema = z.object({
+  xp: z.number().int().nonnegative(),
+  level: z.number().int().positive(),
+  crafted: z.array(z.string()),
+});
+
+// A journal note (D-076), kept as data so the UI words it: a place found, a fight won, a level gained.
+const journalNoteSchema = z.object({
+  at: z.number().int().nonnegative(),
+  kind: z.enum(['discovered', 'won', 'level']),
+  siteId: z.string().optional(),
+  enemies: z.array(z.string()).optional(),
+  level: z.number().int().optional(),
+});
+
 // The schema is the single source of truth for GameState's shape; saves are validated against it.
 // Changing it means bumping SAVE_VERSION and adding a migration (src/engine/save/save.ts).
 export const gameStateSchema = z.object({
@@ -173,6 +189,10 @@ export const gameStateSchema = z.object({
   // Game minute the last event fired, for the cooldown (D-059).
   lastEventAt: z.number().int().nullable(),
   combat: combatStateSchema.nullable(),
+  progression: progressionStateSchema,
+  journal: z.object({ notes: z.array(journalNoteSchema) }),
+  // The intro shows once per run, before the map (D-071, D-076).
+  introSeen: z.boolean(),
   // Permadeath (D-038): once true, every command is refused.
   dead: z.boolean(),
 });
@@ -191,6 +211,7 @@ export type CombatState = z.infer<typeof combatStateSchema>;
 export type CombatLog = z.infer<typeof combatLogSchema>;
 export type Combatant = z.infer<typeof combatantSchema>;
 export type CombatStatus = z.infer<typeof statusSchema>;
+export type JournalNote = z.infer<typeof journalNoteSchema>;
 
 /** Radiation (D-035, D-043) and conditions such as Weak (D-061) lower maximum Health. */
 export function maxHealth(s: SurvivalState, content: Content): number {
@@ -230,6 +251,9 @@ export function createNewGame(content: Content, seed: number): GameState {
     event: null,
     lastEventAt: null,
     combat: null,
+    progression: { xp: 0, level: 1, crafted: [] },
+    journal: { notes: [] },
+    introSeen: false,
     dead: false,
   };
 }

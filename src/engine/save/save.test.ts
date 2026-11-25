@@ -26,7 +26,7 @@ describe('save/load', () => {
     const result = loadSave(v1, content);
     if (!result.ok) throw new Error(result.error);
     expect(result.save.saveVersion).toBe(SAVE_VERSION);
-    expect(result.save.gameState).toEqual({ ...createNewGame(content, 42) });
+    expect(result.save.gameState).toEqual({ ...createNewGame(content, 42), clockMinutes: 360, introSeen: true });
   });
 
   it('migrates an M1 (v2) save: keeps the trip state, adds full meters and the starting kit', () => {

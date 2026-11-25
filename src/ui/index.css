@@ -209,3 +209,18 @@ button.figure:disabled { opacity: 0.4; }
 .test-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 4px 0; }
 .test-row select { flex: 1; min-width: 0; }
 .test-row input[type='number'] { width: 56px; }
+
+/* Intro (D-076): the owner's text over one muted placeholder image */
+.intro { min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 24px; padding: 32px 16px; box-sizing: border-box; background-size: cover; background-position: center; background-color: #1c1916; }
+.intro-text { max-width: 560px; background: rgba(20, 18, 16, 0.78); padding: 20px 24px; border-radius: 6px; font-size: 17px; line-height: 1.6; animation: intro-fade 0.6s ease; }
+.intro-text p { margin: 0 0 12px; }
+.intro-text p:last-child { margin-bottom: 0; }
+.intro-actions { display: flex; align-items: center; gap: 12px; }
+@keyframes intro-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .intro-text { animation: none; } }
+
+/* Journal (D-076) */
+.journal-text { margin: 0; line-height: 1.5; font-size: 14px; }
+.journal-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.journal-notes { list-style: none; padding-left: 0; }
+.pack-level { margin: 0; }

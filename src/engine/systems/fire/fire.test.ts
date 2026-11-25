@@ -7,6 +7,8 @@ import { addItems } from '../inventory/inventory';
 import { fireMinutesLeft, fireOptions } from './fire';
 
 const content = loadContent();
+// Tests count from the run's start time (D-075), not a fixed hour.
+const START = content.newGame.startClockMinutes;
 
 function withItems(items: [string, number][], seed = 1) {
   const state = createNewGame(content, seed);
@@ -28,7 +30,7 @@ const lit = (items: [string, number][] = []) => ok(withItems([['item.firewood', 
 describe('making a fire (D-056, P-016)', () => {
   it('the lighter takes 5 min, a light and a firewood; the fire burns 2 h', () => {
     const s = lit();
-    expect(s.clockMinutes).toBe(360 + 5);
+    expect(s.clockMinutes).toBe(START + 5);
     expect(s.inventory.stacks.find((st) => st.itemId === 'item.lighter')!.charge).toBe(9);
     expect(count(s, 'item.firewood')).toBe(1);
     expect(fireMinutesLeft(s)).toBe(120);
@@ -38,7 +40,7 @@ describe('making a fire (D-056, P-016)', () => {
     const times = { matchbox: 5, flint: 15, sticks: 90 } as Record<string, number>;
     for (const method of Object.keys(times)) {
       const s = withItems([['item.firewood', 1], ['item.matchbox', 1], ['item.flint', 1]]);
-      expect(ok(s, { type: 'fire.make', method }).state.clockMinutes).toBe(360 + times[method]!);
+      expect(ok(s, { type: 'fire.make', method }).state.clockMinutes).toBe(START + times[method]!);
     }
     const flint = ok(withItems([['item.firewood', 1], ['item.flint', 1]]), { type: 'fire.make', method: 'flint' }).state;
     expect(count(flint, 'item.flint')).toBe(1);
@@ -63,7 +65,7 @@ describe('making a fire (D-056, P-016)', () => {
   it('firewood adds 2 h; the fire stays where it was lit', () => {
     const fed = ok(lit(), { type: 'fire.feed' }).state;
     expect(fireMinutesLeft(fed)).toBe(240);
-    expect(fed.clockMinutes).toBe(365);
+    expect(fed.clockMinutes).toBe(START + 5);
     const away = structuredClone(fed);
     away.player.position = { lat: away.player.position.lat + 0.01, lon: away.player.position.lon };
     expect(fireMinutesLeft(away)).toBe(0);
@@ -76,7 +78,7 @@ describe('cooking over the fire', () => {
     const s = ok(lit([['item.raw_meat', 4]]), { type: 'fire.cook', recipeId: 'recipe.cook_meat' }).state;
     expect(count(s, 'item.raw_meat')).toBe(1);
     expect(count(s, 'item.cooked_meat')).toBe(3);
-    expect(s.clockMinutes).toBe(365 + 30);
+    expect(s.clockMinutes).toBe(START + 5 + 30);
   });
 
   it('boils up to 4 bottles with a pot; refuses without one', () => {

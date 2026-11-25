@@ -8,6 +8,8 @@ import { inRadiationZone } from '../survival/radiation';
 import { groundHere, waterAt } from './scavenging';
 
 const content = loadContent();
+// Tests count from the run's start time (D-075), not a fixed hour.
+const START = content.newGame.startClockMinutes;
 const site = (id: string) => ({ lat: content.sites[id]!.lat, lon: content.sites[id]!.lon });
 
 function at(id: string | { lat: number; lon: number }, seed = 1, change: (s: GameState) => void = () => {}) {
@@ -55,7 +57,7 @@ describe('search (P-013)', () => {
     for (let i = 0; i < 12; i++) s = ok(s, { type: 'scavenge.search', torch: false }).state;
     expect(s.sites['loc.nh744']).toMatchObject({ richness: 10 });
     const refreshAt = s.sites['loc.nh744']!.refreshAt!;
-    expect(refreshAt).toBe(360 + 7 * 1440);
+    expect(refreshAt).toBe(START + 7 * 1440);
     // Keep him alive through the wait.
     s.clockMinutes = refreshAt;
     s = ok(s, { type: 'scavenge.search', torch: false }).state;
@@ -86,7 +88,7 @@ describe('hunt (D-046)', () => {
     const kinds = new Set<string>();
     for (let seed = 1; seed <= 40; seed++) {
       const r = ok(at('loc.sanctuary_forest', seed), { type: 'scavenge.hunt' });
-      expect(r.state.clockMinutes).toBe(360 + 60);
+      expect(r.state.clockMinutes).toBe(START + 60);
       for (const f of (r.events[0] as Extract<GameEvent, { type: 'hunted' }>).finds) kinds.add(f.itemId);
     }
     expect([...kinds].sort()).toEqual(['item.animal_hide', 'item.raw_meat']);
@@ -145,7 +147,7 @@ describe('water (D-044)', () => {
     const add = (g: GameState) => addItems(g, 'item.empty_bottle', 3, content);
     const still = ok(at('loc.pilavakkal_dam', 1, add), { type: 'water.fill' });
     expect(still.state.inventory.stacks.find((st) => st.itemId === 'item.unsafe_water')!.count).toBe(3);
-    expect(still.state.clockMinutes).toBe(360 + 15);
+    expect(still.state.clockMinutes).toBe(START + 15);
     const [x, y] = content.water.rivers[0]![0]!;
     const river = ok(at({ lat: y, lon: x }, 1, add), { type: 'water.fill' });
     expect(river.state.inventory.stacks.find((st) => st.itemId === 'item.clean_water')!.count).toBe(3);

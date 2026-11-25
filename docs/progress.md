@@ -82,7 +82,7 @@
   - Save v10 with a migration from v9 (level 1, intro marked seen).
   - 200 unit tests and 13 e2e tests pass; checked in the browser on desktop and phone width.
   - Waiting on the owner: the sister entry's text is Claude's draft (D-072).
-- **Item tooltips** (owner, 2026-11-25; on `dev`): hovering an item anywhere (Pack rows and weapon slot, ground piles, Craft inputs, tool and output, combat items and finds, event finds and losses) shows its name, what it does, weapon damage, bonuses and abilities, charge, what it needs, spoiling time and weight. Built only from the item data. Native browser tooltips, so they don't show on touch screens.
+- **Item tooltips** (owner; live, released 2026-11-25): hovering an item anywhere (Pack rows and weapon slot, ground piles, Craft inputs, tool and output, combat items and finds, event finds and losses) shows its name, what it does, weapon damage, bonuses and abilities, charge, what it needs, spoiling time and weight. Built only from the item data. Native browser tooltips, so they don't show on touch screens.
 
 ## In progress
 - Nothing.

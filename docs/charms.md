@@ -1,25 +1,40 @@
-# Charms — D-062; P-022 proposed, awaiting approval
+# Charms — D-062, D-086; P-022 proposed, awaiting approval
 
-D-062: charms are special items that **lower risks or raise yields**. Prabu can wear **1 talisman, 2 rings and 2 bangles**. Below is the draft. Nothing here is built until the owner approves it.
+D-062: charms are special items that **lower risks or raise yields**. D-086 (owner, 2026-11-25) sets the slots: **one necklace, two bangles, two rings, one set of earrings and a waist cord**. Charms **never break**, and the names stay as drafted. A **set bonus** comes later in development. Below is the draft, revised for those rulings. Nothing here is built until the owner approves it.
 
 ## Rules
 
-- **Wearing:** a **Charms** section in the Pack, under Weapon, with five slots: Talisman, Ring ×2 and Bangle ×2. Wearing or taking one off takes no time, like equipping a weapon.
+- **Wearing:** a **Charms** section in the Pack, under Weapon, with seven slots: Necklace, Earrings, Waist cord, Ring ×2 and Bangle ×2. Wearing or taking one off takes no time, like equipping a weapon.
 - **No doubles:** he can't wear the same charm twice (two copper rings, say). Different charms add up.
 - **Weight:** worn charms weigh nothing. In the pack they weigh 0.05 kg.
-- **They never wear out** in the prototype.
+- **Charms never break or fade** (D-086).
 - **Tooltips:** like every item, they show what they do.
 - Every effect uses a system that already exists. **Luck** finally gets a source: it was left "raised later by items" in D-066.
 
 ## The charms
 
-### Talismans (1 slot): the strongest single effects
+### Necklace (1 slot)
 
 | Charm | Effect | Rarity |
 |---|---|---|
-| Copper amulet (thayathu) | Threat events (ambushes, raiders, wild animals) are 20% less likely | Rare |
 | Rudraksha bead | Rest drains ×0.9; **Restless** and **Shaken** last half as long | Rare |
 | Vel pendant | Deathblow res +10, Stun res +10 | Rare |
+
+### Earrings (1 set) — new
+
+| Charm | Effect | Rarity |
+|---|---|---|
+| Brass kammal (ear studs) | ACC +3 | Uncommon |
+| Gold kadukkan (ear studs) | Luck +2, Crit damage +10% | Rare |
+
+### Waist cord (1 slot) — new
+
+| Charm | Effect | Rarity |
+|---|---|---|
+| Copper amulet (thayathu) on a waist cord | Threat events (ambushes, raiders, wild animals) are 20% less likely | Rare |
+| Silver waist chain (araignan kodi) | Carry without penalty +3 kg (25 → 28 kg; the 50 kg cap stays) | Uncommon |
+
+The copper amulet was a talisman in the first draft; a thayathu is traditionally tied on the waist cord, so it moves there.
 
 ### Rings (2 slots)
 
@@ -34,9 +49,11 @@ D-062: charms are special items that **lower risks or raise yields**. Prabu can 
 
 | Charm | Effect | Rarity |
 |---|---|---|
-| Glass bangles | Searches take 10% less time | Uncommon |
+| Stainless steel bangle | Searches take 10% less time | Uncommon |
 | Brass bangle (kaappu) | Hunting +5% | Uncommon |
 | Silver bangle | In the dark, injury and ambush chances ×0.75 (D-048) | Rare |
+
+That is 13 charms: 6 uncommon, 6 rare, 1 very rare.
 
 ## Where they are found (chance per search, one roll, like the vehicles in P-021)
 
@@ -51,12 +68,10 @@ D-062: charms are special items that **lower risks or raise yields**. Prabu can 
 
 ## Strength at a glance
 
-- **Full set:** Luck +8 (with both rings) is about +8% to finds, +8 to hunting, +4% to the flee chance and +2% crit (D-066 rates).
+- **Full set of Luck charms** (Navaratna and Panchaloha rings, gold kadukkan): Luck +10. That is about +10% to finds, +10 to hunting, +5% to the flee chance and +2.5% crit (D-066 rates).
 - **Combat:** small edges only, with the largest being Deathblow res +10.
-- **Survival:** the copper ring and the rudraksha are the gentlest, and the most useful early.
+- **Survival:** the copper ring, the rudraksha and the silver waist chain are the gentlest, and the most useful early.
 
-## Open for the owner
+## Later
 
-1. The names and their cultural fit. The Vel and the rudraksha are religious objects; if you'd rather keep charms secular, they can become, for example, a "bone pendant" and a "lucky coin".
-2. Whether charms should **break or fade** later (glass bangles that crack in a fight, say). Not proposed for the prototype.
-3. Whether more slots open later (anklets, a nose ring, an earring) when trading or team building arrives.
+- **Set bonuses** (D-086): extra effects for wearing matching charms. Not in the prototype.

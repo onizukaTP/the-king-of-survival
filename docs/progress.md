@@ -88,7 +88,7 @@
 - Nothing.
 
 ## Pending (unblocked)
-- Charms (D-062): drafted as P-022 in `docs/charms.md`, awaiting approval.
+- Charms (D-062): drafted as P-022 in `docs/charms.md`, revised for the owner's slots (D-086), awaiting approval. Set bonuses later.
 
 ## Later (owner's notes)
 - Nothing.

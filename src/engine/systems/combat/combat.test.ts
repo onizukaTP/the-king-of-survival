@@ -15,13 +15,15 @@ import { damage } from './resolve';
 import { applyStatus, startTurn } from './statuses';
 
 const base = loadContent();
+// Tests count from the run's start time (D-075), not a fixed hour.
+const START = base.newGame.startClockMinutes;
 
 // Test-only data: an ability or enemy added here exercises the engine without touching the game's content.
 const ab = (a: Partial<Ability> & { id: string }): Ability => ({
   name: a.id, description: 'test', usableFrom: [1, 2, 3, 4], target: { side: 'enemy', ranks: [1, 2, 3, 4], mode: 'single' }, ...a,
 });
 const dummy = (e: Partial<Enemy> & { id: string }): Enemy => ({
-  name: e.id, hp: 20, damage: [3, 3], size: 1, preferredRanks: [1, 2], abilities: [{ id: 'ability.dog_bite', weight: 1 }], ai: { target: 'random' }, corpse: null, loot: [],
+  name: e.id, hp: 20, xp: 0, damage: [3, 3], size: 1, preferredRanks: [1, 2], abilities: [{ id: 'ability.dog_bite', weight: 1 }], ai: { target: 'random' }, corpse: null, loot: [],
   stats: { atk: 0, def: 0, spd: 1, critRate: 0, critDamage: 150, acc: 200, dodge: 0, stunRes: 0, bleedRes: 0, blightRes: 0, debuffRes: 0, moveRes: 0, deathblowRes: 0 },
   ...e,
 });
@@ -458,7 +460,7 @@ describe('fleeing, loot and the survival game', () => {
     const arrowsBack = result.found.find((f) => f.itemId === 'item.arrow')?.count ?? 0;
     expect(arrowsBack).toBe(Math.floor(state.combat!.arrowsShot / 2));
     expect(has(state, 'item.arrow')).toBe(5 - state.combat!.arrowsShot + arrowsBack);
-    expect(state.clockMinutes).toBe(360 + state.combat!.round);
+    expect(state.clockMinutes).toBe(START + state.combat!.round);
     expect(ok(state, { type: 'combat.close' }).state.combat).toBeNull();
   });
 

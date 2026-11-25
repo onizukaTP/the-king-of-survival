@@ -1,7 +1,7 @@
 {
   "startingCharacter": "character.prabu",
   "startSite": "loc.home",
-  "startClockMinutes": 360,
+  "startClockMinutes": 720,
   "startingWeapon": "item.hunting_knife",
   "startingKit": [
     { "itemId": "item.lighter", "count": 1, "charge": 10 },

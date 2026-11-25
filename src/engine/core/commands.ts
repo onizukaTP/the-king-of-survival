@@ -8,6 +8,7 @@ import { enterTown, leaveTown, walkTo } from '../systems/town/town';
 import { chooseEvent, closeEvent } from '../systems/events/events';
 import { closeCombat, combatAct, type CombatAction } from '../systems/combat/combat';
 import { debugEvent, debugFight, debugNight } from '../systems/debug/debug';
+import { finishIntro, progress } from '../systems/progression/progression';
 import { advanceTravel, startTravel, stopTravel, type TravelTarget } from '../systems/travel/travel';
 import type { GameState, Meter } from './state';
 
@@ -43,6 +44,8 @@ export type Command =
   // Combat (M7): Prabu's action on his turn, then closing the result.
   | { type: 'combat.act'; action: CombatAction; abilityId?: string; target?: string; index?: number; steps?: number }
   | { type: 'combat.close' }
+  // The intro has been read or skipped (D-076).
+  | { type: 'intro.done' }
   // Testing tools (D-068), offered by the UI only with ?debug=1.
   | { type: 'debug.event'; eventId: string }
   | { type: 'debug.fight'; enemies: { enemyId: string; count: number }[]; ambush: boolean }
@@ -66,7 +69,7 @@ export type GameEvent =
   | { type: 'item_spoiled'; itemId: string; count: number }
   | { type: 'died'; cause: DeathCause }
   | { type: 'searched'; finds: Find[]; torch: boolean }
-  | { type: 'hunted'; finds: Find[] }
+  | { type: 'hunted'; finds: Find[]; success: boolean }
   | { type: 'bottles_filled'; count: number; clean: boolean }
   | { type: 'drank'; clean: boolean }
   | { type: 'items_taken'; count: number }
@@ -87,7 +90,10 @@ export type GameEvent =
   | { type: 'event_closed' }
   | { type: 'combat_started'; enemies: number }
   | { type: 'combat_ended'; outcome: 'won' | 'fled' }
-  | { type: 'combat_closed' };
+  | { type: 'combat_closed' }
+  | { type: 'intro_done' }
+  | { type: 'xp_gained'; amount: number }
+  | { type: 'level_up'; level: number };
 
 export type CommandError = {
   code:
@@ -202,6 +208,8 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return combatAct(state, command.action, command, content);
     case 'combat.close':
       return closeCombat(state);
+    case 'intro.done':
+      return finishIntro(state);
     case 'debug.event':
       return debugEvent(state, command.eventId, content);
     case 'debug.fight':
@@ -217,7 +225,10 @@ function run(state: GameState, command: Command, content: Content): CommandResul
 export function applyCommand(state: GameState, command: Command, content: Content): CommandResult {
   try {
     // Handlers get a copy, so a handler that fails halfway can't leave the caller's state half-changed.
-    return run(structuredClone(state), command, content);
+    const result = run(structuredClone(state), command, content);
+    // XP and journal notes follow from what happened (D-076), so every system earns them the same way.
+    if (result.ok) result.events.push(...progress(result.state, result.events, content));
+    return result;
   } catch (err) {
     return { ok: false, error: { code: 'internal_error', message: String(err) } };
   }

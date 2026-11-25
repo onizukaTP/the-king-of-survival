@@ -6,6 +6,8 @@ import { addItems } from '../inventory/inventory';
 import { passTime, type Activity } from './survival';
 
 const content = loadContent();
+// Tests count from the run's start time (D-075), not a fixed hour.
+const START = content.newGame.startClockMinutes;
 
 function fresh(change: (s: GameState) => void = () => {}) {
   const state = createNewGame(content, 1);
@@ -33,7 +35,7 @@ describe('survival drain (D-023, D-035)', () => {
     expect(s.survival.water).toBeCloseTo(70);
     expect(s.survival.rest).toBeCloseTo(50);
     expect(s.survival.health).toBe(100);
-    expect(s.clockMinutes).toBe(360 + 600);
+    expect(s.clockMinutes).toBe(START + 600);
   });
 
   it('doubles Food and Water drain once Rest is at 0', () => {
@@ -63,7 +65,7 @@ describe('survival drain (D-023, D-035)', () => {
     const both = fresh((g) => Object.assign(g.survival, { food: 0, water: 0, health: 10 }));
     const events = pass(both, 600, 'work');
     expect(both.dead).toBe(true);
-    expect(both.clockMinutes).toBe(360 + 60);
+    expect(both.clockMinutes).toBe(START + 60);
     expect(events).toContainEqual({ type: 'died', cause: 'hunger_and_thirst' });
     expect(applyCommand(both, { type: 'rest', minutes: 60 }, content)).toMatchObject({ ok: false, error: { code: 'dead' } });
   });
@@ -76,7 +78,7 @@ describe('survival drain (D-023, D-035)', () => {
   });
 
   it('runs the stomach illness for 24 h with Water draining twice as fast, then recovers (D-027)', () => {
-    const s = fresh((g) => (g.survival.illUntil = 360 + 120));
+    const s = fresh((g) => (g.survival.illUntil = START + 120));
     pass(s, 60, 'work');
     expect(s.survival.water).toBeCloseTo(94);
     const events = pass(s, 60, 'work');

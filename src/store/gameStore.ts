@@ -5,6 +5,7 @@ import { createNewGame, type GameState } from '../engine/core/state';
 import { createSave, loadSave } from '../engine/save/save';
 import type { LatLon } from '../engine/systems/travel/geo';
 import type { TravelTarget } from '../engine/systems/travel/travel';
+import { formatGains } from '../ui/format';
 import { deleteSave, readSave, writeSave } from './saveStorage';
 
 export const content = loadContent();
@@ -17,7 +18,7 @@ export const DEBUG = new URLSearchParams(window.location.search).get('debug') ==
 
 type Screen = 'title' | 'game' | 'gameover';
 /** What the side panel shows when no trip is under way (D-016 plus the approved Pack layout). */
-export type PanelMode = 'pack' | 'rest' | 'craft' | 'here' | 'test' | null;
+export type PanelMode = 'pack' | 'rest' | 'craft' | 'journal' | 'here' | 'test' | null;
 /** Pack order: grouped by kind, or a flat list by name or heaviest first. Price joins with trading. */
 export type PackSort = 'type' | 'name' | 'weight';
 
@@ -102,6 +103,12 @@ function describe(events: GameEvent[]): string | null {
     if (e.type === 'fire_lit') notes.push('Lit a fire.');
     if (e.type === 'fire_fed') notes.push('Added firewood.');
     if (e.type === 'crafted') notes.push(`Made ${itemName(e.itemId).toLowerCase()}${e.count > 1 ? ` ×${e.count}` : ''}.`);
+    if (e.type === 'intro_done') notes.push(content.story.intro.firstMessage);
+    if (e.type === 'xp_gained') notes.push(`+${e.amount} XP.`);
+    if (e.type === 'level_up') {
+      const gains = content.progression.levels.find((l) => l.level === e.level)?.gains ?? {};
+      notes.push(`Level ${e.level}: ${formatGains(gains)}.`);
+    }
     if (e.type === 'cooked') {
       const to = content.fire.recipes.find((r) => r.id === e.recipeId)?.to;
       notes.push(`Made ${to ? itemName(to).toLowerCase() : 'it'}${e.count > 1 ? ` ×${e.count}` : ''}.`);

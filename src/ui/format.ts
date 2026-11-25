@@ -1,4 +1,16 @@
-import type { SiteKind } from '../content/schemas';
+import type { SiteKind, Stats } from '../content/schemas';
+
+export const STAT_LABELS: Record<string, string> = {
+  atk: 'ATK', def: 'DEF', spd: 'SPD', critRate: 'Crit', critDamage: 'Crit dmg', acc: 'ACC', dodge: 'Dodge',
+  stunRes: 'Stun res', bleedRes: 'Bleed res', blightRes: 'Blight res', debuffRes: 'Debuff res', moveRes: 'Move res', deathblowRes: 'Deathblow res',
+  hunting: 'Hunting', luck: 'Luck',
+};
+export const PERCENT_STATS = new Set(['def', 'critRate', 'critDamage', 'stunRes', 'bleedRes', 'blightRes', 'debuffRes', 'moveRes', 'deathblowRes', 'hunting']);
+
+/** A level's gains (D-076) → "ACC +3, Dodge +2". */
+export function formatGains(gains: Partial<Stats>): string {
+  return Object.entries(gains).map(([k, v]) => `${STAT_LABELS[k] ?? k} +${v}${PERCENT_STATS.has(k) ? '%' : ''}`).join(', ');
+}
 
 const pad = (n: number) => String(n).padStart(2, '0');
 

@@ -23,10 +23,12 @@ describe('applyCommand', () => {
 });
 
 describe('createNewGame', () => {
-  it('starts Prabu at home on Day 1 06:00 knowing the nearby places (D-017, D-020)', () => {
+  it('starts Prabu at home on Day 1 12:00 knowing the nearby places, before the intro (D-017, D-075)', () => {
     const state = createNewGame(content, 123);
     expect(state.rngState).toBe(123);
-    expect(state.clockMinutes).toBe(360);
+    expect(state.clockMinutes).toBe(720);
+    expect(state.introSeen).toBe(false);
+    expect(state.progression).toEqual({ xp: 0, level: 1, crafted: [] });
     expect(state.player.position).toEqual({ lat: 9.5599, lon: 77.6251 });
     expect(state.map.discoveredSiteIds.sort()).toEqual(
       ['loc.home', 'loc.nh744', 'loc.sanctuary_forest', 'loc.srivilliputhur', 'loc.srivilliputhur_station'].sort(),

@@ -6,6 +6,8 @@ import { addItems } from '../inventory/inventory';
 import { recipeStatus } from './crafting';
 
 const content = loadContent();
+// Tests count from the run's start time (D-075), not a fixed hour.
+const START = content.newGame.startClockMinutes;
 
 function withItems(items: [string, number][]) {
   const state = createNewGame(content, 1);
@@ -36,7 +38,7 @@ describe('crafting (M5, P-017)', () => {
     const s = ok(withItems([['item.cloth', 3]]), craft('recipe.cloth_bandage')).state;
     expect(count(s, 'item.cloth')).toBe(1);
     expect(count(s, 'item.cloth_bandage')).toBe(1);
-    expect(s.clockMinutes).toBe(360 + 10);
+    expect(s.clockMinutes).toBe(START + 10);
     expect(s.survival.water).toBeLessThan(100);
   });
 
@@ -56,7 +58,7 @@ describe('crafting (M5, P-017)', () => {
     const made = ok(s, craft('recipe.dried_meat')).state;
     expect(count(made, 'item.dried_meat')).toBe(2);
     expect(made.inventory.weapon).toBe('item.hunting_knife');
-    expect(made.clockMinutes).toBe(420);
+    expect(made.clockMinutes).toBe(START + 60);
     const noKnife = structuredClone(s);
     noKnife.inventory.weapon = null;
     expect(err(noKnife, craft('recipe.dried_meat'))).toBe('missing_item');

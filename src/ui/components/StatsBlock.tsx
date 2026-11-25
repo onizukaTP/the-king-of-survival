@@ -1,12 +1,6 @@
 import type { CombatStats } from '../../content/schemas';
 import { content } from '../../store/gameStore';
-
-export const STAT_LABELS: Record<string, string> = {
-  atk: 'ATK', def: 'DEF', spd: 'SPD', critRate: 'Crit', critDamage: 'Crit dmg', acc: 'ACC', dodge: 'Dodge',
-  stunRes: 'Stun res', bleedRes: 'Bleed res', blightRes: 'Blight res', debuffRes: 'Debuff res', moveRes: 'Move res', deathblowRes: 'Deathblow res',
-  hunting: 'Hunting', luck: 'Luck',
-};
-const PERCENT = new Set(['def', 'critRate', 'critDamage', 'stunRes', 'bleedRes', 'blightRes', 'debuffRes', 'moveRes', 'deathblowRes', 'hunting']);
+import { PERCENT_STATS as PERCENT, STAT_LABELS } from '../format';
 
 /** Stats (D-065, D-066, D-069): in the Pack (with the weapon in hand) and on the combat screen (with buffs). */
 export function StatsBlock({ stats, damage, ammo }: { stats: CombatStats & { hunting?: number; luck?: number }; damage: [number, number]; ammo?: string }) {

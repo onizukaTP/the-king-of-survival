@@ -55,7 +55,7 @@
           { "chance": 1, "text": "He gives it a wide berth.", "minutes": 10, "activity": "travel" }
         ] },
         { "id": "pin", "label": "Pin it", "tag": "Weapon", "needs": [{ "weapon": true }], "outcomes": [
-          { "chance": 0.7, "text": "One clean strike. Meat for later.", "loot": { "draws": 1, "entries": [{ "itemId": "item.raw_meat", "chance": 1, "min": 1, "max": 1 }] } },
+          { "chance": 0.7, "text": "One clean strike. Meat for later.", "xp": 5, "loot": { "draws": 1, "entries": [{ "itemId": "item.raw_meat", "chance": 1, "min": 1, "max": 1 }] } },
           { "chance": 0.3, "text": "It is faster than him. The bite burns and his stomach turns.", "health": -10, "injure": true, "ill": true }
         ] },
         { "id": "turn_back", "label": "Turn back", "outcomes": [
@@ -136,7 +136,7 @@
         { "id": "look", "label": "Go and look (30 min)", "outcomes": [
           { "chance": 0.5, "text": "A dead campfire. Someone left wood behind.", "minutes": 30, "activity": "travel", "loot": { "draws": 1, "entries": [{ "itemId": "item.firewood", "chance": 1, "min": 2, "max": 2 }] } },
           { "chance": 0.3, "text": "Only smouldering brush. Nothing here.", "minutes": 30, "activity": "travel" },
-          { "chance": 0.2, "text": "Ashes, and tracks leading off somewhere he hasn't been.", "minutes": 30, "activity": "travel", "revealNearest": true }
+          { "chance": 0.2, "text": "Ashes, and tracks leading off somewhere he hasn't been.", "xp": 10, "minutes": 30, "activity": "travel", "revealNearest": true }
         ] },
         { "id": "avoid", "label": "Avoid it", "outcomes": [{ "chance": 1, "text": "Smoke means people. He keeps away." }] }
       ]
@@ -147,7 +147,7 @@
       "on": ["travel"], "ground": "cross", "nearTownKm": 10, "weight": 2,
       "choices": [
         { "id": "catch", "label": "Try to catch it (30 min)", "outcomes": [
-          { "chance": 0.4, "text": "He corners it against a wall.", "minutes": 30, "loot": { "draws": 1, "entries": [{ "itemId": "item.raw_meat", "chance": 1, "min": 3, "max": 3 }] } },
+          { "chance": 0.4, "text": "He corners it against a wall.", "xp": 10, "minutes": 30, "loot": { "draws": 1, "entries": [{ "itemId": "item.raw_meat", "chance": 1, "min": 3, "max": 3 }] } },
           { "chance": 0.6, "text": "It bounds away over the rocks.", "minutes": 30, "rest": -5 }
         ] },
         { "id": "leave", "label": "Leave it", "outcomes": [{ "chance": 1, "text": "He lets it be." }] }
@@ -168,7 +168,7 @@
           { "chance": 1, "text": "They take it and wave him through.", "lose": { "categories": ["food", "water"] } }
         ] },
         { "id": "slip_past", "label": "Slip past in the dark", "tag": "Night", "needs": [{ "night": true }], "outcomes": [
-          { "chance": 0.6, "text": "He creeps by unseen." },
+          { "chance": 0.6, "text": "He creeps by unseen.", "xp": 15 },
           { "chance": 0.4, "text": "They catch him, beat him and take what they want.", "health": -15, "injure": true, "lose": { "categories": ["food"] }, "conditions": ["condition.weak"] }
         ] }
       ]

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import {
   abilitySchema, buildingTypeSchema, combatSchema, statsSchema, type Ability, conditionSchema, enemySchema, eventsSchema, type CombatConfig, type Enemy, fireSchema, type Condition, type EventsConfig, recipeSchema, townSchema, type FireConfig, type Recipe, townStreetsSchema, type BuildingType, type Town, type TownStreets,
+  progressionSchema, storySchema, type ProgressionConfig, type Story,
   characterSchema, itemSchema, lootSchema, newGameSchema, outlineSchema, roadsSchema, scavengingSchema, siteSchema, survivalSchema, waterSchema, worldSchema,
   type Character, type Item, type Loot, type NewGameConfig, type Outline, type Roads, type ScavengingConfig, type Site, type SurvivalConfig, type Water, type WorldConfig,
 } from './schemas';
@@ -21,6 +22,8 @@ import towns from './data/towns.json';
 import townStreets from './data/town-streets.json';
 import survival from './data/survival.json';
 import newGame from './data/new-game.json';
+import progression from './data/progression.json';
+import story from './data/story.json';
 import roads from './data/roads.json';
 import sites from './data/sites.json';
 import tamilNadu from './data/tamil-nadu.json';
@@ -50,6 +53,8 @@ export interface Content {
   roads: Roads;
   outline: Outline;
   newGame: NewGameConfig;
+  progression: ProgressionConfig;
+  story: Story;
 }
 
 export interface RawContent {
@@ -74,6 +79,8 @@ export interface RawContent {
   roads: unknown;
   outline: unknown;
   newGame: unknown;
+  progression: unknown;
+  story: unknown;
 }
 
 function byId<T extends { id: string }>(list: T[], label: string): Record<string, T> {
@@ -109,6 +116,8 @@ export function parseContent(raw: RawContent): Content {
     roads: roadsSchema.parse(raw.roads),
     outline: outlineSchema.parse(raw.outline),
     newGame: newGameSchema.parse(raw.newGame),
+    progression: progressionSchema.parse(raw.progression),
+    story: storySchema.parse(raw.story),
   };
   const { startingCharacter, startSite } = content.newGame;
   if (!content.characters[startingCharacter]) throw new Error(`new-game.json: unknown character ${startingCharacter}`);
@@ -227,6 +236,12 @@ export function parseContent(raw: RawContent): Content {
     }
   }
   for (const id of Object.keys(content.townStreets)) if (!content.towns[id]) throw new Error(`town-streets.json: ${id} has no town map`);
+  // D-076: levels follow one another from 2, each needing more XP than the last.
+  content.progression.levels.forEach((l, i) => {
+    const prev = content.progression.levels[i - 1];
+    if (l.level !== i + 2) throw new Error(`progression.json: level ${l.level} is out of order`);
+    if (prev && l.xp <= prev.xp) throw new Error(`progression.json: level ${l.level} needs no more XP than level ${prev.level}`);
+  });
   const nodeCount = content.roads.nodes.length;
   const badEdge = content.roads.edges.find(([a, b]) => a >= nodeCount || b >= nodeCount);
   if (badEdge) throw new Error(`roads.json: edge ${badEdge.join(',')} points past the ${nodeCount} nodes`);
@@ -234,5 +249,5 @@ export function parseContent(raw: RawContent): Content {
 }
 
 export function loadContent(): Content {
-  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame });
+  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame, progression, story });
 }

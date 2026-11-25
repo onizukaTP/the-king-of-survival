@@ -2,12 +2,22 @@ import { expect, test } from '@playwright/test';
 
 // Seed 2 meets no random event (D-059) on the trips these tests make, so they run the same every time.
 
+/** New Game, then Skip the intro (D-076). */
+async function newGame(page: import('@playwright/test').Page) {
+  await page.getByRole('button', { name: 'New Game' }).click();
+  await page.getByRole('button', { name: 'Skip' }).click();
+}
+
 test('travel to a known place, reload and continue restores identical state (autosave, D-038)', async ({ page }) => {
   await page.goto('/?seed=2');
   await expect(page.getByRole('button', { name: 'Continue' })).toBeDisabled();
 
   await page.getByRole('button', { name: 'New Game' }).click();
-  await expect(page.getByTestId('clock')).toHaveText('Day 1 · 06:00');
+  // D-076: a new run opens on the intro; Skip goes straight to the map at midday.
+  await expect(page.getByTestId('intro')).toContainText('I was born on the day the bombs fell.');
+  await page.getByRole('button', { name: 'Skip' }).click();
+  await expect(page.getByRole('status')).toHaveText('Day 1, midday. The eclipse is passing.');
+  await expect(page.getByTestId('clock')).toHaveText('Day 1 · 12:00');
   await expect(page.getByTestId('status')).toHaveText('At: Kottai Nagar');
 
   // D-017: nearby places are known from the start; far ones are not.
@@ -19,7 +29,7 @@ test('travel to a known place, reload and continue restores identical state (aut
   await page.getByRole('button', { name: 'Travel', exact: true }).click();
   await expect(page.getByTestId('status')).toHaveText('On the road');
   await expect(page.getByTestId('status')).toHaveText('At: Srivilliputhur town ruins', { timeout: 15_000 });
-  await expect(page.getByTestId('clock')).not.toHaveText('Day 1 · 06:00');
+  await expect(page.getByTestId('clock')).not.toHaveText('Day 1 · 12:00');
   // The walk drained the meters a little (D-035).
   await expect(page.getByTestId('meter-water')).toHaveAttribute('aria-valuenow', '95');
 
@@ -40,7 +50,7 @@ test('travel to a known place, reload and continue restores identical state (aut
 
 test('clicking unmarked ground offers a cross-country trip', async ({ page }) => {
   await page.goto('/?seed=2');
-  await page.getByRole('button', { name: 'New Game' }).click();
+  await newGame(page);
   await page.locator('.map').click({ position: { x: 60, y: 60 } });
   await expect(page.locator('.panel h2')).toHaveText('Unmarked ground');
   await expect(page.getByRole('button', { name: 'Travel', exact: true })).toBeVisible();
@@ -51,11 +61,11 @@ test('clicking unmarked ground offers a cross-country trip', async ({ page }) =>
 
 test('double-clicking a place or open ground starts the trip', async ({ page }) => {
   await page.goto('/?seed=2');
-  await page.getByRole('button', { name: 'New Game' }).click();
+  await newGame(page);
   await page.getByRole('button', { name: 'Sanctuary forest' }).dblclick();
   // A short trip can finish before we look, so check the arrival rather than the road.
   await expect(page.getByTestId('status')).toHaveText('At: Sanctuary forest', { timeout: 15_000 });
-  await expect(page.getByTestId('clock')).not.toHaveText('Day 1 · 06:00');
+  await expect(page.getByTestId('clock')).not.toHaveText('Day 1 · 12:00');
 
   await page.locator('.map').dblclick({ position: { x: 60, y: 60 } });
   await expect(page.getByTestId('status')).toHaveText('On the road');
@@ -63,7 +73,7 @@ test('double-clicking a place or open ground starts the trip', async ({ page }) 
 
 test('resting after a trip only passes time; Prabu stays put', async ({ page }) => {
   await page.goto('/?seed=2');
-  await page.getByRole('button', { name: 'New Game' }).click();
+  await newGame(page);
   await page.getByRole('button', { name: 'Sanctuary forest' }).dblclick();
   await expect(page.getByTestId('status')).toHaveText('At: Sanctuary forest', { timeout: 15_000 });
   await page.waitForTimeout(800);
@@ -82,7 +92,7 @@ test('resting after a trip only passes time; Prabu stays put', async ({ page }) 
 
 test('the pack shows the starting kit and equips, and rest passes time', async ({ page }) => {
   await page.goto('/?seed=2');
-  await page.getByRole('button', { name: 'New Game' }).click();
+  await newGame(page);
 
   await page.getByRole('button', { name: /^Pack/ }).click();
   await expect(page.locator('.panel h2')).toHaveText('Pack');
@@ -98,13 +108,13 @@ test('the pack shows the starting kit and equips, and rest passes time', async (
 
   await page.getByRole('button', { name: 'Rest', exact: true }).click();
   await page.getByRole('button', { name: '4 hours' }).click();
-  await expect(page.getByTestId('clock')).toHaveText('Day 1 · 10:00');
+  await expect(page.getByTestId('clock')).toHaveText('Day 1 · 16:00');
   await expect(page.getByTestId('meter-water')).toHaveAttribute('aria-valuenow', '88');
 });
 
 test('dying ends the run and deletes its save (D-038)', async ({ page }) => {
   await page.goto('/?seed=2');
-  await page.getByRole('button', { name: 'New Game' }).click();
+  await newGame(page);
   await page.getByRole('button', { name: 'Rest', exact: true }).click();
   // Water runs out after ~33 h, then Health falls 5 an hour: dead within about 53 h of sleep.
   for (let i = 0; i < 20 && (await page.getByRole('button', { name: '4 hours' }).count()); i++) {
@@ -120,7 +130,7 @@ test('dying ends the run and deletes its save (D-038)', async ({ page }) => {
 
 test('enter the town, walk to a building, search it; drops stay on its floor; leave (M4, P-014)', async ({ page }) => {
   await page.goto('/?seed=2');
-  await page.getByRole('button', { name: 'New Game' }).click();
+  await newGame(page);
   await page.getByRole('button', { name: 'Srivilliputhur town ruins' }).dblclick();
   await expect(page.getByTestId('status')).toHaveText('At: Srivilliputhur town ruins', { timeout: 15_000 });
   const panel = page.getByTestId('here-panel');
@@ -177,7 +187,7 @@ test('enter the town, walk to a building, search it; drops stay on its floor; le
 
 test('the Craft panel lists recipes and blocks what is missing (M5)', async ({ page }) => {
   await page.goto('/?seed=2');
-  await page.getByRole('button', { name: 'New Game' }).click();
+  await newGame(page);
   await page.getByRole('button', { name: 'Craft' }).click();
   const cards = page.getByTestId('recipe-card');
   await expect(cards).toHaveCount(7);
@@ -190,15 +200,15 @@ test('the Craft panel lists recipes and blocks what is missing (M5)', async ({ p
 /** Starts a new game, then rewrites its save so this event's card is open, and continues it. */
 async function facingEvent(page: import('@playwright/test').Page, eventId: string, clockMinutes = 360) {
   await page.goto('/?seed=2');
-  await page.getByRole('button', { name: 'New Game' }).click();
-  await expect(page.getByTestId('clock')).toHaveText('Day 1 · 06:00');
+  await newGame(page);
+  await expect(page.getByTestId('clock')).toHaveText('Day 1 · 12:00');
   const state = JSON.parse((await page.getByTestId('game-state').textContent()) ?? '{}');
   const gameState = { ...state, clockMinutes, event: { id: eventId, result: null } };
   await page.evaluate((gs) => new Promise<void>((resolve, reject) => {
     const req = indexedDB.open('king-of-survival', 1);
     req.onsuccess = () => {
       const tx = req.result.transaction('saves', 'readwrite');
-      tx.objectStore('saves').put({ saveVersion: 9, createdAt: 'e2e', gameState: gs }, 'manual');
+      tx.objectStore('saves').put({ saveVersion: 10, createdAt: 'e2e', gameState: gs }, 'manual');
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
     };
@@ -230,20 +240,25 @@ test('a fight from the wild dogs card: attack until they are dead, take the meat
   await result.getByRole('button', { name: 'Continue' }).click();
   await expect(combat).toHaveCount(0);
   await expect(page.getByRole('button', { name: /^Pack/ })).not.toHaveText('Pack 0.65 kg');
+  // D-076: the win gave XP and left a note in the journal.
+  await page.getByRole('button', { name: 'Journal' }).click();
+  await expect(page.getByTestId('level')).toContainText('Level 1 · ');
+  await expect(page.getByTestId('level')).not.toContainText('Level 1 · 0 /');
+  await expect(page.getByTestId('journal-panel')).toContainText('Won a fight: wild dog');
 });
 
 test('an event card must be answered, shows what happened, and leaves a condition (M6, D-059, D-061)', async ({ page }) => {
   await page.goto('/?seed=2');
-  await page.getByRole('button', { name: 'New Game' }).click();
+  await newGame(page);
   // Wait for the autosave, then rewrite the save with wild dogs met at 22:00 on Day 1.
-  await expect(page.getByTestId('clock')).toHaveText('Day 1 · 06:00');
+  await expect(page.getByTestId('clock')).toHaveText('Day 1 · 12:00');
   const state = JSON.parse((await page.getByTestId('game-state').textContent()) ?? '{}');
   const gameState = { ...state, clockMinutes: 1320, event: { id: 'event.wild_dogs', result: null } };
   await page.evaluate((gs) => new Promise<void>((resolve, reject) => {
     const req = indexedDB.open('king-of-survival', 1);
     req.onsuccess = () => {
       const tx = req.result.transaction('saves', 'readwrite');
-      tx.objectStore('saves').put({ saveVersion: 9, createdAt: 'e2e', gameState: gs }, 'manual');
+      tx.objectStore('saves').put({ saveVersion: 10, createdAt: 'e2e', gameState: gs }, 'manual');
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
     };
@@ -268,7 +283,7 @@ test('an event card must be answered, shows what happened, and leaves a conditio
 
 test('the Test button shows only with ?debug=1 and opens events and fights (D-068)', async ({ page }) => {
   await page.goto('/?seed=2');
-  await page.getByRole('button', { name: 'New Game' }).click();
+  await newGame(page);
   await expect(page.getByRole('button', { name: 'Test' })).toHaveCount(0);
 
   await page.goto('/?seed=2&debug=1');
@@ -294,7 +309,7 @@ test('the Test button shows only with ?debug=1 and opens events and fights (D-06
 
 test('a four-rank fight with mixed roles plays to the end through the screen (D-069)', async ({ page }) => {
   await page.goto('/?seed=2&debug=1');
-  await page.getByRole('button', { name: 'New Game' }).click();
+  await newGame(page);
   await page.getByRole('button', { name: 'Test' }).click();
   const panel = page.getByTestId('test-panel');
   await panel.getByLabel('Wild dog count').fill('1');
@@ -319,4 +334,27 @@ test('a four-rank fight with mixed roles plays to the end through the screen (D-
     }
   }
   await expect(over).toBeVisible();
+});
+
+test('the intro reads through to the map once, and the Journal opens on the sister entry (D-076)', async ({ page }) => {
+  await page.goto('/?seed=2');
+  await page.getByRole('button', { name: 'New Game' }).click();
+  const intro = page.getByTestId('intro');
+  for (let i = 0; i < 4; i++) await intro.getByRole('button', { name: 'Next' }).click();
+  await expect(intro).toContainText('For you, Mother.');
+  await expect(intro).toContainText('Vaikuntha');
+  await intro.getByRole('button', { name: 'Begin' }).click();
+  await expect(page.getByTestId('clock')).toHaveText('Day 1 · 12:00');
+
+  await page.getByRole('button', { name: 'Journal' }).click();
+  const journal = page.getByTestId('journal-panel');
+  await expect(journal).toContainText('Find my sister');
+  await expect(journal).toContainText('Level 1 · 0 / 100 XP');
+  await expect(journal).toContainText("My mother's wish");
+
+  // Reloading goes back to the map, not the intro.
+  await page.reload();
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await expect(page.getByTestId('clock')).toBeVisible();
+  await expect(page.getByTestId('intro')).toHaveCount(0);
 });

@@ -1,4 +1,4 @@
-# Progression, intro and journal (M8) — approved (D-070 to D-076), to build
+# Progression, intro and journal (M8) — approved (D-070 to D-076), built
 
 Approved on 2026-11-25:
 - **D-076 (P-020, with changes):** the XP table, the 10 levels with fixed gains and the Journal, as proposed below.
@@ -112,6 +112,7 @@ Level 1 at the start, **level 10 at most**. Each level gives a **fixed** gain; t
 - **Level and XP:** the panel's header shows Level and XP to the next level; the Stats block shows them too.
 - **Names:** Prabu knows his sister's name from the start (D-081), so the journal can call her Nila. The intro keeps the owner's wording, "my sister".
 - **Later:** no quest steps beyond the sister entry until the story is designed further.
+- **Still a draft:** the sister entry's text above is Claude's wording (D-072). It is in `story.json`, so the owner can approve or rewrite it without code.
 - **Outlook (D-078):** the intro is Prabu's starting resolve; the journal doesn't judge him.
 
 ## Engine and saves (Claude's side)

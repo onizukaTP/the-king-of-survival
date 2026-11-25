@@ -9,6 +9,8 @@ import { distanceKm } from '../travel/geo';
 import { townSpots, walkMinutes } from './town';
 
 const content = loadContent();
+// Tests count from the run's start time (D-075), not a fixed hour.
+const START = content.newGame.startClockMinutes;
 const SRI = 'loc.srivilliputhur';
 const town = content.towns[SRI]!;
 const building = (typeId: string) => town.buildings.find((b) => b.typeId === typeId)!;
@@ -36,11 +38,11 @@ describe('entering and leaving a town (P-014)', () => {
   it('enters at the edge and leaves to the town point, both for no time', () => {
     const s = inTown();
     expect(s.town).toEqual({ siteId: SRI, at: 'edge' });
-    expect(s.clockMinutes).toBe(360);
+    expect(s.clockMinutes).toBe(START);
     const left = ok(s, { type: 'town.leave' }).state;
     expect(left.town).toBeNull();
     expect(left.player.position).toEqual({ lat: content.sites[SRI]!.lat, lon: content.sites[SRI]!.lon });
-    expect(left.clockMinutes).toBe(360);
+    expect(left.clockMinutes).toBe(START);
   });
 
   it('leaves only from the edge of town (D-053)', () => {
@@ -80,7 +82,7 @@ describe('walking in a town', () => {
     const target = building('btype.place_of_worship');
     const r = ok(s, { type: 'town.walk', spotId: target.id });
     const km = distanceKm(content.sites[SRI]!, target);
-    expect(r.state.clockMinutes).toBe(360 + Math.round((km / 4.5) * 60));
+    expect(r.state.clockMinutes).toBe(START + Math.round((km / 4.5) * 60));
     expect(r.state.player.position).toEqual({ lat: target.lat, lon: target.lon });
     expect(r.state.town!.at).toBe(target.id);
     expect(r.events.at(-1)).toEqual({ type: 'walked', spotId: target.id });
@@ -97,7 +99,7 @@ describe('walking in a town', () => {
     const r = ok(entered, { type: 'town.walk', spotId: 'building.mdu_airport' });
     expect(r.events).toContainEqual({ type: 'travel_stopped', reason: 'meter' });
     expect(r.state.town!.at).toBeNull();
-    expect(r.state.clockMinutes).toBe(360 + 30);
+    expect(r.state.clockMinutes).toBe(START + 30);
     // He can walk on from where he stopped.
     expect(err(r.state, { type: 'town.walk', spotId: 'building.mdu_airport' })).toBe('ok');
   });

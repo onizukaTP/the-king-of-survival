@@ -83,8 +83,15 @@ The four-rank battlefield replaced the band screen (D-067's columns) on 2026-11-
   - **Fight:** how many of each enemy (0–4), whether it's an ambush, then Start fight.
   - **Jump to 22:00.**
 
+## Intro and Journal (M8) — D-076
+
+- **Intro:** after New Game, before the map. The owner's five screens over one muted placeholder image (an eclipse), one at a time, with a page count, **Skip** and **Next** (**Begin** on the last). It shows once per run. The message line then reads "Day 1, midday. The eclipse is passing."
+- **Journal button** in the top bar after Rest. The Journal panel (side panel / bottom sheet): Level and XP to the next level, **Find my sister** with its text, **My mother's wish** as three lines, and the notes, newest first, each with its day and time.
+- **Pack:** a "Level 2 · 130 / 250 XP" line above the Stats block.
+- **Message line:** XP gained ("+15 XP.") and level-ups ("Level 3: ACC +3, Dodge +2.").
+
 ## Numbers the map screen shows (D-017 to D-020)
 - Speeds: road 4.5 km/h, cross-country 3 km/h.
-- The game starts on Day 1 at 06:00.
+- The game starts on Day 1 at 12:00 (D-075; it was 06:00, D-020).
 - Fog clears in a ~3 km sight radius along Prabu's path.
 - At the start he already knows home, the sanctuary forest beside it (D-021), Srivilliputhur town ruins, the NH 744 stretch and the railway station.

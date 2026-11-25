@@ -6,6 +6,7 @@ import { content, useGameStore, type PackSort } from '../../store/gameStore';
 import { formatDuration, formatKg } from '../format';
 import { StatsBlock } from '../components/StatsBlock';
 import { playerStats, weaponProfile } from '../../engine/systems/combat/stats';
+import { nextLevel } from '../../engine/systems/progression/progression';
 
 const GROUPS: [ItemCategory, string][] = [
   ['food', 'Food'], ['water', 'Water'], ['medical', 'Medical'], ['weapon', 'Weapons'], ['tool', 'Tools'], ['material', 'Materials'],
@@ -132,6 +133,7 @@ export function PackPanel() {
         </div>
       ) : <p className="muted">Nothing equipped.</p>}
       <h3>Stats</h3>
+      <p className="tiny muted pack-level">Level {game.progression.level} · {nextLevel(game, content) ? `${game.progression.xp} / ${nextLevel(game, content)!.xp} XP` : `${game.progression.xp} XP`}</p>
       <StatsBlock stats={playerStats(game, content)} damage={weaponProfile(game, content).damage} ammo={weaponProfile(game, content).ammo} />
 
       {stacks.length > 0 && (

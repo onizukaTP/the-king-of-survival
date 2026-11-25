@@ -152,7 +152,7 @@ export function hunt(state: GameState, content: Content): CommandResult {
   const success = roll(state) * 100 < stats.hunting + stats.luck * content.combat.luck.hunting;
   const finds: Find[] = [];
   if (success) for (const entry of entries) if (roll(state) < entry.chance) finds.push({ itemId: entry.itemId, count: quantity(state, entry) });
-  const events: GameEvent[] = [{ type: 'hunted', finds }];
+  const events: GameEvent[] = [{ type: 'hunted', finds, success }];
   finish(state, content.scavenging.huntMinutes, finds, content, events);
   if (!state.dead) maybeEvent(state, { on: 'hunt' }, content, events);
   return { ok: true, state, events };

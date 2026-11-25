@@ -3,7 +3,7 @@ import type { Content } from '../../content/loader';
 import { gameStateSchema, startingInventory, startingSurvival, startPosition, type GameState } from '../core/state';
 import { initialMap } from '../systems/travel/travel';
 
-export const SAVE_VERSION = 9;
+export const SAVE_VERSION = 10;
 
 const saveSchema = z.object({
   saveVersion: z.literal(SAVE_VERSION),
@@ -25,7 +25,8 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
       saveVersion: 2,
       gameState: {
         ...gs,
-        clockMinutes: gs.clockMinutes + content.newGame.startClockMinutes,
+        // M0's clock counted from the 06:00 start of that time (D-020), so this stays 360 whatever new-game.json says now.
+        clockMinutes: gs.clockMinutes + 360,
         player: { ...gs.player, position },
         map: initialMap(position, content),
         travel: null,
@@ -101,6 +102,12 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
     };
     return { ...save, saveVersion: 9, gameState: { ...gs, combat } };
   },
+  // v9 → v10 (progression, D-076): a run under way starts at level 1 with no XP, an empty journal and
+  // its intro counted as seen, since it began before there was one.
+  9: (save) => ({
+    ...save, saveVersion: 10,
+    gameState: { ...(save.gameState as object), progression: { xp: 0, level: 1, crafted: [] }, journal: { notes: [] }, introSeen: true },
+  }),
 };
 
 /** `createdAt` is passed in because the engine never reads the wall clock. */

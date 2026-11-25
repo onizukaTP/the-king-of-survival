@@ -1,5 +1,6 @@
 {
   "placeholder": "assets/placeholder.svg",
+  "art.intro": "assets/intro-eclipse.svg",
   "figure.character.prabu": "assets/figure-person.svg",
   "figure.enemy.wild_dog": "assets/figure-beast.svg",
   "figure.enemy.mutated_boar": "assets/figure-beast.svg",

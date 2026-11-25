@@ -1,0 +1,15 @@
+{
+  "xp": { "huntSuccess": 10, "discovery": 15, "searchWithFinds": 2, "firstCraft": 5 },
+  "notesKept": 30,
+  "levels": [
+    { "level": 2, "xp": 100, "gains": { "atk": 1 } },
+    { "level": 3, "xp": 250, "gains": { "acc": 3, "dodge": 2 } },
+    { "level": 4, "xp": 450, "gains": { "spd": 1 } },
+    { "level": 5, "xp": 700, "gains": { "hunting": 5, "critRate": 2 } },
+    { "level": 6, "xp": 1000, "gains": { "def": 5 } },
+    { "level": 7, "xp": 1350, "gains": { "atk": 1, "deathblowRes": 5 } },
+    { "level": 8, "xp": 1750, "gains": { "spd": 1 } },
+    { "level": 9, "xp": 2200, "gains": { "acc": 3, "dodge": 2 } },
+    { "level": 10, "xp": 2700, "gains": { "atk": 1, "critRate": 3 } }
+  ]
+}

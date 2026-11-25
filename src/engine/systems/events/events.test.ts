@@ -9,6 +9,8 @@ import { passTime } from '../survival/survival';
 import { maybeEvent } from './events';
 
 const content = loadContent();
+// Tests count from the run's start time (D-075), not a fixed hour.
+const START = content.newGame.startClockMinutes;
 const quiet: Content = { ...content, events: { ...content.events, events: [] } };
 const SRI = 'loc.srivilliputhur';
 const at = (day: number, hh: number) => (day - 1) * 1440 + hh * 60;
@@ -136,7 +138,7 @@ describe('choices and outcomes', () => {
     const light = firstWhere('event.abandoned_vehicle', 'search', (s) => s.event!.result!.found.length > 0);
     const f = light.state.event!.result!.found[0]!;
     expect(has(light.state, f.itemId)).toBe(f.count);
-    expect(light.state.clockMinutes).toBe(360 + 30);
+    expect(light.state.clockMinutes).toBe(START + 30);
     const heavy = firstWhere('event.abandoned_vehicle', 'search', (s) => s.event!.result!.left.length > 0,
       (g) => addItems(g, 'item.firewood', 24, content) && addItems(g, 'item.scrap_metal', 1, content));
     expect(heavy.state.ground).toHaveLength(1);
@@ -224,7 +226,7 @@ describe('conditions (D-061)', () => {
   it('a sprained ankle slows every leg to 70% speed, and passes after 12 hours', () => {
     const s = ok(withCondition('condition.sprained_ankle'), { type: 'travel.start', target: { siteId: SRI } }, quiet).state;
     const leg = s.travel!.legs[0]!.minutes;
-    expect(ok(s, { type: 'travel.advance' }, quiet).state.clockMinutes).toBe(360 + Math.round(leg / 0.7));
+    expect(ok(s, { type: 'travel.advance' }, quiet).state.clockMinutes).toBe(START + Math.round(leg / 0.7));
     const later = withCondition('condition.sprained_ankle');
     expect(tick(later, 720)).toContainEqual({ type: 'condition_ended', conditionId: 'condition.sprained_ankle' });
     expect(later.survival.conditions).toEqual([]);

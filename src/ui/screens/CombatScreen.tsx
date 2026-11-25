@@ -8,7 +8,8 @@ import { abilitiesOf, damageRangeOf, hpOf, maxHpOf, statsOf } from '../../engine
 import { sideOf } from '../../engine/systems/combat/formation';
 import { weaponProfile } from '../../engine/systems/combat/stats';
 import { content, useGameStore } from '../../store/gameStore';
-import { STAT_LABELS, StatsBlock } from '../components/StatsBlock';
+import { StatsBlock } from '../components/StatsBlock';
+import { STAT_LABELS } from '../format';
 
 const itemName = (id: string) => content.items[id]?.name ?? id;
 const statusName = (kind: string) => content.combat.statuses[kind]?.name ?? kind;

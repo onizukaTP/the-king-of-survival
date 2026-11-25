@@ -1,0 +1,45 @@
+{
+  "intro": {
+    "image": "art.intro",
+    "screens": [
+      [
+        "I was born on the day the bombs fell.",
+        "The sky was eerie and dark, devoid of life. The world stood still. And in that moment, as I looked into my mother's eyes, I heard my name for the first time.",
+        "\"Prabu.\"",
+        "The one who would rule this accursed world."
+      ],
+      [
+        "Twenty-seven years have passed. My mother is dead, and I am left with the burden of a goal. Somewhere in this disease-ridden, poisoned world, my father or my sister may still be alive. I do not know.",
+        "But I know what I must become.",
+        "A king."
+      ],
+      [
+        "My mother always asked me to be kind. To find someone I could love, someone who would love me as deeply as she did.",
+        "Overly optimistic. Just like her.",
+        "She believed that even in a world like this, love was worth fighting for. That kindness could survive where everything else had perished."
+      ],
+      [
+        "But my mother is gone now.",
+        "And unlike her, I have no room for such hopes. I care only about our survival. About finding my family. About making sure that no one can take away what little I have left.",
+        "I will carve a kingdom out of this wasteland. I will conquer lands, break those who stand in my way, and survive."
+      ],
+      [
+        "Forgive me, Mother. I do not think I can be kind. In this world, kindness is death's closest friend.",
+        "I will live. I will conquer. And when my time comes, I pray that your soul will find its way to Vaikuntha.",
+        "Until then, I will make this world kneel.",
+        "For you, Mother."
+      ]
+    ],
+    "firstMessage": "Day 1, midday. The eclipse is passing."
+  },
+  "journal": {
+    "quest": {
+      "title": "Find my sister",
+      "text": "Mother heard Nila's name in a dream. A devotee of Lord Vishnu to the last, she believed her daughter is still alive."
+    },
+    "wish": {
+      "title": "My mother's wish",
+      "items": ["Find my sister.", "Find someone to love.", "Live a good and happy life."]
+    }
+  }
+}

@@ -22,7 +22,7 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-017 At the start Prabu **already knows** home, Shenbagathoppu forest, Srivilliputhur town ruins, the NH 744 stretch and Srivilliputhur railway station. Watrap/Pilavakkal, Rajapalayam and Madurai must be discovered.
 - D-018 **Discovery:** fog clears in a ~3 km sight radius along Prabu's path; any site inside that radius is discovered.
 - D-019 **Walking speeds:** road 4.5 km/h, cross-country 3 km/h.
-- D-020 A new game starts on **Day 1 at 06:00** (dawn). May be revisited when the opening narrative (Q7) is decided.
+- D-020 *(Superseded by D-075: Day 1 at 12:00.)* A new game starts on **Day 1 at 06:00** (dawn). May be revisited when the opening narrative (Q7) is decided.
 - D-021 (owner chose option C when the OSM data showed the clash) The settlement sits at the sanctuary's **north-east forest edge, ~6 km north-west of Srivilliputhur town** (9.5599, 77.6251), not at Shenbagathoppu. Shenbagathoppu turned out nearer Rajapalayam (~9 km) than the town (~14 km), which clashed with D-017. The hunting ground is the sanctuary forest beside home; the water site is the Pilavakkal (Periyar) dam. Real coordinates and distances are in `docs/world.md`.
 - D-022 **Click again to travel:** clicking the place that is already selected (so also double-clicking it) starts the trip; double-clicking open ground travels there. Double-click no longer zooms (wheel, pinch and +/− still do).
 - D-023 (answers most of Q3; replaces P-002) **Survival meters: Health, Food, Water, Rest.** Health starts at 100. When Food or Water is at 0, Health drops. When Rest is at 0, Food and Water drain faster and the chance of meeting enemies rises (encounters arrive with M6/M7). Radiation can lower Health, in the spirit of Fallout (how is open; where is Q9). Rates are proposed in P-011.
@@ -75,20 +75,23 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-070 (answers Q6; approves P-006) **Progression: XP and levels.** Fights, hunts, finds and events give XP; each level gives a small stat gain; perks stay deferred. Numbers to be proposed with M8.
 - D-071 (answers Q7) **Opening: a short text intro after his mother's death** (who Prabu is, her death, her clue, her wish); then the run starts at home as now.
 - D-072 **Story text:** Claude drafts the mother's final scene and two or three options for the nature of her clue; nothing ships until the owner approves or rewrites it (§4 still applies: no names, clue or dialogue are invented into the game without approval).
+- D-073 (owner, 2026-11-25; supersedes "There is no sister" in §4) **The missing sibling is a younger sister**, not a brother; her name is revealed later. **The father is dead**, but Prabu doesn't know it yet; it is revealed later in the story.
+- D-074 **The mother's clue came to her in a dream.** She was a devotee of Lord Vishnu and believed her daughter is still alive. There is no direction or place.
+- D-075 (supersedes D-020's 06:00) **A run starts on Day 1 at 12:00**, the moment his mother dies, during a **solar eclipse**. The eclipse sets the scene only; daylight rules apply. (Day 1 is a new moon in the moon cycle, D-060, which fits a solar eclipse.)
+- D-076 (approves P-020, with changes) **M8:** the XP table, 10 levels with fixed gains and the Journal as proposed; the journal entry is **"Find my sister"** with the dream as the clue. **The intro is the owner's text** (Prabu's first-person monologue), with "Twenty-seven years have passed" and "my father or my sister may still be alive". Spec in `docs/progression.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat (solo, range bands and fleeing are now D-063): 1–3 enemies, speed-based turn order; actions: attack, aim, move band, use item, flee. Numbers to be proposed.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
-- P-020 Progression, opening and journal (M8): XP from fights (per enemy), hunts 10, discoveries 15, finds 2, first crafts 5, some events; 10 levels (100 to 2,700 XP) with fixed stat gains; a 4-screen text intro (draft) with three options for the mother's clue; a Journal with the brother entry, the wish and automatic notes; save v10. Spec in `docs/progression.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
 - T1–T3 Timeline/character inconsistencies in §4 (T4 is answered by D-063).
 
 ### Open — non-blocking
 - Tamil localisation readiness.
-- Names: settlement, mother, father, brother.
+- Names: settlement, mother, father, sister (her name is revealed later, D-073).
 - Currency/bartering before the wealth arc (bullock cart buying and biodiesel selling wait on it).
 
 When the owner answers, move the item to **Confirmed** with a new D-number and update `docs/decisions.md`.

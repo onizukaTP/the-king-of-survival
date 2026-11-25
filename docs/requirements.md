@@ -38,7 +38,7 @@ Status: ✅ confirmed · 🟡 proposed (needs owner approval) · ❓ open questi
 | R-21 | Canon timeline, the mother's revelation and her final wish, as written in §4. No sister. | ✅ | §4 |
 | R-22 | Timeline inconsistencies T1–T3 (T4 answered). | ❓ | §4, D-063 |
 | R-23 | Opening narrative format. | ❓ | Q7 |
-| R-24 | Names of the settlement, mother, father, brother. | ❓ | §8 non-blocking |
+| R-24 | Names of the settlement, mother, father, sister (her name later, D-073). | ❓ | §8 non-blocking |
 
 ## Prototype systems
 

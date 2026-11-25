@@ -127,7 +127,7 @@ M6 builds `docs/night.md` as proposed: night 18:30–06:00, a 30-day moon with t
 
 ## Not included
 
-- **Story events:** the brother's trace, the mother, the settlement's people. These wait for the opening narrative (Q7) and M8.
+- **Story events:** the search for his sister (D-073), the mother, the settlement's people. These wait for the story to be designed further.
 - **Karma or reputation** from choices (deferred, §6).
 - **Trading** with people met on the road (deferred, §6).
 

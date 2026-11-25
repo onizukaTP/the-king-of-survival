@@ -49,7 +49,7 @@ That makes 7 discoverable places plus home, settling the locations part of P-001
 
 ### Not decided (owner only)
 - Safe zones, hostile territories and any other settlements in the area: none are proposed here.
-- Names of the settlement and of Prabu's family.
+- *(Decided by D-080: the settlement is Kottayam; the family is Divya, Vishnu and Nila.)*
 
 ## Sources
 - Site coordinates, roads and rail: © OpenStreetMap contributors (ODbL), queried in Nov 2026; see `scripts/geo/`.

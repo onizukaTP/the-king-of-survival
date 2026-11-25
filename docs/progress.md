@@ -81,20 +81,20 @@
   - The Journal: Level and XP, "Find my sister", the mother's wish, and the last 30 notes. Level and XP also show in the Pack.
   - Save v10 with a migration from v9 (level 1, intro marked seen).
   - 200 unit tests and 13 e2e tests pass; checked in the browser on desktop and phone width.
-  - Waiting on the owner: the sister entry's text is Claude's draft (D-072).
+  - The sister entry's text is now the owner's (D-083).
 - **Item tooltips** (owner; live, released 2026-11-25): hovering an item anywhere (Pack rows and weapon slot, ground piles, Craft inputs, tool and output, combat items and finds, event finds and losses) shows its name, what it does, weapon damage, bonuses and abilities, charge, what it needs, spoiling time and weight. Built only from the item data. Native browser tooltips, so they don't show on touch screens.
 
 ## In progress
 - Nothing.
 
 ## Pending (unblocked)
-- Charms (D-062): 1 talisman, 2 rings and 2 bangles that lower risks or raise yields. To be drafted for approval.
+- Charms (D-062): drafted as P-022 in `docs/charms.md`, awaiting approval.
 
 ## Later (owner's notes)
 - Nothing.
 
 ## Blocked
-- M10 Vehicles (needs vehicle numbers), M9 — see CLAUDE.md §8.
+- M10 Vehicles (numbers drafted as P-021 in `docs/vehicles.md`, awaiting approval), M9 — see CLAUDE.md §8.
 
 ## Technical choices made in M0 (Claude's authority)
 - `GameState` type is derived from its Zod schema, so save validation and the type can't drift.

@@ -35,7 +35,7 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-030 Vehicles added from Claude's suggestions: **bullock cart** (costly to buy, a living animal), **hand cart, auto-rickshaw, tractor with trailer, small boat, e-rickshaw**. Details in `docs/vehicles.md`.
 - D-031 (Q10.1) **Prototype vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw.** In the prototype the bullock cart is a very rare find (an abandoned cart with a bull).
 - D-032 (Q10.2) **Biodiesel** is made by survivors and sold everywhere; it runs vehicles and generators (generators are very rare). In the prototype it is scavenged, since there is no trading.
-- D-033 (Q10.3) Items and vehicles have **drop chances**; some things are found only where they would likely be, and very rarely, because scavengers got there first. A cycle is found whole or built from parts.
+- D-033 (Q10.3) Items and vehicles have **drop chances**; some things are found only where they would likely be, and very rarely, because scavengers got there first. A cycle is found whole or built from parts. *(Cycle parts superseded by D-085: a cycle is only found whole.)*
 - D-034 (Q10.4) **Vehicle maintenance:** vehicles wear with use, slowly on roads and faster off-road.
 - D-035 (approves P-011; replaces P-009) **Survival numbers:** meters 0–100 starting at 100; Water −3/h, Food −1.5/h, Rest −5/h awake, sleep +12.5/h; Rest at 0 → Food and Water drain ×2; each of Food or Water at 0 → Health −5/h; Health +2/h while sleeping with Food and Water above 25; Rest action (1 h / 4 h / until rested) anywhere; Health 0 → game over; radiation lowers maximum Health. **Legs are at most 30 minutes**, and a trip stops by itself at the end of a leg when a meter falls to 25 or to 0.
 - D-036 (approves P-012, with a change) Item numbers in `docs/items.md`. **Carry limit:** 25 kg on foot without penalty, up to **50 kg** at most. Above 25 kg, Food, Water and Rest drain faster, **gradually**: ×1 at 25 kg, ×1.5 at 37.5 kg, ×2 at 50 kg.
@@ -78,19 +78,24 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-073 (owner, 2026-11-25; supersedes "There is no sister" in §4) **The missing sibling is a younger sister**, not a brother; her name is revealed later *(superseded by D-081: Prabu knows it from the start)*. **The father is dead**, but Prabu doesn't know it yet; it is revealed later in the story.
 - D-074 **The mother's clue came to her in a dream.** She was a devotee of Lord Vishnu and believed her daughter is still alive. There is no direction or place.
 - D-075 (supersedes D-020's 06:00) **A run starts on Day 1 at 12:00**, the moment his mother dies, during a **solar eclipse**. The eclipse sets the scene only; daylight rules apply. (Day 1 is a new moon in the moon cycle, D-060, which fits a solar eclipse.)
-- D-076 (approves P-020, with changes) **M8:** the XP table, 10 levels with fixed gains and the Journal as proposed; the journal entry is **"Find my sister"** with the dream as the clue. **The intro is the owner's text** (Prabu's first-person monologue), with "Twenty-seven years have passed" and "my father or my sister may still be alive". Spec in `docs/progression.md`.
+- D-076 (approves P-020, with changes) **M8:** the XP table, 10 levels with fixed gains and the Journal as proposed; the journal entry is **"Find my sister"** with the dream as the clue. **The intro is the owner's text** (Prabu's first-person monologue), with "Twenty-seven years have passed" and "my father or my sister may still be alive". Spec in `docs/progression.md`. *(The journal text is superseded by D-083.)*
 - D-077 **Intro:** "Svarga Loka" becomes **"Vaikuntha"**, Lord Vishnu's abode, fitting his mother's devotion (D-074).
 - D-078 (answers T3) **Prabu's outlook:** the intro's ruthless resolve is his **starting** frame of mind; through the journey he changes with the decisions the player makes. He has no fixed alignment.
 - D-079 (answers T1 and T2) **The family:** the father stayed with the family until the migration; the **father and the sister were lost there**. The sister is **5 years younger** than Prabu (born about 22 years ago; about 12 at the migration; 22 now).
 - D-080 **Names:** mother **Divya**, father **Vishnu**, sister **Nila**; the settlement is **Kottayam**. *(Superseded in part: Prabu knows Nila's name from the start, D-081; the settlement is Kottai Nagar, D-082.)*
 - D-081 (owner, 2026-11-25; supersedes the "revealed later" parts of D-073 and D-080) **In her dream, the mother heard Nila's name.** Prabu knows his sister's name **from the start**, so game text may call her Nila from the intro on.
 - D-082 (supersedes "Kottayam" in D-080 and "~20 people" in §1 and §4) **The settlement is Kottai Nagar, home to about 200 people.** The map's home place is named **Kottai Nagar**.
+- D-083 (owner, 2026-11-25; settles D-072 for the journal) **The "Find my sister" entry is the owner's text:** "Mother died saying the name Nila. She might be referring to your lost sister. Gather clues to find her." It replaces Claude's draft and the dream as the journal's clue (D-076).
+- D-084 **Combat numbers approved for now** (`docs/combat.md`); the owner may change them after testing for balance.
+- D-085 (owner's rulings for M10) **Vehicles:** durability on every vehicle **except the bullock cart**; repairs use **scrap metal**, and **oil** joins later as a repair tool; **a cycle is found whole, with no parts**, and a **recipe attaches a cart to the cycle** (supersedes "built from parts" in D-033); the **bull's grain and water are deferred**. Numbers proposed in P-021.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat (solo, range bands and fleeing are now D-063): 1–3 enemies, speed-based turn order; actions: attack, aim, move band, use item, flee. Numbers to be proposed.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
+- P-021 **Vehicle numbers (M10):** speed, cargo, effort, durability and wear, repair with scrap metal, the cycle trailer recipe, auto-rickshaw fuel and a rarity table. In `docs/vehicles.md`.
+- P-022 **Charms (D-062):** 3 talismans, 4 rings and 3 bangles, their effects and where they are found. In `docs/charms.md`.
 
 ### Open — blocking (do not implement affected areas until answered)
 

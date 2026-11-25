@@ -207,6 +207,27 @@ export function MapView() {
     }
   }, [discovered, select]);
 
+  // Parked vehicles (M10): a small square where each one was left; clicking it plans a trip there.
+  const parked = JSON.stringify(game?.vehicles.list.filter((v) => v.uid !== game.vehicles.riding).map((v) => [v.vehicleId, v.lat, v.lon]) ?? []);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const markers = (JSON.parse(parked) as [string, number, number][]).map(([vehicleId, lat, lon]) => {
+      const name = content.vehicles.byId[vehicleId]?.name ?? vehicleId;
+      const el = document.createElement('button');
+      el.className = 'vehicle-marker';
+      el.title = `${name} (parked)`;
+      el.setAttribute('aria-label', `${name}, parked`);
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        select({ point: { lat, lon } });
+      });
+      el.addEventListener('dblclick', (e) => e.stopPropagation());
+      return new Marker({ element: el }).setLngLat([lon, lat]).addTo(map);
+    });
+    return () => markers.forEach((m) => m.remove());
+  }, [parked, select]);
+
   // Fog follows the revealed points.
   const revealed = game?.map.revealed;
   useEffect(() => {

@@ -4,11 +4,12 @@ import type { CommandError, CommandResult, GameEvent } from '../../core/commands
 import type { GameState, MapState } from '../../core/state';
 import { distanceKm, insideOutline, samplePath, type LatLon } from './geo';
 import { zoneShare } from '../survival/radiation';
-import { conditionEffects } from '../conditions/conditions';
 import { crossShare, maybeEvent } from '../events/events';
 import { lightTheWay } from '../night/night';
 import { passTime } from '../survival/survival';
 import { planRoute, type RoutePlan } from './route';
+import { cannotMove, ridden, speedFactor, travelSpeeds } from '../vehicles/ridden';
+import { wearVehicle } from '../vehicles/vehicles';
 
 export type TravelTarget = { siteId: string } | { point: LatLon };
 
@@ -76,7 +77,9 @@ export function previewTravel(state: GameState, target: TravelTarget, content: C
     if (!insideOutline(destination, content.outline)) return fail('outside_world', 'That\'s outside Tamil Nadu.');
   }
   if (distanceKm(state.player.position, destination) < AT_PLACE_KM) return fail('already_there', 'Prabu is already here.');
-  const plan = planRoute(state.player.position, destination, content);
+  const stuck = cannotMove(state, content);
+  if (stuck) return fail('cannot_move', stuck);
+  const plan = planRoute(state.player.position, destination, content, travelSpeeds(state, content));
   if (!plan.legs.length) return fail('no_route', 'No way to get there.');
   return { ok: true, destination, siteId, plan };
 }
@@ -85,7 +88,7 @@ export function startTravel(state: GameState, target: TravelTarget, content: Con
   if (state.town) return { ok: false, error: { code: 'in_town', message: 'Leave the town first.' } };
   const preview = previewTravel(state, target, content);
   if (!preview.ok) return preview;
-  state.travel = { destination: preview.destination, siteId: preview.siteId, legs: preview.plan.legs, nextLeg: 0 };
+  state.travel = { destination: preview.destination, siteId: preview.siteId, legs: preview.plan.legs, nextLeg: 0, speeds: travelSpeeds(state, content) };
   return { ok: true, state, events: [{ type: 'travel_started', legs: preview.plan.legs.length }] };
 }
 
@@ -95,12 +98,16 @@ export function advanceTravel(state: GameState, content: Content): CommandResult
   const leg = travel?.legs[travel.nextLeg];
   if (!travel || !leg) return fail('not_travelling', 'Prabu isn\'t travelling.');
   const events: GameEvent[] = [];
-  // A sprained ankle slows him (D-061); the torch lights the dark part of the leg (P-015).
-  const minutes = Math.max(1, Math.round(leg.minutes / conditionEffects(state.survival, content).speed));
+  // A sprained ankle slows him (D-061), unless a vehicle carries him; the torch lights the dark part of the leg (P-015).
+  const minutes = Math.max(1, Math.round(leg.minutes / speedFactor(state, content)));
+  const speeds = travel.speeds ?? { road: content.world.roadSpeedKmh, cross: content.world.crossCountrySpeedKmh };
+  const share = crossShare(leg, speeds);
   const unlit = lightTheWay(state, minutes, content, events);
   state.player.position = leg.path[leg.path.length - 1]!;
   passTime(state, minutes, 'travel', content, events, zoneShare(leg.path, content));
   reveal(state.map, samplePath(leg.path, REVEAL_STEP_KM), content, events);
+  // P-021: the vehicle wears and burns fuel by the kilometre; broken or empty, it can't go on.
+  const stuck = !state.dead && ridden(state) !== undefined && wearVehicle(state, leg.km * (1 - share), leg.km * share, content, events);
   travel.nextLeg += 1;
   events.unshift({ type: 'leg_completed', leg: travel.nextLeg, of: travel.legs.length });
   if (state.dead) {
@@ -108,13 +115,16 @@ export function advanceTravel(state: GameState, content: Content): CommandResult
   } else if (travel.nextLeg >= travel.legs.length) {
     state.travel = null;
     events.push({ type: 'arrived', siteId: travel.siteId });
+  } else if (stuck) {
+    state.travel = null;
+    events.push({ type: 'travel_stopped', reason: 'vehicle' });
   } else if (events.some((e) => e.type === 'meter_low')) {
     // D-035: a falling meter ends the trip at the end of this leg so the player can react.
     state.travel = null;
     events.push({ type: 'travel_stopped', reason: 'meter' });
   }
   // D-059: an event may meet him at the end of the leg; the trip waits until its card is closed.
-  if (!state.dead) maybeEvent(state, { on: 'travel', minutes, crossShare: crossShare(leg, content.world), unlit }, content, events);
+  if (!state.dead) maybeEvent(state, { on: 'travel', minutes, crossShare: share, unlit }, content, events);
   return { ok: true, state, events };
 }
 

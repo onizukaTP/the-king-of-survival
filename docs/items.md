@@ -77,6 +77,8 @@ Effects use the survival meters from D-023 (0–100) and the drain rates propose
 
 ## Vehicle parts and fuel (D-031 to D-034, D-036; built in M10)
 
+**M10 (D-085, D-087):** only the can of biodiesel is built (material, 5 kg, 5 litres). The cycle parts and engine parts are dropped: a cycle is found whole, and repairs use scrap metal. **Charms** (D-088): 13 charm items, 0.05 kg each, in `docs/charms.md`. That makes 51 items.
+
 | ID | Item | Use | Where it comes from |
 |---|---|---|---|
 | item.biodiesel | Can of biodiesel | Fuel for the auto-rickshaw (and generators, later) | Scavenged in towns and on the highway (D-032) |

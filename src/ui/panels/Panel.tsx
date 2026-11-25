@@ -1,5 +1,5 @@
 import { previewTravel, siteAt } from '../../engine/systems/travel/travel';
-import { conditionEffects } from '../../engine/systems/conditions/conditions';
+import { ridden, riddenDef, speedFactor } from '../../engine/systems/vehicles/ridden';
 import { darkMinutes, torchChargeFor } from '../../engine/systems/night/night';
 import { content, useGameStore } from '../../store/gameStore';
 import { formatClock, formatDuration, formatKm, kindLabel } from '../format';
@@ -10,6 +10,7 @@ import { RestPanel } from './RestPanel';
 import { CraftPanel } from './CraftPanel';
 import { TestPanel } from './TestPanel';
 import { JournalPanel } from './JournalPanel';
+import { VehiclePanel } from './VehiclePanel';
 
 /** Right-hand panel (bottom sheet on mobile): the trip under way, Pack, Rest, the selected place, or where Prabu stands. */
 export function Panel() {
@@ -22,8 +23,11 @@ export function Panel() {
   const panel = useGameStore((s) => s.panel);
   const townSelection = useGameStore((s) => s.townSelection);
   if (!game) return null;
-  // A sprained ankle slows every leg (D-061); the times shown include it.
-  const slow = (minutes: number) => Math.round(minutes / conditionEffects(game.survival, content).speed);
+  // A sprained ankle slows every leg on foot (D-061); the times shown include it.
+  const slow = (minutes: number) => Math.round(minutes / speedFactor(game, content));
+  const vehicle = riddenDef(game, content);
+  const v = ridden(game);
+  const worn = v?.durability !== null && v?.durability !== undefined && v.durability <= content.vehicles.warnAt;
 
   if (game.travel) {
     const t = game.travel;
@@ -34,6 +38,8 @@ export function Panel() {
         <h2>Travelling</h2>
         <p className="muted">To {name}</p>
         <hr />
+        {vehicle && <Row label="By" value={vehicle.name} />}
+        {worn && <p className="warn-text">The {vehicle!.name.toLowerCase()} is wearing out ({Math.round(v!.durability!)}).</p>}
         <Row label="Leg" value={`${Math.max(1, t.nextLeg)} of ${t.legs.length}`} />
         <div className="progress" aria-hidden="true"><div style={{ width: `${(t.nextLeg / t.legs.length) * 100}%` }} /></div>
         <Row label="Arrive" value={formatClock(game.clockMinutes + remaining)} />
@@ -45,6 +51,7 @@ export function Panel() {
   }
 
   if (panel === 'pack') return <PackPanel />;
+  if (panel === 'vehicle') return <VehiclePanel />;
   if (panel === 'rest') return <RestPanel />;
   if (panel === 'craft') return <CraftPanel />;
   if (panel === 'journal') return <JournalPanel />;
@@ -73,11 +80,13 @@ export function Panel() {
       <hr />
       {preview.ok ? (
         <>
+          <Row label="By" value={vehicle?.name ?? 'On foot'} />
           <Row label="Distance" value={formatKm(preview.plan.roadKm + preview.plan.crossKm)} />
           <Row label="Road" value={formatKm(preview.plan.roadKm)} />
           <Row label="Cross-country" value={formatKm(preview.plan.crossKm)} />
           <Row label="Time" value={formatDuration(tripMinutes)} />
           <Row label="Legs" value={String(preview.plan.legs.length)} />
+          {worn && <p className="warn-text">The {vehicle!.name.toLowerCase()} is wearing out ({Math.round(v!.durability!)}).</p>}
           {unlit && <p className="warn-text" data-testid="dark-warning">This trip runs into the dark without enough torch charge. Moving in the dark risks injury.</p>}
           <button className="panel-action" onClick={() => void travel()}>Travel</button>
         </>

@@ -40,5 +40,21 @@
   { "id": "item.lighter", "name": "Lighter", "category": "tool", "weightKg": 0.05, "charge": { "max": 20, "unit": "count" } },
   { "id": "item.torch", "name": "Torch", "category": "tool", "weightKg": 0.3, "charge": { "max": 100, "unit": "percent" } },
   { "id": "item.lighter_fuel", "name": "Lighter fuel", "category": "tool", "weightKg": 0.1, "recharges": { "itemId": "item.lighter", "amount": 20, "minutes": 0, "consumed": true } },
-  { "id": "item.crank_charger", "name": "Hand-crank charger", "category": "tool", "weightKg": 0.4, "recharges": { "itemId": "item.torch", "amount": 25, "minutes": 30, "consumed": false } }
+  { "id": "item.crank_charger", "name": "Hand-crank charger", "category": "tool", "weightKg": 0.4, "recharges": { "itemId": "item.torch", "amount": 25, "minutes": 30, "consumed": false } },
+
+  { "id": "item.biodiesel", "name": "Can of biodiesel", "category": "material", "weightKg": 5 },
+
+  { "id": "item.rudraksha_bead", "name": "Rudraksha bead", "category": "charm", "weightKg": 0.05, "charm": { "slot": "necklace", "rarity": "rare", "restDrainMultiplier": 0.9, "conditionTime": { "condition.restless": 0.5, "condition.shaken": 0.5 } } },
+  { "id": "item.vel_pendant", "name": "Vel pendant", "category": "charm", "weightKg": 0.05, "charm": { "slot": "necklace", "rarity": "rare", "stats": { "deathblowRes": 10, "stunRes": 10 } } },
+  { "id": "item.brass_kammal", "name": "Brass kammal (ear studs)", "category": "charm", "weightKg": 0.05, "charm": { "slot": "earrings", "rarity": "uncommon", "stats": { "acc": 3 } } },
+  { "id": "item.gold_kadukkan", "name": "Gold kadukkan (ear studs)", "category": "charm", "weightKg": 0.05, "charm": { "slot": "earrings", "rarity": "rare", "stats": { "luck": 2, "critDamage": 10 } } },
+  { "id": "item.copper_thayathu", "name": "Copper amulet (thayathu)", "category": "charm", "weightKg": 0.05, "charm": { "slot": "waist", "rarity": "rare", "threatMultiplier": 0.8 } },
+  { "id": "item.silver_waist_chain", "name": "Silver waist chain (araignan kodi)", "category": "charm", "weightKg": 0.05, "charm": { "slot": "waist", "rarity": "uncommon", "freeCarryKg": 3 } },
+  { "id": "item.copper_ring", "name": "Copper ring", "category": "charm", "weightKg": 0.05, "charm": { "slot": "ring", "rarity": "uncommon", "illnessMultiplier": 0.5 } },
+  { "id": "item.iron_ring", "name": "Iron ring", "category": "charm", "weightKg": 0.05, "charm": { "slot": "ring", "rarity": "uncommon", "stats": { "dodge": 3 } } },
+  { "id": "item.panchaloha_ring", "name": "Panchaloha ring", "category": "charm", "weightKg": 0.05, "charm": { "slot": "ring", "rarity": "rare", "stats": { "luck": 3 } } },
+  { "id": "item.navaratna_ring", "name": "Navaratna ring", "category": "charm", "weightKg": 0.05, "charm": { "slot": "ring", "rarity": "very_rare", "stats": { "luck": 5, "critRate": 2 } } },
+  { "id": "item.steel_bangle", "name": "Stainless steel bangle", "category": "charm", "weightKg": 0.05, "charm": { "slot": "bangle", "rarity": "uncommon", "searchTimeMultiplier": 0.9 } },
+  { "id": "item.brass_kaappu", "name": "Brass bangle (kaappu)", "category": "charm", "weightKg": 0.05, "charm": { "slot": "bangle", "rarity": "uncommon", "stats": { "hunting": 5 } } },
+  { "id": "item.silver_bangle", "name": "Silver bangle", "category": "charm", "weightKg": 0.05, "charm": { "slot": "bangle", "rarity": "rare", "darkRiskMultiplier": 0.75 } }
 ]

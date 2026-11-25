@@ -18,7 +18,7 @@ export const DEBUG = new URLSearchParams(window.location.search).get('debug') ==
 
 type Screen = 'title' | 'game' | 'gameover';
 /** What the side panel shows when no trip is under way (D-016 plus the approved Pack layout). */
-export type PanelMode = 'pack' | 'rest' | 'craft' | 'journal' | 'here' | 'test' | null;
+export type PanelMode = 'pack' | 'vehicle' | 'rest' | 'craft' | 'journal' | 'here' | 'test' | null;
 /** Pack order: grouped by kind, or a flat list by name or heaviest first. Price joins with trading. */
 export type PackSort = 'type' | 'name' | 'weight';
 
@@ -64,6 +64,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const itemName = (id: string) => content.items[id]?.name ?? id;
 const METER_NAMES = { health: 'Health', food: 'Food', water: 'Water', rest: 'Rest' } as const;
 const conditionName = (id: string) => content.conditions[id]?.name ?? id;
+const vehicleName = (id: string) => (content.vehicles.byId[id]?.name ?? id).toLowerCase();
 
 function describe(events: GameEvent[]): string | null {
   const notes: string[] = [];
@@ -109,6 +110,18 @@ function describe(events: GameEvent[]): string | null {
       const gains = content.progression.levels.find((l) => l.level === e.level)?.gains ?? {};
       notes.push(`Level ${e.level}: ${formatGains(gains)}.`);
     }
+    if (e.type === 'charm_worn') notes.push(`Wearing the ${itemName(e.itemId).toLowerCase()}.`);
+    if (e.type === 'charm_removed') notes.push(`Took off the ${itemName(e.itemId).toLowerCase()}.`);
+    if (e.type === 'vehicle_found') notes.push(`Found a ${vehicleName(e.vehicleId)}! It's parked here.`);
+    if (e.type === 'vehicle_boarded') notes.push(`On the ${vehicleName(e.vehicleId)}.`);
+    if (e.type === 'vehicle_left') notes.push(`Left the ${vehicleName(e.vehicleId)} parked here.`);
+    if (e.type === 'vehicle_worn') notes.push(`The ${vehicleName(e.vehicleId)} is wearing out.`);
+    if (e.type === 'vehicle_broken') notes.push(`The ${vehicleName(e.vehicleId)} has broken down. Repair it with scrap metal.`);
+    if (e.type === 'out_of_fuel') notes.push(`The ${vehicleName(e.vehicleId)} is out of fuel.`);
+    if (e.type === 'vehicle_repaired') notes.push(`Repaired the ${vehicleName(e.vehicleId)} to ${Math.round(e.durability)}.`);
+    if (e.type === 'refuelled') notes.push(`Refuelled: ${e.litres} litres in the tank.`);
+    if (e.type === 'vehicle_built') notes.push(`Made a ${vehicleName(e.vehicleId)}.`);
+    if (e.type === 'cargo_moved') notes.push(e.loaded ? 'Loaded.' : 'Unloaded.');
     if (e.type === 'cooked') {
       const to = content.fire.recipes.find((r) => r.id === e.recipeId)?.to;
       notes.push(`Made ${to ? itemName(to).toLowerCase() : 'it'}${e.count > 1 ? ` ×${e.count}` : ''}.`);

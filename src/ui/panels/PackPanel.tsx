@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import type { ItemCategory } from '../../content/schemas';
+import type { CharmSlot, ItemCategory } from '../../content/schemas';
+import { carryLimits } from '../../engine/systems/charms/charms';
 import type { Stack } from '../../engine/core/state';
 import { carriedKg, loadMultiplier } from '../../engine/systems/inventory/inventory';
 import { content, useGameStore, type PackSort } from '../../store/gameStore';
@@ -10,8 +11,9 @@ import { playerStats, weaponProfile } from '../../engine/systems/combat/stats';
 import { nextLevel } from '../../engine/systems/progression/progression';
 
 const GROUPS: [ItemCategory, string][] = [
-  ['food', 'Food'], ['water', 'Water'], ['medical', 'Medical'], ['weapon', 'Weapons'], ['tool', 'Tools'], ['material', 'Materials'],
+  ['food', 'Food'], ['water', 'Water'], ['medical', 'Medical'], ['weapon', 'Weapons'], ['tool', 'Tools'], ['material', 'Materials'], ['charm', 'Charms to wear'],
 ];
+const SLOT_LABELS: Record<CharmSlot, string> = { necklace: 'Necklace', earrings: 'Earrings', waist: 'Waist cord', ring: 'Ring', bangle: 'Bangle' };
 
 function chargeText(stack: Stack) {
   const charge = content.items[stack.itemId]!.charge;
@@ -48,10 +50,16 @@ export function PackPanel() {
   const [selected, setSelected] = useState<number | null>(null);
   const sort = useGameStore((s) => s.packSort);
   const setSort = useGameStore((s) => s.setPackSort);
-  const { stacks, weapon } = game.inventory;
-  const { freeKg, maxKg } = content.survival.carry;
+  const { stacks, weapon, charms } = game.inventory;
+  const carry = carryLimits(game, content);
+  const { freeKg, maxKg } = carry;
   const kg = carriedKg(game.inventory, content);
-  const mult = loadMultiplier(kg, content.survival.carry);
+  const mult = loadMultiplier(kg, carry);
+  // Each slot in charms.json order, filled with what he wears there (D-086).
+  const slots = (Object.entries(content.charms.slots) as [CharmSlot, number][]).flatMap(([slot, n]) => {
+    const worn = charms.filter((id) => content.items[id]?.charm?.slot === slot);
+    return Array.from({ length: n }, (_, i) => ({ slot, itemId: worn[i] }));
+  });
   const stack = selected !== null ? stacks[selected] : undefined;
   const item = stack && content.items[stack.itemId];
 
@@ -115,6 +123,18 @@ export function PackPanel() {
           <button className="small" onClick={() => run({ type: 'item.unequip' })}>Unequip</button>
         </div>
       ) : <p className="muted">Nothing equipped.</p>}
+      <h3>Charms</h3>
+      <ul className="items charm-slots" data-testid="charm-slots">
+        {slots.map(({ slot, itemId }, i) => (
+          <li key={`${slot}${i}`} className="item-line">
+            <span className="item-row static">
+              <span className="muted">{SLOT_LABELS[slot]}</span>
+              <span>{itemId ? <ItemName id={itemId} /> : <span className="muted">—</span>}</span>
+            </span>
+            {itemId && <button className="small row-use" aria-label={`Take off ${content.items[itemId]!.name}`} onClick={() => run({ type: 'charm.remove', itemId })}>Take off</button>}
+          </li>
+        ))}
+      </ul>
       <h3>Stats</h3>
       <p className="tiny muted pack-level">Level {game.progression.level} · {nextLevel(game, content) ? `${game.progression.xp} / ${nextLevel(game, content)!.xp} XP` : `${game.progression.xp} XP`}</p>
       <StatsBlock stats={playerStats(game, content)} damage={weaponProfile(game, content).damage} ammo={weaponProfile(game, content).ammo} />
@@ -154,6 +174,7 @@ export function PackPanel() {
               <button className="small" disabled={Boolean(blocker(item.id, stacks))} onClick={() => run({ type: 'item.use', index: selected })}>{verbFor(item.id)}</button>
             )}
             {item.weapon && <button className="small" onClick={() => run({ type: 'item.equip', index: selected })}>Equip</button>}
+            {item.charm && <button className="small" onClick={() => run({ type: 'charm.wear', index: selected })}>Wear</button>}
             <button className="small" onClick={() => run({ type: 'item.drop', index: selected, count: 1 })}>Drop 1</button>
             {stack.count > 1 && <button className="small" onClick={() => run({ type: 'item.drop', index: selected, count: stack.count })}>Drop all</button>}
           </div>

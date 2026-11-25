@@ -56,7 +56,7 @@ Vehicles wear as they are used: slowly on roads, faster off-road.
 - **No cycle parts.** A cycle is found whole; the player only needs a **recipe to attach a cart to the cycle** (supersedes "built from its parts" in D-033).
 - **The bull's grain and water are deferred**; the bull needs nothing in M10.
 
-## P-021 — vehicle numbers (proposed, awaiting approval)
+## Vehicle numbers — D-087 (approved P-021), built in M10
 
 Walking, for comparison: road 4.5 km/h, cross-country 3 km/h, pack 25 kg free and 50 kg at most (D-019, D-036).
 
@@ -150,4 +150,4 @@ For scale: one full sweep of Srivilliputhur's 13 buildings with fresh stock find
 - Oil as a repair tool (later, D-085).
 - The bull's grain and water (deferred, D-085).
 - Buying a bullock cart (trading), catching and taming bulls, and the other vehicles in D-024 and D-030.
-- The vehicle screens (Pack cargo section, Repair, Park) will be shown for approval with M10, before they are built.
+- The vehicle screens are approved as D-089 (`docs/ui.md`).

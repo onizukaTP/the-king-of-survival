@@ -224,3 +224,6 @@ button.figure:disabled { opacity: 0.4; }
 .journal-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
 .journal-notes { list-style: none; padding-left: 0; }
 .pack-level { margin: 0; }
+
+/* Item tooltips: a dotted underline marks names that have one. */
+.item-name { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }

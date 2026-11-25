@@ -90,6 +90,10 @@ The four-rank battlefield replaced the band screen (D-067's columns) on 2026-11-
 - **Pack:** a "Level 2 · 130 / 250 XP" line above the Stats block.
 - **Message line:** XP gained ("+15 XP.") and level-ups ("Level 3: ACC +3, Dodge +2.").
 
+## Item tooltips (owner, 2026-11-25)
+
+- Every item name shows a tooltip on hover: name, effects, weapon damage, bonuses and abilities, charge, what it needs, spoiling time and weight, all from the item data. Inline names have a dotted underline. They are the browser's own tooltips, so touch screens don't show them; the Pack's item card still gives the same facts on a tap.
+
 ## Numbers the map screen shows (D-017 to D-020)
 - Speeds: road 4.5 km/h, cross-country 3 km/h.
 - The game starts on Day 1 at 12:00 (D-075; it was 06:00, D-020).

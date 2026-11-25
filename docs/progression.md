@@ -105,14 +105,14 @@ Level 1 at the start, **level 10 at most**. Each level gives a **fixed** gain; t
 ## The journal
 
 - **Where:** a **Journal** button in the top bar opens a panel like Pack and Craft.
-- **"Find my sister":** the quest entry, opened by the intro. Its draft text (D-072, for approval): "Mother heard Nila's name in a dream. A devotee of Lord Vishnu to the last, she believed her daughter is still alive."
+- **"Find my sister":** the quest entry, opened by the intro. Its text is the owner's (D-083): "Mother died saying the name Nila. She might be referring to your lost sister. Gather clues to find her."
   - It gives no place and no direction (D-074).
 - **"My mother's wish":** her three wishes as a reminder (find my sister, find someone to love, live a good and happy life). Nothing is scored.
 - **Notes:** kept automatically: places discovered, fights won, levels gained, each with the day and time. The last 30 are kept.
 - **Level and XP:** the panel's header shows Level and XP to the next level; the Stats block shows them too.
 - **Names:** Prabu knows his sister's name from the start (D-081), so the journal can call her Nila. The intro keeps the owner's wording, "my sister".
 - **Later:** no quest steps beyond the sister entry until the story is designed further.
-- **Still a draft:** the sister entry's text above is Claude's wording (D-072). It is in `story.json`, so the owner can approve or rewrite it without code.
+- **Owner's text:** the sister entry above is the owner's wording (D-083), kept in `story.json`.
 - **Outlook (D-078):** the intro is Prabu's starting resolve; the journal doesn't judge him.
 
 ## Engine and saves (Claude's side)

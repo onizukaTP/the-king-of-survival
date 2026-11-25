@@ -1,22 +1,14 @@
-# Progression, opening and journal (M8) — proposed (P-020), awaiting approval
+# Progression, intro and journal (M8) — approved (D-070 to D-076), to build
 
-Everything below is a proposal. Nothing is built. The story text is a **draft for the owner to approve or rewrite** (D-072); nothing in it is canon until approved.
+Approved on 2026-11-25:
+- **D-076 (P-020, with changes):** the XP table, the 10 levels with fixed gains and the Journal, as proposed below.
+- **The intro is the owner's text** (Prabu's first-person monologue), replacing Claude's draft, with two corrections the owner chose.
+- **The story changed at the same time:**
+  - **D-073:** the missing sibling is a **younger sister**, whose name is revealed later. The **father is dead**, but Prabu doesn't know it yet.
+  - **D-074:** the mother's clue **came to her in a dream**. She was a devotee of **Lord Vishnu** and believed her daughter is still alive.
+  - **D-075:** a run starts on **Day 1 at 12:00**, the moment she dies, during a **solar eclipse**. It sets the scene only; daylight rules apply.
 
-## Already decided
-
-- **D-070:** XP and levels. Fights, hunts, finds and events give XP; each level gives a small stat gain; **perks stay deferred** (and the perk selection screen is on the deferred list, §6).
-- **D-071:** a short **text intro after his mother's death**: who Prabu is, her death, her clue, her wish. Then the run starts at home as now.
-- **D-072:** Claude drafts the mother's final scene and two or three options for her clue; the owner approves or rewrites.
-- **Canon (§4) the intro must respect:**
-  - Prabu is 27, born on the day of the Annihilation, and the hunter of a settlement of about 20.
-  - About ten years ago a scuffle during the mass migration separated the family; he and his mother lost his father and younger brother.
-  - They came to the settlement from the north, where her sickness began (D-040).
-  - She has found a trace of his brother.
-  - Her wish is that he finds his brother, finds love, and lives a good and happy life, not merely power or wealth.
-  - **There is no sister.** No names (mother, father, brother, settlement) are used.
-- **M8 acceptance (§9):** progression works; the approved opening plays; the brother quest appears in the journal.
-
-## Progression
+## Progression (D-070)
 
 ### XP
 
@@ -28,13 +20,13 @@ Everything below is a proposal. Nothing is built. The story text is a **draft fo
 | Discovering a place (D-018) | 15 |
 | A search that finds something | 2 |
 | Crafting a recipe for the first time | 5 |
-| Some event outcomes | 5–15: catching the goat 10, pinning the snake 5, slipping past the roadblock 15, the smoke's tracks 10 |
+| Some event outcomes | Catching the goat 10, pinning the snake 5, slipping past the roadblock 15, the smoke's tracks 10 |
 
-XP amounts are data (on enemies, events and a small config), so the balance pass (M9) can tune them without code.
+XP amounts are data (on enemies, events and `progression.json`), so the balance pass (M9) can tune them without code.
 
 ### Levels
 
-Level 1 at the start, **level 10 at most** in the prototype. Each level gives a **fixed** gain, so there is no choice screen; a choice would be close to the deferred perk screen.
+Level 1 at the start, **level 10 at most**. Each level gives a **fixed** gain; there's no choice screen, since perks and a perk screen are deferred (§6).
 
 | Level | Total XP | Gain |
 |---|---|---|
@@ -48,88 +40,93 @@ Level 1 at the start, **level 10 at most** in the prototype. Each level gives a 
 | 9 | 2,200 | ACC +3, Dodge +2 |
 | 10 | 2,700 | ATK +1, crit +3% |
 
-- **How fast it goes:** a 30–60 minute session (M9's target) should reach about level 3–5: a few fights, some hunts and the first discoveries.
-- **What a level doesn't change:** maximum Health stays 100 (radiation and Weak still lower it), so survival keeps its weight.
-- **Gains** add to Prabu's stats in the same total as his weapon (D-066), so they show in the Stats block and count in fights, hunting and searching.
-- **Permadeath (D-038):** levels go with the run; a new run starts at level 1.
+- **Stats:** gains add to Prabu's stats with his weapon's (D-066), so they show in the Stats block and count in fights, hunting and searching.
+- **Health:** maximum Health stays 100.
+- **Permadeath:** a new run starts at level 1 (D-038).
+- **Pace:** a 30–60 minute session should reach about level 3–5.
 
-## The opening (DRAFT for approval)
+## The intro (D-071, D-076): the owner's text
 
-**When it shows:** after **New Game**, before the map, as 4 short text screens with **Next** and **Skip**. It shows once per run; a reloaded save doesn't show it again.
+**When it shows:**
+- After **New Game**, before the map: the moment his mother dies, at midday during the eclipse.
+- The run then starts on **Day 1 at 12:00** at home.
+- It shows once per run, with **Next** and **Skip**; reloading doesn't show it again.
 
-**Placeholder art:** one muted placeholder image behind the text (D-004).
+**How it looks:**
+- Five screens, split at the text's natural breaks.
+- One muted placeholder image behind the text (D-004).
+- The words live in `story.json`, so they can be edited (or translated later) without code.
 
-**When it happens (D-020):** the intro happens the night before. The run still starts on **Day 1 at 06:00**, the first morning after her death, so D-020 stands.
+**The text**, exactly as written by the owner, with the two corrections they chose: "Twenty-seven years" (canon age 27) and "my father or my sister" (D-073):
 
-### Screen 1: who he is
+**Screen 1**
+> I was born on the day the bombs fell.
+>
+> The sky was eerie and dark, devoid of life. The world stood still. And in that moment, as I looked into my mother's eyes, I heard my name for the first time.
+>
+> "Prabu."
+>
+> The one who would rule this accursed world.
 
-> Twenty-seven years ago the sky burned, and Prabu was born the same day.
-> He grew up in a world that was already over. Now he is the hunter of a small settlement in the foothills, twenty mouths and a failing field, where the forest is the only thing still giving.
+**Screen 2**
+> Twenty-seven years have passed. My mother is dead, and I am left with the burden of a goal. Somewhere in this disease-ridden, poisoned world, my father or my sister may still be alive. I do not know.
+>
+> But I know what I must become.
+>
+> A king.
 
-### Screen 2: the road from the north
+**Screen 3**
+> My mother always asked me to be kind. To find someone I could love, someone who would love me as deeply as she did.
+>
+> Overly optimistic. Just like her.
+>
+> She believed that even in a world like this, love was worth fighting for. That kindness could survive where everything else had perished.
 
-> Ten years ago, when the wells in the north ran dry, everyone walked south. In the crush of that road his family was torn apart. His father and his younger brother were lost in the crowd, and Prabu and his mother never found them again.
-> They came here with nothing. The sickness she carried had already started.
+**Screen 4**
+> But my mother is gone now.
+>
+> And unlike her, I have no room for such hopes. I care only about our survival. About finding my family. About making sure that no one can take away what little I have left.
+>
+> I will carve a kingdom out of this wasteland. I will conquer lands, break those who stand in my way, and survive.
 
-### Screen 3: her last night (the clue: see the options below)
+**Screen 5**
+> Forgive me, Mother. I do not think I can be kind. In this world, kindness is death's closest friend.
+>
+> I will live. I will conquer. And when my time comes, I pray that your soul will find its way to Svarga Loka.
+>
+> Until then, I will make this world kneel.
+>
+> For you, Mother.
 
-> This season he stopped going out to hunt so he could sit with her. Last night, near the end, she pressed his hand and told him she had found something: a trace of his brother.
-> *[The clue, once chosen.]*
-
-### Screen 4: her wish
-
-> Her last words were not about revenge or riches.
-> Find your brother. Find someone to love. Live a good life, a happy one.
-> By morning they had laid her to rest. The settlement is still hungry, and the world is still dangerous. What he becomes now is up to him.
-
-**The wish wording is a draft.** The canon wish has three parts (find the brother, find love, live a good and happy life); the exact dialogue is owner-only (§4).
-
-**What the draft adds beyond canon, so you can strike it:**
-- that the migration went south (from D-040: they came from the north);
-- that drought drove it ("the wells in the north ran dry");
-- that the separation happened "in the crush" of the road (canon: a chaotic scuffle);
-- that she told him "last night";
-- "laid her to rest", which deliberately avoids naming a funeral rite.
-
-### Options for her clue (pick one, change one, or write your own)
-
-| Option | The trace | What it means for play |
-|---|---|---|
-| **A. A traveller's word** | A trader passing through months ago spoke of a young man from the north, about the right age, seen with a group heading towards Madurai. | Gives the long trip to Madurai (D-012) a story reason. Nothing is found there in the prototype; the journal just points that way. |
-| **B. Something of his** | She traded for a small object that she knew at once as her younger son's, and the trader said where it came from (to be decided: a place in the prototype area or beyond). | A physical keepsake in the pack (a story item, weightless, can't be dropped). |
-| **C. A message passed on** | Word reached her, through a chain of strangers, that someone was asking after a woman of her description from the northern road. | Says only that he may be alive and looking. No direction yet; it leaves the most room for later story. |
-
-I'd recommend **A**: it fits the prototype's one long journey and promises no content that isn't built.
+**First message after the intro:**
+- Draft: "Day 1, midday. The eclipse is passing."
+- This is Claude's wording and can be changed; it adds nothing to canon.
 
 ## The journal
 
 - **Where:** a **Journal** button in the top bar opens a panel like Pack and Craft.
-- **Brother quest entry:** **"Find my brother"**, opened by the intro, with the approved clue in one or two lines.
-- **Mother's wish:** **"My mother's wish"**, listing its three parts as a reminder; nothing is scored or tracked.
-- **Notes:** a short list kept automatically: places discovered, fights won, levels gained, each with the day and time. The last 30 are kept.
-- **Level and XP:** the panel's header shows Level and XP to the next level. The Stats block in the Pack shows them too.
-- **Later:** no quest steps beyond the brother entry until the story is designed further (§4 forbids inventing plot).
+- **"Find my sister":** the quest entry, opened by the intro. Its draft text (D-072, for approval): "Mother saw her in a dream. A devotee of Lord Vishnu to the last, she believed her daughter is still alive."
+  - It gives no place and no direction (D-074).
+- **"My mother's wish":** her three wishes as a reminder (find my sister, find someone to love, live a good and happy life). Nothing is scored.
+- **Notes:** kept automatically: places discovered, fights won, levels gained, each with the day and time. The last 30 are kept.
+- **Level and XP:** the panel's header shows Level and XP to the next level; the Stats block shows them too.
+- **Later:** no quest steps beyond the sister entry until the story is designed further.
 
 ## Engine and saves (Claude's side)
 
-- **Save v10** adds `progression: { xp, level }`, `journal: { notes[] }`, `introSeen`, and the recipes crafted once. Migration: old runs start at level 1 with 0 XP, the intro marked seen (so it doesn't interrupt a run in progress), and the brother entry present.
-- **Data:**
-  - Enemy `xp`, event outcome `xp`, and `progression.json` for the XP table and level gains.
-  - The intro text lives in a data file (`story.json`), so the owner's wording can replace the draft without code, and Tamil can come later.
-- **Command:** `intro.done` (Next past the last screen, or Skip).
-- **Messages:** level-ups appear in the message line, for example "Level 3: ACC +3, Dodge +2."
-- **Tests:** XP from every source, thresholds and gains, the cap, stats with gains in fights and hunting, journal notes, the intro shown once, saves and migration. e2e: New Game → intro → Skip → map; win a fight → XP rises; Journal shows the brother entry.
+- **Start time:** a new game starts at Day 1 12:00 (`new-game.json`), D-075.
+- **Save v10** adds:
+  - `progression: { xp, level }`, `journal: { notes[] }`, `introSeen`, and the recipes crafted once;
+  - a migration where old runs start at level 1 with 0 XP and the intro marked seen.
+- **Data:** enemy `xp`, event outcome `xp`, `progression.json` (XP sources and the level table), and `story.json` (the intro screens and the journal texts).
+- **Command:** `intro.done`. Level-ups appear in the message line: "Level 3: ACC +3, Dodge +2."
+- **Tests:**
+  - XP from each source, thresholds, gains and the cap;
+  - gains counting in fights and hunts;
+  - journal notes, the intro shown once, saves and the migration.
+  - e2e: New Game → intro → Skip → map at 12:00; a won fight raises XP; the Journal shows "Find my sister".
 
 ## Not included
 
-- Perks, skill trees, a stat choice at level-up (deferred, §6).
-- Names, more family history, or any plot beyond the approved clue.
-- A playable prologue (D-071 chose the text intro).
-
-## Choices for the owner
-
-1. **XP and levels:** the XP amounts, the 10-level table and the fixed gains. Keep or change?
-2. **The intro:** approve the four screens as drafted, or edit the wording? The mother's words especially.
-3. **The clue:** A, B, C, or your own?
-4. **The journal:** brother entry, the wish as a reminder, and automatic notes. Approve?
-5. **When the intro happens:** the night before Day 1, with the run still starting at 06:00. All right?
+- **Not built:** perks, skill trees and a stat choice at level-up (deferred, §6).
+- **Not invented:** names, how or when the father died, what the dream showed beyond her belief, or any plot beyond the sister entry.

@@ -79,7 +79,7 @@
 - Nothing.
 
 ## Pending (unblocked)
-- M8 Progression and opening — proposed in `docs/progression.md` (P-020), with the intro draft and three clue options; awaiting approval.
+- M8 Progression, intro and journal — approved (D-070 to D-076); ready to build. The intro is the owner's text.
 - Charms (D-062): 1 talisman, 2 rings and 2 bangles that lower risks or raise yields. To be drafted for approval.
 
 ## Later (owner's notes)

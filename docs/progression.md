@@ -57,7 +57,7 @@ Level 1 at the start, **level 10 at most**. Each level gives a **fixed** gain; t
 - One muted placeholder image behind the text (D-004).
 - The words live in `story.json`, so they can be edited (or translated later) without code.
 
-**The text**, exactly as written by the owner, with the two corrections they chose: "Twenty-seven years" (canon age 27) and "my father or my sister" (D-073):
+**The text**, exactly as written by the owner, with the corrections they chose: "Twenty-seven years" (canon age 27), "my father or my sister" (D-073) and "Vaikuntha" (D-077):
 
 **Screen 1**
 > I was born on the day the bombs fell.
@@ -92,7 +92,7 @@ Level 1 at the start, **level 10 at most**. Each level gives a **fixed** gain; t
 **Screen 5**
 > Forgive me, Mother. I do not think I can be kind. In this world, kindness is death's closest friend.
 >
-> I will live. I will conquer. And when my time comes, I pray that your soul will find its way to Svarga Loka.
+> I will live. I will conquer. And when my time comes, I pray that your soul will find its way to Vaikuntha.
 >
 > Until then, I will make this world kneel.
 >
@@ -110,7 +110,9 @@ Level 1 at the start, **level 10 at most**. Each level gives a **fixed** gain; t
 - **"My mother's wish":** her three wishes as a reminder (find my sister, find someone to love, live a good and happy life). Nothing is scored.
 - **Notes:** kept automatically: places discovered, fights won, levels gained, each with the day and time. The last 30 are kept.
 - **Level and XP:** the panel's header shows Level and XP to the next level; the Stats block shows them too.
+- **Names:** the entry says "my sister"; her name, Nila (D-080), appears only when the story reveals it.
 - **Later:** no quest steps beyond the sister entry until the story is designed further.
+- **Outlook (D-078):** the intro is Prabu's starting resolve; the journal doesn't judge him.
 
 ## Engine and saves (Claude's side)
 

@@ -57,14 +57,13 @@ Inspirations (atmosphere and broad mechanics only — **never copy content, char
 
 ## 4. Prabu and the canonical timeline
 
-**Prabu** — 27, hunter, member of a ~20-person settlement. No predetermined moral alignment; personality and morality are shaped by player decisions. Has suffered major loss. Wants to become better, wealthy, powerful, and able to change the world; does not particularly care if people call him a tyrant.
+**Prabu** — 27, hunter, member of a ~20-person settlement, **Kottayam** (D-080). No predetermined moral alignment; personality and morality are shaped by player decisions. The intro's ruthless resolve is his starting frame of mind, and he changes with the player's decisions (D-078). Has suffered major loss. Wants to become better, wealthy, powerful, and able to change the world; does not particularly care if people call him a tyrant.
 
 | When | Prabu's age | Event |
 |---|---|---|
-| 27 years ago | 0 | The Great Annihilation. Prabu is born the same day. Father survives and stays with the family. |
-| ~22 years ago | ~5 | Mother becomes pregnant. |
-| ~21 years ago | ~6 | Younger sister born (D-073; she was a brother before). |
-| ~10 years ago | ~17 | Drought/famine → mass migration. A chaotic scuffle separates the family: Prabu + mother lose the father and younger sister (sister ~10). The father has since died, but Prabu doesn't know it yet (D-073); the sister's whereabouts are unknown. |
+| 27 years ago | 0 | The Great Annihilation. Prabu is born the same day. Father (**Vishnu**) survives and stays with the family until the migration (D-079). Mother: **Divya** (D-080). |
+| ~22 years ago | 5 | Younger sister (**Nila**) born, 5 years younger than Prabu (D-073, D-079, D-080; she was a brother before). |
+| ~10 years ago | ~17 | Drought/famine → mass migration. A chaotic scuffle separates the family: Prabu + mother lose the father and younger sister (sister ~12), who are lost there together (D-079). The father has since died, but Prabu doesn't know it yet (D-073); the sister's whereabouts are unknown. |
 | Recent years | — | Prabu becomes the settlement's hunter. Settlement struggles: too many mouths, failing crops, little clean water, declining cattle, almost no medicine. |
 | Day 1, 12:00 | 27 | Mother's health fails (radiation + famine). Prabu stays home to care for her instead of hunting. She dies at midday, during a solar eclipse; the run starts then (D-075). |
 
@@ -74,7 +73,7 @@ Prabu and his mother came to the settlement from the north, and her sickness beg
 
 **Mother's final wish:** that Prabu (1) finds his younger sister, (2) finds love, (3) lives a good and happy life — not merely power or wealth. This contrasts with Prabu's grief-shaped ambition; the player may interpret or fulfil it in different ways.
 
-**The missing sibling is a younger sister** (D-073, 2026-11-25). *(This supersedes the earlier rule "There is no sister"; any reference to a missing younger brother is now wrong.)* Her name is revealed later in the story.
+**The missing sibling is a younger sister** (D-073, 2026-11-25). *(This supersedes the earlier rule "There is no sister"; any reference to a missing younger brother is now wrong.)* Her name is **Nila** (D-080), revealed to the player later in the story; game text says "my sister" until then.
 
 **The intro** (D-076) is the owner's own text, in Prabu's voice: `docs/progression.md`.
 
@@ -83,14 +82,10 @@ Prabu and his mother came to the settlement from the north, and her sickness beg
 - How the family was separated; how and when the father died, and how Prabu learns it.
 - What the mother's dream showed, beyond her belief that her daughter lives (no letter/photo/witness/location without approval).
 - Exact dialogue of the mother's final scene (the intro is Prabu's monologue after it).
-- Names of the mother, father, sister (revealed later) and settlement.
 
 ### Flagged inconsistencies (awaiting owner ruling)
 
-- **T1** Sister born when Prabu ~6; migration ~10 years ago (Prabu ~17) → she would be ~11, not ~10.
-- **T2** "Father remains present during his first five years" vs. separation at the migration (~17). Assumed present until the migration — unconfirmed.
-- **T3** "Doesn't care if called a tyrant" vs. "no predetermined alignment" — fixed starting disposition, or one possible path?
-- ~~**T4**~~ Answered by D-063: he fights alone in the prototype; combat supports companions later.
+None open. Answered: ~~T1~~ and ~~T2~~ by D-079 (the sister is 5 years younger; the father stayed until the migration), ~~T3~~ by D-078 (a starting frame of mind, changed by the player's decisions), ~~T4~~ by D-063.
 
 ---
 
@@ -306,6 +301,10 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-074 **The mother's clue came to her in a dream.** She was a devotee of Lord Vishnu and believed her daughter is still alive. There is no direction or place.
 - D-075 (supersedes D-020's 06:00) **A run starts on Day 1 at 12:00**, the moment his mother dies, during a **solar eclipse**. The eclipse sets the scene only; daylight rules apply. (Day 1 is a new moon in the moon cycle, D-060, which fits a solar eclipse.)
 - D-076 (approves P-020, with changes) **M8:** the XP table, 10 levels with fixed gains and the Journal as proposed; the journal entry is **"Find my sister"** with the dream as the clue. **The intro is the owner's text** (Prabu's first-person monologue), with "Twenty-seven years have passed" and "my father or my sister may still be alive". Spec in `docs/progression.md`.
+- D-077 **Intro:** "Svarga Loka" becomes **"Vaikuntha"**, Lord Vishnu's abode, fitting his mother's devotion (D-074).
+- D-078 (answers T3) **Prabu's outlook:** the intro's ruthless resolve is his **starting** frame of mind; through the journey he changes with the decisions the player makes. He has no fixed alignment.
+- D-079 (answers T1 and T2) **The family:** the father stayed with the family until the migration; the **father and the sister were lost there**. The sister is **5 years younger** than Prabu (born about 22 years ago; about 12 at the migration; 22 now).
+- D-080 **Names:** mother **Divya**, father **Vishnu**, sister **Nila**; the settlement is **Kottayam**. *(Nila's name is still revealed to the player later in the story, D-073; game text says "my sister" until then. Kottayam is also the name of a real town in Kerala; recorded as given.)*
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -314,11 +313,9 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 
 ### Open — blocking (do not implement affected areas until answered)
-- T1–T3 Timeline/character inconsistencies in §4 (T4 is answered by D-063).
 
 ### Open — non-blocking
 - Tamil localisation readiness.
-- Names: settlement, mother, father, sister (her name is revealed later, D-073).
 - Currency/bartering before the wealth arc (bullock cart buying and biodiesel selling wait on it).
 
 When the owner answers, move the item to **Confirmed** with a new D-number and update `docs/decisions.md`.

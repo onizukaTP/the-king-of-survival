@@ -75,7 +75,7 @@
   - 188 unit tests and 12 e2e tests pass; checked in the browser on desktop and phone width, including Death's Door.
   - Starting values chosen by Claude are listed for review in `docs/combat.md`.
 
-- **M8 Progression, intro and journal (D-070 to D-076, D-081)** — built on `dev`; not released yet.
+- **M8 Progression, intro and journal (D-070 to D-076, D-081)** — live (released 2026-11-25).
   - XP from fights won, successful hunts, discoveries, searches with finds, first crafts and some event outcomes; 10 levels with fixed stat gains that count in fights, hunts and searches.
   - The owner's intro (five screens, Skip and Next), once per run; a run now starts on Day 1 at 12:00.
   - The Journal: Level and XP, "Find my sister", the mother's wish, and the last 30 notes. Level and XP also show in the Pack.

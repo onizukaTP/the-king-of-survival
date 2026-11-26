@@ -171,6 +171,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ progression.md       # progression, intro, journal (D-076)
 │  ├─ combat.md            # four-rank combat (D-069)
 │  ├─ charms.md            # charms (D-086, D-088)
+│  ├─ playtest.md          # M9 playtest report and balance proposals (P-023)
 │  └─ combat-m7.md         # the first combat, superseded (history)
 ├─ public/
 │  ├─ assets/              # placeholder art
@@ -194,7 +195,8 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  │  └─ components/       # shared UI pieces
 │  └─ main.tsx
 └─ tests/
-   └─ e2e/                 # Playwright
+   ├─ e2e/                 # Playwright
+   └─ playtest/            # M9 playtest bot and fight table (npm run playtest)
 ```
 
 Engine unit tests live next to the code (`*.test.ts`).
@@ -320,6 +322,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat (solo, range bands and fleeing are now D-063): 1–3 enemies, speed-based turn order; actions: attack, aim, move band, use item, flee. Numbers to be proposed.
+- P-023 (M9 playtest, `docs/playtest.md`) **Balance and fixes:** (1) give the bow raider a weak blow from rank 1 so a lone archer can act; (2) raw meat and millet tooltips say how to cook them, from the fire recipes; (3) how many days to reach level 10 (now about 90); (4) keep fights at about 1 every 4–5 days for now; (5) keep the two-raider ambush (a light avoids it); (6) keep the bow as is. Also flagged: the Wild dogs event says "Five lean dogs" but the fight has 2–4.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 
 ### Open — blocking (do not implement affected areas until answered)
@@ -347,7 +350,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M7 | Combat | M3, M6 | Done — live; four-rank redesign (D-069) live (released 2026-11-24) |
 | M8 | Progression, opening narrative, journal | M7 | Done — live (released 2026-11-25); journal text is the owner's (D-083) |
 | M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Done — live (released 2026-11-26; D-085, D-087 to D-089), with charms (D-086, D-088) |
-| M9 | Integration, balance pass, playtest | All | Blocked |
+| M9 | Integration, balance pass, playtest | All | In progress — first pass on `dev` (2026-11-26): playtest bot, fight table, phone playtest, four bugs fixed; balance proposals P-023 await the owner (`docs/playtest.md`) |
 
 Keep this table and `docs/progress.md` current at the end of every work session.
 
@@ -403,6 +406,7 @@ npm run typecheck    # tsc --noEmit
 npm run lint         # eslint
 npm test             # vitest (engine unit tests)
 npm run test:e2e     # playwright smoke tests
+npm run playtest     # M9 playtest bot and fight table (RUNS, DAYS, DETAIL=1, SEED=n)
 ```
 
 Update this section if scripts change.

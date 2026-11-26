@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "playtest": "vitest run --config tests/playtest/vitest.config.ts"
   },
   "dependencies": {
     "maplibre-gl": "^6.19.0",

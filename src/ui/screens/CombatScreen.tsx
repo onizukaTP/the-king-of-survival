@@ -27,10 +27,25 @@ function namesOf(game: GameState): Record<string, string> {
   return out;
 }
 
-function logLine(l: CombatLog, n: Record<string, string>): string {
-  // A fighter no longer on the field is named by its type.
-  const gone = l.defId ? content.enemies[l.defId]?.name ?? content.characters[l.defId]?.name : undefined;
-  const who = (uid?: string) => (uid ? n[uid] ?? gone ?? 'Someone' : 'Someone');
+/**
+ * Names for one round's log. A fighter taken off the field during the round (remains cleared, or dead
+ * without remains) is named by the entry that removed it, so earlier lines don't read "Someone".
+ * Blows on remains that were already there read "the remains of …".
+ */
+function logNames(game: GameState, log: CombatLog[], names: Record<string, string>) {
+  const n = { ...names };
+  for (const l of log) if (l.target && l.defId && !n[l.target]) n[l.target] = content.enemies[l.defId]?.name ?? content.characters[l.defId]?.name ?? 'Someone';
+  const killedNow = new Set(log.filter((l) => l.kind === 'killed').map((l) => l.target));
+  const remains = new Set([
+    ...game.combat!.combatants.filter((c) => c.corpse).map((c) => c.uid),
+    ...log.filter((l) => l.kind === 'corpse_cleared').map((l) => l.target),
+  ].filter((uid): uid is string => Boolean(uid) && !killedNow.has(uid)));
+  return { n, remains };
+}
+
+function logLine(l: CombatLog, { n, remains }: ReturnType<typeof logNames>): string {
+  const name = (uid?: string) => (uid ? n[uid] ?? 'Someone' : 'Someone');
+  const who = (uid?: string) => (uid && remains.has(uid) && l.kind !== 'corpse_cleared' ? `the remains of ${name(uid)}` : name(uid));
   switch (l.kind) {
     case 'ability': return `${who(l.actor)} uses ${content.abilities[l.abilityId ?? '']?.name ?? 'an ability'}${l.target && l.target !== l.actor ? ` on ${who(l.target)}` : ''}.`;
     case 'hit': return `${who(l.actor)} hits ${who(l.target)} for ${l.amount}${l.crit ? ', a critical hit!' : '.'}`;
@@ -45,7 +60,7 @@ function logLine(l: CombatLog, n: Record<string, string>): string {
     case 'deaths_door': return `${who(l.target)} is at Death's Door!`;
     case 'deathblow': return l.survived ? `${who(l.target)} survives a deathblow.` : `${who(l.target)} takes a deathblow.`;
     case 'killed': return `${who(l.target)} is dead.`;
-    case 'corpse_cleared': return `The remains of ${who(l.target)} are cleared away.`;
+    case 'corpse_cleared': return `The remains of ${name(l.target)} are cleared away.`;
     case 'pass': return `${who(l.actor)} waits.`;
     case 'item': return `${who(l.actor)} uses ${itemName(l.itemId ?? '').toLowerCase()}.`;
     case 'flee_failed': return `${who(l.actor)} tries to run but can't get away.`;
@@ -116,6 +131,7 @@ export function CombatScreen() {
   const [items, setItems] = useState(false);
   const c = game.combat!;
   const names = namesOf(game);
+  const logged = logNames(game, game.combat!.log, names);
   const me = actingNow(game);
   const myTurn = Boolean(me && me.side === 'player' && !c.result && !game.dead);
   const abilities = me && me.side === 'player' ? abilitiesOf(game, me, content) : [];
@@ -202,7 +218,7 @@ export function CombatScreen() {
       )}
 
       <ul className="combat-log" aria-live="polite">
-        {c.log.map((l, i) => <li key={i} className={l.kind}>{logLine(l, names)}</li>)}
+        {c.log.map((l, i) => <li key={i} className={l.kind}>{logLine(l, logged)}</li>)}
       </ul>
 
       {c.result && (

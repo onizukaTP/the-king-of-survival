@@ -95,7 +95,11 @@
 - **Test panel lists** (owner, 2026-11-26; on `dev`): every list in the Test panel is alphabetical, and charms have their own list (give one charm, or one of every charm).
 
 ## In progress
-- Nothing.
+- **M9 (integration, balance, playtest)**, first pass on `dev` (2026-11-26), report in `docs/playtest.md`:
+  - A playtest bot plays whole runs through the engine (100 runs × 30 days: 96 survive; deaths come from early fights), and a fight table runs every event fight 200 times per weapon and level.
+  - A phone-width playtest of every screen.
+  - Fixed: the combat log's "Someone" for cleared remains; repeated finds ("bamboo ×2"); a failed hunt's message; Prabu's dot on the town map now opens the Here panel (phone).
+  - Waiting on the owner: balance proposals P-023 and the Wild dogs text ("Five" vs 2–4). Then a human playtest of a full session on desktop and a phone.
 
 ## Pending (unblocked)
 - Nothing.
@@ -106,7 +110,7 @@
 - Charm set bonuses (D-086).
 
 ## Blocked
-- M9 (integration, balance pass, playtest) — see CLAUDE.md §8.
+- Nothing.
 
 ## Technical choices made in M10 (Claude's authority)
 - Cargo, repair and refuel act on the vehicle he rides; a parked vehicle keeps its cargo until he gets on it.

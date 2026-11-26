@@ -93,8 +93,12 @@ function describe(events: GameEvent[]): string | null {
       if (text) notes.push(text);
     }
     if (e.type === 'searched' || e.type === 'hunted') {
-      const finds = e.finds.map((f) => `${itemName(f.itemId).toLowerCase()}${f.count > 1 ? ` ×${f.count}` : ''}`);
-      notes.push(finds.length ? `Found: ${finds.join(', ')}. It's on the ground here.` : 'Found nothing.');
+      // Two draws of the same item read as one: "bamboo ×2", not "bamboo, bamboo".
+      const counts = new Map<string, number>();
+      for (const f of e.finds) counts.set(f.itemId, (counts.get(f.itemId) ?? 0) + f.count);
+      const finds = [...counts].map(([id, count]) => `${itemName(id).toLowerCase()}${count > 1 ? ` ×${count}` : ''}`);
+      const none = e.type === 'hunted' && !e.success ? 'The hunt failed: the game got away.' : 'Found nothing.';
+      notes.push(finds.length ? `Found: ${finds.join(', ')}. It's on the ground here.` : none);
     }
     if (e.type === 'bottles_filled') notes.push(`Filled ${e.count} bottle${e.count > 1 ? 's' : ''} with ${e.clean ? 'clean' : 'unsafe'} water.`);
     if (e.type === 'drank') notes.push(e.clean ? 'Drank clean water.' : 'Drank unsafe water.');

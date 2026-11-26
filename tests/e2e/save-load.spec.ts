@@ -193,6 +193,10 @@ test('enter the town, walk to a building, search it; drops stay on its floor; le
   await edge.click();
   await edge.click();
   await expect(page.getByTestId('status')).toHaveText('In Srivilliputhur town ruins');
+  // Clicking Prabu on the town map brings back what he can do here, as on the world map.
+  await page.getByRole('button', { name: /^Pack/ }).click();
+  await expect(panel).toHaveCount(0);
+  await page.getByRole('button', { name: 'Prabu: what to do here' }).click();
   await panel.getByRole('button', { name: 'Leave town' }).click();
   await expect(page.getByTestId('status')).toHaveText('At: Srivilliputhur town ruins');
 });

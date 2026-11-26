@@ -96,6 +96,8 @@ label.item-row { cursor: pointer; justify-content: flex-start; align-items: cent
 .town-map .spot:focus-visible rect, .town-map .spot:focus-visible circle { stroke: #fff; }
 .town-map .spot text { fill: #e6dccf; paint-order: stroke; stroke: #1c1916; stroke-width: 3px; vector-effect: non-scaling-stroke; }
 .town-map .town-prabu { fill: var(--accent); stroke: #fff; pointer-events: none; transition: cx 0.6s, cy 0.6s; }
+.town-map .town-prabu-hit { cursor: pointer; }
+.town-map .town-prabu-hit circle:first-child { transition: cx 0.6s, cy 0.6s; }
 .leave-town { align-self: flex-start; }
 .town-zoom { position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 4px; }
 .town-zoom button { width: 30px; }

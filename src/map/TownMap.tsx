@@ -159,9 +159,16 @@ export function TownMap() {
             </g>
           );
         })}
-        <circle className="town-prabu" cx={prabu.x} cy={prabu.y} r={px(6)} strokeWidth={px(2)}>
-          <title>Prabu</title>
-        </circle>
+        {/* As on the world map, clicking Prabu shows what he can do where he stands (on a phone, nearby labels cover his spot). */}
+        <g className="town-prabu-hit" role="button" tabIndex={0} aria-label="Prabu: what to do here"
+          onClick={(e) => { e.stopPropagation(); if (!wasDrag()) openPanel('here'); }}
+          onDoubleClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPanel('here'); } }}>
+          <circle cx={prabu.x} cy={prabu.y} r={px(14)} fill="transparent" />
+          <circle className="town-prabu" cx={prabu.x} cy={prabu.y} r={px(6)} strokeWidth={px(2)}>
+            <title>Prabu</title>
+          </circle>
+        </g>
       </svg>
       <div className="town-zoom">
         <button className="small" aria-label="Zoom in" onClick={() => zoom(1 / 1.5)}>+</button>

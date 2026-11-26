@@ -165,6 +165,62 @@ describe('cargo (P-021)', () => {
   });
 });
 
+describe('load all, load selected, and equipping from the cargo (owner, 2026-11-26)', () => {
+  it('loads whole stacks as far as they fit; the rest stays in the pack', () => {
+    const s = fresh();
+    give(s, 'vehicle.cycle');
+    addItems(s, 'item.firewood', 5, content);
+    addItems(s, 'item.cloth', 2, content);
+    const all = s.inventory.stacks.map((_, i) => i);
+    const r = ok(s, { type: 'cargo.loadMany', indexes: all });
+    // The cycle holds 10 kg: the starting kit, four of the five firewood (2 kg each) and the rags fit.
+    const cargoKg = ridden(r.state)!.cargo.reduce((kg, x) => kg + content.items[x.itemId]!.weightKg * x.count, 0);
+    expect(cargoKg).toBeLessThanOrEqual(10);
+    expect(r.state.inventory.stacks.find((x) => x.itemId === 'item.firewood')?.count).toBeGreaterThan(0);
+    expect(r.events[0]).toMatchObject({ type: 'cargo_moved', loaded: true });
+    expect((r.events[0] as { leftKg: number }).leftKg).toBeGreaterThan(0);
+  });
+
+  it('loads only the selected stacks, and refuses when nothing fits', () => {
+    const s = fresh();
+    give(s, 'vehicle.hand_cart');
+    addItems(s, 'item.cloth', 2, content);
+    const i = s.inventory.stacks.findIndex((x) => x.itemId === 'item.cloth');
+    const r = ok(s, { type: 'cargo.loadMany', indexes: [i] });
+    expect(ridden(r.state)!.cargo).toEqual([{ itemId: 'item.cloth', count: 2 }]);
+    expect(r.state.inventory.stacks.some((x) => x.itemId === 'item.cloth')).toBe(false);
+    expect(r.state.inventory.stacks.length).toBe(s.inventory.stacks.length - 1);
+    const full = fresh();
+    give(full, 'vehicle.cycle');
+    ridden(full)!.cargo.push({ itemId: 'item.firewood', count: 5 });
+    expect(code(full, { type: 'cargo.loadMany', indexes: [0] })).toBe('cargo_full');
+  });
+
+  it('equips a weapon and wears a charm straight from the cargo; they leave the cargo', () => {
+    const s = fresh();
+    give(s, 'vehicle.hand_cart');
+    ridden(s)!.cargo.push({ itemId: 'item.aruval', count: 1 }, { itemId: 'item.iron_ring', count: 1 });
+    const armed = ok(s, { type: 'item.equip', index: 0, from: 'cargo' }).state;
+    expect(armed.inventory.weapon).toBe('item.aruval');
+    expect(armed.inventory.stacks.some((x) => x.itemId === 'item.hunting_knife')).toBe(true);
+    expect(ridden(armed)!.cargo).toEqual([{ itemId: 'item.iron_ring', count: 1 }]);
+    const ringed = ok(armed, { type: 'charm.wear', index: 0, from: 'cargo' }).state;
+    expect(ringed.inventory.charms).toEqual(['item.iron_ring']);
+    expect(ridden(ringed)!.cargo).toEqual([]);
+    expect(code(fresh(), { type: 'item.equip', index: 0, from: 'cargo' })).toBe('bad_item');
+  });
+
+  it("won't equip a weapon from the cargo past 50 kg", () => {
+    const s = fresh();
+    give(s, 'vehicle.hand_cart');
+    addItems(s, 'item.firewood', 24, content);
+    addItems(s, 'item.cloth', 4, content);
+    ridden(s)!.cargo.push({ itemId: 'item.bamboo_spear', count: 1 });
+    s.inventory.weapon = null;
+    expect(code(s, { type: 'item.equip', index: 0, from: 'cargo' })).toBe('too_heavy');
+  });
+});
+
 describe('repairs and fuel (D-085, P-021)', () => {
   it('repairs with scrap metal from the pack or the cargo, with the knife, taking time', () => {
     const s = fresh();

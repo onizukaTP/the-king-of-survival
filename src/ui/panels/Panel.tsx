@@ -11,6 +11,7 @@ import { CraftPanel } from './CraftPanel';
 import { TestPanel } from './TestPanel';
 import { JournalPanel } from './JournalPanel';
 import { VehiclePanel } from './VehiclePanel';
+import { PlayerPanel } from './PlayerPanel';
 
 /** Right-hand panel (bottom sheet on mobile): the trip under way, Pack, Rest, the selected place, or where Prabu stands. */
 export function Panel() {
@@ -50,6 +51,7 @@ export function Panel() {
     );
   }
 
+  if (panel === 'player') return <PlayerPanel />;
   if (panel === 'pack') return <PackPanel />;
   if (panel === 'vehicle') return <VehiclePanel />;
   if (panel === 'rest') return <RestPanel />;

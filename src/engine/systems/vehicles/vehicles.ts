@@ -196,6 +196,35 @@ export function loadCargo(state: GameState, index: number, count: number, conten
   return { ok: true, state, events: [{ type: 'cargo_moved', loaded: true }] };
 }
 
+/**
+ * Moves whole pack stacks into the ridden vehicle's cargo, in pack order, as much of each as fits (Load all,
+ * Load selected). What doesn't fit stays in the pack; refused only if nothing fits.
+ */
+export function loadManyCargo(state: GameState, indexes: number[], content: Content): CommandResult {
+  const v = ridden(state);
+  const def = v && content.vehicles.byId[v.vehicleId];
+  if (!v || !def) return fail('no_vehicle', 'Prabu isn\'t riding anything.');
+  const stacks = state.inventory.stacks;
+  const unique = [...new Set(indexes)].sort((a, b) => a - b);
+  if (!unique.length || unique.some((i) => !Number.isInteger(i) || !stacks[i])) return fail('bad_item', 'That item isn\'t in the pack.');
+  const picked = unique.map((i) => stacks[i]!);
+  let moved = 0;
+  let leftKg = 0;
+  for (const stack of picked) {
+    const w = content.items[stack.itemId]!.weightKg;
+    const room = def.cargoKg - stacksKg(v.cargo, content);
+    const n = w > 0 ? Math.max(0, Math.min(stack.count, Math.floor((room + 1e-9) / w))) : stack.count;
+    leftKg += w * (stack.count - n);
+    if (n <= 0) continue;
+    addTo(v.cargo, { ...stack, count: n });
+    stack.count -= n;
+    moved += n;
+  }
+  if (!moved) return fail('cargo_full', `The ${nameOf(def)} is full (${def.cargoKg} kg).`);
+  state.inventory.stacks = stacks.filter((s) => s.count > 0);
+  return { ok: true, state, events: [{ type: 'cargo_moved', loaded: true, leftKg: Math.round(leftKg * 100) / 100 }] };
+}
+
 /** Moves part of a cargo stack into the pack, refused past the 50 kg maximum (D-036). */
 export function unloadCargo(state: GameState, index: number, count: number, content: Content): CommandResult {
   const v = ridden(state);

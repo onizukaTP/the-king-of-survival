@@ -8,6 +8,7 @@ import { passTime } from '../survival/survival';
 import { healingBlocked } from '../conditions/conditions';
 import { maxHealth } from '../../core/state';
 import { charmEffects } from '../charms/charms';
+import { ridden } from '../vehicles/ridden';
 
 const fail = (code: CommandError['code'], message: string) => ({ ok: false as const, error: { code, message } });
 
@@ -154,12 +155,31 @@ export function dropItem(state: GameState, index: number, count: number, content
   return { ok: true, state, events: [] };
 }
 
-/** One weapon slot (D-036); the previous weapon goes back into the pack. */
-export function equipItem(state: GameState, index: number, content: Content): CommandResult {
-  const stack = stackAt(state, index);
-  if (!stack) return fail('bad_item', 'That item isn\'t in the pack.');
-  if (!content.items[stack.itemId]!.weapon) return fail('not_a_weapon', `${content.items[stack.itemId]!.name} isn't a weapon.`);
-  const weapon = takeOne(state.inventory, index);
+/** Where an item to equip comes from: the pack, or the cargo of the vehicle he rides. */
+export type ItemSource = 'pack' | 'cargo';
+
+/** The stacks of the pack or of the ridden vehicle's cargo, or undefined when he rides nothing. */
+export function sourceStacks(state: GameState, from: ItemSource): Stack[] | undefined {
+  return from === 'cargo' ? ridden(state)?.cargo : state.inventory.stacks;
+}
+
+/** Takes one item out of the pack or the cargo, removing the stack when it empties. */
+export function takeOneFrom(state: GameState, from: ItemSource, index: number): Stack {
+  return takeOne({ stacks: sourceStacks(state, from)!, weapon: null, charms: [] }, index);
+}
+
+/** One weapon slot (D-036); the previous weapon goes back into the pack. It can come from the vehicle's cargo. */
+export function equipItem(state: GameState, index: number, content: Content, from: ItemSource = 'pack'): CommandResult {
+  const stacks = sourceStacks(state, from);
+  const stack = stacks && Number.isInteger(index) ? stacks[index] : undefined;
+  if (!stack) return fail('bad_item', from === 'cargo' ? 'That isn\'t in the cargo.' : 'That item isn\'t in the pack.');
+  const item = content.items[stack.itemId]!;
+  if (!item.weapon) return fail('not_a_weapon', `${item.name} isn't a weapon.`);
+  // The weapon in hand counts towards the carried weight (D-036), so taking one from the cargo adds to it.
+  if (from === 'cargo' && carriedKg(state.inventory, content) + item.weightKg > content.survival.carry.maxKg + 1e-9) {
+    return fail('too_heavy', `That would take Prabu past ${content.survival.carry.maxKg} kg.`);
+  }
+  const weapon = takeOneFrom(state, from, index);
   if (state.inventory.weapon) addStack(state.inventory, { itemId: state.inventory.weapon, count: 1 });
   state.inventory.weapon = weapon.itemId;
   return { ok: true, state, events: [] };

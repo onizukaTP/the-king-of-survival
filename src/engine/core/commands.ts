@@ -1,5 +1,5 @@
 import type { Content } from '../../content/loader';
-import { dropItem, equipItem, unequipItem, applyItem } from '../systems/inventory/inventory';
+import { dropItem, equipItem, unequipItem, applyItem, type ItemSource } from '../systems/inventory/inventory';
 import { drinkHere, fillBottles, hunt, search, takeFromGround, type Find } from '../systems/scavenging/scavenging';
 import { rest } from '../systems/survival/survival';
 import { craft } from '../systems/crafting/crafting';
@@ -10,7 +10,7 @@ import { closeCombat, combatAct, type CombatAction } from '../systems/combat/com
 import { debugEvent, debugFight, debugItem, debugNight, debugVehicle, debugVehicleState } from '../systems/debug/debug';
 import { finishIntro, progress } from '../systems/progression/progression';
 import { removeCharm, wearCharm } from '../systems/charms/charms';
-import { boardVehicle, buildVehicle, leaveVehicle, loadCargo, refuelVehicle, repairVehicle, unloadCargo } from '../systems/vehicles/vehicles';
+import { boardVehicle, buildVehicle, leaveVehicle, loadCargo, loadManyCargo, refuelVehicle, repairVehicle, unloadCargo } from '../systems/vehicles/vehicles';
 import { advanceTravel, startTravel, stopTravel, type TravelTarget } from '../systems/travel/travel';
 import type { GameState, Meter } from './state';
 
@@ -22,7 +22,8 @@ export type Command =
   // `index` points into inventory.stacks.
   | { type: 'item.use'; index: number }
   | { type: 'item.drop'; index: number; count: number }
-  | { type: 'item.equip'; index: number }
+  // `from: 'cargo'` takes it from the ridden vehicle's cargo instead of the pack.
+  | { type: 'item.equip'; index: number; from?: ItemSource }
   | { type: 'item.unequip' }
   | { type: 'scavenge.search'; torch: boolean }
   | { type: 'scavenge.hunt' }
@@ -31,7 +32,7 @@ export type Command =
   // `indexes` point into state.ground; `toCargo` puts them in the ridden vehicle instead of the pack (P-021).
   | { type: 'ground.take'; indexes: number[]; toCargo?: boolean }
   // Charms (D-086): wear one from the pack (`index` into stacks), or take a worn one off.
-  | { type: 'charm.wear'; index: number }
+  | { type: 'charm.wear'; index: number; from?: ItemSource }
   | { type: 'charm.remove'; itemId: string }
   // Vehicles (M10, P-021). `uid` from state.vehicles; cargo `index` points into the ridden vehicle's cargo.
   | { type: 'vehicle.board'; uid: string }
@@ -41,6 +42,8 @@ export type Command =
   | { type: 'vehicle.build'; vehicleId: string }
   | { type: 'cargo.load'; index: number; count: number }
   | { type: 'cargo.unload'; index: number; count: number }
+  // Whole pack stacks into the cargo, as much as fits (Load all / Load selected).
+  | { type: 'cargo.loadMany'; indexes: number[] }
   | { type: 'town.enter' }
   | { type: 'town.leave' }
   // `spotId`: 'edge', a building or a water point of the town he's in.
@@ -121,7 +124,7 @@ export type GameEvent =
   | { type: 'vehicle_repaired'; vehicleId: string; durability: number }
   | { type: 'refuelled'; vehicleId: string; litres: number }
   | { type: 'vehicle_built'; vehicleId: string }
-  | { type: 'cargo_moved'; loaded: boolean };
+  | { type: 'cargo_moved'; loaded: boolean; leftKg?: number };
 
 export type CommandError = {
   code:
@@ -211,7 +214,7 @@ function run(state: GameState, command: Command, content: Content): CommandResul
     case 'item.drop':
       return dropItem(state, command.index, command.count, content);
     case 'item.equip':
-      return equipItem(state, command.index, content);
+      return equipItem(state, command.index, content, command.from);
     case 'item.unequip':
       return unequipItem(state);
     case 'scavenge.search':
@@ -225,7 +228,7 @@ function run(state: GameState, command: Command, content: Content): CommandResul
     case 'ground.take':
       return takeFromGround(state, command.indexes, content, command.toCargo ?? false);
     case 'charm.wear':
-      return wearCharm(state, command.index, content);
+      return wearCharm(state, command.index, content, command.from);
     case 'charm.remove':
       return removeCharm(state, command.itemId);
     case 'vehicle.board':
@@ -242,6 +245,8 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return loadCargo(state, command.index, command.count, content);
     case 'cargo.unload':
       return unloadCargo(state, command.index, command.count, content);
+    case 'cargo.loadMany':
+      return loadManyCargo(state, command.indexes, content);
     case 'town.enter':
       return enterTown(state, content);
     case 'town.leave':

@@ -89,7 +89,7 @@ The four-rank battlefield replaced the band screen (D-067's columns) on 2026-11-
 
 - **Intro:** after New Game, before the map. The owner's five screens over one muted placeholder image (an eclipse), one at a time, with a page count, **Skip** and **Next** (**Begin** on the last). It shows once per run. The message line then reads "Day 1, midday. The eclipse is passing."
 - **Journal button** in the top bar after Rest. The Journal panel (side panel / bottom sheet): Level and XP to the next level, **Find my sister** with its text, **My mother's wish** as three lines, and the notes, newest first, each with its day and time.
-- **Pack:** a "Level 2 · 130 / 250 XP" line above the Stats block.
+- **Player panel** (moved there on 2026-11-26): a "Level 2 · 130 / 250 XP" line under his name.
 - **Message line:** XP gained ("+15 XP.") and level-ups ("Level 3: ACC +3, Dodge +2.").
 
 ## Item tooltips (owner, 2026-11-25)
@@ -107,8 +107,15 @@ The four-rank battlefield replaced the band screen (D-067's columns) on 2026-11-
 
 ## Charms (D-086, D-088)
 
-- **Pack:** a **Charms** section under Weapon with seven slots (Necklace, Earrings, Waist cord, Ring ×2, Bangle ×2), each with Take off. Charms not worn are listed under "Charms to wear"; the item card has **Wear**. The weight line shows the free limit with the silver waist chain (28 kg).
+- **Player panel:** the seven charm slots (Necklace, Earrings, Waist cord, Ring ×2, Bangle ×2), each with Take off. In the Pack, charms not worn are listed under "Charms to wear", and the item card has **Wear**. The Pack's weight line shows the free limit with the silver waist chain (28 kg).
 - **Tooltips** say what each charm does, its slot and rarity.
+
+## Player panel (owner, 2026-11-26)
+
+- A **Player** button in the top bar, before Pack, opens the Player panel: his name, age, level and XP; **Condition** (Health of its maximum, Food, Water, Rest, Radiation, what he carries against the limits, and any injury, illness or condition with its time left); **Equipped** (the weapon with Unequip, and the seven charm slots with Take off); **Stats** (damage and every stat); **To equip** (weapons and charms in the pack or in the cargo of the vehicle he rides, with Equip or Wear).
+- What he has equipped or worn is not in the pack or the cargo. The Pack no longer shows the weapon slot, the charms or the stats.
+- **Vehicle panel:** the pack list has tick boxes, with **Load all** and **Load selected**. Both load whole stacks in pack order as far as they fit; what doesn't fit stays in the pack and the message says how much.
+- The top bar wraps onto a second row when its buttons don't fit.
 
 ## Numbers the map screen shows (D-017 to D-020)
 - Speeds: road 4.5 km/h, cross-country 3 km/h.

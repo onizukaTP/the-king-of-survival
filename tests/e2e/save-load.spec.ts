@@ -94,20 +94,29 @@ test('the pack shows the starting kit and equips, and rest passes time', async (
   await page.goto('/?seed=2');
   await newGame(page);
 
+  // The Player panel (owner, 2026-11-26): what he has equipped and every stat.
+  await page.getByRole('button', { name: 'Player', exact: true }).click();
+  const player = page.getByTestId('player-panel');
+  await expect(player.locator('h2')).toHaveText('Prabu');
+  await expect(player).toContainText('Level 1 · 0 / 100 XP');
+  const equipped = page.getByTestId('equipped');
+  await expect(equipped).toContainText('WeaponHunting knife');
+  // Item tooltips come from the item's data.
+  await expect(equipped.locator('.item-name').first()).toHaveAttribute('title', /Damage 4–7 · SPD \+1, Crit \+5%\nAbilities: Stab, Open a vein/);
+  await expect(player.getByTestId('stats')).toContainText('Deathblow res');
+  await player.getByRole('button', { name: 'Unequip' }).click();
+  await expect(equipped).toContainText('WeaponBare hands');
+  // Unequipped, the knife is in the pack and offered to equip again.
+  await player.getByTestId('equippable').getByRole('button', { name: 'Equip Hunting knife' }).click();
+  await expect(equipped).toContainText('WeaponHunting knife');
+
   await page.getByRole('button', { name: /^Pack/ }).click();
   await expect(page.locator('.panel h2')).toHaveText('Pack');
-  await expect(page.locator('.slot')).toContainText('Hunting knife');
   await expect(page.locator('.panel')).toContainText('Lighter · 10/20');
   await expect(page.locator('.panel')).toContainText('Torch · 50%');
-  // Item tooltips come from the item's data.
-  await expect(page.locator('.slot .item-name')).toHaveAttribute('title', /Damage 4–7 · SPD \+1, Crit \+5%\nAbilities: Stab, Open a vein/);
+  // The equipped knife isn't listed in the pack.
+  await expect(page.locator('.panel')).not.toContainText('Hunting knife');
   await expect(page.getByRole('button', { name: /^Lighter/ })).toHaveAttribute('title', /Up to 20 uses/);
-
-  await page.getByRole('button', { name: 'Unequip' }).click();
-  await expect(page.locator('.panel')).toContainText('Nothing equipped.');
-  await page.getByRole('button', { name: /Hunting knife/ }).click();
-  await page.getByTestId('item-card').getByRole('button', { name: 'Equip' }).click();
-  await expect(page.locator('.slot')).toContainText('Hunting knife');
 
   await page.getByRole('button', { name: 'Rest', exact: true }).click();
   await page.getByRole('button', { name: '4 hours' }).click();
@@ -414,6 +423,15 @@ test('vehicles and charms (M10): build the cycle trailer, repair it, park it, we
   await page.getByRole('button', { name: /^Pack/ }).click();
   await page.getByRole('button', { name: /^Copper ring/ }).click();
   await page.getByTestId('item-card').getByRole('button', { name: 'Wear' }).click();
-  await expect(page.getByTestId('charm-slots')).toContainText('RingCopper ring');
-  await expect(page.getByTestId('charm-slots').locator('.item-name')).toHaveAttribute('title', /illness chance 50% lower/);
+  await page.getByRole('button', { name: 'Player', exact: true }).click();
+  await expect(page.getByTestId('equipped')).toContainText('RingCopper ring');
+  await expect(page.getByTestId('equipped').locator('.item-name').nth(1)).toHaveAttribute('title', /illness chance 50% lower/);
+
+  // Load selected and Load all (owner, 2026-11-26).
+  await page.getByTestId('vehicle-button').click();
+  await panel.getByRole('checkbox', { name: 'Select Lighter' }).check();
+  await panel.getByRole('button', { name: 'Load selected (1)' }).click();
+  await expect(panel.locator('ul.items').first()).toContainText('Lighter');
+  await panel.getByRole('button', { name: 'Load all' }).click();
+  await expect(panel).toContainText('The pack is empty.');
 });

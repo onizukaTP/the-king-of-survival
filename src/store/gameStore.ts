@@ -18,7 +18,7 @@ export const DEBUG = new URLSearchParams(window.location.search).get('debug') ==
 
 type Screen = 'title' | 'game' | 'gameover';
 /** What the side panel shows when no trip is under way (D-016 plus the approved Pack layout). */
-export type PanelMode = 'pack' | 'vehicle' | 'rest' | 'craft' | 'journal' | 'here' | 'test' | null;
+export type PanelMode = 'player' | 'pack' | 'vehicle' | 'rest' | 'craft' | 'journal' | 'here' | 'test' | null;
 /** Pack order: grouped by kind, or a flat list by name or heaviest first. Price joins with trading. */
 export type PackSort = 'type' | 'name' | 'weight';
 
@@ -121,7 +121,7 @@ function describe(events: GameEvent[]): string | null {
     if (e.type === 'vehicle_repaired') notes.push(`Repaired the ${vehicleName(e.vehicleId)} to ${Math.round(e.durability)}.`);
     if (e.type === 'refuelled') notes.push(`Refuelled: ${e.litres} litres in the tank.`);
     if (e.type === 'vehicle_built') notes.push(`Made a ${vehicleName(e.vehicleId)}.`);
-    if (e.type === 'cargo_moved') notes.push(e.loaded ? 'Loaded.' : 'Unloaded.');
+    if (e.type === 'cargo_moved') notes.push(e.loaded ? `Loaded.${e.leftKg ? ` ${e.leftKg} kg didn't fit and stays in the pack.` : ''}` : 'Unloaded.');
     if (e.type === 'cooked') {
       const to = content.fire.recipes.find((r) => r.id === e.recipeId)?.to;
       notes.push(`Made ${to ? itemName(to).toLowerCase() : 'it'}${e.count > 1 ? ` ×${e.count}` : ''}.`);

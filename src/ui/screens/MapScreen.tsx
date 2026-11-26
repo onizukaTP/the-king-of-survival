@@ -34,7 +34,7 @@ export function MapScreen() {
     ? `In ${content.sites[game.town.siteId]?.name}${spot && spot.id !== TOWN_EDGE ? `: ${spot.name}` : ''}`
     : game.travel ? 'On the road' : here ? `At: ${here.name}` : 'In the open';
   const panelOpen = Boolean(selection || (game.town && townSelection) || game.travel || panel);
-  const toggle = (p: 'pack' | 'vehicle' | 'rest' | 'craft' | 'journal' | 'test') => openPanel(panel === p ? null : p);
+  const toggle = (p: 'player' | 'pack' | 'vehicle' | 'rest' | 'craft' | 'journal' | 'test') => openPanel(panel === p ? null : p);
   const vehicle = riddenDef(game, content);
   const durability = ridden(game)?.durability;
   const warnAt = content.survival.warnAt;
@@ -82,6 +82,7 @@ export function MapScreen() {
             );
           })}
         </div>
+        <button className="small" aria-pressed={panel === 'player'} onClick={() => toggle('player')}>Player</button>
         <button className="small" aria-pressed={panel === 'pack'} onClick={() => toggle('pack')}>
           Pack {formatKg(carriedKg(game.inventory, content))}
         </button>

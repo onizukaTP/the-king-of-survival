@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Stack } from '../../engine/core/state';
 import { distanceKm } from '../../engine/systems/travel/geo';
 import { ridden, stacksKg } from '../../engine/systems/vehicles/ridden';
@@ -8,11 +9,12 @@ import { formatDuration, formatKg, formatKm } from '../format';
 
 const vehicleName = (vehicleId: string) => content.vehicles.byId[vehicleId]?.name ?? vehicleId;
 
-/** One cargo or pack row with buttons to move one or all of it. */
-function MoveRow({ stack, verb, onMove }: { stack: Stack; verb: string; onMove: (count: number) => void }) {
+/** One cargo or pack row with buttons to move one or all of it, and a tick box when it can be picked. */
+function MoveRow({ stack, verb, onMove, picked, onPick }: { stack: Stack; verb: string; onMove: (count: number) => void; picked?: boolean; onPick?: () => void }) {
   const item = content.items[stack.itemId]!;
   return (
     <li className="item-line">
+      {onPick && <input type="checkbox" checked={picked} onChange={onPick} aria-label={`Select ${item.name}`} />}
       <span className="item-row static"><span><ItemName id={stack.itemId} count={stack.count} /></span><span className="muted">{formatKg(item.weightKg * stack.count)}</span></span>
       <button className="small row-use" aria-label={`${verb} ${item.name}`} onClick={() => onMove(stack.count)}>{verb}{stack.count > 1 ? ' all' : ''}</button>
       {stack.count > 1 && <button className="small row-use" aria-label={`${verb} one ${item.name}`} onClick={() => onMove(1)}>1</button>}
@@ -25,6 +27,11 @@ export function VehiclePanel() {
   const game = useGameStore((s) => s.game)!;
   const act = useGameStore((s) => s.act);
   const openPanel = useGameStore((s) => s.openPanel);
+  // Ticks belong to the pack as it was when they were made; any change to the pack clears them.
+  const [ticks, setTicks] = useState<{ stacks: Stack[]; picked: number[] }>({ stacks: [], picked: [] });
+  const picked = ticks.stacks === game.inventory.stacks ? ticks.picked : [];
+  const pick = (i: number) => setTicks({ stacks: game.inventory.stacks, picked: picked.includes(i) ? picked.filter((p) => p !== i) : [...picked, i] });
+  const loadMany = (indexes: number[]) => act({ type: 'cargo.loadMany', indexes });
   const v = ridden(game);
   const def = v && content.vehicles.byId[v.vehicleId];
   const here = vehiclesHere(game);
@@ -77,7 +84,20 @@ export function VehiclePanel() {
           ) : <p className="muted">Empty.</p>}
           <h3>From the pack</h3>
           {game.inventory.stacks.length ? (
-            <ul className="items">{game.inventory.stacks.map((s, i) => <MoveRow key={i} stack={s} verb="Load" onMove={(count) => act({ type: 'cargo.load', index: i, count })} />)}</ul>
+            <>
+              <div className="card-actions">
+                <button className="small" onClick={() => loadMany(game.inventory.stacks.map((_, i) => i))}>Load all</button>
+                <button className="small" disabled={!picked.length} title={picked.length ? undefined : 'Tick the items to load'} onClick={() => loadMany(picked)}>
+                  Load selected{picked.length ? ` (${picked.length})` : ''}
+                </button>
+              </div>
+              <ul className="items">
+                {game.inventory.stacks.map((s, i) => (
+                  <MoveRow key={i} stack={s} verb="Load" picked={picked.includes(i)} onPick={() => pick(i)}
+                    onMove={(count) => act({ type: 'cargo.load', index: i, count })} />
+                ))}
+              </ul>
+            </>
           ) : <p className="muted">The pack is empty.</p>}
         </>
       ) : <p className="muted">On foot.</p>}

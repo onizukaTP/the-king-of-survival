@@ -2,7 +2,7 @@ import type { Content } from '../../../content/loader';
 import type { Stats } from '../../../content/schemas';
 import type { CommandError, CommandResult } from '../../core/commands';
 import type { GameState, Inventory } from '../../core/state';
-import { addStack, takeOne } from '../inventory/inventory';
+import { addStack, sourceStacks, takeOneFrom, type ItemSource } from '../inventory/inventory';
 
 const fail = (code: CommandError['code'], message: string) => ({ ok: false as const, error: { code, message } });
 
@@ -28,10 +28,11 @@ export function charmEffects(inventory: Inventory, content: Content) {
   return fx;
 }
 
-/** Puts on a charm from the pack, if its slot has room and he isn't wearing the same one (P-022). */
-export function wearCharm(state: GameState, index: number, content: Content): CommandResult {
-  const stack = Number.isInteger(index) ? state.inventory.stacks[index] : undefined;
-  if (!stack) return fail('bad_item', 'That item isn\'t in the pack.');
+/** Puts on a charm from the pack or the vehicle's cargo, if its slot has room and he isn't wearing the same one (P-022). */
+export function wearCharm(state: GameState, index: number, content: Content, from: ItemSource = 'pack'): CommandResult {
+  const stacks = sourceStacks(state, from);
+  const stack = stacks && Number.isInteger(index) ? stacks[index] : undefined;
+  if (!stack) return fail('bad_item', from === 'cargo' ? 'That isn\'t in the cargo.' : 'That item isn\'t in the pack.');
   const item = content.items[stack.itemId]!;
   if (!item.charm) return fail('not_a_charm', `${item.name} isn't a charm.`);
   const worn = state.inventory.charms;
@@ -39,7 +40,7 @@ export function wearCharm(state: GameState, index: number, content: Content): Co
   const slots = content.charms.slots[item.charm.slot] ?? 0;
   const used = worn.filter((id) => content.items[id]?.charm?.slot === item.charm!.slot).length;
   if (used >= slots) return fail('slot_full', `No free ${item.charm.slot} slot. Take one off first.`);
-  takeOne(state.inventory, index);
+  takeOneFrom(state, from, index);
   worn.push(item.id);
   return { ok: true, state, events: [{ type: 'charm_worn', itemId: item.id }] };
 }

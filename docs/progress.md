@@ -92,6 +92,7 @@
   - Testing tools (owner's request): the Test panel can give any item or every charm, park any vehicle, and set the ridden vehicle's durability and fuel.
 
 - **Player panel and cargo loading** (owner, 2026-11-26; on `dev`): a Player tab with everything equipped and worn, his condition and every stat, and equipping from the pack or the vehicle; the weapon, charms and stats left the Pack. Load all and Load selected in the Vehicle panel. The top bar wraps when crowded. 233 unit tests and 14 e2e tests pass.
+- **Test panel lists** (owner, 2026-11-26; on `dev`): every list in the Test panel is alphabetical, and charms have their own list (give one charm, or one of every charm).
 
 ## In progress
 - Nothing.

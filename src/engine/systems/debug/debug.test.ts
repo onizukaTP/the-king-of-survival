@@ -37,4 +37,22 @@ describe('testing tools (D-068)', () => {
     const open = run({ type: 'debug.event', eventId: 'event.snake' });
     expect(open.ok && run({ type: 'debug.night' }, open.state)).toMatchObject({ ok: false, error: { code: 'event_open' } });
   });
+
+  it('gives any item, leaving what is past 50 kg on the ground', () => {
+    const r = run({ type: 'debug.item', itemId: 'item.navaratna_ring', count: 2 });
+    expect(r.ok && r.state.inventory.stacks.find((x) => x.itemId === 'item.navaratna_ring')?.count).toBe(2);
+    const heavy = run({ type: 'debug.item', itemId: 'item.biodiesel', count: 12 });
+    expect(heavy.ok && heavy.state.ground.length).toBe(1);
+    expect(run({ type: 'debug.item', itemId: 'item.dragon', count: 1 })).toMatchObject({ ok: false });
+  });
+
+  it("parks any vehicle here in full repair, and sets the ridden vehicle's durability and fuel", () => {
+    const r = run({ type: 'debug.vehicle', vehicleId: 'vehicle.auto_rickshaw' });
+    if (!r.ok) throw new Error(r.error.message);
+    expect(r.state.vehicles.list[0]).toMatchObject({ vehicleId: 'vehicle.auto_rickshaw', durability: 100, fuel: 10, cargo: [] });
+    expect(run({ type: 'debug.vehicleState', durability: 5, fuel: 1 }, r.state)).toMatchObject({ ok: false, error: { code: 'no_vehicle' } });
+    const on = run({ type: 'vehicle.board', uid: r.state.vehicles.list[0]!.uid }, r.state);
+    const set = on.ok ? run({ type: 'debug.vehicleState', durability: 5, fuel: 99 }, on.state) : on;
+    expect(set.ok && set.state.vehicles.list[0]).toMatchObject({ durability: 5, fuel: 10 });
+  });
 });

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { content, useGameStore } from '../../store/gameStore';
+import { ridden } from '../../engine/systems/vehicles/ridden';
 
-/** Testing tools (D-068), shown only with ?debug=1: open any event, start an ambush or any fight, make it night. */
+/** Testing tools (D-068), shown only with ?debug=1: events, fights, night, any item, any vehicle and its state. */
 export function TestPanel() {
   const act = useGameStore((s) => s.act);
   const openPanel = useGameStore((s) => s.openPanel);
@@ -12,6 +13,17 @@ export function TestPanel() {
   const [ambush, setAmbush] = useState(false);
   const run = (command: Parameters<typeof act>[0]) => { if (act(command)) openPanel(null); };
   const total = Object.values(counts).reduce((n, c) => n + c, 0);
+  const game = useGameStore((s) => s.game)!;
+  const items = Object.values(content.items);
+  const vehicles = Object.values(content.vehicles.byId);
+  const [itemId, setItemId] = useState(items[0]!.id);
+  const [itemCount, setItemCount] = useState(1);
+  const [vehicleId, setVehicleId] = useState(vehicles[0]!.id);
+  const riding = ridden(game);
+  const ridingDef = riding && content.vehicles.byId[riding.vehicleId];
+  const [durability, setDurability] = useState(20);
+  const [fuel, setFuel] = useState(1);
+  const charms = items.filter((i) => i.charm);
 
   return (
     <div className="panel-body" data-testid="test-panel">
@@ -46,6 +58,46 @@ export function TestPanel() {
         onClick={() => run({ type: 'debug.fight', enemies: Object.entries(counts).map(([enemyId, count]) => ({ enemyId, count })), ambush })}>
         Start fight
       </button>
+
+      <h3>Items</h3>
+      <div className="test-row">
+        <select aria-label="Item" value={itemId} onChange={(e) => setItemId(e.target.value)}>
+          {items.map((i) => <option key={i.id} value={i.id}>{i.name}</option>)}
+        </select>
+        <input type="number" min={1} max={100} value={itemCount} aria-label="Item count"
+          onChange={(ev) => setItemCount(Math.max(1, Math.min(100, Number(ev.target.value) || 1)))} />
+        <button className="small" onClick={() => act({ type: 'debug.item', itemId, count: itemCount })}>Give</button>
+      </div>
+      <button className="small" onClick={() => charms.forEach((c) => act({ type: 'debug.item', itemId: c.id, count: 1 }))}>Give one of every charm</button>
+      <p className="muted tiny">Past 50 kg, the rest is left on the ground here.</p>
+
+      <h3>Vehicles</h3>
+      <div className="test-row">
+        <select aria-label="Vehicle" value={vehicleId} onChange={(e) => setVehicleId(e.target.value)}>
+          {vehicles.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
+        </select>
+        <button className="small" onClick={() => act({ type: 'debug.vehicle', vehicleId })}>Park one here</button>
+      </div>
+      {riding && ridingDef ? (
+        <>
+          <p className="muted tiny">Riding: {ridingDef.name}</p>
+          {riding.durability !== null && (
+            <label className="test-row">
+              <span>Durability</span>
+              <input type="number" min={0} max={100} value={durability} aria-label="Durability" onChange={(ev) => setDurability(Number(ev.target.value) || 0)} />
+            </label>
+          )}
+          {riding.fuel !== null && (
+            <label className="test-row">
+              <span>Fuel (litres)</span>
+              <input type="number" min={0} max={ridingDef.fuel?.tankLitres ?? 0} step={0.5} value={fuel} aria-label="Fuel" onChange={(ev) => setFuel(Number(ev.target.value) || 0)} />
+            </label>
+          )}
+          {(riding.durability !== null || riding.fuel !== null) && (
+            <button className="small" onClick={() => act({ type: 'debug.vehicleState', durability: riding.durability !== null ? durability : null, fuel: riding.fuel !== null ? fuel : null })}>Set</button>
+          )}
+        </>
+      ) : <p className="muted tiny">Get on a vehicle to set its durability and fuel.</p>}
 
       <h3>Time</h3>
       <button className="small" onClick={() => run({ type: 'debug.night' })}>Jump to 22:00</button>

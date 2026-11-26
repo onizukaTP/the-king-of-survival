@@ -88,7 +88,8 @@
   - The Vehicle button and panel, Get on in the Here panel, Load into cargo, parked vehicles on the map, "By" on trips.
   - 13 charms in seven slots in the Pack, with their effects in stats, drain, carry, events, searching, illness and conditions; found by rarity in houses, apartments, textile shops and places of worship.
   - New item: can of biodiesel (5 kg, 5 litres) in petrol bunks, garages, NH 744 and the station. The cycle and engine parts are dropped (D-085).
-  - Save v11 with a migration from v10. 227 unit tests and 14 e2e tests pass; checked in the browser.
+  - Save v11 with a migration from v10. 229 unit tests and 14 e2e tests pass; checked in the browser.
+  - Testing tools (owner's request): the Test panel can give any item or every charm, park any vehicle, and set the ridden vehicle's durability and fuel.
 
 ## In progress
 - Nothing.

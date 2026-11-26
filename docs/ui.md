@@ -82,6 +82,8 @@ The four-rank battlefield replaced the band screen (D-067's columns) on 2026-11-
   - **Start an ambush.**
   - **Fight:** how many of each enemy (0–4), whether it's an ambush, then Start fight.
   - **Jump to 22:00.**
+  - **Items** (owner, 2026-11-26): give any item, 1–100 at a time (past 50 kg the rest goes on the ground), or one of every charm.
+  - **Vehicles** (owner, 2026-11-26): park any vehicle here in full repair with a full tank; while riding, set its durability and fuel.
 
 ## Intro and Journal (M8) — D-076
 

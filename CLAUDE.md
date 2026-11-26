@@ -346,7 +346,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Done — live (released 2026-11-23); Fight choices wait for M7 (D-059) |
 | M7 | Combat | M3, M6 | Done — live; four-rank redesign (D-069) live (released 2026-11-24) |
 | M8 | Progression, opening narrative, journal | M7 | Done — live (released 2026-11-25); journal text is the owner's (D-083) |
-| M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Done — on `dev` (D-085, D-087 to D-089), with charms (D-086, D-088) |
+| M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Done — live (released 2026-11-26; D-085, D-087 to D-089), with charms (D-086, D-088) |
 | M9 | Integration, balance pass, playtest | All | Blocked |
 
 Keep this table and `docs/progress.md` current at the end of every work session.

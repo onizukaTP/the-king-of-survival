@@ -83,7 +83,7 @@
   - 200 unit tests and 13 e2e tests pass; checked in the browser on desktop and phone width.
   - The sister entry's text is now the owner's (D-083).
 - **Item tooltips** (owner; live, released 2026-11-25): hovering an item anywhere (Pack rows and weapon slot, ground piles, Craft inputs, tool and output, combat items and finds, event finds and losses) shows its name, what it does, weapon damage, bonuses and abilities, charge, what it needs, spoiling time and weight. Built only from the item data. Native browser tooltips, so they don't show on touch screens.
-- **M10 Vehicles and charms** (D-085 to D-089; on `dev`, not released):
+- **M10 Vehicles and charms** (D-085 to D-089) — live (released 2026-11-26):
   - Hand cart, cycle, cycle with trailer, auto-rickshaw and bullock cart with the approved speeds, cargo, effort, wear, repairs with scrap metal, the auto's biodiesel and the rarity table. The trailer is a Craft recipe.
   - The Vehicle button and panel, Get on in the Here panel, Load into cargo, parked vehicles on the map, "By" on trips.
   - 13 charms in seven slots in the Pack, with their effects in stats, drain, carry, events, searching, illness and conditions; found by rarity in houses, apartments, textile shops and places of worship.

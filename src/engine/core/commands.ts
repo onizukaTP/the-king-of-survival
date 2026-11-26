@@ -7,7 +7,7 @@ import { cook, feedFire, makeFire } from '../systems/fire/fire';
 import { enterTown, leaveTown, walkTo } from '../systems/town/town';
 import { chooseEvent, closeEvent } from '../systems/events/events';
 import { closeCombat, combatAct, type CombatAction } from '../systems/combat/combat';
-import { debugEvent, debugFight, debugNight } from '../systems/debug/debug';
+import { debugEvent, debugFight, debugItem, debugNight, debugVehicle, debugVehicleState } from '../systems/debug/debug';
 import { finishIntro, progress } from '../systems/progression/progression';
 import { removeCharm, wearCharm } from '../systems/charms/charms';
 import { boardVehicle, buildVehicle, leaveVehicle, loadCargo, refuelVehicle, repairVehicle, unloadCargo } from '../systems/vehicles/vehicles';
@@ -62,7 +62,10 @@ export type Command =
   // Testing tools (D-068), offered by the UI only with ?debug=1.
   | { type: 'debug.event'; eventId: string }
   | { type: 'debug.fight'; enemies: { enemyId: string; count: number }[]; ambush: boolean }
-  | { type: 'debug.night' };
+  | { type: 'debug.night' }
+  | { type: 'debug.item'; itemId: string; count: number }
+  | { type: 'debug.vehicle'; vehicleId: string }
+  | { type: 'debug.vehicleState'; durability: number | null; fuel: number | null };
 
 export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst' | 'radiation' | 'injury' | 'killed';
 
@@ -269,6 +272,12 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return debugFight(state, command.enemies, command.ambush, content);
     case 'debug.night':
       return debugNight(state);
+    case 'debug.item':
+      return debugItem(state, command.itemId, command.count, content);
+    case 'debug.vehicle':
+      return debugVehicle(state, command.vehicleId, content);
+    case 'debug.vehicleState':
+      return debugVehicleState(state, command.durability, command.fuel, content);
     default:
       return { ok: false, error: { code: 'unknown_command', message: `Unknown command: ${(command as { type: string }).type}` } };
   }

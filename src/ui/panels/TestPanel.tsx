@@ -2,28 +2,33 @@ import { useState } from 'react';
 import { content, useGameStore } from '../../store/gameStore';
 import { ridden } from '../../engine/systems/vehicles/ridden';
 
-/** Testing tools (D-068), shown only with ?debug=1: events, fights, night, any item, any vehicle and its state. */
+const byName = <T,>(list: T[], name: (x: T) => string) => [...list].sort((a, b) => name(a).localeCompare(name(b)));
+
+/** Testing tools (D-068), shown only with ?debug=1: events, fights, night, any item or charm, any vehicle and its state. Every list is alphabetical. */
 export function TestPanel() {
   const act = useGameStore((s) => s.act);
   const openPanel = useGameStore((s) => s.openPanel);
-  const events = content.events.events;
-  const enemies = Object.values(content.enemies);
+  const events = byName(content.events.events, (e) => e.title);
+  const firstEnemy = Object.values(content.enemies)[0]!.id;
+  const enemies = byName(Object.values(content.enemies), (e) => e.name);
   const [eventId, setEventId] = useState(events[0]!.id);
-  const [counts, setCounts] = useState<Record<string, number>>(() => Object.fromEntries(enemies.map((e, i) => [e.id, i === 0 ? 2 : 0])));
+  const [counts, setCounts] = useState<Record<string, number>>(() => Object.fromEntries(enemies.map((e) => [e.id, e.id === firstEnemy ? 2 : 0])));
   const [ambush, setAmbush] = useState(false);
   const run = (command: Parameters<typeof act>[0]) => { if (act(command)) openPanel(null); };
   const total = Object.values(counts).reduce((n, c) => n + c, 0);
   const game = useGameStore((s) => s.game)!;
-  const items = Object.values(content.items);
-  const vehicles = Object.values(content.vehicles.byId);
+  const allItems = byName(Object.values(content.items), (i) => i.name);
+  const items = allItems.filter((i) => !i.charm);
+  const charms = allItems.filter((i) => i.charm);
+  const vehicles = byName(Object.values(content.vehicles.byId), (v) => v.name);
   const [itemId, setItemId] = useState(items[0]!.id);
+  const [charmId, setCharmId] = useState(charms[0]!.id);
   const [itemCount, setItemCount] = useState(1);
   const [vehicleId, setVehicleId] = useState(vehicles[0]!.id);
   const riding = ridden(game);
   const ridingDef = riding && content.vehicles.byId[riding.vehicleId];
   const [durability, setDurability] = useState(20);
   const [fuel, setFuel] = useState(1);
-  const charms = items.filter((i) => i.charm);
 
   return (
     <div className="panel-body" data-testid="test-panel">
@@ -68,8 +73,16 @@ export function TestPanel() {
           onChange={(ev) => setItemCount(Math.max(1, Math.min(100, Number(ev.target.value) || 1)))} />
         <button className="small" onClick={() => act({ type: 'debug.item', itemId, count: itemCount })}>Give</button>
       </div>
-      <button className="small" onClick={() => charms.forEach((c) => act({ type: 'debug.item', itemId: c.id, count: 1 }))}>Give one of every charm</button>
       <p className="muted tiny">Past 50 kg, the rest is left on the ground here.</p>
+
+      <h3>Charms</h3>
+      <div className="test-row">
+        <select aria-label="Charm" value={charmId} onChange={(e) => setCharmId(e.target.value)}>
+          {charms.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </select>
+        <button className="small" onClick={() => act({ type: 'debug.item', itemId: charmId, count: 1 })}>Give</button>
+      </div>
+      <button className="small" onClick={() => charms.forEach((c) => act({ type: 'debug.item', itemId: c.id, count: 1 }))}>Give one of every charm</button>
 
       <h3>Vehicles</h3>
       <div className="test-row">

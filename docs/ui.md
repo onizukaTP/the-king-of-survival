@@ -82,6 +82,8 @@ The four-rank battlefield replaced the band screen (D-067's columns) on 2026-11-
   - **Start an ambush.**
   - **Fight:** how many of each enemy (0–4), whether it's an ambush, then Start fight.
   - **Jump to 22:00.**
+  - **Items** (owner, 2026-11-26): give any item, 1–100 at a time (past 50 kg the rest goes on the ground), or one of every charm.
+  - **Vehicles** (owner, 2026-11-26): park any vehicle here in full repair with a full tank; while riding, set its durability and fuel.
 
 ## Intro and Journal (M8) — D-076
 
@@ -93,6 +95,20 @@ The four-rank battlefield replaced the band screen (D-067's columns) on 2026-11-
 ## Item tooltips (owner, 2026-11-25)
 
 - Every item name shows a tooltip on hover: name, effects, weapon damage, bonuses and abilities, charge, what it needs, spoiling time and weight, all from the item data. Inline names have a dotted underline. They are the browser's own tooltips, so touch screens don't show them; the Pack's item card still gives the same facts on a tap.
+
+## Vehicles (M10) — D-089, approved
+
+- **Vehicle button** in the top bar after Pack, shown once he owns a vehicle: "Vehicle: Cycle 72%" while riding (durability), or just "Vehicle".
+- **Vehicle panel:** what he rides with durability (a bar, yellow at 25 or below), fuel, cargo against capacity and speeds; **Get off**, **Repair** ("Repair: 2 scrap metal → 100, 1 h", disabled with the reason) and **Refuel** for the auto; the cargo with Unload (all or 1); the pack with Load (all or 1); vehicles here with Get on; vehicles parked elsewhere with their distance.
+- **Here panel:** "Vehicles here" with Get on; on the ground, **Load into cargo** (selected or all) while riding.
+- **Trip panel and trip preview:** a "By" row (the vehicle, or On foot) and a warning when it is wearing out.
+- **Map:** a small square where each vehicle is parked; clicking it plans a trip there.
+- **Craft panel:** the Cycle trailer card at the top, needing a cycle and a hand cart here.
+
+## Charms (D-086, D-088)
+
+- **Pack:** a **Charms** section under Weapon with seven slots (Necklace, Earrings, Waist cord, Ring ×2, Bangle ×2), each with Take off. Charms not worn are listed under "Charms to wear"; the item card has **Wear**. The weight line shows the free limit with the silver waist chain (28 kg).
+- **Tooltips** say what each charm does, its slot and rarity.
 
 ## Numbers the map screen shows (D-017 to D-020)
 - Speeds: road 4.5 km/h, cross-country 3 km/h.

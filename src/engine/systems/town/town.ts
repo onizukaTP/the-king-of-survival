@@ -5,9 +5,10 @@ import type { GameState } from '../../core/state';
 import { passTime } from '../survival/survival';
 import { distanceKm, lerp, type LatLon } from '../travel/geo';
 import { siteAt } from '../travel/travel';
-import { conditionEffects } from '../conditions/conditions';
 import { eventStopsMovement, maybeEvent } from '../events/events';
 import { lightTheWay } from '../night/night';
+import { cannotMove, ridden, speedFactor, travelSpeeds } from '../vehicles/ridden';
+import { wearVehicle } from '../vehicles/vehicles';
 
 const fail = (code: CommandError['code'], message: string) => ({ ok: false as const, error: { code, message } });
 
@@ -77,8 +78,14 @@ export function walkTo(state: GameState, spotId: string, content: Content): Comm
   if (!spot) return fail('unknown_spot', 'That place isn\'t in this town.');
   if (state.town.at === spot.id) return fail('already_there', `Prabu is already at the ${spot.name.toLowerCase()}.`);
 
+  const stuck = cannotMove(state, content);
+  if (stuck) return fail('cannot_move', stuck);
   const from = state.player.position;
-  const total = Math.max(1, Math.round(walkMinutes(from, spot, content) / conditionEffects(state.survival, content).speed));
+  // P-021: a vehicle he rides comes along at its road speed; a sprained ankle slows him on foot (D-061).
+  const ratio = travelSpeeds(state, content).road / content.world.roadSpeedKmh;
+  const total = Math.max(1, Math.round(walkMinutes(from, spot, content) / ratio / speedFactor(state, content)));
+  const km = distanceKm(from, spot);
+  const wear = (share: number) => ridden(state) !== undefined && wearVehicle(state, km * share, 0, content, events);
   const events: GameEvent[] = [];
   let walked = 0;
   while (walked < total) {
@@ -91,12 +98,14 @@ export function walkTo(state: GameState, spotId: string, content: Content): Comm
     // One event per walk at most; if it stops him (a sprained ankle), he stays where it happened.
     const stopped = !state.event && maybeEvent(state, { on: 'walk', minutes: leg, unlit }, content, events) && eventStopsMovement(state, content);
     if (walked < total && (stopped || events.slice(before).some((e) => e.type === 'meter_low'))) {
+      wear(walked / total);
       state.player.position = lerp(from, spot, walked / total);
       state.town.at = null;
       events.push({ type: 'travel_stopped', reason: 'meter' });
       return { ok: true, state, events };
     }
   }
+  wear(1);
   state.player.position = { lat: spot.lat, lon: spot.lon };
   state.town.at = spot.id;
   events.push({ type: 'walked', spotId: spot.id });

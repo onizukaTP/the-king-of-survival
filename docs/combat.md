@@ -1,4 +1,4 @@
-# Combat — four-rank tactical combat (D-069), built and live (released 2026-11-24)
+# Combat — four-rank tactical combat (D-069), built and live (released 2026-11-24); numbers approved for now (D-084)
 
 This replaces the first combat (M7, D-063 to D-067), which used Close/Mid/Far bands and generic Attack and Aim actions; that version is kept for history in `docs/combat-m7.md`. The owner's redesign (2026-11-24) asked for a four-rank formation, position-dependent abilities, initiative from SPD, statuses and resistances, Death's Door and Deathblow, corpses, and enemy AI that understands the formation. Stress and psychological mechanics are deferred.
 

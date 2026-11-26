@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { maxHealth, type Meter } from '../../engine/core/state';
 import { carriedKg } from '../../engine/systems/inventory/inventory';
+import { riddenDef, ridden } from '../../engine/systems/vehicles/ridden';
 import { siteAt } from '../../engine/systems/travel/travel';
 import { spotHere, TOWN_EDGE } from '../../engine/systems/town/town';
 import { MapView } from '../../map/MapView';
@@ -33,7 +34,9 @@ export function MapScreen() {
     ? `In ${content.sites[game.town.siteId]?.name}${spot && spot.id !== TOWN_EDGE ? `: ${spot.name}` : ''}`
     : game.travel ? 'On the road' : here ? `At: ${here.name}` : 'In the open';
   const panelOpen = Boolean(selection || (game.town && townSelection) || game.travel || panel);
-  const toggle = (p: 'pack' | 'rest' | 'craft' | 'journal' | 'test') => openPanel(panel === p ? null : p);
+  const toggle = (p: 'pack' | 'vehicle' | 'rest' | 'craft' | 'journal' | 'test') => openPanel(panel === p ? null : p);
+  const vehicle = riddenDef(game, content);
+  const durability = ridden(game)?.durability;
   const warnAt = content.survival.warnAt;
   const nightCfg = content.world.night;
   const night = isNight(game.clockMinutes, nightCfg);
@@ -82,6 +85,11 @@ export function MapScreen() {
         <button className="small" aria-pressed={panel === 'pack'} onClick={() => toggle('pack')}>
           Pack {formatKg(carriedKg(game.inventory, content))}
         </button>
+        {game.vehicles.list.length > 0 && (
+          <button className="small" aria-pressed={panel === 'vehicle'} onClick={() => toggle('vehicle')} data-testid="vehicle-button">
+            Vehicle{vehicle ? `: ${vehicle.name}${durability !== null && durability !== undefined ? ` ${Math.round(durability)}%` : ''}` : ''}
+          </button>
+        )}
         <button className="small" aria-pressed={panel === 'craft'} onClick={() => toggle('craft')}>Craft</button>
         <button className="small" aria-pressed={panel === 'rest'} onClick={() => toggle('rest')}>Rest</button>
         <button className="small" aria-pressed={panel === 'journal'} onClick={() => toggle('journal')}>Journal</button>

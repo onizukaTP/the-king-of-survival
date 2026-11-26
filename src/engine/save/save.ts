@@ -3,7 +3,7 @@ import type { Content } from '../../content/loader';
 import { gameStateSchema, startingInventory, startingSurvival, startPosition, type GameState } from '../core/state';
 import { initialMap } from '../systems/travel/travel';
 
-export const SAVE_VERSION = 10;
+export const SAVE_VERSION = 11;
 
 const saveSchema = z.object({
   saveVersion: z.literal(SAVE_VERSION),
@@ -108,6 +108,11 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
     ...save, saveVersion: 10,
     gameState: { ...(save.gameState as object), progression: { xp: 0, level: 1, crafted: [] }, journal: { notes: [] }, introSeen: true },
   }),
+  // v10 → v11 (M10): no charms worn and no vehicles yet.
+  10: (save) => {
+    const gs = save.gameState as { inventory: object };
+    return { ...save, saveVersion: 11, gameState: { ...gs, inventory: { ...gs.inventory, charms: [] }, vehicles: { list: [], riding: null, seq: 0 } } };
+  },
 };
 
 /** `createdAt` is passed in because the engine never reads the wall clock. */
@@ -141,7 +146,9 @@ export function loadSave(raw: unknown, content: Content): LoadResult {
   if (!content.characters[gameState.player.characterId]) return { ok: false, error: 'Save refers to an unknown character.' };
   if (gameState.map.discoveredSiteIds.some((id) => !content.sites[id])) return { ok: false, error: 'Save refers to an unknown place.' };
   const { stacks, weapon } = gameState.inventory;
-  const items = [...stacks, ...gameState.ground].map((st) => st.itemId).concat(weapon ? [weapon] : []);
+  const cargo = gameState.vehicles.list.flatMap((v) => v.cargo);
+  const items = [...stacks, ...gameState.ground, ...cargo].map((st) => st.itemId).concat(weapon ? [weapon] : [], gameState.inventory.charms);
+  if (gameState.vehicles.list.some((v) => !content.vehicles.byId[v.vehicleId])) return { ok: false, error: 'Save refers to an unknown vehicle.' };
   if (items.some((id) => !content.items[id])) return { ok: false, error: 'Save refers to an unknown item.' };
   const buildingIds = new Set(Object.values(content.towns).flatMap((t) => t.buildings.map((b) => b.id)));
   if (Object.keys(gameState.sites).some((id) => !content.sites[id] && !buildingIds.has(id))) return { ok: false, error: 'Save refers to an unknown place.' };

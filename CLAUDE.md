@@ -170,6 +170,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ crafting.md          # crafting (D-058)
 │  ├─ progression.md       # progression, intro, journal (D-076)
 │  ├─ combat.md            # four-rank combat (D-069)
+│  ├─ charms.md            # charms (D-086, D-088)
 │  └─ combat-m7.md         # the first combat, superseded (history)
 ├─ public/
 │  ├─ assets/              # placeholder art
@@ -257,7 +258,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-030 Vehicles added from Claude's suggestions: **bullock cart** (costly to buy, a living animal), **hand cart, auto-rickshaw, tractor with trailer, small boat, e-rickshaw**. Details in `docs/vehicles.md`.
 - D-031 (Q10.1) **Prototype vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw.** In the prototype the bullock cart is a very rare find (an abandoned cart with a bull).
 - D-032 (Q10.2) **Biodiesel** is made by survivors and sold everywhere; it runs vehicles and generators (generators are very rare). In the prototype it is scavenged, since there is no trading.
-- D-033 (Q10.3) Items and vehicles have **drop chances**; some things are found only where they would likely be, and very rarely, because scavengers got there first. A cycle is found whole or built from parts.
+- D-033 (Q10.3) Items and vehicles have **drop chances**; some things are found only where they would likely be, and very rarely, because scavengers got there first. A cycle is found whole or built from parts. *(Cycle parts superseded by D-085: a cycle is only found whole.)*
 - D-034 (Q10.4) **Vehicle maintenance:** vehicles wear with use, slowly on roads and faster off-road.
 - D-035 (approves P-011; replaces P-009) **Survival numbers:** meters 0–100 starting at 100; Water −3/h, Food −1.5/h, Rest −5/h awake, sleep +12.5/h; Rest at 0 → Food and Water drain ×2; each of Food or Water at 0 → Health −5/h; Health +2/h while sleeping with Food and Water above 25; Rest action (1 h / 4 h / until rested) anywhere; Health 0 → game over; radiation lowers maximum Health. **Legs are at most 30 minutes**, and a trip stops by itself at the end of a leg when a meter falls to 25 or to 0.
 - D-036 (approves P-012, with a change) Item numbers in `docs/items.md`. **Carry limit:** 25 kg on foot without penalty, up to **50 kg** at most. Above 25 kg, Food, Water and Rest drain faster, **gradually**: ×1 at 25 kg, ×1.5 at 37.5 kg, ×2 at 50 kg.
@@ -286,7 +287,7 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-059 (approves P-018) **Events (M6)** as proposed in `docs/events.md`: rolls on travel legs (5% road, 10% cross-country), searches (10%) and outdoor rest at night (5%/h, none by a fire); ×2 in the dark without light; ×1.5 for threats at Rest 0; 2-hour cooldown; the 12 starter events; a dialog that must be answered, with item-tagged choices shown disabled with the reason. **Threats are handled without fighting for now; a Fight choice comes with M7.** A nameless raiders' roadblock is fine in the prototype area.
 - D-060 (approves P-015) **Night and the moon** as proposed in `docs/night.md`, built with M6.
 - D-061 **Conditions:** events leave lasting modifiers on Prabu. Six approved: **Sprained ankle** (walk speed ×0.7, 12 h), **Restless** (Rest drains ×1.5 until a 4-hour sleep), **Weak** (max Health −10 for 24 h; in M7 also −25% damage), **Shaken** (searches take 25% longer, 8 h; ends after 1 h of rest at home or by a fire), **Infected wound** (Health −1/h and no healing until treated with a sterilized bandage or neem–turmeric paste), **Well rested** (after sleeping to full Rest at home or by a fire: Rest drains ×0.75 for 12 h). The same condition again restarts its timer; no stacking. Spec in `docs/events.md`.
-- D-062 **Charms (later):** special items that lower risks or raise yields; Prabu can wear **1 talisman, 2 rings and 2 bangles**. To be drafted and approved later; not built in M6.
+- D-062 **Charms (later):** special items that lower risks or raise yields; Prabu can wear **1 talisman, 2 rings and 2 bangles**. To be drafted and approved later; not built in M6. *(Slots refined by D-086.)*
 - D-063 (answers Q4 and T4) **Combat setup:** Prabu **fights alone** in the prototype, but the engine supports any number of fighters on each side so companions can join once team building is approved. **Range bands:** each enemy is Close, Mid or Far; knives and the aruval hit Close, the spear reaches Mid, the bow hits any band and uses arrows; moving a band costs a turn. **Fleeing** is a chance roll that uses his turn: easier from Far, harder when he is hurt or heavily loaded; if it fails, the enemies get a free hit. *(Bands, band movement and reach superseded by D-069: four-rank formations and abilities. Solo Prabu, fleeing and the free hits on failure stay.)*
 - D-064 (answers Q5) **Prototype enemies:** **mutated animals** (such as the wild dog pack, D-029) and **nameless human raiders** (such as the roadblock). No other mutated creatures in the prototype.
 - D-065 **Combat rules (owner):** every fighter has **ATK, DEF, SPD, crit rate and crit damage**; items and attire will raise or lower them later. **Turn order** is SPD plus a roll, as in Darkest Dungeon. Prototype enemies: **wild dogs, mutated animals and raiders**. **Fights come from random encounters.** **Hunting** stays a success roll driven by a hunting stat, which hunting items will raise later. **Weapons stay primitive** for now; guns, crossbows, compound bows, sniper rifles and so on come later. Numbers proposed in P-019.
@@ -300,13 +301,20 @@ Engine unit tests live next to the code (`*.test.ts`).
 - D-073 (owner, 2026-11-25; supersedes "There is no sister" in §4) **The missing sibling is a younger sister**, not a brother; her name is revealed later *(superseded by D-081: Prabu knows it from the start)*. **The father is dead**, but Prabu doesn't know it yet; it is revealed later in the story.
 - D-074 **The mother's clue came to her in a dream.** She was a devotee of Lord Vishnu and believed her daughter is still alive. There is no direction or place.
 - D-075 (supersedes D-020's 06:00) **A run starts on Day 1 at 12:00**, the moment his mother dies, during a **solar eclipse**. The eclipse sets the scene only; daylight rules apply. (Day 1 is a new moon in the moon cycle, D-060, which fits a solar eclipse.)
-- D-076 (approves P-020, with changes) **M8:** the XP table, 10 levels with fixed gains and the Journal as proposed; the journal entry is **"Find my sister"** with the dream as the clue. **The intro is the owner's text** (Prabu's first-person monologue), with "Twenty-seven years have passed" and "my father or my sister may still be alive". Spec in `docs/progression.md`.
+- D-076 (approves P-020, with changes) **M8:** the XP table, 10 levels with fixed gains and the Journal as proposed; the journal entry is **"Find my sister"** with the dream as the clue. **The intro is the owner's text** (Prabu's first-person monologue), with "Twenty-seven years have passed" and "my father or my sister may still be alive". Spec in `docs/progression.md`. *(The journal text is superseded by D-083.)*
 - D-077 **Intro:** "Svarga Loka" becomes **"Vaikuntha"**, Lord Vishnu's abode, fitting his mother's devotion (D-074).
 - D-078 (answers T3) **Prabu's outlook:** the intro's ruthless resolve is his **starting** frame of mind; through the journey he changes with the decisions the player makes. He has no fixed alignment.
 - D-079 (answers T1 and T2) **The family:** the father stayed with the family until the migration; the **father and the sister were lost there**. The sister is **5 years younger** than Prabu (born about 22 years ago; about 12 at the migration; 22 now).
 - D-080 **Names:** mother **Divya**, father **Vishnu**, sister **Nila**; the settlement is **Kottayam**. *(Superseded in part: Prabu knows Nila's name from the start, D-081; the settlement is Kottai Nagar, D-082.)*
 - D-081 (owner, 2026-11-25; supersedes the "revealed later" parts of D-073 and D-080) **In her dream, the mother heard Nila's name.** Prabu knows his sister's name **from the start**, so game text may call her Nila from the intro on.
 - D-082 (supersedes "Kottayam" in D-080 and "~20 people" in §1 and §4) **The settlement is Kottai Nagar, home to about 200 people.** The map's home place is named **Kottai Nagar**.
+- D-083 (owner, 2026-11-25; settles D-072 for the journal) **The "Find my sister" entry is the owner's text:** "Mother died saying the name Nila. She might be referring to your lost sister. Gather clues to find her." It replaces Claude's draft and the dream as the journal's clue (D-076).
+- D-084 **Combat numbers approved for now** (`docs/combat.md`); the owner may change them after testing for balance.
+- D-085 (owner's rulings for M10) **Vehicles:** durability on every vehicle **except the bullock cart**; repairs use **scrap metal**, and **oil** joins later as a repair tool; **a cycle is found whole, with no parts**, and a **recipe attaches a cart to the cycle** (supersedes "built from parts" in D-033); the **bull's grain and water are deferred**. Numbers proposed in P-021.
+- D-086 (owner, 2026-11-25; refines D-062) **Charms:** Prabu can wear at most **one necklace, two bangles, two rings, one set of earrings and a waist cord** (replaces D-062's 1 talisman, 2 rings and 2 bangles). Charms **never break**; the drafted names stay; **stainless steel bangles** replace glass bangles. **Set bonuses** come later in development.
+- D-087 (approves P-021) **Vehicle numbers** as in `docs/vehicles.md`: speeds, cargo, effort, durability and wear, repair with scrap metal, the cycle trailer recipe (cycle + hand cart + 2 coir rope + 1 scrap metal, 1 h), the auto-rickshaw's fuel, and the rarity table.
+- D-088 (approves P-022) **Charms** as in `docs/charms.md`: 13 charms across the necklace, earrings, waist cord, rings and bangles, their effects and where they are found.
+- D-089 **Vehicle screens:** a Vehicle button and panel; parked vehicles on the map; Get on in the Here panel; Load into cargo for ground finds; the trailer as a Craft recipe. Spec in `docs/ui.md`.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
@@ -337,8 +345,8 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M5 | Crafting | M3 | Done — live (released 2026-11-22); weapon recipes built with M7 (D-066) |
 | M6 | Event system: data-driven events with choices/consequences; night and moon (D-048, P-015) | M2, M3 | Done — live (released 2026-11-23); Fight choices wait for M7 (D-059) |
 | M7 | Combat | M3, M6 | Done — live; four-rank redesign (D-069) live (released 2026-11-24) |
-| M8 | Progression, opening narrative, journal | M7 | Done — live (released 2026-11-25); the journal's sister text is Claude's draft, awaiting approval (D-072) |
-| M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Blocked (needs vehicle numbers proposed and approved) |
+| M8 | Progression, opening narrative, journal | M7 | Done — live (released 2026-11-25); journal text is the owner's (D-083) |
+| M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Done — on `dev` (D-085, D-087 to D-089), with charms (D-086, D-088) |
 | M9 | Integration, balance pass, playtest | All | Blocked |
 
 Keep this table and `docs/progress.md` current at the end of every work session.

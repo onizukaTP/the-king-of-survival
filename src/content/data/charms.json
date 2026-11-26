@@ -1,0 +1,8 @@
+{
+  "slots": { "necklace": 1, "earrings": 1, "waist": 1, "ring": 2, "bangle": 2 },
+  "finds": [
+    { "rarity": "uncommon", "chance": 0.03, "at": ["btype.house", "btype.apartment_block", "btype.textile"] },
+    { "rarity": "rare", "chance": 0.015, "at": ["btype.place_of_worship", "btype.house", "btype.apartment_block"] },
+    { "rarity": "very_rare", "chance": 0.003, "at": ["btype.place_of_worship", "btype.apartment_block"], "towns": ["loc.madurai"] }
+  ]
+}

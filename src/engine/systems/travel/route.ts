@@ -1,5 +1,8 @@
 import type { Content } from '../../../content/loader';
 import type { Roads, WorldConfig } from '../../../content/schemas';
+
+/** km/h on roads and cross-country: walking (D-019) or a vehicle (P-021). */
+export type Speeds = { road: number; cross: number };
 import { distanceKm, lerp, type LatLon } from './geo';
 
 export interface Leg {
@@ -93,13 +96,13 @@ class Heap {
 }
 
 /** Fastest mix of cross-country and road (D-009): Dijkstra over the road graph plus virtual start and end nodes. */
-function fastestSteps(from: LatLon, to: LatLon, roads: Roads, world: WorldConfig): Step[] {
+function fastestSteps(from: LatLon, to: LatLon, roads: Roads, speeds: Speeds): Step[] {
   const adj = adjacency(roads);
   const n = roads.nodes.length;
   const START = n;
   const END = n + 1;
-  const crossMin = (km: number) => (km / world.crossCountrySpeedKmh) * 60;
-  const roadMin = (km: number) => (km / world.roadSpeedKmh) * 60;
+  const crossMin = (km: number) => (km / speeds.cross) * 60;
+  const roadMin = (km: number) => (km / speeds.road) * 60;
 
   const cost = new Float64Array(n + 2).fill(Infinity);
   const prev = new Int32Array(n + 2).fill(-1);
@@ -145,8 +148,8 @@ function fastestSteps(from: LatLon, to: LatLon, roads: Roads, world: WorldConfig
 }
 
 /** Cuts the route into legs of at most `legMaxMinutes` (D-010). Leg minutes are whole and sum to the rounded total. */
-function splitIntoLegs(steps: Step[], world: WorldConfig): Leg[] {
-  const speed = (m: Mode) => (m === 'road' ? world.roadSpeedKmh : world.crossCountrySpeedKmh);
+function splitIntoLegs(steps: Step[], speeds: Speeds, world: WorldConfig): Leg[] {
+  const speed = (m: Mode) => (m === 'road' ? speeds.road : speeds.cross);
   const legs: Leg[] = [];
   let path: LatLon[] = [steps[0]!.from];
   let km = 0;
@@ -195,10 +198,13 @@ function splitIntoLegs(steps: Step[], world: WorldConfig): Leg[] {
   return legs;
 }
 
-export function planRoute(from: LatLon, to: LatLon, content: Pick<Content, 'roads' | 'world'>): RoutePlan {
+export function planRoute(
+  from: LatLon, to: LatLon, content: Pick<Content, 'roads' | 'world'>,
+  speeds: Speeds = { road: content.world.roadSpeedKmh, cross: content.world.crossCountrySpeedKmh },
+): RoutePlan {
   // Copy just the coordinates: callers may pass richer objects (a site), and the path ends up in saved state.
-  const steps = fastestSteps({ lat: from.lat, lon: from.lon }, { lat: to.lat, lon: to.lon }, content.roads, content.world);
-  const legs = splitIntoLegs(steps, content.world);
+  const steps = fastestSteps({ lat: from.lat, lon: from.lon }, { lat: to.lat, lon: to.lon }, content.roads, speeds);
+  const legs = splitIntoLegs(steps, speeds, content.world);
   const sum = (mode: Mode) => steps.filter((s) => s.mode === mode).reduce((t, s) => t + s.km, 0);
   return { legs, minutes: legs.reduce((t, l) => t + l.minutes, 0), roadKm: sum('road'), crossKm: sum('cross') };
 }

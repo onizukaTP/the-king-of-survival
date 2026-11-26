@@ -16,6 +16,8 @@ const travelSchema = z.object({
   siteId: z.string().nullable(),
   legs: z.array(z.object({ minutes: z.number().int().nonnegative(), km: z.number().nonnegative(), path: z.array(latLon).min(2) })).min(1),
   nextLeg: z.number().int().nonnegative(),
+  // Speeds the legs were planned at (km/h): walking, or the vehicle he rides (P-021).
+  speeds: z.object({ road: z.number().positive(), cross: z.number().positive() }).optional(),
 });
 
 const stackSchema = z.object({
@@ -31,6 +33,21 @@ const inventorySchema = z.object({
   stacks: z.array(stackSchema),
   // The one weapon slot (D-036); it still counts towards the carried weight.
   weapon: z.string().nullable(),
+  // Charms worn (D-086): item ids, weightless while worn; the slots are in charms.json.
+  charms: z.array(z.string()),
+});
+
+// A vehicle he owns (P-021): parked at lat/lon, or ridden (then it goes where he goes).
+const vehicleStateSchema = z.object({
+  uid: z.string(),
+  vehicleId: z.string(),
+  lat: z.number(),
+  lon: z.number(),
+  // null for the bullock cart, which never wears (D-085).
+  durability: z.number().min(0).max(100).nullable(),
+  // Litres in the tank, or null for a vehicle without fuel.
+  fuel: z.number().min(0).nullable(),
+  cargo: z.array(stackSchema),
 });
 
 // Meters run 0–100 and are kept unrounded; the UI rounds them (D-023, D-035).
@@ -191,6 +208,8 @@ export const gameStateSchema = z.object({
   combat: combatStateSchema.nullable(),
   progression: progressionStateSchema,
   journal: z.object({ notes: z.array(journalNoteSchema) }),
+  // Vehicles (M10): `riding` is the uid of the one in use; `seq` numbers new ones.
+  vehicles: z.object({ list: z.array(vehicleStateSchema), riding: z.string().nullable(), seq: z.number().int().nonnegative() }),
   // The intro shows once per run, before the map (D-071, D-076).
   introSeen: z.boolean(),
   // Permadeath (D-038): once true, every command is refused.
@@ -212,6 +231,7 @@ export type CombatLog = z.infer<typeof combatLogSchema>;
 export type Combatant = z.infer<typeof combatantSchema>;
 export type CombatStatus = z.infer<typeof statusSchema>;
 export type JournalNote = z.infer<typeof journalNoteSchema>;
+export type VehicleState = z.infer<typeof vehicleStateSchema>;
 
 /** Radiation (D-035, D-043) and conditions such as Weak (D-061) lower maximum Health. */
 export function maxHealth(s: SurvivalState, content: Content): number {
@@ -224,7 +244,7 @@ export function startingSurvival(content: Content): SurvivalState {
 }
 
 export function startingInventory(content: Content, clockMinutes: number): Inventory {
-  const inventory: Inventory = { stacks: [], weapon: content.newGame.startingWeapon };
+  const inventory: Inventory = { stacks: [], weapon: content.newGame.startingWeapon, charms: [] };
   for (const k of content.newGame.startingKit) addStack(inventory, makeStack(k.itemId, k.count, clockMinutes, content, k.charge));
   return inventory;
 }
@@ -253,6 +273,7 @@ export function createNewGame(content: Content, seed: number): GameState {
     combat: null,
     progression: { xp: 0, level: 1, crafted: [] },
     journal: { notes: [] },
+    vehicles: { list: [], riding: null, seq: 0 },
     introSeen: false,
     dead: false,
   };

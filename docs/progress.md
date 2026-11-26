@@ -81,20 +81,35 @@
   - The Journal: Level and XP, "Find my sister", the mother's wish, and the last 30 notes. Level and XP also show in the Pack.
   - Save v10 with a migration from v9 (level 1, intro marked seen).
   - 200 unit tests and 13 e2e tests pass; checked in the browser on desktop and phone width.
-  - Waiting on the owner: the sister entry's text is Claude's draft (D-072).
-- **Item tooltips** (owner, 2026-11-25; on `dev`): hovering an item anywhere (Pack rows and weapon slot, ground piles, Craft inputs, tool and output, combat items and finds, event finds and losses) shows its name, what it does, weapon damage, bonuses and abilities, charge, what it needs, spoiling time and weight. Built only from the item data. Native browser tooltips, so they don't show on touch screens.
+  - The sister entry's text is now the owner's (D-083).
+- **Item tooltips** (owner; live, released 2026-11-25): hovering an item anywhere (Pack rows and weapon slot, ground piles, Craft inputs, tool and output, combat items and finds, event finds and losses) shows its name, what it does, weapon damage, bonuses and abilities, charge, what it needs, spoiling time and weight. Built only from the item data. Native browser tooltips, so they don't show on touch screens.
+- **M10 Vehicles and charms** (D-085 to D-089; on `dev`, not released):
+  - Hand cart, cycle, cycle with trailer, auto-rickshaw and bullock cart with the approved speeds, cargo, effort, wear, repairs with scrap metal, the auto's biodiesel and the rarity table. The trailer is a Craft recipe.
+  - The Vehicle button and panel, Get on in the Here panel, Load into cargo, parked vehicles on the map, "By" on trips.
+  - 13 charms in seven slots in the Pack, with their effects in stats, drain, carry, events, searching, illness and conditions; found by rarity in houses, apartments, textile shops and places of worship.
+  - New item: can of biodiesel (5 kg, 5 litres) in petrol bunks, garages, NH 744 and the station. The cycle and engine parts are dropped (D-085).
+  - Save v11 with a migration from v10. 229 unit tests and 14 e2e tests pass; checked in the browser.
+  - Testing tools (owner's request): the Test panel can give any item or every charm, park any vehicle, and set the ridden vehicle's durability and fuel.
 
 ## In progress
 - Nothing.
 
 ## Pending (unblocked)
-- Charms (D-062): 1 talisman, 2 rings and 2 bangles that lower risks or raise yields. To be drafted for approval.
-
-## Later (owner's notes)
 - Nothing.
 
+## Later (owner's notes)
+- Oil as a vehicle repair tool (D-085).
+- The bull's grain and water (D-085).
+- Charm set bonuses (D-086).
+
 ## Blocked
-- M10 Vehicles (needs vehicle numbers), M9 — see CLAUDE.md §8.
+- M9 (integration, balance pass, playtest) — see CLAUDE.md §8.
+
+## Technical choices made in M10 (Claude's authority)
+- Cargo, repair and refuel act on the vehicle he rides; a parked vehicle keeps its cargo until he gets on it.
+- Refuelling takes no time (no number was approved).
+- A found vehicle is parked where it was found; a found charm goes on the ground with the other finds.
+- The vehicle and charm rolls are scaled by the place's stock and Luck, like item finds (as the approved drafts say), and roll only where something can be found, so other places' luck is unchanged.
 
 ## Technical choices made in M0 (Claude's authority)
 - `GameState` type is derived from its Zod schema, so save validation and the type can't drift.

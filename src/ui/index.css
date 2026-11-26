@@ -227,3 +227,9 @@ button.figure:disabled { opacity: 0.4; }
 
 /* Item tooltips: a dotted underline marks names that have one. */
 .item-name { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }
+
+/* Vehicles and charms (M10). */
+.item-row.static, .item-row.static:hover { background: none; cursor: default; }
+.progress.warn > div { background: #e0b050; }
+.charm-slots .item-row { font-size: 13px; }
+.vehicle-marker { width: 11px; height: 11px; padding: 0; border-radius: 2px; background: #e0b050; border: 2px solid #141210; cursor: pointer; z-index: 1; }

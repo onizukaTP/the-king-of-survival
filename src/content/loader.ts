@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
   abilitySchema, buildingTypeSchema, combatSchema, statsSchema, type Ability, conditionSchema, enemySchema, eventsSchema, type CombatConfig, type Enemy, fireSchema, type Condition, type EventsConfig, recipeSchema, townSchema, type FireConfig, type Recipe, townStreetsSchema, type BuildingType, type Town, type TownStreets,
   progressionSchema, storySchema, type ProgressionConfig, type Story,
+  charmsSchema, vehiclesSchema, type CharmsConfig, type Vehicle, type VehiclesConfig,
   characterSchema, itemSchema, lootSchema, newGameSchema, outlineSchema, roadsSchema, scavengingSchema, siteSchema, survivalSchema, waterSchema, worldSchema,
   type Character, type Item, type Loot, type NewGameConfig, type Outline, type Roads, type ScavengingConfig, type Site, type SurvivalConfig, type Water, type WorldConfig,
 } from './schemas';
@@ -24,6 +25,8 @@ import survival from './data/survival.json';
 import newGame from './data/new-game.json';
 import progression from './data/progression.json';
 import story from './data/story.json';
+import charms from './data/charms.json';
+import vehicles from './data/vehicles.json';
 import roads from './data/roads.json';
 import sites from './data/sites.json';
 import tamilNadu from './data/tamil-nadu.json';
@@ -55,6 +58,8 @@ export interface Content {
   newGame: NewGameConfig;
   progression: ProgressionConfig;
   story: Story;
+  charms: CharmsConfig;
+  vehicles: Omit<VehiclesConfig, 'vehicles'> & { byId: Record<string, Vehicle> };
 }
 
 export interface RawContent {
@@ -81,6 +86,8 @@ export interface RawContent {
   newGame: unknown;
   progression: unknown;
   story: unknown;
+  charms: unknown;
+  vehicles: unknown;
 }
 
 function byId<T extends { id: string }>(list: T[], label: string): Record<string, T> {
@@ -118,6 +125,8 @@ export function parseContent(raw: RawContent): Content {
     newGame: newGameSchema.parse(raw.newGame),
     progression: progressionSchema.parse(raw.progression),
     story: storySchema.parse(raw.story),
+    charms: charmsSchema.parse(raw.charms),
+    vehicles: (({ vehicles: list, ...rest }) => ({ ...rest, byId: byId(list, 'vehicle') }))(vehiclesSchema.parse(raw.vehicles)),
   };
   const { startingCharacter, startSite } = content.newGame;
   if (!content.characters[startingCharacter]) throw new Error(`new-game.json: unknown character ${startingCharacter}`);
@@ -242,6 +251,32 @@ export function parseContent(raw: RawContent): Content {
     if (l.level !== i + 2) throw new Error(`progression.json: level ${l.level} is out of order`);
     if (prev && l.xp <= prev.xp) throw new Error(`progression.json: level ${l.level} needs no more XP than level ${prev.level}`);
   });
+  // Charms and vehicles (D-085, D-086): finds point at building types or sites; every rarity found has a charm.
+  const place = (id: string, where: string) => {
+    if (!content.buildingTypes[id] && !content.sites[id]) throw new Error(`${where}: unknown building type or site ${id}`);
+  };
+  for (const f of content.charms.finds) {
+    for (const id of f.at) place(id, 'charms.json');
+    for (const id of f.towns ?? []) if (!content.towns[id]) throw new Error(`charms.json: ${id} has no town map`);
+    if (!Object.values(content.items).some((it) => it.charm?.rarity === f.rarity)) throw new Error(`charms.json: no ${f.rarity} charm`);
+  }
+  for (const it of Object.values(content.items)) {
+    if ((it.category === 'charm') !== Boolean(it.charm)) throw new Error(`items.json ${it.id}: charm category and profile must go together`);
+    for (const id of Object.keys(it.charm?.conditionTime ?? {})) condition(id, `items.json ${it.id}`);
+  }
+  item(content.vehicles.repair.itemId, 'vehicles.json repair');
+  item(content.vehicles.repair.tool, 'vehicles.json repair');
+  for (const v of Object.values(content.vehicles.byId)) {
+    const where = `vehicles.json ${v.id}`;
+    for (const f of v.finds) place(f.at, where);
+    if (v.fuel) item(v.fuel.itemId, where);
+    if (v.durability && v.durability.foundAt[0] > v.durability.foundAt[1]) throw new Error(`${where}: foundAt min is above max`);
+    if (v.build) {
+      for (const id of v.build.vehicles) if (!content.vehicles.byId[id]) throw new Error(`${where}: unknown vehicle ${id}`);
+      for (const i of v.build.inputs) item(i.itemId, where);
+      if (v.build.tool) item(v.build.tool, where);
+    }
+  }
   const nodeCount = content.roads.nodes.length;
   const badEdge = content.roads.edges.find(([a, b]) => a >= nodeCount || b >= nodeCount);
   if (badEdge) throw new Error(`roads.json: edge ${badEdge.join(',')} points past the ${nodeCount} nodes`);
@@ -249,5 +284,5 @@ export function parseContent(raw: RawContent): Content {
 }
 
 export function loadContent(): Content {
-  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame, progression, story });
+  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame, progression, story, charms, vehicles });
 }

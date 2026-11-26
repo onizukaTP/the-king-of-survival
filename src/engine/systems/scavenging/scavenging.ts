@@ -11,6 +11,9 @@ import { siteAt } from '../travel/travel';
 import { conditionEffects } from '../conditions/conditions';
 import { maybeEvent } from '../events/events';
 import { playerStats } from '../combat/stats';
+import { charmEffects } from '../charms/charms';
+import { ridden, stacksKg } from '../vehicles/ridden';
+import { rollVehicleFind } from '../vehicles/vehicles';
 
 const fail = (code: CommandError['code'], message: string) => ({ ok: false as const, error: { code, message } });
 // Ground piles within this distance count as "here" (same as being at a place).
@@ -43,13 +46,13 @@ function searchTarget(state: GameState, content: Content) {
   const spot = spotHere(state, content);
   if (spot?.kind === 'building') {
     const t = spot.type;
-    return { id: spot.id, name: spot.name, entries: t.search, minutes: t.searchMinutes, torchMinutes: t.torchSearchMinutes, depletion: t.depletionPerSearch };
+    return { id: spot.id, key: t.id, name: spot.name, entries: t.search, minutes: t.searchMinutes, torchMinutes: t.torchSearchMinutes, depletion: t.depletionPerSearch };
   }
   // Inside a town only buildings are searched; the town's own site has no loot.
   const site = state.town ? undefined : siteAt(state.player.position, content);
   const entries = site ? content.loot[site.id]?.search : undefined;
   if (!site || !entries?.length) return undefined;
-  return { id: site.id, name: site.name, entries, minutes: cfg.searchMinutes, torchMinutes: cfg.torchSearchMinutes, depletion: cfg.depletionPerSearch };
+  return { id: site.id, key: site.id, name: site.name, entries, minutes: cfg.searchMinutes, torchMinutes: cfg.torchSearchMinutes, depletion: cfg.depletionPerSearch };
 }
 
 /** The site's or building's richness now, applying the 7-day refresh (P-013). Mutates `state.sites`. */
@@ -93,6 +96,22 @@ function finish(state: GameState, minutes: number, finds: Find[], content: Conte
   for (const f of finds) leaveOnGround(state, makeStack(f.itemId, f.count, state.clockMinutes, content, f.charge), content);
 }
 
+/** A charm found here, or null: one roll over the rarities found at this building type or site (P-022). */
+function charmFind(state: GameState, key: string, factor: number, content: Content): string | null {
+  const town = state.town?.siteId;
+  const tiers = content.charms.finds.filter((f) => f.at.includes(key) && (!f.towns || (town !== undefined && f.towns.includes(town))));
+  if (!tiers.length) return null;
+  const r = roll(state);
+  let acc = 0;
+  for (const tier of tiers) {
+    acc += tier.chance * factor;
+    if (r >= acc) continue;
+    const pool = Object.values(content.items).filter((it) => it.charm?.rarity === tier.rarity);
+    return pool[Math.floor(roll(state) * pool.length)]!.id;
+  }
+  return null;
+}
+
 /** Search the site (P-013): two draws, each taking the first entry that hits, scaled by richness. */
 export function search(state: GameState, useTorch: boolean, content: Content): CommandResult {
   if (state.travel) return fail('travel_in_progress', 'Prabu can\'t search while travelling.');
@@ -126,13 +145,19 @@ export function search(state: GameState, useTorch: boolean, content: Content): C
       }
     }
   }
+  // One roll each for a charm and a vehicle (P-021, P-022), scaled like the draws.
+  const factor = (rich / 100) * luck;
+  const charm = charmFind(state, target.key, factor, content);
+  if (charm) finds.push({ itemId: charm, count: 1 });
+  const found: GameEvent[] = [];
+  rollVehicleFind(state, target.key, factor, content, found);
   const after = Math.max(cfg.minRichness, rich - target.depletion);
   const refreshAt = state.sites[target.id]?.refreshAt ?? state.clockMinutes + cfg.refreshMinutes;
   state.sites[target.id] = { richness: after, refreshAt };
 
-  const events: GameEvent[] = [{ type: 'searched', finds, torch: useTorch }];
+  const events: GameEvent[] = [{ type: 'searched', finds, torch: useTorch }, ...found];
   // Shaken hands search slower (D-061).
-  const minutes = Math.round((useTorch ? target.torchMinutes : target.minutes) * conditionEffects(state.survival, content).searchTime);
+  const minutes = Math.round((useTorch ? target.torchMinutes : target.minutes) * conditionEffects(state.survival, content).searchTime * charmEffects(state.inventory, content).searchTime);
   finish(state, minutes, finds, content, events);
   const spot = spotHere(state, content);
   if (!state.dead) maybeEvent(state, { on: 'search', buildingTypeId: spot?.kind === 'building' ? spot.type.id : null }, content, events);
@@ -236,7 +261,7 @@ export function drinkHere(state: GameState, content: Content): CommandResult {
   if (state.dead) return { ok: true, state, events };
   state.survival.water = 100;
   const chance = content.items[content.scavenging.bottles.unsafe]?.illnessChance ?? 0;
-  if (water === 'still' && roll(state) < chance) {
+  if (water === 'still' && roll(state) < chance * charmEffects(state.inventory, content).illness) {
     state.survival.illUntil = state.clockMinutes + content.survival.illness.minutes;
     events.push({ type: 'fell_ill' });
   }
@@ -244,12 +269,18 @@ export function drinkHere(state: GameState, content: Content): CommandResult {
 }
 
 /** Picks up piles from the ground here; refused as a whole past the carry maximum (D-036, D-045). */
-export function takeFromGround(state: GameState, indexes: number[], content: Content): CommandResult {
+export function takeFromGround(state: GameState, indexes: number[], content: Content, toCargo = false): CommandResult {
   const here = new Set(groundHere(state));
   const unique = [...new Set(indexes)];
   if (!unique.length || unique.some((i) => !here.has(i))) return fail('bad_item', 'That isn\'t here.');
   const kg = unique.reduce((sum, i) => sum + content.items[state.ground[i]!.itemId]!.weightKg * state.ground[i]!.count, 0);
-  if (carriedKg(state.inventory, content) + kg > content.survival.carry.maxKg + 1e-9) {
+  // P-021: straight into the cargo of the vehicle he rides, within its capacity.
+  const vehicle = toCargo ? ridden(state) : undefined;
+  if (toCargo) {
+    const def = vehicle && content.vehicles.byId[vehicle.vehicleId];
+    if (!vehicle || !def) return fail('no_vehicle', 'Prabu isn\'t riding anything.');
+    if (stacksKg(vehicle.cargo, content) + kg > def.cargoKg + 1e-9) return fail('cargo_full', `The ${def.name.toLowerCase()} holds ${def.cargoKg} kg.`);
+  } else if (carriedKg(state.inventory, content) + kg > content.survival.carry.maxKg + 1e-9) {
     return fail('too_heavy', `That would take Prabu past ${content.survival.carry.maxKg} kg.`);
   }
   for (const i of unique) {
@@ -257,7 +288,7 @@ export function takeFromGround(state: GameState, indexes: number[], content: Con
     const stack: Stack = { itemId: pile.itemId, count: pile.count };
     if (pile.charge !== undefined) stack.charge = pile.charge;
     if (pile.spoilsAt !== undefined) stack.spoilsAt = pile.spoilsAt;
-    addStack(state.inventory, stack);
+    addStack(vehicle ? { stacks: vehicle.cargo, weapon: null, charms: [] } : state.inventory, stack);
   }
   state.ground = state.ground.filter((_, i) => !unique.includes(i));
   return { ok: true, state, events: [{ type: 'items_taken', count: unique.length }] };

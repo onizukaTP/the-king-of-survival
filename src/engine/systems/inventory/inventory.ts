@@ -7,6 +7,7 @@ import { leaveOnGround, type Find } from '../scavenging/scavenging';
 import { passTime } from '../survival/survival';
 import { healingBlocked } from '../conditions/conditions';
 import { maxHealth } from '../../core/state';
+import { charmEffects } from '../charms/charms';
 
 const fail = (code: CommandError['code'], message: string) => ({ ok: false as const, error: { code, message } });
 
@@ -132,7 +133,7 @@ export function applyItem(state: GameState, index: number, content: Content): Co
   if (item.illnessChance) {
     const [roll, rngState] = nextRandom(state.rngState);
     state.rngState = rngState;
-    if (roll < item.illnessChance) {
+    if (roll < item.illnessChance * charmEffects(state.inventory, content).illness) {
       s.illUntil = state.clockMinutes + content.survival.illness.minutes;
       events.push({ type: 'fell_ill' });
     }

@@ -7,8 +7,10 @@ import { cook, feedFire, makeFire } from '../systems/fire/fire';
 import { enterTown, leaveTown, walkTo } from '../systems/town/town';
 import { chooseEvent, closeEvent } from '../systems/events/events';
 import { closeCombat, combatAct, type CombatAction } from '../systems/combat/combat';
-import { debugEvent, debugFight, debugNight } from '../systems/debug/debug';
+import { debugEvent, debugFight, debugItem, debugNight, debugVehicle, debugVehicleState } from '../systems/debug/debug';
 import { finishIntro, progress } from '../systems/progression/progression';
+import { removeCharm, wearCharm } from '../systems/charms/charms';
+import { boardVehicle, buildVehicle, leaveVehicle, loadCargo, refuelVehicle, repairVehicle, unloadCargo } from '../systems/vehicles/vehicles';
 import { advanceTravel, startTravel, stopTravel, type TravelTarget } from '../systems/travel/travel';
 import type { GameState, Meter } from './state';
 
@@ -26,8 +28,19 @@ export type Command =
   | { type: 'scavenge.hunt' }
   | { type: 'water.fill' }
   | { type: 'water.drink' }
-  // `indexes` point into state.ground.
-  | { type: 'ground.take'; indexes: number[] }
+  // `indexes` point into state.ground; `toCargo` puts them in the ridden vehicle instead of the pack (P-021).
+  | { type: 'ground.take'; indexes: number[]; toCargo?: boolean }
+  // Charms (D-086): wear one from the pack (`index` into stacks), or take a worn one off.
+  | { type: 'charm.wear'; index: number }
+  | { type: 'charm.remove'; itemId: string }
+  // Vehicles (M10, P-021). `uid` from state.vehicles; cargo `index` points into the ridden vehicle's cargo.
+  | { type: 'vehicle.board'; uid: string }
+  | { type: 'vehicle.leave' }
+  | { type: 'vehicle.repair'; count: number }
+  | { type: 'vehicle.refuel' }
+  | { type: 'vehicle.build'; vehicleId: string }
+  | { type: 'cargo.load'; index: number; count: number }
+  | { type: 'cargo.unload'; index: number; count: number }
   | { type: 'town.enter' }
   | { type: 'town.leave' }
   // `spotId`: 'edge', a building or a water point of the town he's in.
@@ -49,7 +62,10 @@ export type Command =
   // Testing tools (D-068), offered by the UI only with ?debug=1.
   | { type: 'debug.event'; eventId: string }
   | { type: 'debug.fight'; enemies: { enemyId: string; count: number }[]; ambush: boolean }
-  | { type: 'debug.night' };
+  | { type: 'debug.night' }
+  | { type: 'debug.item'; itemId: string; count: number }
+  | { type: 'debug.vehicle'; vehicleId: string }
+  | { type: 'debug.vehicleState'; durability: number | null; fuel: number | null };
 
 export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst' | 'radiation' | 'injury' | 'killed';
 
@@ -59,7 +75,7 @@ export type GameEvent =
   | { type: 'site_discovered'; siteId: string }
   | { type: 'arrived'; siteId: string | null }
   // `meter`: the trip stopped by itself because a meter fell to the warning level or to 0 (D-035).
-  | { type: 'travel_stopped'; reason: 'player' | 'meter' | 'event' }
+  | { type: 'travel_stopped'; reason: 'player' | 'meter' | 'event' | 'vehicle' }
   | { type: 'rested'; minutes: number }
   | { type: 'meter_low'; meter: Meter; empty: boolean }
   | { type: 'fell_ill' }
@@ -93,7 +109,19 @@ export type GameEvent =
   | { type: 'combat_closed' }
   | { type: 'intro_done' }
   | { type: 'xp_gained'; amount: number }
-  | { type: 'level_up'; level: number };
+  | { type: 'level_up'; level: number }
+  | { type: 'charm_worn'; itemId: string }
+  | { type: 'charm_removed'; itemId: string }
+  | { type: 'vehicle_found'; vehicleId: string; uid: string }
+  | { type: 'vehicle_boarded'; vehicleId: string }
+  | { type: 'vehicle_left'; vehicleId: string }
+  | { type: 'vehicle_worn'; vehicleId: string }
+  | { type: 'vehicle_broken'; vehicleId: string }
+  | { type: 'out_of_fuel'; vehicleId: string }
+  | { type: 'vehicle_repaired'; vehicleId: string; durability: number }
+  | { type: 'refuelled'; vehicleId: string; litres: number }
+  | { type: 'vehicle_built'; vehicleId: string }
+  | { type: 'cargo_moved'; loaded: boolean };
 
 export type CommandError = {
   code:
@@ -141,7 +169,17 @@ export type CommandError = {
     | 'out_of_reach'
     | 'wrong_rank'
     | 'no_arrows'
-    | 'bad_target';
+    | 'bad_target'
+    | 'not_a_charm'
+    | 'already_worn'
+    | 'slot_full'
+    | 'no_vehicle'
+    | 'not_here'
+    | 'cannot_repair'
+    | 'no_fuel_tank'
+    | 'tank_full'
+    | 'cargo_full'
+    | 'cannot_move';
   message: string;
 };
 
@@ -185,7 +223,25 @@ function run(state: GameState, command: Command, content: Content): CommandResul
     case 'water.drink':
       return drinkHere(state, content);
     case 'ground.take':
-      return takeFromGround(state, command.indexes, content);
+      return takeFromGround(state, command.indexes, content, command.toCargo ?? false);
+    case 'charm.wear':
+      return wearCharm(state, command.index, content);
+    case 'charm.remove':
+      return removeCharm(state, command.itemId);
+    case 'vehicle.board':
+      return boardVehicle(state, command.uid, content);
+    case 'vehicle.leave':
+      return leaveVehicle(state);
+    case 'vehicle.repair':
+      return repairVehicle(state, command.count, content);
+    case 'vehicle.refuel':
+      return refuelVehicle(state, content);
+    case 'vehicle.build':
+      return buildVehicle(state, command.vehicleId, content);
+    case 'cargo.load':
+      return loadCargo(state, command.index, command.count, content);
+    case 'cargo.unload':
+      return unloadCargo(state, command.index, command.count, content);
     case 'town.enter':
       return enterTown(state, content);
     case 'town.leave':
@@ -216,6 +272,12 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return debugFight(state, command.enemies, command.ambush, content);
     case 'debug.night':
       return debugNight(state);
+    case 'debug.item':
+      return debugItem(state, command.itemId, command.count, content);
+    case 'debug.vehicle':
+      return debugVehicle(state, command.vehicleId, content);
+    case 'debug.vehicleState':
+      return debugVehicleState(state, command.durability, command.fuel, content);
     default:
       return { ok: false, error: { code: 'unknown_command', message: `Unknown command: ${(command as { type: string }).type}` } };
   }

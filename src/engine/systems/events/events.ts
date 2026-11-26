@@ -1,5 +1,5 @@
 import type { Content } from '../../../content/loader';
-import type { EventChoice, EventNeed, GameEventDef, LootEntry, WorldConfig } from '../../../content/schemas';
+import type { EventChoice, EventNeed, GameEventDef, LootEntry } from '../../../content/schemas';
 import type { CommandError, CommandResult, GameEvent } from '../../core/commands';
 import { nextRandom } from '../../core/rng';
 import { maxHealth, type GameState } from '../../core/state';
@@ -11,7 +11,8 @@ import type { Find } from '../scavenging/scavenging';
 import { passTime } from '../survival/survival';
 import { spotHere } from '../town/town';
 import { distanceKm } from '../travel/geo';
-import type { Leg } from '../travel/route';
+import type { Leg, Speeds } from '../travel/route';
+import { charmEffects } from '../charms/charms';
 
 const fail = (code: CommandError['code'], message: string) => ({ ok: false as const, error: { code, message } });
 const clamp = (v: number) => Math.min(100, Math.max(0, v));
@@ -30,10 +31,10 @@ function roll(state: GameState): number {
   return value;
 }
 
-/** Share of a leg that went cross-country, worked out from its length and time (D-019 speeds). */
-export function crossShare(leg: Leg, world: WorldConfig): number {
-  const roadHours = leg.km / world.roadSpeedKmh;
-  const crossHours = leg.km / world.crossCountrySpeedKmh;
+/** Share of a leg that went cross-country, worked out from its length and time at the speeds it was planned at. */
+export function crossShare(leg: Leg, speeds: Speeds): number {
+  const roadHours = leg.km / speeds.road;
+  const crossHours = leg.km / speeds.cross;
   if (crossHours <= roadHours) return 0;
   return Math.min(1, Math.max(0, (leg.minutes / 60 - roadHours) / (crossHours - roadHours)));
 }
@@ -81,11 +82,15 @@ export function maybeEvent(state: GameState, t: Trigger, content: Content, event
   const total = pool.reduce((sum, e) => sum + weight(e), 0);
   // D-023: with Rest at 0, threats are more likely.
   const exhausted = state.survival.rest <= 0;
+  // Charms make threats rarer, and in the dark more so (P-022).
+  const charm = charmEffects(state.inventory, content);
+  const unlit = (t.on === 'travel' || t.on === 'walk') && t.unlit;
+  const threatFactor = charm.threat * (unlit ? charm.darkRisk : 1);
 
   const r = roll(state);
   let acc = 0;
   for (const e of pool) {
-    acc += (chance * weight(e) / total) * (e.threat && exhausted ? cfg.exhaustedThreatMultiplier : 1);
+    acc += (chance * weight(e) / total) * (e.threat ? (exhausted ? cfg.exhaustedThreatMultiplier : 1) * threatFactor : 1);
     if (r < acc) {
       openEvent(state, e, content, events);
       return true;

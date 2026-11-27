@@ -64,8 +64,8 @@ describe('XP multiplier (owner, 2026-11-27)', () => {
     const set = run({ type: 'debug.xpMultiplier', multiplier: 10 });
     if (!set.ok) throw new Error(set.error.message);
     expect(set.state.progression).toMatchObject({ xp: 0, xpMultiplier: 10 });
-    // A discovery is 15 XP; ×10 gives 150, which is level 4 (100) but not level 5 (155).
-    const events = progress(structuredClone(set.state), [{ type: 'site_discovered', siteId: 'loc.rajapalayam' }], content);
+    // A first visit is 15 XP; ×10 gives 150, which is level 4 (100) but not level 5 (155).
+    const events = progress(structuredClone(set.state), [{ type: 'site_visited', siteId: 'loc.rajapalayam' }], content);
     expect(events[0]).toEqual({ type: 'xp_gained', amount: 150 });
     expect(events.filter((e) => e.type === 'level_up').map((e) => (e as { level: number }).level)).toEqual([2, 3, 4]);
     for (const bad of [-1, 101, Number.NaN]) expect(run({ type: 'debug.xpMultiplier', multiplier: bad }).ok).toBe(false);

@@ -76,7 +76,7 @@ export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst' | 'radiation'
 export type GameEvent =
   | { type: 'travel_started'; legs: number }
   | { type: 'leg_completed'; leg: number; of: number }
-  | { type: 'site_discovered'; siteId: string }
+  | { type: 'site_visited'; siteId: string }
   | { type: 'arrived'; siteId: string | null }
   // `meter`: the trip stopped by itself because a meter fell to the warning level or to 0 (D-035).
   | { type: 'travel_stopped'; reason: 'player' | 'meter' | 'event' | 'vehicle' }

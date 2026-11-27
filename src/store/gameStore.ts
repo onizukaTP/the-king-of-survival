@@ -68,8 +68,8 @@ const vehicleName = (id: string) => (content.vehicles.byId[id]?.name ?? id).toLo
 
 function describe(events: GameEvent[]): string | null {
   const notes: string[] = [];
-  const found = events.flatMap((e) => (e.type === 'site_discovered' ? [content.sites[e.siteId]?.name ?? e.siteId] : []));
-  if (found.length) notes.push(`Discovered: ${found.join(', ')}.`);
+  const found = events.flatMap((e) => (e.type === 'site_visited' ? [content.sites[e.siteId]?.name ?? e.siteId] : []));
+  if (found.length) notes.push(`First visit: ${found.join(', ')}.`);
   for (const e of events) {
     if (e.type === 'item_used') {
       const category = content.items[e.itemId]?.category;

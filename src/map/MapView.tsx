@@ -11,7 +11,7 @@ import { content, LEG_ANIMATION_MS, useGameStore } from '../store/gameStore';
 setWorkerUrl(workerUrl);
 
 const COLORS = {
-  sea: '#141210', land: '#3a342c', border: '#6b5f50', road: '#b08546', rail: '#857a6c', route: '#5aa0e0', fog: 'rgba(12, 10, 8, 0.5)',
+  sea: '#141210', land: '#3a342c', border: '#6b5f50', road: '#b08546', rail: '#857a6c', route: '#5aa0e0',
   still: '#2f5870', river: '#4f9fd8', zone: '#e6c828',
 };
 
@@ -85,7 +85,6 @@ function along(path: LatLon[], t: number): LatLon {
 export function MapView() {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
-  const fogRef = useRef<HTMLCanvasElement | null>(null);
   const prabuRef = useRef<Marker | null>(null);
   const siteMarkers = useRef(new Map<string, Marker>());
 
@@ -131,8 +130,6 @@ export function MapView() {
       maxZoom: 15,
       maxBounds: [[75.5, 7.6], [81.5, 13.9]],
       attributionControl: { customAttribution: '© OpenStreetMap contributors · Natural Earth' },
-      // Without this, compositing the fog canvas on top can show a blank map frame in Chrome.
-      canvasContextAttributes: { preserveDrawingBuffer: true },
     });
     map.addControl(new NavigationControl({ showCompass: false }), 'top-left');
     map.on('click', (e: { lngLat: { lat: number; lng: number } }) => useGameStore.getState().select({ point: { lat: e.lngLat.lat, lon: e.lngLat.lng } }));
@@ -144,15 +141,6 @@ export function MapView() {
       void store.travel();
     });
 
-    // Fog sits between the map and the markers, so known places show through it.
-    const fog = document.createElement('canvas');
-    fog.className = 'fog';
-    map.getCanvasContainer().appendChild(fog);
-    fogRef.current = fog;
-    const redraw = () => drawFog(map, fog);
-    map.on('move', redraw);
-    map.on('resize', redraw);
-    map.on('load', redraw);
 
     const { from, to } = content.scavenging.radiation;
     const icon = document.createElement('div');
@@ -181,12 +169,11 @@ export function MapView() {
     };
   }, []);
 
-  // Site markers for discovered places.
-  const discovered = game?.map.discoveredSiteIds.join(',');
+  // Site markers: the map is open (D-094), so every place shows from the start.
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !discovered) return;
-    for (const id of discovered.split(',')) {
+    if (!map) return;
+    for (const id of Object.keys(content.sites)) {
       if (siteMarkers.current.has(id)) continue;
       const site = content.sites[id]!;
       const el = document.createElement('button');
@@ -205,7 +192,7 @@ export function MapView() {
       el.addEventListener('dblclick', (e) => e.stopPropagation());
       siteMarkers.current.set(id, new Marker({ element: el, anchor: 'left', offset: [-6, 0] }).setLngLat([site.lon, site.lat]).addTo(map));
     }
-  }, [discovered, select]);
+  }, [select]);
 
   // Parked vehicles (M10): a small square where each one was left; clicking it plans a trip there.
   const parked = JSON.stringify(game?.vehicles.list.filter((v) => v.uid !== game.vehicles.riding).map((v) => [v.vehicleId, v.lat, v.lon]) ?? []);
@@ -227,13 +214,6 @@ export function MapView() {
     });
     return () => markers.forEach((m) => m.remove());
   }, [parked, select]);
-
-  // Fog follows the revealed points.
-  const revealed = game?.map.revealed;
-  useEffect(() => {
-    const map = mapRef.current;
-    if (map && fogRef.current) drawFog(map, fogRef.current);
-  }, [revealed]);
 
   // Route line: the trip under way, or a preview of the selected one.
   useEffect(() => {
@@ -270,38 +250,4 @@ export function MapView() {
   }, [position, lastLegPath]);
 
   return <div ref={container} className="map" />;
-}
-
-/** Darkens everything, then cuts soft holes around each revealed point (sight radius, D-018). */
-function drawFog(map: MapLibreMap, canvas: HTMLCanvasElement) {
-  const game = useGameStore.getState().game;
-  const { clientWidth: w, clientHeight: h } = map.getContainer();
-  const dpr = window.devicePixelRatio || 1;
-  if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width = `${w}px`;
-    canvas.style.height = `${h}px`;
-  }
-  const ctx = canvas.getContext('2d');
-  if (!ctx || !game) return;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.globalCompositeOperation = 'source-over';
-  ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = COLORS.fog;
-  ctx.fillRect(0, 0, w, h);
-  ctx.globalCompositeOperation = 'destination-out';
-  const radiusDeg = content.world.sightRadiusKm / 111.32;
-  for (const p of game.map.revealed) {
-    const c = map.project([p.lon, p.lat]);
-    const r = Math.abs(map.project([p.lon, p.lat + radiusDeg]).y - c.y);
-    if (c.x < -r || c.y < -r || c.x > w + r || c.y > h + r) continue;
-    const g = ctx.createRadialGradient(c.x, c.y, r * 0.6, c.x, c.y, r);
-    g.addColorStop(0, 'rgba(0,0,0,1)');
-    g.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
-    ctx.fill();
-  }
 }

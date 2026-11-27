@@ -64,11 +64,21 @@ describe('save/load', () => {
     ['a version with no migration', { saveVersion: 0, createdAt: 'x', gameState: state }],
     ['a corrupted state', { saveVersion: SAVE_VERSION, createdAt: 'x', gameState: { ...state, clockMinutes: -5 } }],
     ['a broken v1 save', { saveVersion: 1, createdAt: 'x', gameState: null }],
-    ['an unknown place', { saveVersion: SAVE_VERSION, createdAt: 'x', gameState: { ...state, map: { ...state.map, discoveredSiteIds: ['loc.atlantis'] } } }],
+    ['an unknown place', { saveVersion: SAVE_VERSION, createdAt: 'x', gameState: { ...state, map: { ...state.map, visitedSiteIds: ['loc.atlantis'] } } }],
     ['an unknown item', { saveVersion: SAVE_VERSION, createdAt: 'x', gameState: { ...state, inventory: { stacks: [{ itemId: 'item.gold', count: 1 }], weapon: null } } }],
     ['a meter out of range', { saveVersion: SAVE_VERSION, createdAt: 'x', gameState: { ...state, survival: { ...state.survival, food: 140 } } }],
     ['an unknown character', { saveVersion: SAVE_VERSION, createdAt: 'x', gameState: { ...state, player: { ...state.player, characterId: 'character.ghost' } } }],
   ])('rejects %s', (_, raw) => {
     expect(loadSave(raw, content).ok).toBe(false);
+  });
+});
+
+describe('save v13 (D-094, open map)', () => {
+  it('drops the fog and counts the places a v12 run knew as visited', () => {
+    const v12 = structuredClone(createNewGame(loadContent(), 1)) as unknown as Record<string, unknown>;
+    v12.map = { discoveredSiteIds: ['loc.home', 'loc.rajapalayam'], revealed: [{ lat: 9.5, lon: 77.6 }] };
+    const result = loadSave({ saveVersion: 12, createdAt: 'x', gameState: v12 }, loadContent());
+    if (!result.ok) throw new Error(result.error);
+    expect(result.save.gameState.map).toEqual({ visitedSiteIds: ['loc.home', 'loc.rajapalayam'] });
   });
 });

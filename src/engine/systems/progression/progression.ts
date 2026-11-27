@@ -47,9 +47,9 @@ export function progress(state: GameState, events: GameEvent[], content: Content
   const out: GameEvent[] = [];
   let amount = 0;
   for (const e of events) {
-    if (e.type === 'site_discovered') {
-      amount += xp.discovery;
-      addNote(state, { kind: 'discovered', siteId: e.siteId }, content);
+    if (e.type === 'site_visited') {
+      amount += xp.firstVisit;
+      addNote(state, { kind: 'visited', siteId: e.siteId }, content);
     }
     if (e.type === 'searched' && e.finds.length) amount += xp.searchWithFinds;
     if (e.type === 'hunted' && e.success) amount += xp.huntSuccess;

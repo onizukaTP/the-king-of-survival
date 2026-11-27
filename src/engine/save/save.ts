@@ -3,7 +3,7 @@ import type { Content } from '../../content/loader';
 import { gameStateSchema, startingInventory, startingSurvival, startPosition, type GameState } from '../core/state';
 import { initialMap } from '../systems/travel/travel';
 
-export const SAVE_VERSION = 12;
+export const SAVE_VERSION = 13;
 
 const saveSchema = z.object({
   saveVersion: z.literal(SAVE_VERSION),
@@ -121,6 +121,14 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
     const level = Math.max(gs.progression.level, reached);
     return { ...save, saveVersion: 12, gameState: { ...gs, progression: { ...gs.progression, level, xpMultiplier: 1 } } };
   },
+  // v12 → v13 (D-094, open map): no fog, every place known; the places he knew count as visited, so no
+  // place he already had pays its first-visit XP again.
+  12: (save) => {
+    // (A v1 save migrated in the same load already has the new map from initialMap.)
+    const gs = save.gameState as { map: { discoveredSiteIds?: string[]; visitedSiteIds?: string[] } };
+    const visitedSiteIds = gs.map.visitedSiteIds ?? [...(gs.map.discoveredSiteIds ?? [])];
+    return { ...save, saveVersion: 13, gameState: { ...gs, map: { visitedSiteIds } } };
+  },
 };
 
 /** `createdAt` is passed in because the engine never reads the wall clock. */
@@ -152,7 +160,7 @@ export function loadSave(raw: unknown, content: Content): LoadResult {
   const { gameState } = parsed.data;
   // The save must point at content this build knows about.
   if (!content.characters[gameState.player.characterId]) return { ok: false, error: 'Save refers to an unknown character.' };
-  if (gameState.map.discoveredSiteIds.some((id) => !content.sites[id])) return { ok: false, error: 'Save refers to an unknown place.' };
+  if (gameState.map.visitedSiteIds.some((id) => !content.sites[id])) return { ok: false, error: 'Save refers to an unknown place.' };
   const { stacks, weapon } = gameState.inventory;
   const cargo = gameState.vehicles.list.flatMap((v) => v.cargo);
   const items = [...stacks, ...gameState.ground, ...cargo].map((st) => st.itemId).concat(weapon ? [weapon] : [], gameState.inventory.charms);

@@ -1,5 +1,5 @@
 {
-  "xp": { "huntSuccess": 10, "discovery": 15, "searchWithFinds": 2, "firstCraft": 5 },
+  "xp": { "huntSuccess": 10, "firstVisit": 15, "searchWithFinds": 2, "firstCraft": 5 },
   "notesKept": 30,
   "levels": [
     { "level": 2, "xp": 20, "gains": { "atk": 1 } },

@@ -144,11 +144,11 @@ describe('choices and outcomes', () => {
     expect(heavy.state.ground).toHaveLength(1);
   });
 
-  it('the smoke can lead to a place he hasn\'t found', () => {
+  it('the smoke\'s tracks lead to the nearest place he hasn\'t been to (D-094)', () => {
     const r = firstWhere('event.distant_smoke', 'look', (s) => s.event!.result!.outcome === 2);
     const siteId = r.state.event!.result!.siteId!;
-    expect(r.state.map.discoveredSiteIds).toContain(siteId);
-    expect(r.events).toContainEqual({ type: 'site_discovered', siteId });
+    expect(r.state.map.visitedSiteIds).not.toContain(siteId);
+    expect(r.events.some((e) => e.type === 'site_visited')).toBe(false);
   });
 
   it('bad footing in the dark resolves by itself; a twisted ankle stops the trip (D-048)', () => {

@@ -199,14 +199,11 @@ function resolve(state: GameState, def: GameEventDef, choice: EventChoice, conte
   result.left.push(...stowed.left);
   if (o.revealNearest) {
     const here = state.player.position;
+    // The map is open (D-094): the tracks point to the nearest place he hasn't been to yet.
     const site = Object.values(content.sites)
-      .filter((x) => !state.map.discoveredSiteIds.includes(x.id))
+      .filter((x) => !state.map.visitedSiteIds.includes(x.id))
       .sort((a, b) => distanceKm(here, a) - distanceKm(here, b))[0];
-    if (site) {
-      state.map.discoveredSiteIds.push(site.id);
-      events.push({ type: 'site_discovered', siteId: site.id });
-      result.siteId = site.id;
-    }
+    if (site) result.siteId = site.id;
   }
   events.unshift({ type: 'event_resolved', eventId: def.id, choiceId: choice.id, outcome: index });
 

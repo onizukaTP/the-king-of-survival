@@ -5,10 +5,9 @@ import { initialMap } from '../systems/travel/travel';
 
 const latLon = z.object({ lat: z.number().min(-90).max(90), lon: z.number().min(-180).max(180) });
 
+// The map is open (D-094): every place is known; this keeps the places Prabu has been to (first visit = XP).
 const mapStateSchema = z.object({
-  discoveredSiteIds: z.array(z.string()),
-  // Points whose surroundings are clear of fog (one per ~1 km cell).
-  revealed: z.array(latLon),
+  visitedSiteIds: z.array(z.string()),
 });
 
 const travelSchema = z.object({
@@ -179,10 +178,11 @@ const progressionStateSchema = z.object({
   xpMultiplier: z.number().min(0).max(100),
 });
 
-// A journal note (D-076), kept as data so the UI words it: a place found, a fight won, a level gained.
+// A journal note (D-076), kept as data so the UI words it: a place found (older runs) or first visited,
+// a fight won, a level gained.
 const journalNoteSchema = z.object({
   at: z.number().int().nonnegative(),
-  kind: z.enum(['discovered', 'won', 'level']),
+  kind: z.enum(['discovered', 'visited', 'won', 'level']),
   siteId: z.string().optional(),
   enemies: z.array(z.string()).optional(),
   level: z.number().int().optional(),

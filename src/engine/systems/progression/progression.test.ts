@@ -17,10 +17,10 @@ function ok(state: GameState, command: Command) {
 const xpOf = (events: GameEvent[]) => events.reduce((n, e) => n + (e.type === 'xp_gained' ? e.amount : 0), 0);
 
 describe('XP sources (D-070, D-076)', () => {
-  it('gives XP for discovering a place, a search with finds and a successful hunt, and a note for the place', () => {
+  it('gives XP for a first visit to a place (D-094), a search with finds and a successful hunt, and a note for the place', () => {
     const s = fresh();
-    expect(xpOf(progress(s, [{ type: 'site_discovered', siteId: 'loc.rajapalayam' }], content))).toBe(15);
-    expect(s.journal.notes).toEqual([{ at: s.clockMinutes, kind: 'discovered', siteId: 'loc.rajapalayam' }]);
+    expect(xpOf(progress(s, [{ type: 'site_visited', siteId: 'loc.rajapalayam' }], content))).toBe(15);
+    expect(s.journal.notes).toEqual([{ at: s.clockMinutes, kind: 'visited', siteId: 'loc.rajapalayam' }]);
     expect(xpOf(progress(s, [{ type: 'searched', finds: [{ itemId: 'item.cloth', count: 1 }], torch: false }], content))).toBe(2);
     expect(xpOf(progress(s, [{ type: 'searched', finds: [], torch: false }], content))).toBe(0);
     expect(xpOf(progress(s, [{ type: 'hunted', finds: [], success: true }], content))).toBe(10);
@@ -57,7 +57,7 @@ describe('XP sources (D-070, D-076)', () => {
   it('gives a dead man nothing', () => {
     const s = fresh();
     s.dead = true;
-    expect(progress(s, [{ type: 'site_discovered', siteId: 'loc.rajapalayam' }], content)).toEqual([]);
+    expect(progress(s, [{ type: 'site_visited', siteId: 'loc.rajapalayam' }], content)).toEqual([]);
   });
 });
 
@@ -67,7 +67,7 @@ describe('levels (D-076)', () => {
     const events = progress(s, [{ type: 'event_resolved', eventId: 'event.stray_goat', choiceId: 'catch', outcome: 0 }], content);
     expect(events).toEqual([{ type: 'xp_gained', amount: 10 }]);
     s.progression.xp = 50;
-    const up = progress(s, [{ type: 'site_discovered', siteId: 'loc.rajapalayam' }], content);
+    const up = progress(s, [{ type: 'site_visited', siteId: 'loc.rajapalayam' }], content);
     expect(up.filter((e) => e.type === 'level_up')).toEqual([{ type: 'level_up', level: 2 }, { type: 'level_up', level: 3 }]);
     expect(s.progression.level).toBe(3);
     expect(s.journal.notes.filter((n) => n.kind === 'level').map((n) => n.level)).toEqual([2, 3]);
@@ -76,7 +76,7 @@ describe('levels (D-076)', () => {
   it('stops at level 10, though XP still counts', () => {
     const s = fresh();
     s.progression.xp = 100000;
-    progress(s, [{ type: 'site_discovered', siteId: 'loc.rajapalayam' }], content);
+    progress(s, [{ type: 'site_visited', siteId: 'loc.rajapalayam' }], content);
     expect(s.progression).toMatchObject({ level: 10, xp: 100015 });
   });
 
@@ -98,7 +98,7 @@ describe('levels (D-076)', () => {
     const siteIds = Object.keys(content.sites);
     for (let i = 0; i < 35; i++) {
       s.clockMinutes += 1;
-      progress(s, [{ type: 'site_discovered', siteId: siteIds[i % siteIds.length]! }], content);
+      progress(s, [{ type: 'site_visited', siteId: siteIds[i % siteIds.length]! }], content);
     }
     expect(s.journal.notes).toHaveLength(30);
     // The newest stays; the first discoveries went.

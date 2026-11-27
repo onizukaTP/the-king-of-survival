@@ -64,10 +64,10 @@ describe('search (P-013)', () => {
     expect(s.sites['loc.nh744']).toEqual({ richness: 90, refreshAt: refreshAt + 7 * 1440 });
   });
 
-  it('with the torch: 45 minutes and 5% battery (D-037)', () => {
+  it('with the torch: half the time (30 minutes) and 5% battery (D-037; owner, 2026-11-27)', () => {
     const s = at('loc.srivilliputhur_station');
     const r = ok(s, { type: 'scavenge.search', torch: true });
-    expect(r.state.clockMinutes).toBe(s.clockMinutes + 45);
+    expect(r.state.clockMinutes).toBe(s.clockMinutes + 30);
     expect(r.state.inventory.stacks.find((st) => st.itemId === 'item.torch')!.charge).toBe(45);
     const flat = at('loc.srivilliputhur_station', 1, (g) => (g.inventory.stacks.find((st) => st.itemId === 'item.torch')!.charge = 4));
     expect(err(flat, { type: 'scavenge.search', torch: true })).toBe('no_torch_charge');
@@ -143,11 +143,11 @@ describe('water (D-044)', () => {
     expect(waterAt({ lat: wy, lon: wx }, content)).toBe('well');
   });
 
-  it('fills every empty bottle: unsafe at still water, clean at a river, 5 minutes each', () => {
+  it('fills every empty bottle: unsafe at still water, clean at a river, 1 minute each (owner, 2026-11-27)', () => {
     const add = (g: GameState) => addItems(g, 'item.empty_bottle', 3, content);
     const still = ok(at('loc.pilavakkal_dam', 1, add), { type: 'water.fill' });
     expect(still.state.inventory.stacks.find((st) => st.itemId === 'item.unsafe_water')!.count).toBe(3);
-    expect(still.state.clockMinutes).toBe(START + 15);
+    expect(still.state.clockMinutes).toBe(START + 3);
     const [x, y] = content.water.rivers[0]![0]!;
     const river = ok(at({ lat: y, lon: x }, 1, add), { type: 'water.fill' });
     expect(river.state.inventory.stacks.find((st) => st.itemId === 'item.clean_water')!.count).toBe(3);

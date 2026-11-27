@@ -23,7 +23,6 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .menu-list button:hover { background: #2e2822; }
 .main { display: grid; grid-template-columns: minmax(0, 1fr) 280px; min-height: 0; }
 .map { position: relative; min-height: 0; }
-.fog { position: absolute; top: 0; left: 0; pointer-events: none; }
 .panel { border-left: 1px solid var(--line); background: var(--panel); padding: 12px; overflow-y: auto; }
 .panel-body { display: flex; flex-direction: column; gap: 6px; height: 100%; }
 .panel-head { display: flex; justify-content: space-between; align-items: start; gap: 8px; }

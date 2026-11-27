@@ -241,7 +241,7 @@ function* wishes(s: GameState, content: Content, mem: Memory): Generator<Command
   if (starving && s.town) { yield { type: 'town.walk', spotId: 'edge' }; yield { type: 'town.leave' }; }
   if (starving && !s.town) {
     const p0 = s.player.position;
-    const grounds = s.map.discoveredSiteIds.map((id) => content.sites[id]!).filter((k) => content.loot[k.id]?.hunt?.length).sort((a, b) => distanceKm(p0, a) - distanceKm(p0, b));
+    const grounds = Object.values(content.sites).filter((k) => content.loot[k.id]?.hunt?.length).sort((a, b) => distanceKm(p0, a) - distanceKm(p0, b));
     for (const site of grounds) if (distanceKm(p0, site) > 0.1) yield { type: 'travel.start', target: { siteId: site.id } };
   }
   if (opts.canSearch && opts.richness >= 30 && !(exhausted[key] !== undefined && s.clockMinutes - exhausted[key]! < EXHAUSTED_FOR)) {
@@ -269,7 +269,7 @@ function* wishes(s: GameState, content: Content, mem: Memory): Generator<Command
   // Travel: carry on to an interrupted trip's goal, then water if dry, otherwise the nearest place not yet searched out.
   if (mem.goal && !s.town) yield mem.goal.target;
   const pos = s.player.position;
-  const known = s.map.discoveredSiteIds.filter((id) => id !== FAR).map((id) => content.sites[id]!);
+  const known = Object.values(content.sites).filter((k) => k.id !== FAR);
   const near = (list: typeof known) => list.sort((a, b) => distanceKm(pos, a) - distanceKm(pos, b));
   const dry = points('water') < 50 && sv.water < 80;
   const clean = (k: (typeof known)[number]) => { const w = waterAt(k, content); return w === 'river' || w === 'well'; };
@@ -277,9 +277,6 @@ function* wishes(s: GameState, content: Content, mem: Memory): Generator<Command
   if (hungry) for (const site of near(known.filter((k) => content.loot[k.id]?.hunt?.length))) if (distanceKm(pos, site) > 0.1) yield { type: 'travel.start', target: { siteId: site.id } };
   const fresh = near(known.filter((k) => distanceKm(pos, k) > 0.1 && !(exhausted[k.id] !== undefined && s.clockMinutes - exhausted[k.id]! < EXHAUSTED_FOR)));
   for (const site of fresh) yield { type: 'travel.start', target: { siteId: site.id } };
-  // Then explore toward places not yet found (a player would wander the map).
-  const unknown = near(Object.values(content.sites).filter((k) => k.id !== FAR && !s.map.discoveredSiteIds.includes(k.id)));
-  for (const site of unknown) yield { type: 'travel.start', target: { point: { lat: site.lat, lon: site.lon } } };
   // Nothing left nearby: wait it out.
   yield { type: 'rest', minutes: 240 };
 }

@@ -5,6 +5,7 @@ import { formatClock } from '../format';
 
 function noteText(n: JournalNote): string {
   if (n.kind === 'discovered') return `Found ${content.sites[n.siteId ?? '']?.name ?? 'a place'}.`;
+  if (n.kind === 'visited') return `First visit: ${content.sites[n.siteId ?? '']?.name ?? 'a place'}.`;
   if (n.kind === 'level') return `Reached level ${n.level}.`;
   const counts = new Map<string, number>();
   for (const id of n.enemies ?? []) counts.set(id, (counts.get(id) ?? 0) + 1);

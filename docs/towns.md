@@ -64,9 +64,11 @@ A small town like Srivilliputhur has no supermarket, which matches the map data:
 
 | Size | Types | Search | With torch (5%) | Stock lost per search |
 |---|---|---|---|---|
-| Small | Independent house, provision store, ration shop, medical store, petrol bunk | 30 min | 25 min | 25 points |
-| Medium | Place of worship, garage, hardware store, hotel / mess, police station, bus stand | 45 min | 35 min | 20 points |
-| Large | Apartment block, supermarket, hospital, textile shop / mill, airport | 1 h | 45 min | 15 points |
+| Small | Independent house, provision store, ration shop, medical store, petrol bunk | 30 min | 15 min | 25 points |
+| Medium | Place of worship, garage, hardware store, hotel / mess, police station, bus stand | 45 min | 23 min | 20 points |
+| Large | Apartment block, supermarket, hospital, textile shop / mill, airport | 1 h | 30 min | 15 points |
+
+Torch times are half the search time since D-095 (they were about three quarters).
 
 Each building has its own stock. The other rules are the same as in M4:
 - Stock never falls below 10%.

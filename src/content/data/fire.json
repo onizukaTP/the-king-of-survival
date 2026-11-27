@@ -9,6 +9,7 @@
   ],
   "waterItemIds": ["item.unsafe_water", "item.clean_water"],
   "recipes": [
+    { "id": "recipe.cook_fish", "name": "Cook fish", "from": "item.raw_fish", "to": "item.cooked_fish", "maxBatch": 3, "minutes": 30, "tool": null, "usesWater": false },
     { "id": "recipe.cook_meat", "name": "Cook raw meat", "from": "item.raw_meat", "to": "item.cooked_meat", "maxBatch": 3, "minutes": 30, "tool": null, "usesWater": false },
     { "id": "recipe.boil_water", "name": "Boil water", "from": "item.unsafe_water", "to": "item.clean_water", "maxBatch": 4, "minutes": 30, "tool": "item.cooking_pot", "usesWater": false },
     { "id": "recipe.cooked_rice", "name": "Cooked rice", "from": "item.rice", "to": "item.cooked_rice", "maxBatch": 2, "minutes": 30, "tool": "item.cooking_pot", "usesWater": true },

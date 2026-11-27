@@ -29,6 +29,8 @@ Fire recipes are approved and built already (D-056, D-057): cooked meat, clean w
 | Bamboo spear | 1 bamboo + 1 scrap metal | Hunting knife | 45 min | 1 bamboo spear |
 | Bamboo bow | 1 bamboo + 1 coir rope | Hunting knife | 1 h | 1 bamboo bow |
 | Arrows | 1 bamboo + 1 scrap metal | Hunting knife | 30 min | 5 arrows |
+| Fishing rod (D-100) | 1 bamboo + 1 coir rope + 1 scrap metal | — | 20 min | 1 fishing rod (fishing 50% instead of a spear's 20%) |
+| Moss gauze (D-100) | 2 moss + 1 cloth bandage | — | 10 min | 1 moss gauze (treats an injury, Health +30, stops bleeding in a fight, keeps 5 days) |
 
 **At a fire** (one more recipe, built like the approved fire recipes):
 

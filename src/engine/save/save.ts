@@ -174,7 +174,7 @@ export function loadSave(raw: unknown, content: Content): LoadResult {
   if (gameState.vehicles.list.some((v) => !content.vehicles.byId[v.vehicleId])) return { ok: false, error: 'Save refers to an unknown vehicle.' };
   if (items.some((id) => !content.items[id])) return { ok: false, error: 'Save refers to an unknown item.' };
   const buildingIds = new Set(Object.values(content.towns).flatMap((t) => t.buildings.map((b) => b.id)));
-  if (Object.keys(gameState.sites).some((id) => !content.sites[id] && !buildingIds.has(id))) return { ok: false, error: 'Save refers to an unknown place.' };
+  if (Object.keys(gameState.sites).some((id) => !content.sites[id] && !buildingIds.has(id) && !id.startsWith('cell.'))) return { ok: false, error: 'Save refers to an unknown place.' };
   if (gameState.event && !content.events.events.some((e) => e.id === gameState.event!.id)) return { ok: false, error: 'Save refers to an unknown event.' };
   if (gameState.survival.conditions.some((c) => !content.conditions[c.id])) return { ok: false, error: 'Save refers to an unknown condition.' };
   if (gameState.combat?.combatants.some((c) => (c.side === 'enemy' ? !content.enemies[c.defId] : !content.characters[c.defId]))) return { ok: false, error: 'Save refers to an unknown fighter.' };

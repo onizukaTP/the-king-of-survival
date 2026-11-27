@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { groundHere, searchOptions, waterHere } from '../../engine/systems/scavenging/scavenging';
+import { groundHere, searchOptions, waterHere, waterOptions } from '../../engine/systems/scavenging/scavenging';
 import { fireOptions } from '../../engine/systems/fire/fire';
 import { spotHere } from '../../engine/systems/town/town';
 import { inRadiationZone } from '../../engine/systems/survival/radiation';
@@ -18,6 +18,7 @@ export function HerePanel() {
   const cfg = content.scavenging;
   const { site, canSearch, canHunt, searchMinutes, torchSearchMinutes, torch, richness } = searchOptions(game, content);
   const water = waterHere(game, content);
+  const pond = waterOptions(game, content);
   const spot = spotHere(game, content);
   const townName = spot ? content.sites[spot.townId]?.name : undefined;
   const zone = inRadiationZone(game.player.position, content);
@@ -75,6 +76,14 @@ export function HerePanel() {
             </button>
           )}
           {water && <button onClick={() => run({ type: 'water.drink' })}>Drink ({formatDuration(cfg.drinkMinutes)})</button>}
+          {pond.open && (
+            <button onClick={() => run({ type: 'water.fish' })} disabled={!pond.tool}
+              title={pond.tool ? `${Math.round(pond.fishChance)}% with the ${content.items[pond.tool.itemId]?.name.toLowerCase()}` : 'Needs a spear or a fishing rod'}>
+              Fish ({formatDuration(cfg.fishing.minutes)}){pond.tool ? '' : ' · needs a spear or rod'}
+            </button>
+          )}
+          {pond.open && <button onClick={() => run({ type: 'water.moss' })}>Gather moss ({formatDuration(cfg.moss.minutes)})</button>}
+          {pond.open && <p className="muted tiny">Water's stock: {Math.round(pond.left)}%</p>}
         </div>
       )}
       {canSearch && <p className="muted">Left to find: {Math.round(richness)}%</p>}

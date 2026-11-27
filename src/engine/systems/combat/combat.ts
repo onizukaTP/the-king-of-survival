@@ -202,6 +202,8 @@ export function combatAct(state: GameState, action: CombatAction, opts: { abilit
       if (!used.ok) return used;
       events.push(...used.events);
       combat.log = [{ kind: 'item', actor: me.uid, itemId: item.id }];
+      // D-100: a dressing that stops bleeding clears his bleed.
+      if (item.stopsBleeding) me.statuses = me.statuses.filter((st) => st.kind !== 'bleed');
       if (hpOf(state, me) > 0) me.deathsDoor = false;
       me.hp = Math.round(hpOf(state, me));
       break;

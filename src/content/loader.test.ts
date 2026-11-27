@@ -38,7 +38,7 @@ describe('content loader', () => {
     expect(content.roads.nodes.length).toBeGreaterThan(1000);
     // D-026 + D-037: the 28 approved items, the three starting-kit additions and lighter fuel (37 with D-057, D-058);
     // M10 adds biodiesel and the 13 charms (P-021, P-022).
-    expect(Object.keys(content.items)).toHaveLength(58);
+    expect(Object.keys(content.items)).toHaveLength(63);
     expect(Object.values(content.items).filter((i) => i.charm)).toHaveLength(13);
     expect(Object.keys(content.vehicles.byId)).toEqual(['vehicle.hand_cart', 'vehicle.cycle', 'vehicle.cycle_trailer', 'vehicle.auto_rickshaw', 'vehicle.bullock_cart']);
     // P-014: 16 building types; 13, 16 and 24 buildings; 39 mapped wells.

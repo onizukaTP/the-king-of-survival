@@ -218,3 +218,54 @@ describe('radiation zone (D-043)', () => {
     throw new Error('no seed produced a hit');
   });
 });
+
+describe('fishing and moss (D-100)', () => {
+  const dam = () => at('loc.pilavakkal_dam');
+
+  it('needs a spear or a fishing rod; the rod is better; the catch lands on the ground here', () => {
+    expect(err(dam(), { type: 'water.fish' })).toBe('missing_item');
+    let spear = 0, rod = 0;
+    for (let seed = 1; seed <= 200; seed++) {
+      const withSpear = at('loc.pilavakkal_dam', seed, (g) => addItems(g, 'item.bamboo_spear', 1, content));
+      const r1 = ok(withSpear, { type: 'water.fish' });
+      expect(r1.state.clockMinutes).toBe(withSpear.clockMinutes + 60);
+      if ((r1.events[0] as Extract<GameEvent, { type: 'fished' }>).success) spear++;
+      const withRod = at('loc.pilavakkal_dam', seed, (g) => addItems(g, 'item.fishing_rod', 1, content));
+      const r2 = ok(withRod, { type: 'water.fish' });
+      const ev = r2.events[0] as Extract<GameEvent, { type: 'fished' }>;
+      if (ev.success) {
+        rod++;
+        expect(ev.finds[0]!.itemId).toBe('item.raw_fish');
+        expect(groundHere(r2.state)).toHaveLength(1);
+      }
+    }
+    expect(spear / 200).toBeCloseTo(0.2, 1);
+    expect(rod / 200).toBeCloseTo(0.5, 1);
+  });
+
+  it('gathers moss in 30 minutes; each try thins the water, which refreshes after 7 days', () => {
+    const s = dam();
+    const r = ok(s, { type: 'water.moss' });
+    expect(r.state.clockMinutes).toBe(s.clockMinutes + 30);
+    const key = Object.keys(r.state.sites).find((k) => k.startsWith('cell.water.'))!;
+    expect(r.state.sites[key]).toMatchObject({ richness: 90, refreshAt: s.clockMinutes + 7 * 1440 });
+  });
+
+  it('refuses at a well or away from water', () => {
+    expect(err(at('loc.home'), { type: 'water.moss' })).toBe('no_water');
+    const sri = content.towns['loc.srivilliputhur']!.water.find((w) => w.kind === 'well')!;
+    expect(err(at({ lat: sri.lat, lon: sri.lon }), { type: 'water.moss' })).toBe('no_water');
+  });
+
+  it('moss treats an injury; moss gauze (2 moss + a cloth bandage) heals +30 and stops bleeding in a fight', () => {
+    const s = at('loc.home', 1, (g) => { addItems(g, 'item.moss', 2, content); addItems(g, 'item.cloth_bandage', 1, content); });
+    s.survival.injured = true;
+    s.survival.health = 50;
+    const gauze = ok(s, { type: 'craft', recipeId: 'recipe.moss_gauze' }).state;
+    const i = gauze.inventory.stacks.findIndex((st) => st.itemId === 'item.moss_gauze');
+    const used = ok(gauze, { type: 'item.use', index: i }).state;
+    expect(used.survival).toMatchObject({ injured: false, health: 80 });
+    expect(content.items['item.moss']).toMatchObject({ curesInjury: true, effects: { health: 5 } });
+    expect(content.items['item.moss_gauze']!.stopsBleeding).toBe(true);
+  });
+});

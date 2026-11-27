@@ -59,6 +59,7 @@ Chance per draw and how many, in draw order (a search makes 2 draws; each takes 
 - **Exposure:** every hour Prabu spends inside (travelling, resting or searching) has a **1-in-4 chance of +5 radiation**. For a travel leg, the hours inside are the share of the leg's path that lies in the zone.
 - Radiation lowers **maximum** Health one for one (D-035); Health can't heal past it. The Health meter shows the lost part as a dark end segment, and an "Irradiated" tag appears in the top bar. Nothing removes radiation yet (iodine tablets are a "later" item).
 - The zone is **drawn on the map from the start in yellow, with a radiation icon in the middle** (D-047).
+- **Off for now (D-108):** the zone is not drawn and gives no radiation; `off: true` in `scavenging.json` turns it back on when set to false.
 
 ## Actions by terrain — D-101 (owner, 2026-11-27)
 

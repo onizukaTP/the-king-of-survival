@@ -305,7 +305,8 @@ export const scavengingSchema = z.object({
   // A stretch of water keeps its own stock in squares this many degrees wide (~1 km).
   waterCellDeg: z.number().positive(),
   bottles: z.object({ empty: slug('item'), clean: slug('item'), unsafe: slug('item') }),
-  radiation: z.object({ from: place, to: place, radiusKm: z.number().positive(), chancePerHour: z.number().min(0).max(1), amount: z.number().positive() }),
+  // `off` (owner, 2026-11-27): the zone is switched off for the generated map; the rules stay for later.
+  radiation: z.object({ off: z.boolean().optional(), from: place, to: place, radiusKm: z.number().positive(), chancePerHour: z.number().min(0).max(1), amount: z.number().positive() }),
 });
 
 // Fire and cooking (D-056, P-016).

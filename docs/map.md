@@ -82,8 +82,8 @@ village. Built today: 15.0% forest, 39.9% farmland, 26.1% scrub, 14.9% dry, 4.1%
 
 ## Left out for now
 
-- **Radiation** is not part of the generated map (D-105). The D-043 zone around the Trichy–Villupuram line
-  still works as before.
+- **Radiation** is off (D-105, D-108): the D-043 zone around the Trichy–Villupuram line is not drawn and
+  gives no radiation; its rules stay in `scavenging.json` (`off: true`).
 - Countryside ponds (the generator has room for them; not built).
 - No ideas from Project Zomboid (D-107).
 

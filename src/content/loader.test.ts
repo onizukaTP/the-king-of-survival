@@ -22,11 +22,13 @@ import story from './data/story.json';
 import charms from './data/charms.json';
 import vehicles from './data/vehicles.json';
 import roads from './data/roads.json';
+import terrain from './data/terrain.json';
+import terrainLoot from './data/terrain-loot.json';
 import sites from './data/sites.json';
 import tamilNadu from './data/tamil-nadu.json';
 import world from './data/world.json';
 
-const raw: RawContent = { characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame, progression, story, charms, vehicles };
+const raw: RawContent = { characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, terrain, terrainLoot, outline: tamilNadu, newGame, progression, story, charms, vehicles };
 const prabu = characters[0]!;
 const home = sites[0]!;
 

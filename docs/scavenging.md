@@ -59,3 +59,22 @@ Chance per draw and how many, in draw order (a search makes 2 draws; each takes 
 - **Exposure:** every hour Prabu spends inside (travelling, resting or searching) has a **1-in-4 chance of +5 radiation**. For a travel leg, the hours inside are the share of the leg's path that lies in the zone.
 - Radiation lowers **maximum** Health one for one (D-035); Health can't heal past it. The Health meter shows the lost part as a dark end segment, and an "Irradiated" tag appears in the top bar. Nothing removes radiation yet (iodine tablets are a "later" item).
 - The zone is **drawn on the map from the start in yellow, with a radiation icon in the middle** (D-047).
+
+## Actions by terrain — D-101 (owner, 2026-11-27)
+
+Away from named places and town buildings, **the ground Prabu stands on decides what he can do**. Named places keep their own tables (home and a town's marker have nothing to search; town wells and tanks are for water only), and on open water he fishes and gathers moss instead (D-100).
+
+- **Ground:** within 100 m of a road, town street or railway it is road; otherwise the land-cover square (~500 m, `docs/architecture.md`, Map data pipeline); outside the mapped area, dry land.
+- **Stock:** each ~1 km square keeps its own: −10 points a search, full again 7 days after the first search there.
+- **Hunting:** the place's share of his Hunting chance (40% at the start, +Luck), so the bow and level gains still count.
+- **Events** roll as on any search or hunt.
+- **The numbers** below are Claude's, built from the approved item lists (the forest uses the Sanctuary forest's table, the road the NH 744's); the owner may tune them.
+
+| Ground | Search (1 h, 30 min with the torch) | Hunt (1 h) |
+|---|---|---|
+| Forest and woods | firewood 50% (1–2) · neem leaves 30% (1–3) · bamboo 25% (1) · wild jackfruit 15% (1) · wild honey 4% (1–3) | 100% of his Hunting chance: raw meat 100% (2–3) · animal hide 75% (1) |
+| Scrub and grassland | firewood 30% (1) · neem leaves 20% (1–2) | 62.5% of his Hunting chance: raw meat 100% (1) |
+| Farmland and orchards | groundnuts 15% (1–2) · tender coconut 10% (1) · millet grain 10% (1) · rice 8% (1) | 37.5% of his Hunting chance: raw meat 100% (1) |
+| Road and railway | scrap metal 40% (1–2) · empty bottle 20% (1) · cloth rags 12% (1) · pre-war biscuit packet 8% (1–2) · pre-war tinned food 6% (1) · can of biodiesel 4% (1) · lighter fuel 4% (1) | — |
+| Village | cloth rags 20% (1–2) · firewood 15% (1) · empty bottle 15% (1) · rice 8% (1–2) · salt 6% (1) | — |
+| Dry, open land | firewood 10% (1) | 25% of his Hunting chance: raw meat 100% (1) |

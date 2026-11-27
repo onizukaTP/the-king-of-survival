@@ -7,6 +7,7 @@ import { addStack, carriedKg, makeStack } from '../inventory/inventory';
 import { passTime } from '../survival/survival';
 import { distanceKm, distanceToLineKm, insideRing, type LatLon } from '../travel/geo';
 import { spotHere } from '../town/town';
+import { terrainAt, terrainCellKey } from '../terrain/terrain';
 import { siteAt } from '../travel/travel';
 import { conditionEffects } from '../conditions/conditions';
 import { maybeEvent } from '../events/events';
@@ -40,7 +41,11 @@ export function groundHere(state: GameState): number[] {
   return state.ground.flatMap((pile, i) => (distanceKm(pile, state.player.position) <= HERE_KM ? [i] : []));
 }
 
-/** What Prabu can search where he stands: a town building (P-014, on the world map since D-099), or a site with loot (P-013). */
+/**
+ * What Prabu can search where he stands: a town building (P-014, on the world map since D-099), a named
+ * place with its own loot (P-013), or else the ground itself (D-101). Named places without loot (home, a
+ * town's marker) and open water have nothing to search.
+ */
 function searchTarget(state: GameState, content: Content) {
   const cfg = content.scavenging;
   const torch = (minutes: number) => Math.round(minutes * cfg.torchTimeFactor);
@@ -49,11 +54,34 @@ function searchTarget(state: GameState, content: Content) {
     const t = spot.type;
     return { id: spot.id, key: t.id, name: spot.name, entries: t.search, minutes: t.searchMinutes, torchMinutes: torch(t.searchMinutes), depletion: t.depletionPerSearch };
   }
-  // A town's own marker has no loot; its buildings do.
+  // A town's well or tank is for water only.
+  if (spot) return undefined;
   const site = siteAt(state.player.position, content);
-  const entries = site ? content.loot[site.id]?.search : undefined;
-  if (!site || !entries?.length) return undefined;
-  return { id: site.id, key: site.id, name: site.name, entries, minutes: cfg.searchMinutes, torchMinutes: torch(cfg.searchMinutes), depletion: cfg.depletionPerSearch };
+  if (site) {
+    // A town's own marker has no loot; its buildings do.
+    const entries = content.loot[site.id]?.search;
+    if (!entries?.length) return undefined;
+    return { id: site.id, key: site.id, name: site.name, entries, minutes: cfg.searchMinutes, torchMinutes: torch(cfg.searchMinutes), depletion: cfg.depletionPerSearch };
+  }
+  const water = waterHere(state, content);
+  if (water && water !== 'well') return undefined;
+  const ground = terrainAt(state.player.position, content);
+  if (!ground.search.length) return undefined;
+  const id = terrainCellKey(state.player.position, content);
+  return { id, key: `terrain.${ground.id}`, name: ground.name, entries: ground.search, minutes: cfg.searchMinutes, torchMinutes: torch(cfg.searchMinutes), depletion: content.terrainLoot.depletionPerSearch };
+}
+
+/** What he can hunt here: a named place's hunt, or the ground's (D-101) with its share of his Hunting chance. */
+function huntTarget(state: GameState, content: Content) {
+  if (spotHere(state, content)) return undefined;
+  const site = siteAt(state.player.position, content);
+  if (site) {
+    const entries = content.loot[site.id]?.hunt;
+    return entries?.length ? { entries, factor: 1 } : undefined;
+  }
+  const water = waterHere(state, content);
+  if (water && water !== 'well') return undefined;
+  return terrainAt(state.player.position, content).hunt;
 }
 
 /** The site's or building's richness now, applying the 7-day refresh (P-013). Mutates `state.sites`. */
@@ -74,10 +102,13 @@ export function searchOptions(state: GameState, content: Content) {
   const entry = target && state.sites[target.id];
   // Shown as 100% once the refresh is due, before the next search applies it.
   const left = !entry || (entry.refreshAt !== null && state.clockMinutes >= entry.refreshAt) ? 100 : entry.richness;
+  // D-101: on open ground, the kind of ground he stands on.
+  const ground = !site && !spotHere(state, content) ? terrainAt(state.player.position, content) : undefined;
   return {
     site,
+    ground,
     canSearch: Boolean(target),
-    canHunt: Boolean(site && content.loot[site.id]?.hunt?.length),
+    canHunt: Boolean(huntTarget(state, content)),
     searchMinutes: target?.minutes ?? content.scavenging.searchMinutes,
     torchSearchMinutes: target?.torchMinutes ?? Math.round(content.scavenging.searchMinutes * content.scavenging.torchTimeFactor),
     torch: torchIndex(state, content) >= 0,
@@ -170,11 +201,12 @@ export function search(state: GameState, useTorch: boolean, content: Content): C
  */
 export function hunt(state: GameState, content: Content): CommandResult {
   if (state.travel) return fail('travel_in_progress', 'Prabu can\'t hunt while travelling.');
-  const site = siteAt(state.player.position, content);
-  const entries = site ? content.loot[site.id]?.hunt : undefined;
-  if (!site || !entries?.length) return fail('cannot_hunt_here', 'There\'s no game to hunt here.');
+  const target = huntTarget(state, content);
+  if (!target) return fail('cannot_hunt_here', 'There\'s no game to hunt here.');
+  const entries = target.entries;
   const stats = playerStats(state, content);
-  const success = roll(state) * 100 < stats.hunting + stats.luck * content.combat.luck.hunting;
+  // D-101: poorer ground gives a share of his Hunting chance (the sanctuary and forests the whole of it).
+  const success = roll(state) * 100 < (stats.hunting + stats.luck * content.combat.luck.hunting) * target.factor;
   const finds: Find[] = [];
   if (success) for (const entry of entries) if (roll(state) < entry.chance) finds.push({ itemId: entry.itemId, count: quantity(state, entry) });
   const events: GameEvent[] = [{ type: 'hunted', finds, success }];

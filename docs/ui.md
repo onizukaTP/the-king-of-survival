@@ -34,6 +34,11 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 - **Map:** still water in dark blue, flowing rivers in bright blue, and the radiation zone in yellow with a dashed edge and a radiation icon in the middle. Prabu's marker sits above place markers and can be clicked.
 - **Top bar:** an "Irradiated" tag, and the Health meter shows the part lost to radiation as a dark end segment.
 
+## Land cover — D-101
+
+- The map is tinted by land cover from the terrain grid: forest dark green, scrub olive, farmland yellow-green, villages brown; dry land stays the plain land colour. Only the mapped area (the prototype box) is tinted.
+- On open ground, the Here panel's title names the ground ("Forest and woods", "Dry, open land") and offers Search and, where there is game, Hunt.
+
 ## Towns on the world map — D-099
 
 - From zoom 14, each town's buildings show as small labelled squares and its wells and tanks as blue dots, with the town's streets drawn; zoomed out, the town is one marker.

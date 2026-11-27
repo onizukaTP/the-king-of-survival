@@ -16,7 +16,7 @@ export function HerePanel() {
   const openPanel = useGameStore((s) => s.openPanel);
   const [picked, setPicked] = useState<number[]>([]);
   const cfg = content.scavenging;
-  const { site, canSearch, canHunt, searchMinutes, torchSearchMinutes, torch, richness } = searchOptions(game, content);
+  const { site, ground, canSearch, canHunt, searchMinutes, torchSearchMinutes, torch, richness } = searchOptions(game, content);
   const water = waterHere(game, content);
   const pond = waterOptions(game, content);
   const spot = spotHere(game, content);
@@ -37,7 +37,7 @@ export function HerePanel() {
   return (
     <div className="panel-body" data-testid="here-panel">
       <div className="panel-head">
-        <h2>{spot?.name ?? site?.name ?? 'Open ground'}</h2>
+        <h2>{spot?.name ?? site?.name ?? ground?.name ?? 'Open ground'}</h2>
         <button className="icon" aria-label="Close" onClick={() => openPanel(null)}>×</button>
       </div>
       <p className="muted">

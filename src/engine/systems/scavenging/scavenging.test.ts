@@ -73,11 +73,11 @@ describe('search (P-013)', () => {
     expect(err(flat, { type: 'scavenge.search', torch: true })).toBe('no_torch_charge');
   });
 
-  it('refuses at home, on open ground and while travelling', () => {
+  it('refuses at home, at a town marker and while travelling (open ground has its own search, D-101)', () => {
     expect(err(at('loc.home'), { type: 'scavenge.search', torch: false })).toBe('nothing_to_search');
     // A town's finds are in its buildings (P-014): nothing to search at its point on the world map.
     expect(err(at('loc.madurai'), { type: 'scavenge.search', torch: false })).toBe('nothing_to_search');
-    expect(err(at({ lat: 9.6, lon: 77.7 }), { type: 'scavenge.search', torch: false })).toBe('not_at_site');
+    expect(err(at({ lat: 9.6, lon: 77.7 }), { type: 'scavenge.search', torch: false })).toBe('ok');
     const moving = ok(at('loc.home'), { type: 'travel.start', target: { siteId: 'loc.nh744' } }).state;
     expect(err(moving, { type: 'scavenge.search', torch: false })).toBe('travel_in_progress');
   });

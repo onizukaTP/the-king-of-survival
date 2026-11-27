@@ -3,7 +3,7 @@ import {
   abilitySchema, buildingTypeSchema, combatSchema, statsSchema, type Ability, conditionSchema, enemySchema, eventsSchema, type CombatConfig, type Enemy, fireSchema, type Condition, type EventsConfig, recipeSchema, townSchema, type FireConfig, type Recipe, townStreetsSchema, type BuildingType, type Town, type TownStreets,
   progressionSchema, storySchema, type ProgressionConfig, type Story,
   charmsSchema, vehiclesSchema, type CharmsConfig, type Vehicle, type VehiclesConfig,
-  characterSchema, itemSchema, lootSchema, newGameSchema, outlineSchema, roadsSchema, scavengingSchema, siteSchema, survivalSchema, waterSchema, worldSchema,
+  characterSchema, itemSchema, lootSchema, terrainSchema, terrainLootSchema, type Terrain, type TerrainKind, type TerrainLoot, newGameSchema, outlineSchema, roadsSchema, scavengingSchema, siteSchema, survivalSchema, waterSchema, worldSchema,
   type Character, type Item, type Loot, type NewGameConfig, type Outline, type Roads, type ScavengingConfig, type Site, type SurvivalConfig, type Water, type WorldConfig,
 } from './schemas';
 import characters from './data/characters.json';
@@ -29,6 +29,8 @@ import story from './data/story.json';
 import charms from './data/charms.json';
 import vehicles from './data/vehicles.json';
 import roads from './data/roads.json';
+import terrain from './data/terrain.json';
+import terrainLoot from './data/terrain-loot.json';
 import sites from './data/sites.json';
 import tamilNadu from './data/tamil-nadu.json';
 import world from './data/world.json';
@@ -55,6 +57,8 @@ export interface Content {
   towns: Record<string, Town>;
   townStreets: TownStreets;
   roads: Roads;
+  terrain: Terrain;
+  terrainLoot: Omit<TerrainLoot, 'kinds'> & { byId: Record<string, TerrainKind> };
   outline: Outline;
   newGame: NewGameConfig;
   progression: ProgressionConfig;
@@ -83,6 +87,8 @@ export interface RawContent {
   towns: unknown;
   townStreets: unknown;
   roads: unknown;
+  terrain: unknown;
+  terrainLoot: unknown;
   outline: unknown;
   newGame: unknown;
   progression: unknown;
@@ -123,6 +129,8 @@ export function parseContent(raw: RawContent): Content {
     townStreets: townStreetsSchema.parse(raw.townStreets),
     // D-099: trips inside towns follow their streets, so the streets join the road graph.
     roads: checkedRoads(roadsSchema.parse(raw.roads), townStreetsSchema.parse(raw.townStreets)),
+    terrain: terrainSchema.parse(raw.terrain),
+    terrainLoot: (({ kinds, ...rest }) => ({ ...rest, byId: Object.fromEntries(kinds.map((k) => [k.id, k])) }))(terrainLootSchema.parse(raw.terrainLoot)),
     outline: outlineSchema.parse(raw.outline),
     newGame: newGameSchema.parse(raw.newGame),
     progression: progressionSchema.parse(raw.progression),
@@ -218,6 +226,12 @@ export function parseContent(raw: RawContent): Content {
     if (e.critCondition) condition(e.critCondition.conditionId, `enemies.json ${e.id}`);
     if (e.damage[0] > e.damage[1]) throw new Error(`enemies.json ${e.id}: damage min is above max`);
   }
+  // D-101: the land-cover grid fills its box, and terrain loot names real items.
+  const t = content.terrain;
+  if (t.grid.length !== t.rows * t.cols) throw new Error(`terrain.json: the grid has ${t.grid.length} squares, not ${t.rows} × ${t.cols}`);
+  for (const k of Object.values(content.terrainLoot.byId)) {
+    for (const e of [...k.search, ...(k.hunt?.entries ?? [])]) if (!content.items[e.itemId]) throw new Error(`terrain-loot.json: ${k.id} has unknown item ${e.itemId}`);
+  }
   for (const l of Object.values(content.loot)) {
     if (!content.sites[l.siteId]) throw new Error(`loot.json: unknown site ${l.siteId}`);
     for (const e of [...l.search, ...(l.hunt ?? [])]) {
@@ -283,7 +297,7 @@ export function parseContent(raw: RawContent): Content {
 }
 
 export function loadContent(): Content {
-  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame, progression, story, charms, vehicles });
+  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, terrain, terrainLoot, outline: tamilNadu, newGame, progression, story, charms, vehicles });
 }
 
 /** roads.json checked as shipped, then joined with the town streets (D-099). */

@@ -111,10 +111,13 @@ export function MapView() {
           wells: { type: 'geojson', data: wellsGeoJson() },
           zone: { type: 'geojson', data: zoneGeoJson() },
           streets: { type: 'geojson', data: streetsGeoJson() },
+          landcover: { type: 'geojson', data: landCoverGeoJson() },
         },
         layers: [
           { id: 'sea', type: 'background', paint: { 'background-color': COLORS.sea } },
           { id: 'land', type: 'fill', source: 'land', paint: { 'fill-color': COLORS.land } },
+          // D-101: land cover from the terrain grid: forest, scrub, farmland and villages; dry land stays bare.
+          { id: 'landcover', type: 'fill', source: 'landcover', paint: { 'fill-color': ['match', ['get', 'kind'], 'F', '#3e5634', 'S', '#5a5a36', 'A', '#6e6a3c', 'V', '#5c4f43', '#3a342c'], 'fill-opacity': 0.75 } },
           { id: 'border', type: 'line', source: 'land', paint: { 'line-color': COLORS.border, 'line-width': 1 } },
           { id: 'water', type: 'fill', source: 'water', paint: { 'fill-color': ['case', ['get', 'river'], COLORS.river, COLORS.still] } },
           { id: 'rivers', type: 'line', source: 'rivers', paint: { 'line-color': COLORS.river, 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.8, 12, 2, 14, 3.5] } },
@@ -285,4 +288,25 @@ const SPOTS_ZOOM = 14;
 function streetsGeoJson(): Feature {
   const lines = Object.values(content.townStreets).flat();
   return { type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: lines } };
+}
+
+/** The terrain grid (D-101) as rectangles: runs of the same kind along each row, one feature per run. */
+function landCoverGeoJson(): FeatureCollection {
+  const t = content.terrain;
+  const [south, west] = t.bbox;
+  const features: Feature[] = [];
+  for (let r = 0; r < t.rows; r++) {
+    const lat0 = south + r * t.cellDeg, lat1 = lat0 + t.cellDeg;
+    for (let c = 0; c < t.cols;) {
+      const kind = t.grid[r * t.cols + c]!;
+      let end = c + 1;
+      while (end < t.cols && t.grid[r * t.cols + end] === kind) end++;
+      if (kind !== '.') {
+        const lon0 = west + c * t.cellDeg, lon1 = west + end * t.cellDeg;
+        features.push({ type: 'Feature', properties: { kind }, geometry: { type: 'Polygon', coordinates: [[[lon0, lat0], [lon1, lat0], [lon1, lat1], [lon0, lat1], [lon0, lat0]]] } });
+      }
+      c = end;
+    }
+  }
+  return { type: 'FeatureCollection', features };
 }

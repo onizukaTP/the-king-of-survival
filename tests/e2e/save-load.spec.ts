@@ -197,9 +197,10 @@ test('the Craft panel lists recipes and blocks what is missing (M5)', async ({ p
   await newGame(page);
   await page.getByRole('button', { name: 'Craft' }).click();
   const cards = page.getByTestId('recipe-card');
-  // Seven recipes and the cycle trailer (D-085).
-  await expect(cards).toHaveCount(8);
-  const bandage = cards.filter({ hasText: 'Cloth bandage' });
+  // Nine recipes and the cycle trailer (D-085, D-100).
+  await expect(cards).toHaveCount(10);
+  // Moss gauze also lists a cloth bandage; the bandage's own card comes first.
+  const bandage = cards.filter({ hasText: 'Cloth bandage' }).first();
   await expect(bandage).toContainText('Cloth rags 0/2');
   await expect(bandage).toContainText('Needs 2 more cloth rags');
   await expect(bandage.getByRole('button', { name: 'Craft' })).toBeDisabled();

@@ -192,6 +192,31 @@ const lootEntry = z.object({
   charge: z.tuple([z.number().int().nonnegative(), z.number().int().nonnegative()]).optional(),
 });
 
+// D-101: the land-cover grid (scripts/geo/build-terrain.mjs): one letter per ~500 m square, rows from
+// south to north, over [south, west, north, east]; and the railway lines ([lon, lat]).
+export const terrainSchema = z.object({
+  bbox: z.tuple([lat, lon, lat, lon]),
+  cellDeg: z.number().positive(),
+  rows: z.number().int().positive(),
+  cols: z.number().int().positive(),
+  grid: z.string().regex(/^[FSAV.]*$/),
+  rail: z.array(z.array(z.tuple([lon, lat])).min(2)),
+});
+
+// D-101: what each kind of ground gives. Search draws as at a site; a hunt succeeds with the Hunting
+// chance times `factor`, then every entry rolls.
+export const terrainLootSchema = z.object({
+  roadKm: z.number().positive(),
+  stockCellDeg: z.number().positive(),
+  depletionPerSearch: z.number().min(0).max(100),
+  kinds: z.array(z.object({
+    id: z.enum(['forest', 'scrub', 'farmland', 'road', 'village', 'dry']),
+    name: z.string().min(1),
+    search: z.array(lootEntry),
+    hunt: z.object({ factor: z.number().positive(), entries: z.array(lootEntry).min(1) }).optional(),
+  })).length(6),
+});
+
 // Per-site loot (P-013, D-033). Search: each draw takes the first entry that hits. Hunt: every entry rolls.
 export const lootSchema = z.object({
   siteId: slug('loc'),
@@ -544,6 +569,9 @@ export type Site = z.infer<typeof siteSchema>;
 export type SiteKind = Site['kind'];
 export type WorldConfig = z.infer<typeof worldSchema>;
 export type Roads = z.infer<typeof roadsSchema>;
+export type Terrain = z.infer<typeof terrainSchema>;
+export type TerrainKind = z.infer<typeof terrainLootSchema>['kinds'][number];
+export type TerrainLoot = z.infer<typeof terrainLootSchema>;
 export type Outline = z.infer<typeof outlineSchema>;
 export type Loot = z.infer<typeof lootSchema>;
 export type LootEntry = z.infer<typeof lootEntry>;

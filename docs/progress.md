@@ -115,7 +115,7 @@
   - Scarce loot in generated towns and villages (firewood 30%, scrap metal 10%, the rest at a tenth); 90% of their wells dry; first-visit XP only at the owner's places. Save v15 drops the old generic buildings' stock.
   - The map shows places by size as you zoom, draws only what's in view, and follows Prabu on trips.
   - 243 unit tests and 14 e2e tests pass; checked in the browser. The playtest bot first died of thirst in 54 of 60 runs: it was walking to dry wells (a bot bug, fixed); see `docs/playtest.md`.
-  - Flag: the radiation zone around the Trichy–Villupuram line (D-043) still works as before; D-105 leaves radiation out of the *generated* map only.
+  - D-108 (2026-11-27): the radiation zone (D-043) is switched off: not drawn, no radiation. Its rules stay in the data for later.
 
 ## Pending (unblocked)
 - Nothing.

@@ -1,5 +1,5 @@
 import type { Feature, FeatureCollection } from 'geojson';
-import { Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl, type GeoJSONSource } from 'maplibre-gl';
+import { Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl, type GeoJSONSource, type LayerSpecification } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 // MapLibre v6 can't find its own worker once Vite bundles it; give it the bundled worker's URL.
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
@@ -122,8 +122,10 @@ export function MapView() {
           { id: 'water', type: 'fill', source: 'water', paint: { 'fill-color': ['case', ['get', 'river'], COLORS.river, COLORS.still] } },
           { id: 'rivers', type: 'line', source: 'rivers', paint: { 'line-color': COLORS.river, 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.8, 12, 2, 14, 3.5] } },
           { id: 'wells', type: 'circle', source: 'wells', paint: { 'circle-color': COLORS.river, 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 1.5, 12, 3, 15, 5], 'circle-stroke-color': '#1c1916', 'circle-stroke-width': 1 } },
-          { id: 'zone', type: 'fill', source: 'zone', paint: { 'fill-color': COLORS.zone, 'fill-opacity': 0.18 } },
-          { id: 'zone-edge', type: 'line', source: 'zone', paint: { 'line-color': COLORS.zone, 'line-width': 1.5, 'line-dasharray': [4, 3] } },
+          ...(content.scavenging.radiation.off ? [] : [
+            { id: 'zone', type: 'fill', source: 'zone', paint: { 'fill-color': COLORS.zone, 'fill-opacity': 0.18 } },
+            { id: 'zone-edge', type: 'line', source: 'zone', paint: { 'line-color': COLORS.zone, 'line-width': 1.5, 'line-dasharray': [4, 3] } },
+          ] satisfies LayerSpecification[]),
           { id: 'rail', type: 'line', source: 'rail', paint: { 'line-color': COLORS.rail, 'line-width': 1.5, 'line-dasharray': [3, 2] } },
           // D-099: a town's streets show once zoomed in to street level, with its buildings.
           { id: 'streets', type: 'line', source: 'streets', minzoom: SPOTS_ZOOM - 1, paint: { 'line-color': COLORS.road, 'line-opacity': 0.55, 'line-width': ['interpolate', ['linear'], ['zoom'], 13, 0.6, 16, 2] } },
@@ -153,11 +155,13 @@ export function MapView() {
     });
 
 
-    const { from, to } = content.scavenging.radiation;
-    const icon = document.createElement('div');
-    icon.innerHTML = TREFOIL;
-    icon.title = 'Radiation zone';
-    new Marker({ element: icon }).setLngLat([(from.lon + to.lon) / 2, (from.lat + to.lat) / 2]).addTo(map);
+    const { off, from, to } = content.scavenging.radiation;
+    if (!off) {
+      const icon = document.createElement('div');
+      icon.innerHTML = TREFOIL;
+      icon.title = 'Radiation zone';
+      new Marker({ element: icon }).setLngLat([(from.lon + to.lon) / 2, (from.lat + to.lat) / 2]).addTo(map);
+    }
 
     // Clicking Prabu shows what he can do where he stands (the only way to open it on a phone).
     const el = document.createElement('button');

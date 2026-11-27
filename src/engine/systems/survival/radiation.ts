@@ -1,9 +1,10 @@
 import type { Content } from '../../../content/loader';
 import { distanceToSegmentKm, samplePath, type LatLon } from '../travel/geo';
 
-/** D-043: inside the band within radiusKm of the Trichy–Villupuram line (rounded ends). */
+/** D-043: inside the band within radiusKm of the Trichy–Villupuram line (rounded ends); never while the zone is off. */
 export function inRadiationZone(p: LatLon, content: Content): boolean {
-  const { from, to, radiusKm } = content.scavenging.radiation;
+  const { off, from, to, radiusKm } = content.scavenging.radiation;
+  if (off) return false;
   return distanceToSegmentKm(p, from, to) <= radiusKm;
 }
 

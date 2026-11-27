@@ -172,36 +172,43 @@ describe('water (D-044)', () => {
 });
 
 describe('radiation zone (D-043)', () => {
+  // The zone is off for now (owner, 2026-11-27); these tests switch it back on.
+  const zoned = { ...content, scavenging: { ...content.scavenging, radiation: { ...content.scavenging.radiation, off: false } } };
+
+  it('is off: nowhere is inside, Trichy included', () => {
+    expect(inRadiationZone({ lat: 10.7905, lon: 78.7047 }, content)).toBe(false);
+  });
+
   const trichy = { lat: 10.7905, lon: 78.7047 };
   const midway = { lat: 11.3653, lon: 79.0954 };
 
   it('covers 30 km around the Trichy–Villupuram line, not Madurai or home', () => {
-    expect(inRadiationZone(trichy, content)).toBe(true);
-    expect(inRadiationZone(midway, content)).toBe(true);
-    expect(inRadiationZone({ lat: midway.lat, lon: midway.lon + 0.25 }, content)).toBe(true);
-    expect(inRadiationZone({ lat: trichy.lat - 0.35, lon: trichy.lon }, content)).toBe(false);
-    expect(inRadiationZone(site('loc.madurai'), content)).toBe(false);
-    expect(inRadiationZone(site('loc.home'), content)).toBe(false);
+    expect(inRadiationZone(trichy, zoned)).toBe(true);
+    expect(inRadiationZone(midway, zoned)).toBe(true);
+    expect(inRadiationZone({ lat: midway.lat, lon: midway.lon + 0.25 }, zoned)).toBe(true);
+    expect(inRadiationZone({ lat: trichy.lat - 0.35, lon: trichy.lon }, zoned)).toBe(false);
+    expect(inRadiationZone(site('loc.madurai'), zoned)).toBe(false);
+    expect(inRadiationZone(site('loc.home'), zoned)).toBe(false);
   });
 
   it('rolls once per full hour inside: about 1 in 4 hours adds 5 radiation, lowering maximum Health', () => {
     const s = at(midway);
-    const calm = { ...content, survival: { ...content.survival, drainPerHour: { food: 0, water: 0, rest: 0 } } };
+    const calm = { ...zoned, survival: { ...zoned.survival, drainPerHour: { food: 0, water: 0, rest: 0 } } };
     const events: GameEvent[] = [];
     passTime(s, 200 * 60, 'work', calm, events);
     const hits = events.filter((e) => e.type === 'irradiated').length;
     expect(hits).toBeGreaterThan(30);
     expect(hits).toBeLessThan(70);
     expect(s.survival.radiation).toBe(Math.min(100, hits * 5));
-    expect(s.survival.health).toBeLessThanOrEqual(maxHealth(s.survival, content));
+    expect(s.survival.health).toBeLessThanOrEqual(maxHealth(s.survival, zoned));
   });
 
   it('carries part-hours over, and sleeping cannot heal past the maximum', () => {
     const s = at(midway, 1, (g) => Object.assign(g.survival, { radiation: 30, health: 60 }));
-    passTime(s, 30, 'work', content, []);
+    passTime(s, 30, 'work', zoned, []);
     expect(s.survival.zoneMinutes).toBe(30);
     const home = at('loc.home', 1, (g) => Object.assign(g.survival, { radiation: 30, health: 65 }));
-    passTime(home, 8 * 60, 'sleep', content, []);
+    passTime(home, 8 * 60, 'sleep', zoned, []);
     expect(home.survival.health).toBe(70);
   });
 
@@ -210,7 +217,7 @@ describe('radiation zone (D-043)', () => {
     for (let seed = 1; seed < 100; seed++) {
       const t = at(midway, seed, (g) => Object.assign(g.survival, { radiation: 95, health: 5, zoneMinutes: 59 }));
       const events: GameEvent[] = [];
-      passTime(t, 1, 'work', content, events);
+      passTime(t, 1, 'work', zoned, events);
       if (!t.dead) continue;
       expect(events).toContainEqual({ type: 'died', cause: 'radiation' });
       return;

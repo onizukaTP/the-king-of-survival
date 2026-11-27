@@ -23,7 +23,7 @@ function effectLines(o: EventOutcome, r: NonNullable<EventState['result']>): Rea
   if (r.lost.length) lines.push(<>Lost: {names(r.lost.map((itemId) => ({ itemId, count: 1 })))}</>);
   if (r.found.length) lines.push(<>Found: {names(r.found)}</>);
   if (r.left.length) lines.push(<>Too heavy, left on the ground: {names(r.left)}</>);
-  if (r.siteId) lines.push(`On the map: ${content.sites[r.siteId]?.name ?? r.siteId}`);
+  if (r.siteId) lines.push(`The tracks lead towards ${content.sites[r.siteId]?.name ?? r.siteId}.`);
   if (o.minutes) lines.push(`${formatDuration(o.minutes)} passed`);
   if (o.stopTravel) lines.push('He stops here.');
   return lines;

@@ -1,10 +1,10 @@
 [
-  { "id": "loc.home", "name": "Kottai Nagar", "kind": "home", "lat": 9.5599, "lon": 77.6251, "knownAtStart": true },
-  { "id": "loc.sanctuary_forest", "name": "Sanctuary forest", "kind": "hunting", "lat": 9.5793, "lon": 77.6137, "knownAtStart": true },
-  { "id": "loc.srivilliputhur", "name": "Srivilliputhur town ruins", "kind": "ruins", "lat": 9.5081, "lon": 77.6336, "knownAtStart": true },
-  { "id": "loc.srivilliputhur_station", "name": "Srivilliputhur railway station", "kind": "rail", "lat": 9.4978, "lon": 77.6451, "knownAtStart": true },
-  { "id": "loc.nh744", "name": "NH 744 highway", "kind": "road", "lat": 9.482, "lon": 77.5897, "knownAtStart": true },
-  { "id": "loc.pilavakkal_dam", "name": "Pilavakkal dam", "kind": "water", "lat": 9.6412, "lon": 77.5262, "knownAtStart": false },
-  { "id": "loc.rajapalayam", "name": "Rajapalayam town ruins", "kind": "ruins", "lat": 9.4456, "lon": 77.5543, "knownAtStart": false },
-  { "id": "loc.madurai", "name": "Madurai city ruins", "kind": "city", "lat": 9.9261, "lon": 78.1141, "knownAtStart": false }
+  { "id": "loc.home", "name": "Kottai Nagar", "kind": "home", "lat": 9.5599, "lon": 77.6251 },
+  { "id": "loc.sanctuary_forest", "name": "Sanctuary forest", "kind": "hunting", "lat": 9.5793, "lon": 77.6137 },
+  { "id": "loc.srivilliputhur", "name": "Srivilliputhur town ruins", "kind": "ruins", "lat": 9.5081, "lon": 77.6336 },
+  { "id": "loc.srivilliputhur_station", "name": "Srivilliputhur railway station", "kind": "rail", "lat": 9.4978, "lon": 77.6451 },
+  { "id": "loc.nh744", "name": "NH 744 highway", "kind": "road", "lat": 9.482, "lon": 77.5897 },
+  { "id": "loc.pilavakkal_dam", "name": "Pilavakkal dam", "kind": "water", "lat": 9.6412, "lon": 77.5262 },
+  { "id": "loc.rajapalayam", "name": "Rajapalayam town ruins", "kind": "ruins", "lat": 9.4456, "lon": 77.5543 },
+  { "id": "loc.madurai", "name": "Madurai city ruins", "kind": "city", "lat": 9.9261, "lon": 78.1141 }
 ]

@@ -4,7 +4,7 @@ import { applyCommand, type Command, type GameEvent } from '../../core/commands'
 import { createNewGame, type GameState } from '../../core/state';
 import { distanceKm } from './geo';
 import { planRoute } from './route';
-import { fogCell, previewTravel, siteAt } from './travel';
+import { previewTravel, siteAt } from './travel';
 
 // Events (M6) have their own tests; here they would only interrupt the trips under test.
 const loaded = loadContent();
@@ -80,23 +80,15 @@ describe('travel commands', () => {
     expect(siteAt(state.player.position, content)?.id).toBe('loc.srivilliputhur');
   });
 
-  it('discovers places within sight along the way (D-018)', () => {
-    const { state, events } = travelAll(createNewGame(content, 1), { siteId: 'loc.nh744' });
-    // Rajapalayam isn't on this route's sight line; a trip towards it is what finds it.
-    expect(state.map.discoveredSiteIds).not.toContain('loc.madurai');
-    const toRaja = travelAll(state, { point: { lat: 9.46, lon: 77.565 } });
-    expect(toRaja.state.map.discoveredSiteIds).toContain('loc.rajapalayam');
-    expect(toRaja.events).toContainEqual({ type: 'site_discovered', siteId: 'loc.rajapalayam' });
-    expect(events.filter((e) => e.type === 'arrived')).toEqual([{ type: 'arrived', siteId: 'loc.nh744' }]);
-  });
-
-  it('clears fog along the path and keeps one point per ~1 km cell', () => {
+  it('can go to any place from the start, and counts a first visit only once (D-094)', () => {
     const start = createNewGame(content, 1);
-    const { state } = travelAll(start, { siteId: 'loc.srivilliputhur' });
-    expect(state.map.revealed.length).toBeGreaterThan(start.map.revealed.length);
-    const again = travelAll(travelAll(state, { siteId: 'loc.home' }).state, { siteId: 'loc.srivilliputhur' }).state;
-    const cells = new Set(again.map.revealed.map(fogCell));
-    expect(cells.size).toBe(again.map.revealed.length);
+    expect(previewTravel(start, { siteId: 'loc.madurai' }, content).ok).toBe(true);
+    const { state, events } = travelAll(start, { siteId: 'loc.nh744' });
+    expect(events.filter((e) => e.type === 'site_visited')).toEqual([{ type: 'site_visited', siteId: 'loc.nh744' }]);
+    expect(events.filter((e) => e.type === 'arrived')).toEqual([{ type: 'arrived', siteId: 'loc.nh744' }]);
+    expect(state.map.visitedSiteIds).toEqual(['loc.home', 'loc.nh744']);
+    const back = travelAll(travelAll(state, { siteId: 'loc.home' }).state, { siteId: 'loc.nh744' });
+    expect(back.events.some((e) => e.type === 'site_visited')).toBe(false);
   });
 
   it('stops after the current leg and stays where that leg ended', () => {
@@ -110,7 +102,6 @@ describe('travel commands', () => {
   });
 
   it.each([
-    ['an undiscovered place', { siteId: 'loc.madurai' }, 'unknown_site'],
     ['a place that does not exist', { siteId: 'loc.atlantis' }, 'unknown_site'],
     ['a point outside Tamil Nadu', { point: { lat: 12.9716, lon: 77.5946 } }, 'outside_world'],
     ['where Prabu already is', { siteId: 'loc.home' }, 'already_there'],

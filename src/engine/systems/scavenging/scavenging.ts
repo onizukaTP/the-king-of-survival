@@ -43,16 +43,17 @@ export function groundHere(state: GameState): number[] {
 /** What Prabu can search where he stands: a building on a town map (P-014), or a site with loot (P-013). */
 function searchTarget(state: GameState, content: Content) {
   const cfg = content.scavenging;
+  const torch = (minutes: number) => Math.round(minutes * cfg.torchTimeFactor);
   const spot = spotHere(state, content);
   if (spot?.kind === 'building') {
     const t = spot.type;
-    return { id: spot.id, key: t.id, name: spot.name, entries: t.search, minutes: t.searchMinutes, torchMinutes: t.torchSearchMinutes, depletion: t.depletionPerSearch };
+    return { id: spot.id, key: t.id, name: spot.name, entries: t.search, minutes: t.searchMinutes, torchMinutes: torch(t.searchMinutes), depletion: t.depletionPerSearch };
   }
   // Inside a town only buildings are searched; the town's own site has no loot.
   const site = state.town ? undefined : siteAt(state.player.position, content);
   const entries = site ? content.loot[site.id]?.search : undefined;
   if (!site || !entries?.length) return undefined;
-  return { id: site.id, key: site.id, name: site.name, entries, minutes: cfg.searchMinutes, torchMinutes: cfg.torchSearchMinutes, depletion: cfg.depletionPerSearch };
+  return { id: site.id, key: site.id, name: site.name, entries, minutes: cfg.searchMinutes, torchMinutes: torch(cfg.searchMinutes), depletion: cfg.depletionPerSearch };
 }
 
 /** The site's or building's richness now, applying the 7-day refresh (P-013). Mutates `state.sites`. */
@@ -79,7 +80,7 @@ export function searchOptions(state: GameState, content: Content) {
     canHunt: Boolean(site && content.loot[site.id]?.hunt?.length),
     canEnterTown: Boolean(site && content.towns[site.id]),
     searchMinutes: target?.minutes ?? content.scavenging.searchMinutes,
-    torchSearchMinutes: target?.torchMinutes ?? content.scavenging.torchSearchMinutes,
+    torchSearchMinutes: target?.torchMinutes ?? Math.round(content.scavenging.searchMinutes * content.scavenging.torchTimeFactor),
     torch: torchIndex(state, content) >= 0,
     richness: left,
   };

@@ -83,14 +83,12 @@ export const siteSchema = z.object({
   name: z.string().min(1),
   kind: z.enum(siteKinds),
   lat,
-  lon,
-  knownAtStart: z.boolean(),
+  lon,
 });
 
 export const worldSchema = z.object({
   roadSpeedKmh: z.number().positive(),
-  crossCountrySpeedKmh: z.number().positive(),
-  sightRadiusKm: z.number().positive(),
+  crossCountrySpeedKmh: z.number().positive(),
   legMaxMinutes: z.number().int().positive(),
   // Night and the moon (D-048, D-060): minutes of the day, and which days of the cycle have a full-moon night.
   night: z.object({
@@ -204,7 +202,8 @@ const place = z.object({ name: z.string(), lat, lon });
 // Scavenging, water and radiation numbers (P-013, D-043 to D-045).
 export const scavengingSchema = z.object({
   searchMinutes: z.number().int().positive(),
-  torchSearchMinutes: z.number().int().positive(),
+  // A search with the torch takes this share of the time, everywhere (owner, 2026-11-27: half).
+  torchTimeFactor: z.number().positive().max(1),
   torchItemId: slug('item'),
   torchChargePerSearch: z.number().int().positive(),
   drawsPerSearch: z.number().int().positive(),
@@ -262,7 +261,6 @@ export const buildingTypeSchema = z.object({
   id: slug('btype'),
   name: z.string().min(1),
   searchMinutes: z.number().int().positive(),
-  torchSearchMinutes: z.number().int().positive(),
   depletionPerSearch: z.number().min(0).max(100),
   search: z.array(lootEntry).min(1),
 });
@@ -442,7 +440,7 @@ export const combatSchema = z.object({
 
 // Progression (D-070, D-076): XP per source and the level table. Level 1 needs no entry.
 export const progressionSchema = z.object({
-  xp: z.object({ huntSuccess: z.number().int().nonnegative(), discovery: z.number().int().nonnegative(), searchWithFinds: z.number().int().nonnegative(), firstCraft: z.number().int().nonnegative() }),
+  xp: z.object({ huntSuccess: z.number().int().nonnegative(), firstVisit: z.number().int().nonnegative(), searchWithFinds: z.number().int().nonnegative(), firstCraft: z.number().int().nonnegative() }),
   // Journal notes kept; the oldest go first.
   notesKept: z.number().int().positive(),
   levels: z.array(z.object({ level: z.number().int().min(2), xp: z.number().int().positive(), gains: statsSchema.partial() })).min(1),

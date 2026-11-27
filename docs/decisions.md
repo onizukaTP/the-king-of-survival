@@ -96,6 +96,10 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-091 (owner, 2026-11-27; approves P-024 option A) **Level table: level 10 in about 20 days.** XP awards stay; the thresholds become 20 / 55 / 100 / 155 / 220 / 300 / 390 / 490 / 600 for levels 2–10 (gains unchanged). More levels will follow, continuing the growing gaps. A run under way catches up to the level its XP reaches when it loads (save v12).
 - D-092 (owner, 2026-11-27) **XP multiplier in the Test panel:** with `?debug=1`, every XP gain can be multiplied (0–100, 1 is normal); it stays with the run's save.
 - D-093 (owner, 2026-11-27; closes the M9 flag) **The Wild dogs text stays:** five dogs step out, but only 2 to 4 of them have the courage to fight.
+- D-094 (owner, 2026-11-27; supersedes D-017 and D-018) **The map is open:** every place is known from the start and there is no fog. **A first visit** to a place gives the 15 XP a discovery used to (the Distant smoke's tracks point to the nearest place he hasn't been to). Save v13.
+- D-095 (owner, 2026-11-27; changes D-047) **A search with the torch takes half the time** of one without it, everywhere (one factor, 0.5); the battery cost stays 5%.
+- D-096 (owner, 2026-11-27; changes D-047) **Filling a bottle takes 1 minute** (was 5). A bottle still gives Water +25; drinking straight from water still fills Water to 100.
+- D-097 (owner, 2026-11-27) **Next up:** every item's weight and every loot table are redone (Claude drafts beside today's numbers, the owner edits and approves), with **firewood in houses**, **more food in towns** and **new food items**; empty bottles found everywhere stay. After that: **more locations**, and **search or hunt anywhere** on the map, in the spirit of Day R Survival.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.

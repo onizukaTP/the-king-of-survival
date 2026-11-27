@@ -6,7 +6,7 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 
 ### Desktop
 - **Top bar:** game time (`Day 1 · 06:00`), Prabu's status ("At: home settlement" / "On the road"), and a **Menu** button. In M1 the menu holds only Save and Quit to title.
-- **Map:** fills the rest of the screen. Unexplored land is covered by fog. Discovered places are markers, and Prabu has his own marker.
+- **Map:** fills the rest of the screen. Every place is a marker from the start (D-094: no fog), and Prabu has his own marker.
 - **Side panel (right):**
   - *Place selected:* name, kind, discovered/known, distance, the road and cross-country split, total time, number of legs, and a **Travel** button.
   - *Empty ground selected:* the same panel, titled "Unmarked ground" (D-009: he can travel anywhere).
@@ -124,5 +124,4 @@ The four-rank battlefield replaced the band screen (D-067's columns) on 2026-11-
 ## Numbers the map screen shows (D-017 to D-020)
 - Speeds: road 4.5 km/h, cross-country 3 km/h.
 - The game starts on Day 1 at 12:00 (D-075; it was 06:00, D-020).
-- Fog clears in a ~3 km sight radius along Prabu's path.
-- At the start he already knows home, the sanctuary forest beside it (D-021), Srivilliputhur town ruins, the NH 744 stretch and the railway station.
+- The map is open (D-094): every place shows from the start, and there is no fog. Arriving at a place for the first time says "First visit" and gives 15 XP.

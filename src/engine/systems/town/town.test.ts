@@ -123,11 +123,11 @@ describe('searching buildings (P-014)', () => {
     expect(found).toBeGreaterThan(20);
   });
 
-  it('a house loses 25 points a search and searches in 25 minutes with the torch', () => {
+  it('a house loses 25 points a search and searches in 15 minutes with the torch, half its 30', () => {
     const house = building('btype.house');
     const s = ok(inTown(), { type: 'town.walk', spotId: house.id }).state;
     const r = ok(s, { type: 'scavenge.search', torch: true });
-    expect(r.state.clockMinutes).toBe(s.clockMinutes + 25);
+    expect(r.state.clockMinutes).toBe(s.clockMinutes + 15);
     expect(r.state.sites[house.id]).toMatchObject({ richness: 75 });
   });
 

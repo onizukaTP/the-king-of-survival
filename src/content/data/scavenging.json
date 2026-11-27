@@ -1,6 +1,6 @@
 {
   "searchMinutes": 60,
-  "torchSearchMinutes": 45,
+  "torchTimeFactor": 0.5,
   "torchItemId": "item.torch",
   "torchChargePerSearch": 5,
   "drawsPerSearch": 2,
@@ -10,7 +10,7 @@
   "huntMinutes": 60,
   "groundMinutes": 5760,
   "waterRangeKm": 0.2,
-  "fillMinutesPerBottle": 5,
+  "fillMinutesPerBottle": 1,
   "drinkMinutes": 10,
   "bottles": { "empty": "item.empty_bottle", "clean": "item.clean_water", "unsafe": "item.unsafe_water" },
   "radiation": {

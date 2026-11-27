@@ -20,9 +20,9 @@ test('travel to a known place, reload and continue restores identical state (aut
   await expect(page.getByTestId('clock')).toHaveText('Day 1 · 12:00');
   await expect(page.getByTestId('status')).toHaveText('At: Kottai Nagar');
 
-  // D-017: nearby places are known from the start; far ones are not.
+  // D-094: the map is open; every place shows from the start, Madurai included.
   await expect(page.getByRole('button', { name: 'Srivilliputhur town ruins' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Madurai city ruins' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Madurai city ruins' })).toHaveCount(1);
 
   await page.getByRole('button', { name: 'Srivilliputhur town ruins' }).click();
   await expect(page.locator('.panel h2')).toHaveText('Srivilliputhur town ruins');

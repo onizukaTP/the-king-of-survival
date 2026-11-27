@@ -4,7 +4,6 @@ import { drinkHere, fillBottles, hunt, search, takeFromGround, type Find } from 
 import { rest } from '../systems/survival/survival';
 import { craft } from '../systems/crafting/crafting';
 import { cook, feedFire, makeFire } from '../systems/fire/fire';
-import { enterTown, leaveTown, walkTo } from '../systems/town/town';
 import { chooseEvent, closeEvent } from '../systems/events/events';
 import { closeCombat, combatAct, type CombatAction } from '../systems/combat/combat';
 import { debugEvent, debugFight, debugItem, debugNight, debugVehicle, debugVehicleState, debugXpMultiplier } from '../systems/debug/debug';
@@ -44,10 +43,6 @@ export type Command =
   | { type: 'cargo.unload'; index: number; count: number }
   // Whole pack stacks into the cargo, as much as fits (Load all / Load selected).
   | { type: 'cargo.loadMany'; indexes: number[] }
-  | { type: 'town.enter' }
-  | { type: 'town.leave' }
-  // `spotId`: 'edge', a building or a water point of the town he's in.
-  | { type: 'town.walk'; spotId: string }
   // Fire and cooking (D-056): `method` and `recipeId` come from fire.json.
   | { type: 'fire.make'; method: string }
   | { type: 'fire.feed' }
@@ -94,9 +89,6 @@ export type GameEvent =
   | { type: 'drank'; clean: boolean }
   | { type: 'items_taken'; count: number }
   | { type: 'irradiated'; amount: number }
-  | { type: 'town_entered'; siteId: string }
-  | { type: 'town_left' }
-  | { type: 'walked'; spotId: string }
   | { type: 'fire_lit'; method: string }
   | { type: 'fire_fed' }
   | { type: 'cooked'; recipeId: string; count: number }
@@ -248,12 +240,6 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return unloadCargo(state, command.index, command.count, content);
     case 'cargo.loadMany':
       return loadManyCargo(state, command.indexes, content);
-    case 'town.enter':
-      return enterTown(state, content);
-    case 'town.leave':
-      return leaveTown(state, content);
-    case 'town.walk':
-      return walkTo(state, command.spotId, content);
     case 'fire.make':
       return makeFire(state, command.method, content);
     case 'fire.feed':

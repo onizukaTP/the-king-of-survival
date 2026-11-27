@@ -1,3 +1,4 @@
+import { spotHere } from '../town/town';
 import type { Content } from '../../../content/loader';
 import type { CommandResult, DeathCause, GameEvent } from '../../core/commands';
 import { nextRandom } from '../../core/rng';
@@ -116,7 +117,9 @@ export function rest(state: GameState, minutes: number | 'until_rested', content
   }
   const events: GameEvent[] = [];
   const start = state.clockMinutes;
-  const home = !state.town && siteAt(state.player.position, content)?.id === content.newGame.startSite;
+  const home = siteAt(state.player.position, content)?.id === content.newGame.startSite;
+  // Inside a town building he is under a roof, as he was on the old town maps (D-099).
+  const indoors = spotHere(state, content)?.kind === 'building';
   // At home or beside a fire he sleeps sheltered (D-061); outdoors at night something may come (D-059).
   const sheltered = home || fireMinutesLeft(state) > 0;
   // A night disturbance spoils the sleep: it neither ends Restless nor leaves him well rested.
@@ -125,7 +128,7 @@ export function rest(state: GameState, minutes: number | 'until_rested', content
     const hour = Math.min(60, duration - slept);
     passTime(state, hour, 'sleep', content, events);
     slept += hour;
-    const outdoors = !state.town && !home && fireMinutesLeft(state) === 0;
+    const outdoors = !indoors && !home && fireMinutesLeft(state) === 0;
     if (hour === 60 && !state.dead && outdoors && isNight(state.clockMinutes, content.world.night) && maybeEvent(state, { on: 'rest' }, content, events)) {
       interrupted = true;
       break;

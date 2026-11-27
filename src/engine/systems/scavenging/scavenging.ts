@@ -40,7 +40,7 @@ export function groundHere(state: GameState): number[] {
   return state.ground.flatMap((pile, i) => (distanceKm(pile, state.player.position) <= HERE_KM ? [i] : []));
 }
 
-/** What Prabu can search where he stands: a building on a town map (P-014), or a site with loot (P-013). */
+/** What Prabu can search where he stands: a town building (P-014, on the world map since D-099), or a site with loot (P-013). */
 function searchTarget(state: GameState, content: Content) {
   const cfg = content.scavenging;
   const torch = (minutes: number) => Math.round(minutes * cfg.torchTimeFactor);
@@ -49,8 +49,8 @@ function searchTarget(state: GameState, content: Content) {
     const t = spot.type;
     return { id: spot.id, key: t.id, name: spot.name, entries: t.search, minutes: t.searchMinutes, torchMinutes: torch(t.searchMinutes), depletion: t.depletionPerSearch };
   }
-  // Inside a town only buildings are searched; the town's own site has no loot.
-  const site = state.town ? undefined : siteAt(state.player.position, content);
+  // A town's own marker has no loot; its buildings do.
+  const site = siteAt(state.player.position, content);
   const entries = site ? content.loot[site.id]?.search : undefined;
   if (!site || !entries?.length) return undefined;
   return { id: site.id, key: site.id, name: site.name, entries, minutes: cfg.searchMinutes, torchMinutes: torch(cfg.searchMinutes), depletion: cfg.depletionPerSearch };
@@ -69,7 +69,7 @@ function richness(state: GameState, siteId: string): number {
 
 /** Can Prabu search here, and with the torch? For the UI, without changing anything. */
 export function searchOptions(state: GameState, content: Content) {
-  const site = state.town ? undefined : siteAt(state.player.position, content);
+  const site = siteAt(state.player.position, content);
   const target = searchTarget(state, content);
   const entry = target && state.sites[target.id];
   // Shown as 100% once the refresh is due, before the next search applies it.
@@ -78,7 +78,6 @@ export function searchOptions(state: GameState, content: Content) {
     site,
     canSearch: Boolean(target),
     canHunt: Boolean(site && content.loot[site.id]?.hunt?.length),
-    canEnterTown: Boolean(site && content.towns[site.id]),
     searchMinutes: target?.minutes ?? content.scavenging.searchMinutes,
     torchSearchMinutes: target?.torchMinutes ?? Math.round(content.scavenging.searchMinutes * content.scavenging.torchTimeFactor),
     torch: torchIndex(state, content) >= 0,
@@ -99,7 +98,7 @@ function finish(state: GameState, minutes: number, finds: Find[], content: Conte
 
 /** A charm found here, or null: one roll over the rarities found at this building type or site (P-022). */
 function charmFind(state: GameState, key: string, factor: number, content: Content): string | null {
-  const town = state.town?.siteId;
+  const town = spotHere(state, content)?.townId;
   const tiers = content.charms.finds.filter((f) => f.at.includes(key) && (!f.towns || (town !== undefined && f.towns.includes(town))));
   if (!tiers.length) return null;
   const r = roll(state);
@@ -118,7 +117,7 @@ export function search(state: GameState, useTorch: boolean, content: Content): C
   if (state.travel) return fail('travel_in_progress', 'Prabu can\'t search while travelling.');
   const target = searchTarget(state, content);
   if (!target) {
-    const site = state.town ? undefined : siteAt(state.player.position, content);
+    const site = siteAt(state.player.position, content);
     return site ? fail('nothing_to_search', `There's nothing to search at ${site.name}.`) : fail('not_at_site', 'There\'s nothing to search here.');
   }
   const cfg = content.scavenging;
@@ -171,7 +170,7 @@ export function search(state: GameState, useTorch: boolean, content: Content): C
  */
 export function hunt(state: GameState, content: Content): CommandResult {
   if (state.travel) return fail('travel_in_progress', 'Prabu can\'t hunt while travelling.');
-  const site = state.town ? undefined : siteAt(state.player.position, content);
+  const site = siteAt(state.player.position, content);
   const entries = site ? content.loot[site.id]?.hunt : undefined;
   if (!site || !entries?.length) return fail('cannot_hunt_here', 'There\'s no game to hunt here.');
   const stats = playerStats(state, content);
@@ -229,11 +228,11 @@ export function waterAt(p: LatLon, content: Content): WaterKind | null {
   return found;
 }
 
-/** Water where Prabu stands. Inside a town only its wells and tanks count (P-014). */
+/** Water where Prabu stands: the map's water, or a town's well (clean) or tank (unsafe) he stands at (P-014, D-099). */
 export function waterHere(state: GameState, content: Content): WaterKind | null {
-  if (!state.town) return waterAt(state.player.position, content);
   const spot = spotHere(state, content);
-  return spot?.kind === 'water' ? (spot.water === 'well' ? 'well' : 'still') : null;
+  if (spot?.kind === 'water') return spot.water === 'well' ? 'well' : 'still';
+  return waterAt(state.player.position, content);
 }
 
 /** Fills every empty bottle: clean at a river or well, unsafe anywhere else (D-044, D-050). */

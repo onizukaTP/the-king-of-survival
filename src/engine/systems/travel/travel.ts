@@ -10,8 +10,10 @@ import { passTime } from '../survival/survival';
 import { planRoute, type RoutePlan } from './route';
 import { cannotMove, ridden, speedFactor, travelSpeeds } from '../vehicles/ridden';
 import { wearVehicle } from '../vehicles/vehicles';
+import { spotById, townAround } from '../town/town';
 
-export type TravelTarget = { siteId: string } | { point: LatLon };
+// D-099: `spotId` is a town building or water spot, now a place on the world map.
+export type TravelTarget = { siteId: string } | { spotId: string } | { point: LatLon };
 
 // Within this distance Prabu counts as being at a place.
 const AT_PLACE_KM = 0.05;
@@ -54,6 +56,10 @@ export function previewTravel(state: GameState, target: TravelTarget, content: C
     if (!site) return fail('unknown_site', 'There\'s no such place.');
     destination = { lat: site.lat, lon: site.lon };
     siteId = site.id;
+  } else if ('spotId' in target) {
+    const spot = spotById(target.spotId, content);
+    if (!spot) return fail('unknown_spot', 'There\'s no such place.');
+    destination = { lat: spot.lat, lon: spot.lon };
   } else {
     destination = target.point;
     if (!insideOutline(destination, content.outline)) return fail('outside_world', 'That\'s outside Tamil Nadu.');
@@ -67,7 +73,6 @@ export function previewTravel(state: GameState, target: TravelTarget, content: C
 }
 
 export function startTravel(state: GameState, target: TravelTarget, content: Content): CommandResult {
-  if (state.town) return { ok: false, error: { code: 'in_town', message: 'Leave the town first.' } };
   const preview = previewTravel(state, target, content);
   if (!preview.ok) return preview;
   state.travel = { destination: preview.destination, siteId: preview.siteId, legs: preview.plan.legs, nextLeg: 0, speeds: travelSpeeds(state, content) };
@@ -106,7 +111,9 @@ export function advanceTravel(state: GameState, content: Content): CommandResult
     events.push({ type: 'travel_stopped', reason: 'meter' });
   }
   // D-059: an event may meet him at the end of the leg; the trip waits until its card is closed.
-  if (!state.dead) maybeEvent(state, { on: 'travel', minutes, crossShare: share, unlit }, content, events);
+  // A leg ending inside a town is a town walk (D-059, kept by D-099): only town events.
+  const trigger = townAround(state.player.position, content) ? { on: 'walk' as const, minutes, unlit } : { on: 'travel' as const, minutes, crossShare: share, unlit };
+  if (!state.dead) maybeEvent(state, trigger, content, events);
   return { ok: true, state, events };
 }
 

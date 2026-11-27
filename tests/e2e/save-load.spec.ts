@@ -140,29 +140,36 @@ test('dying ends the run and deletes its save (D-038)', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Continue' })).toBeDisabled();
 });
 
-test('enter the town, walk to a building, search it; drops stay on its floor; leave (M4, P-014)', async ({ page }) => {
+test('a town building on the world map: go there, search it; drops stay on its floor (M4, P-014, D-099)', async ({ page }) => {
   await page.goto('/?seed=2');
   await newGame(page);
   await page.getByRole('button', { name: 'Srivilliputhur town ruins' }).dblclick();
   await expect(page.getByTestId('status')).toHaveText('At: Srivilliputhur town ruins', { timeout: 15_000 });
   const panel = page.getByTestId('here-panel');
-  await panel.getByRole('button', { name: 'Enter town' }).click();
-  await expect(page.getByTestId('status')).toHaveText('In Srivilliputhur town ruins');
 
-  // Click a building to see it, click it again to walk there (D-022 on the town map).
-  const garage = page.getByRole('button', { name: 'Garage', exact: true });
-  await garage.click();
-  await expect(page.getByTestId('spot-panel')).toContainText('Left to find100%');
-  await garage.click();
-  await expect(page.getByTestId('status')).toHaveText('In Srivilliputhur town ruins: Garage');
-  await expect(page.getByTestId('clock')).not.toHaveText(/06:|07:[0-4]/);
+  // Buildings show on the world map from street level (D-099).
+  const garage = page.locator('.spot-marker[aria-label="Garage"]').first();
+  await expect(garage).toBeHidden();
+  // Zoom in to street level (a click during the zoom animation adds less than a whole level).
+  for (let i = 0; i < 6 && !(await garage.isVisible()); i++) {
+    await page.getByRole('button', { name: 'Zoom in' }).click();
+    await page.waitForTimeout(400);
+  }
+  await expect(garage).toBeVisible();
 
-  // Being in a town survives saving and loading. (Save and quit waits for the write; a bare
-  // reload right after a walk can beat the autosave on a slow machine.)
+  // Click a building to see it, click it again to go there (D-022), along the streets.
+  await garage.click();
+  await expect(page.locator('.panel')).toContainText('Left to find100%');
+  await expect(page.locator('.panel')).toContainText('Garage, Srivilliputhur town ruins');
+  await garage.click();
+  await expect(page.getByTestId('status')).toHaveText('At: Garage, Srivilliputhur town ruins', { timeout: 15_000 });
+
+  // Standing at a building survives saving and loading. (Save and quit waits for the write.)
   await page.getByRole('button', { name: 'Menu' }).click();
   await page.getByRole('menuitem', { name: 'Save and quit' }).click();
   await page.getByRole('button', { name: 'Continue' }).click();
-  await expect(page.getByTestId('status')).toHaveText('In Srivilliputhur town ruins: Garage');
+  await expect(page.getByTestId('status')).toHaveText('At: Garage, Srivilliputhur town ruins');
+  await page.getByRole('button', { name: 'Prabu: what to do here' }).click();
 
   // Finds are random per run; a few searches always turn something up.
   for (let i = 0; i < 6 && !(await panel.getByText('On the ground').count()); i++) {
@@ -177,28 +184,12 @@ test('enter the town, walk to a building, search it; drops stay on its floor; le
   await page.getByRole('button', { name: /^Pack/ }).click();
   await page.getByRole('button', { name: /^Torch/ }).click();
   await page.getByTestId('item-card').getByRole('button', { name: 'Drop 1' }).click();
-  await garage.click();
+  await page.getByRole('button', { name: 'Prabu: what to do here' }).click();
   await expect(panel).toContainText('Torch');
   await panel.getByRole('checkbox').last().check();
   await panel.getByRole('button', { name: 'Take selected' }).click();
   await page.getByRole('button', { name: /^Pack/ }).click();
   await expect(page.locator('.panel')).toContainText('Torch · 50%');
-
-  // Leave only from the edge of town (D-053): walk back to it, then leave to the world map.
-  await page.getByRole('button', { name: /^Pack/ }).click();
-  await garage.click();
-  await expect(panel).toContainText('Walk to the edge of town or one of its ends to leave.');
-  await expect(panel.getByRole('button', { name: 'Leave town' })).toHaveCount(0);
-  const edge = page.getByRole('button', { name: 'Edge of town', exact: true });
-  await edge.click();
-  await edge.click();
-  await expect(page.getByTestId('status')).toHaveText('In Srivilliputhur town ruins');
-  // Clicking Prabu on the town map brings back what he can do here, as on the world map.
-  await page.getByRole('button', { name: /^Pack/ }).click();
-  await expect(panel).toHaveCount(0);
-  await page.getByRole('button', { name: 'Prabu: what to do here' }).click();
-  await panel.getByRole('button', { name: 'Leave town' }).click();
-  await expect(page.getByTestId('status')).toHaveText('At: Srivilliputhur town ruins');
 });
 
 test('the Craft panel lists recipes and blocks what is missing (M5)', async ({ page }) => {

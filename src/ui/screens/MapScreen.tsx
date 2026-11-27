@@ -3,9 +3,8 @@ import { maxHealth, type Meter } from '../../engine/core/state';
 import { carriedKg } from '../../engine/systems/inventory/inventory';
 import { riddenDef, ridden } from '../../engine/systems/vehicles/ridden';
 import { siteAt } from '../../engine/systems/travel/travel';
-import { spotHere, TOWN_EDGE } from '../../engine/systems/town/town';
+import { spotHere } from '../../engine/systems/town/town';
 import { MapView } from '../../map/MapView';
-import { TownMap } from '../../map/TownMap';
 import { content, DEBUG, useGameStore } from '../../store/gameStore';
 import { formatClock, formatKg } from '../format';
 import { Panel } from '../panels/Panel';
@@ -20,7 +19,6 @@ export function MapScreen() {
   const game = useGameStore((s) => s.game);
   const message = useGameStore((s) => s.message);
   const selection = useGameStore((s) => s.selection);
-  const townSelection = useGameStore((s) => s.townSelection);
   const panel = useGameStore((s) => s.panel);
   const openPanel = useGameStore((s) => s.openPanel);
   const saveAndQuit = useGameStore((s) => s.saveAndQuit);
@@ -30,10 +28,9 @@ export function MapScreen() {
 
   const here = siteAt(game.player.position, content);
   const spot = spotHere(game, content);
-  const status = game.town
-    ? `In ${content.sites[game.town.siteId]?.name}${spot && spot.id !== TOWN_EDGE ? `: ${spot.name}` : ''}`
-    : game.travel ? 'On the road' : here ? `At: ${here.name}` : 'In the open';
-  const panelOpen = Boolean(selection || (game.town && townSelection) || game.travel || panel);
+  const status = game.travel ? 'On the road'
+    : spot ? `At: ${spot.name}, ${content.sites[spot.townId]?.name}` : here ? `At: ${here.name}` : 'In the open';
+  const panelOpen = Boolean(selection || game.travel || panel);
   const toggle = (p: 'player' | 'pack' | 'vehicle' | 'rest' | 'craft' | 'journal' | 'test') => openPanel(panel === p ? null : p);
   const vehicle = riddenDef(game, content);
   const durability = ridden(game)?.durability;
@@ -107,7 +104,7 @@ export function MapScreen() {
       <div className={`main ${panelOpen && !game.combat ? 'panel-open' : ''} ${game.combat ? 'in-combat' : ''}`}>
         {game.combat ? <CombatScreen /> : (
           <>
-            {game.town ? <TownMap key={game.town.siteId} /> : <MapView />}
+            <MapView />
             <aside className="panel">
               <Panel />
             </aside>

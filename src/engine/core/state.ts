@@ -81,9 +81,6 @@ const groundPileSchema = stackSchema.extend({
   expiresAt: z.number().int(),
 });
 
-// Inside a town map (D-049). `at` is where he stands: 'edge' (the town's site point), a building or
-// water point id, or null after a walk stopped part-way.
-const townStateSchema = z.object({ siteId: z.string(), at: z.string().nullable() });
 
 // The one fire burning, where it was lit, until the game minute it burns out (D-056, P-016).
 const fireStateSchema = z.object({ lat: z.number(), lon: z.number(), outAt: z.number().int() });
@@ -201,8 +198,7 @@ export const gameStateSchema = z.object({
   survival: survivalStateSchema,
   inventory: inventorySchema,
   sites: z.record(z.string(), siteStateSchema),
-  ground: z.array(groundPileSchema),
-  town: townStateSchema.nullable(),
+  ground: z.array(groundPileSchema),
   fire: fireStateSchema.nullable(),
   event: eventStateSchema.nullable(),
   // Game minute the last event fired, for the cooldown (D-059).
@@ -225,7 +221,6 @@ export type Inventory = z.infer<typeof inventorySchema>;
 export type SurvivalState = z.infer<typeof survivalStateSchema>;
 export type Meter = 'health' | 'food' | 'water' | 'rest';
 export type GroundPile = z.infer<typeof groundPileSchema>;
-export type TownState = z.infer<typeof townStateSchema>;
 export type FireState = z.infer<typeof fireStateSchema>;
 export type EventState = z.infer<typeof eventStateSchema>;
 export type CombatState = z.infer<typeof combatStateSchema>;
@@ -267,8 +262,7 @@ export function createNewGame(content: Content, seed: number): GameState {
     survival: startingSurvival(content),
     inventory: startingInventory(content, content.newGame.startClockMinutes),
     sites: {},
-    ground: [],
-    town: null,
+    ground: [],
     fire: null,
     event: null,
     lastEventAt: null,

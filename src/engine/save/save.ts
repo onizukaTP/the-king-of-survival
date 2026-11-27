@@ -3,7 +3,7 @@ import type { Content } from '../../content/loader';
 import { gameStateSchema, startingInventory, startingSurvival, startPosition, type GameState } from '../core/state';
 import { initialMap } from '../systems/travel/travel';
 
-export const SAVE_VERSION = 13;
+export const SAVE_VERSION = 14;
 
 const saveSchema = z.object({
   saveVersion: z.literal(SAVE_VERSION),
@@ -129,6 +129,13 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
     const visitedSiteIds = gs.map.visitedSiteIds ?? [...(gs.map.discoveredSiteIds ?? [])];
     return { ...save, saveVersion: 13, gameState: { ...gs, map: { visitedSiteIds } } };
   },
+  // v13 → v14 (D-099, towns on the world map): no town screen. A run inside a town is already at its
+  // spot's point (or where a walk stopped), so only the town state goes.
+  13: (save) => {
+    const { town: _town, ...gs } = save.gameState as { town?: unknown };
+    void _town;
+    return { ...save, saveVersion: 14, gameState: gs };
+  },
 };
 
 /** `createdAt` is passed in because the engine never reads the wall clock. */
@@ -171,11 +178,5 @@ export function loadSave(raw: unknown, content: Content): LoadResult {
   if (gameState.event && !content.events.events.some((e) => e.id === gameState.event!.id)) return { ok: false, error: 'Save refers to an unknown event.' };
   if (gameState.survival.conditions.some((c) => !content.conditions[c.id])) return { ok: false, error: 'Save refers to an unknown condition.' };
   if (gameState.combat?.combatants.some((c) => (c.side === 'enemy' ? !content.enemies[c.defId] : !content.characters[c.defId]))) return { ok: false, error: 'Save refers to an unknown fighter.' };
-  const { town } = gameState;
-  if (town) {
-    const map = content.towns[town.siteId];
-    const spots = map ? ['edge', ...map.buildings.map((b) => b.id), ...map.water.map((w) => w.id), ...map.ends.map((e) => e.id)] : [];
-    if (!map || (town.at !== null && !spots.includes(town.at))) return { ok: false, error: 'Save refers to an unknown town.' };
-  }
   return { ok: true, save: parsed.data };
 }

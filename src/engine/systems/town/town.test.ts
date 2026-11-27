@@ -4,13 +4,13 @@ import { applyCommand, type Command, type GameEvent } from '../../core/commands'
 import { createNewGame, type GameState } from '../../core/state';
 import { createSave, loadSave } from '../../save/save';
 import { addItems } from '../inventory/inventory';
-import { groundHere } from '../scavenging/scavenging';
-import { distanceKm } from '../travel/geo';
-import { townSpots, walkMinutes } from './town';
+import { groundHere, waterAt } from '../scavenging/scavenging';
+import { previewTravel } from '../travel/travel';
+import { allSpots, spotAt, spotHere } from './town';
 
-const content = loadContent();
-// Tests count from the run's start time (D-075), not a fixed hour.
-const START = content.newGame.startClockMinutes;
+// Events have their own tests; here they would only interrupt the trips under test.
+const loaded = loadContent();
+const content = { ...loaded, events: { ...loaded.events, events: [] } };
 const SRI = 'loc.srivilliputhur';
 const town = content.towns[SRI]!;
 const building = (typeId: string) => town.buildings.find((b) => b.typeId === typeId)!;
@@ -27,90 +27,55 @@ const err = (state: GameState, command: Command) => {
   return r.ok ? 'ok' : r.error.code;
 };
 
-/** A new game standing at Srivilliputhur, inside its town map. */
-function inTown(seed = 1) {
+/** A new game standing at the Srivilliputhur marker. */
+function atTown(seed = 1) {
   const s = createNewGame(content, seed);
   s.player.position = { lat: content.sites[SRI]!.lat, lon: content.sites[SRI]!.lon };
-  return ok(s, { type: 'town.enter' }).state;
+  return s;
 }
 
-describe('entering and leaving a town (P-014)', () => {
-  it('enters at the edge and leaves to the town point, both for no time', () => {
-    const s = inTown();
-    expect(s.town).toEqual({ siteId: SRI, at: 'edge' });
-    expect(s.clockMinutes).toBe(START);
-    const left = ok(s, { type: 'town.leave' }).state;
-    expect(left.town).toBeNull();
-    expect(left.player.position).toEqual({ lat: content.sites[SRI]!.lat, lon: content.sites[SRI]!.lon });
-    expect(left.clockMinutes).toBe(START);
+/** A whole trip to a town spot, leg by leg. */
+function goTo(state: GameState, spotId: string) {
+  let s = ok(state, { type: 'travel.start', target: { spotId } }).state;
+  const events: GameEvent[] = [];
+  while (s.travel) {
+    const r = ok(s, { type: 'travel.advance' });
+    events.push(...r.events);
+    s = r.state;
+  }
+  return { state: s, events };
+}
+
+describe('towns on the world map (D-099)', () => {
+  it('every building, well and tank is a place of its own, 100 m or more apart', () => {
+    const spots = allSpots(content);
+    expect(spots).toHaveLength(Object.values(content.towns).reduce((n, t) => n + t.buildings.length + t.water.length, 0));
+    expect(new Set(spots.map((s) => s.id)).size).toBe(spots.length);
+    for (const s of spots) expect(spotAt(s, content)?.id).toBe(s.id);
   });
 
-  it('leaves only from the edge of town (D-053)', () => {
-    const walked = ok(inTown(), { type: 'town.walk', spotId: building('btype.hotel').id }).state;
-    expect(err(walked, { type: 'town.leave' })).toBe('not_at_edge');
-    const back = ok(walked, { type: 'town.walk', spotId: 'edge' }).state;
-    expect(back.clockMinutes).toBeGreaterThan(walked.clockMinutes);
-    expect(ok(back, { type: 'town.leave' }).state.town).toBeNull();
-  });
-
-  it('leaves from a north, south, east or west end at that end on the world map (D-054)', () => {
-    for (const town of Object.values(content.towns)) {
-      expect(town.ends.map((e) => e.name)).toEqual(['North end', 'South end', 'East end', 'West end']);
-    }
-    const end = content.towns[SRI]!.ends.find((e) => e.name === 'West end')!;
-    const there = ok(inTown(), { type: 'town.walk', spotId: end.id }).state;
-    const left = ok(there, { type: 'town.leave' }).state;
-    expect(left.town).toBeNull();
-    expect(left.player.position).toEqual({ lat: end.lat, lon: end.lon });
-    expect(left.player.position.lon).toBeLessThan(content.sites[SRI]!.lon);
-  });
-
-  it('refuses away from a town, twice, or while travelling; no world travel from inside', () => {
-    const home = createNewGame(content, 1);
-    expect(err(home, { type: 'town.enter' })).toBe('no_town_here');
-    expect(err(home, { type: 'town.leave' })).toBe('not_in_town');
-    expect(err(home, { type: 'town.walk', spotId: 'edge' })).toBe('not_in_town');
-    const s = inTown();
-    expect(err(s, { type: 'town.enter' })).toBe('in_town');
-    expect(err(s, { type: 'travel.start', target: { siteId: 'loc.home' } })).toBe('in_town');
-  });
-});
-
-describe('walking in a town', () => {
-  it('takes the straight-line distance at road speed and lands on the spot', () => {
-    const s = inTown();
-    const target = building('btype.place_of_worship');
-    const r = ok(s, { type: 'town.walk', spotId: target.id });
-    const km = distanceKm(content.sites[SRI]!, target);
-    expect(r.state.clockMinutes).toBe(START + Math.round((km / 4.5) * 60));
-    expect(r.state.player.position).toEqual({ lat: target.lat, lon: target.lon });
-    expect(r.state.town!.at).toBe(target.id);
-    expect(r.events.at(-1)).toEqual({ type: 'walked', spotId: target.id });
-    expect(err(r.state, { type: 'town.walk', spotId: target.id })).toBe('already_there');
-    expect(err(r.state, { type: 'town.walk', spotId: 'building.mdu_airport' })).toBe('unknown_spot');
-  });
-
-  it('stops part-way after a leg in which a meter fell low (D-035)', () => {
-    // Madurai's edge to its airport is a walk of over two hours.
-    const s = createNewGame(content, 1);
-    s.player.position = { lat: content.sites['loc.madurai']!.lat, lon: content.sites['loc.madurai']!.lon };
-    const entered = ok(s, { type: 'town.enter' }).state;
-    entered.survival.water = 26;
-    const r = ok(entered, { type: 'town.walk', spotId: 'building.mdu_airport' });
-    expect(r.events).toContainEqual({ type: 'travel_stopped', reason: 'meter' });
-    expect(r.state.town!.at).toBeNull();
-    expect(r.state.clockMinutes).toBe(START + 30);
-    // He can walk on from where he stopped.
-    expect(err(r.state, { type: 'town.walk', spotId: 'building.mdu_airport' })).toBe('ok');
+  it('a trip goes to a building along the streets, with legs and time, and lands on it', () => {
+    const s = atTown();
+    const garage = building('btype.garage');
+    const preview = previewTravel(s, { spotId: garage.id }, content);
+    if (!preview.ok) throw new Error(preview.error.message);
+    // The town's streets are in the road graph, so most of the way is road.
+    expect(preview.plan.roadKm).toBeGreaterThan(preview.plan.crossKm);
+    const { state } = goTo(s, garage.id);
+    expect(spotHere(state, content)?.id).toBe(garage.id);
+    expect(state.clockMinutes).toBe(s.clockMinutes + preview.plan.minutes);
+    expect(err(state, { type: 'travel.start', target: { spotId: garage.id } })).toBe('already_there');
+    expect(err(state, { type: 'travel.start', target: { spotId: 'building.nowhere' } })).toBe('unknown_spot');
   });
 });
 
 describe('searching buildings (P-014)', () => {
   it('uses the building type: its time, its loot table and its own stock', () => {
     let found = 0;
+    const garage = building('btype.garage');
+    const there = goTo(atTown(), garage.id).state;
     for (let seed = 1; seed <= 40; seed++) {
-      const garage = building('btype.garage');
-      const s = ok(inTown(seed), { type: 'town.walk', spotId: garage.id }).state;
+      const s = { ...structuredClone(there), rngState: seed };
       const r = ok(s, { type: 'scavenge.search', torch: false });
       expect(r.state.clockMinutes).toBe(s.clockMinutes + 45);
       const finds = (r.events[0] as Extract<GameEvent, { type: 'searched' }>).finds;
@@ -125,70 +90,65 @@ describe('searching buildings (P-014)', () => {
 
   it('a house loses 25 points a search and searches in 15 minutes with the torch, half its 30', () => {
     const house = building('btype.house');
-    const s = ok(inTown(), { type: 'town.walk', spotId: house.id }).state;
+    const s = goTo(atTown(), house.id).state;
     const r = ok(s, { type: 'scavenge.search', torch: true });
     expect(r.state.clockMinutes).toBe(s.clockMinutes + 15);
     expect(r.state.sites[house.id]).toMatchObject({ richness: 75 });
   });
 
-  it('has nothing to search at the edge or at the water', () => {
-    const s = inTown();
-    expect(err(s, { type: 'scavenge.search', torch: false })).toBe('not_at_site');
-    expect(err(ok(s, { type: 'town.walk', spotId: well.id }).state, { type: 'scavenge.search', torch: false })).toBe('not_at_site');
+  it('has nothing to search at the town marker or at the water', () => {
+    expect(err(atTown(), { type: 'scavenge.search', torch: false })).toBe('nothing_to_search');
+    expect(err(goTo(atTown(), well.id).state, { type: 'scavenge.search', torch: false })).toBe('not_at_site');
   });
 
   it('keeps finds on the floor of the building they were found in', () => {
-    const s = inTown();
+    const s = atTown();
     addItems(s, 'item.bamboo', 1, content);
-    const hotel = ok(s, { type: 'town.walk', spotId: building('btype.hotel').id }).state;
+    const hotel = goTo(s, building('btype.hotel').id).state;
     const dropped = ok(hotel, { type: 'item.drop', index: 2, count: 1 }).state;
     expect(groundHere(dropped)).toHaveLength(1);
-    const elsewhere = ok(dropped, { type: 'town.walk', spotId: building('btype.garage').id }).state;
+    const elsewhere = goTo(dropped, building('btype.garage').id).state;
     expect(groundHere(elsewhere)).toHaveLength(0);
   });
 });
 
 describe('town water (D-050)', () => {
   it('a well gives clean water, the tank unsafe water, a building none', () => {
-    const s = inTown();
+    const s = atTown();
     addItems(s, 'item.empty_bottle', 1, content);
-    const atWell = ok(s, { type: 'town.walk', spotId: well.id }).state;
+    const atWell = goTo(s, well.id).state;
     expect(ok(atWell, { type: 'water.fill' }).events[0]).toEqual({ type: 'bottles_filled', count: 1, clean: true });
-    const atTank = ok(s, { type: 'town.walk', spotId: tank.id }).state;
+    const atTank = goTo(s, tank.id).state;
     expect(ok(atTank, { type: 'water.fill' }).events[0]).toEqual({ type: 'bottles_filled', count: 1, clean: false });
-    const atHotel = ok(s, { type: 'town.walk', spotId: building('btype.hotel').id }).state;
-    expect(err(atHotel, { type: 'water.drink' })).toBe('no_water');
+    // A building away from any lake or river on the map has no water of its own.
+    const dry = town.buildings.find((b) => !waterAt(b, content))!;
+    const atDry = goTo(s, dry.id).state;
+    expect(err(atDry, { type: 'water.drink' })).toBe('no_water');
   });
 });
 
-describe('town data', () => {
-  it('every spot is reachable and walks take at least a minute', () => {
-    for (const t of Object.values(content.towns)) {
-      const spots = townSpots(t, content);
-      expect(new Set(spots.map((s) => s.id)).size).toBe(spots.length);
-      for (const s of spots) expect(walkMinutes(spots[0]!, s, content)).toBeGreaterThanOrEqual(1);
-    }
-  });
-});
-
-describe('saves (v5)', () => {
-  it('round-trips a game inside a town, and rejects an unknown spot', () => {
-    const s = ok(inTown(), { type: 'town.walk', spotId: well.id }).state;
-    const loaded = loadSave(JSON.parse(JSON.stringify(createSave(s, 'now'))), content);
-    expect(loaded.ok && loaded.save.gameState).toEqual(s);
-    const bad = createSave({ ...s, town: { siteId: SRI, at: 'building.nowhere' } }, 'now');
-    expect(loadSave(bad, content)).toMatchObject({ ok: false });
+describe('saves', () => {
+  it('round-trips a game standing at a building', () => {
+    const s = goTo(atTown(), well.id).state;
+    const back = loadSave(JSON.parse(JSON.stringify(createSave(s, 'now'))), content);
+    expect(back.ok && back.save.gameState).toEqual(s);
   });
 
-  it('migrates a v4 save: no town, and the town-wide stock is dropped', () => {
+  it('migrates a v13 run inside a town: it stays at its spot, and the town screen state goes (D-099)', () => {
     const s = createNewGame(content, 1);
-    const v4State: Partial<GameState> = { ...s, sites: { [SRI]: { richness: 50, refreshAt: 9000 }, 'loc.nh744': { richness: 40, refreshAt: 9000 } } };
-    delete v4State.town;
-    const loaded = loadSave({ saveVersion: 4, createdAt: 'then', gameState: v4State }, content);
-    expect(loaded.ok).toBe(true);
-    if (loaded.ok) {
-      expect(loaded.save.gameState.town).toBeNull();
-      expect(Object.keys(loaded.save.gameState.sites)).toEqual(['loc.nh744']);
-    }
+    const hotel = building('btype.hotel');
+    const v13 = { ...structuredClone(s), player: { ...s.player, position: { lat: hotel.lat, lon: hotel.lon } }, town: { siteId: SRI, at: hotel.id } };
+    const r = loadSave({ saveVersion: 13, createdAt: 'then', gameState: v13 }, content);
+    if (!r.ok) throw new Error(r.error);
+    expect('town' in r.save.gameState).toBe(false);
+    expect(spotHere(r.save.gameState, content)?.id).toBe(hotel.id);
+  });
+
+  it('migrates a v4 save: the town-wide stock is dropped', () => {
+    const s = createNewGame(content, 1);
+    const v4State = { ...s, sites: { [SRI]: { richness: 50, refreshAt: 9000 }, 'loc.nh744': { richness: 40, refreshAt: 9000 } } };
+    const r = loadSave({ saveVersion: 4, createdAt: 'then', gameState: v4State }, content);
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(Object.keys(r.save.gameState.sites)).toEqual(['loc.nh744']);
   });
 });

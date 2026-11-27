@@ -39,6 +39,8 @@ export type RunReport = {
   /** Hours spent with Food or Water at 0. */
   starvingHours: number;
   stuck: boolean;
+  /** XP at the end of each whole day. */
+  xpByDay: number[];
 };
 
 const EAT = ['item.cooked_meat', 'item.millet_porridge', 'item.dried_meat', 'item.tinned_food', 'item.tender_coconut'];
@@ -66,7 +68,7 @@ export function playRun(content: Content, seed: number, maxDays = 10, trace?: (l
   let state = createNewGame(content, seed);
   const report: RunReport = {
     seed, died: false, cause: null, days: 0, level: 1, xp: 0, fights: 0, won: 0, fled: 0, events: 0, searches: 0,
-    hunts: 0, huntsHit: 0, injuries: 0, ill: 0, lowest: { food: 100, water: 100, health: 100 }, starvingHours: 0, stuck: false,
+    hunts: 0, huntsHit: 0, injuries: 0, ill: 0, lowest: { food: 100, water: 100, health: 100 }, starvingHours: 0, stuck: false, xpByDay: [],
   };
   // Places (and town buildings) searched down to a thin stock, with when.
   const mem: Memory = { exhausted: {}, goal: null };
@@ -94,6 +96,7 @@ export function playRun(content: Content, seed: number, maxDays = 10, trace?: (l
     report.lowest.water = Math.min(report.lowest.water, s.water);
     report.lowest.health = Math.min(report.lowest.health, s.health);
     if (s.food === 0 || s.water === 0) report.starvingHours += (state.clockMinutes - before) / 60;
+    while (state.clockMinutes - content.newGame.startClockMinutes >= (report.xpByDay.length + 1) * 1440) report.xpByDay.push(state.progression.xp);
   }
   report.died = state.dead;
   report.days = Math.round(((state.clockMinutes - content.newGame.startClockMinutes) / 1440) * 10) / 10;

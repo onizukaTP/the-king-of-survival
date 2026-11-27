@@ -524,3 +524,19 @@ describe('an encounter end to end', () => {
     expect(outcomes.has('won')).toBe(true);
   });
 });
+
+describe('the bow raider alone in front (P-023)', () => {
+  it('punches with bare hands from rank 1, weak as Prabu’s fists, and never instead of shooting from further back', () => {
+    const start = createNewGame(base, 3);
+    start.introSeen = true;
+    const r = applyCommand(start, { type: 'debug.fight', enemies: [{ enemyId: 'enemy.raider_bow', count: 1 }], ambush: false }, base);
+    if (!r.ok) throw new Error(r.error.message);
+    const archer = r.state.combat!.combatants.find((c) => c.side === 'enemy')!;
+    expect(archer.rank).toBe(1);
+    for (let i = 0; i < 20; i++) expect(decide(r.state, archer, base)).toMatchObject({ kind: 'ability', abilityId: 'ability.raider_punch' });
+    const punch = base.abilities['ability.raider_punch']!;
+    expect(punch.usableFrom).toEqual([1]);
+    // (4–7 + ATK 0) × 0.4 → about 2–3, like Prabu's bare fists (1–3).
+    expect(punch.damage).toBe(0.4);
+  });
+});

@@ -71,7 +71,9 @@ Not bugs:
 - **Wild dogs text vs numbers:** the event says "Five lean dogs step out of the scrub", but the fight it starts has **2 to 4** dogs (`events.json`). Which is right?
 - **A lone archer can't act:** when the bow raider ends up alone in rank 1 (after the blade raider's remains are cleared), it can't shoot. Shoot is used from ranks 2–4, it has no other attack, and with no one behind it, it can't step back. It just waits, which makes it a free kill.
 
-## Balance proposals (P-023, awaiting the owner)
+## Balance proposals (P-023, answered by D-090 on 2026-11-27)
+
+The owner's answers: 1 yes, as bare hands (built); 2 yes (built); 3 **level 10 in about 20 days**, since more levels will come (table in P-024 below); 4, 5 and 6 yes.
 
 | # | Question | Options | Recommendation |
 |---|---|---|---|
@@ -83,3 +85,28 @@ Not bugs:
 | 6 | The bow | It does worse than melee and costs arrows. Options: keep (it reaches every rank and gives Hunting +15%); raise its damage | **Keep for now**: its value is reach and hunting |
 
 Still to do in M9 after the owner's answers: a human playtest of a full 30–60 minute session on desktop and a phone (acceptance criterion), and any approved balance changes.
+
+## P-024: level table for level 10 in about 20 days (awaiting the owner)
+
+A careful player's XP by the end of each day (100 runs, median, `tests/playtest/xp.sim.ts`): day 1: 45 · 2: 77 · 3: 115 · 5: 184 · 7: 263 · 10: 349 · 15: 479 · 20: **606** · 30: 876. After the first week it's about 30 XP a day, nearly all from searches.
+
+Two ways to make day 20 reach level 10:
+- **(A) Lower the thresholds.** XP awards stay as they are. The table keeps its growing gaps, so new levels just continue it. **Recommended.**
+- **(B) Raise every XP award about 4.5 times** (a search 9, a hunt 45, a discovery 68, enemies ×4.5). The table stays, but every XP number changes.
+
+Option A, gains unchanged:
+
+| Level | Total XP now | Proposed | Reached on about (median) |
+|---|---|---|---|
+| 2 | 100 | 20 | day 1 (about 11 h in) |
+| 3 | 250 | 55 | day 2 |
+| 4 | 450 | 100 | day 3 |
+| 5 | 700 | 155 | day 5 |
+| 6 | 1,000 | 220 | day 6 |
+| 7 | 1,350 | 300 | day 9 |
+| 8 | 1,750 | 390 | day 12 |
+| 9 | 2,200 | 490 | day 16 |
+| 10 | 2,700 | 600 | day 20 |
+
+Levels after 10 would continue the gaps (+120, +130, …): level 11 at about 720 XP (day 24) and level 12 at about 850 (day 29), at the current XP rate.
+

@@ -396,7 +396,8 @@ export const enemySchema = z.object({
   size: z.number().int().min(1).max(2),
   // Where it likes to stand; it is placed there at the start and moves back there when it has nothing to do.
   preferredRanks: z.array(rank).min(1),
-  abilities: z.array(z.object({ id: slug('ability'), weight: z.number().positive() })).min(1),
+  // `fallback`: used only when nothing else works and it can't step towards its ranks (P-023: the archer's punch).
+  abilities: z.array(z.object({ id: slug('ability'), weight: z.number().positive(), fallback: z.boolean().optional() })).min(1),
   // How it picks a target: at random, the weakest, a marked one first, or the one nearest the front.
   ai: z.object({ target: z.enum(['random', 'lowest_hp', 'marked', 'front']) }),
   turnsPerRound: z.number().int().min(1).max(3).optional(),

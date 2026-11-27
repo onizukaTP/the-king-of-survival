@@ -1,5 +1,7 @@
 # Towns and water at places — approved (D-052), built; on the world map since D-099
 
+> **Since M11 (D-102 to D-107)** every town and village is generated around the owner's places, with the building types below; Srivilliputhur, Rajapalayam and Madurai keep only their named landmarks by hand. The hand-made layouts and town ends below are history. See `docs/map.md`.
+
 Confirmed by the owner:
 - **D-049:** every town has its own map of buildings to scavenge. Layouts are hand-made, with real landmarks where they exist. Building types can be any that reflect a real Tamil Nadu town; the owner's list was examples.
 - **D-050:** ponds, lakes and wells sit at places, and **well water is clean**.

@@ -198,7 +198,7 @@ export const gameStateSchema = z.object({
   survival: survivalStateSchema,
   inventory: inventorySchema,
   sites: z.record(z.string(), siteStateSchema),
-  ground: z.array(groundPileSchema),
+  ground: z.array(groundPileSchema),
   fire: fireStateSchema.nullable(),
   event: eventStateSchema.nullable(),
   // Game minute the last event fired, for the cooldown (D-059).
@@ -262,7 +262,7 @@ export function createNewGame(content: Content, seed: number): GameState {
     survival: startingSurvival(content),
     inventory: startingInventory(content, content.newGame.startClockMinutes),
     sites: {},
-    ground: [],
+    ground: [],
     fire: null,
     event: null,
     lastEventAt: null,

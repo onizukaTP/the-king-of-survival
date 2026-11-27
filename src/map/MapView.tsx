@@ -111,13 +111,13 @@ export function MapView() {
           wells: { type: 'geojson', data: wellsGeoJson() },
           zone: { type: 'geojson', data: zoneGeoJson() },
           streets: { type: 'geojson', data: streetsGeoJson() },
-          landcover: { type: 'geojson', data: landCoverGeoJson() },
+          landcover: landCoverImage(),
         },
         layers: [
           { id: 'sea', type: 'background', paint: { 'background-color': COLORS.sea } },
           { id: 'land', type: 'fill', source: 'land', paint: { 'fill-color': COLORS.land } },
           // D-101: land cover from the terrain grid: forest, scrub, farmland and villages; dry land stays bare.
-          { id: 'landcover', type: 'fill', source: 'landcover', paint: { 'fill-color': ['match', ['get', 'kind'], 'F', '#3e5634', 'S', '#5a5a36', 'A', '#6e6a3c', 'V', '#5c4f43', '#3a342c'], 'fill-opacity': 0.75 } },
+          { id: 'landcover', type: 'raster', source: 'landcover', paint: { 'raster-opacity': 0.55, 'raster-resampling': 'linear', 'raster-fade-duration': 0 } },
           { id: 'border', type: 'line', source: 'land', paint: { 'line-color': COLORS.border, 'line-width': 1 } },
           { id: 'water', type: 'fill', source: 'water', paint: { 'fill-color': ['case', ['get', 'river'], COLORS.river, COLORS.still] } },
           { id: 'rivers', type: 'line', source: 'rivers', paint: { 'line-color': COLORS.river, 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.8, 12, 2, 14, 3.5] } },
@@ -180,48 +180,60 @@ export function MapView() {
     };
   }, []);
 
-  // Site markers: the map is open (D-094), so every place shows from the start.
+  // Markers for what is on screen (M11: ~670 places and ~4,300 buildings across the state). Places show
+  // by size as you zoom in: cities and the owner's places always, towns from zoom 9, villages from 11;
+  // buildings, wells and tanks from street level (D-099). Only markers in view exist, so panning stays smooth.
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    for (const id of Object.keys(content.sites)) {
-      if (siteMarkers.current.has(id)) continue;
-      const site = content.sites[id]!;
+    const markers = siteMarkers.current;
+    const make = (id: string, lat: number, lon: number, cls: string, label: string, title: string, target: () => Parameters<typeof select>[0]) => {
       const el = document.createElement('button');
-      el.className = `site-marker kind-${site.kind}`;
-      el.setAttribute('aria-label', site.name);
+      el.className = cls;
+      el.setAttribute('aria-label', label);
+      if (title) el.title = title;
       el.innerHTML = `<span class="dot"></span><span class="label"></span>`;
-      el.querySelector('.label')!.textContent = site.name;
-      // Clicking the already-selected place (so also a double-click) travels there.
+      el.querySelector('.label')!.textContent = label;
+      // Clicking the already-selected place (so also a double-click) travels there (D-022).
       el.addEventListener('click', (e) => {
         e.stopPropagation();
         const store = useGameStore.getState();
-        const selected = store.selection && 'siteId' in store.selection && store.selection.siteId === id;
-        if (selected) void store.travel();
-        else select({ siteId: id });
+        const t = target();
+        if (store.selection && JSON.stringify(store.selection) === JSON.stringify(t)) void store.travel();
+        else select(t);
       });
       el.addEventListener('dblclick', (e) => e.stopPropagation());
-      siteMarkers.current.set(id, new Marker({ element: el, anchor: 'left', offset: [-6, 0] }).setLngLat([site.lon, site.lat]).addTo(map));
-    }
-    // D-099: town buildings, wells and tanks are places on the world map, shown when zoomed in.
-    for (const spot of allSpots(content)) {
-      if (siteMarkers.current.has(spot.id)) continue;
-      const el = document.createElement('button');
-      el.className = `spot-marker spot-${spot.kind === 'building' ? 'building' : spot.water}`;
-      el.setAttribute('aria-label', spot.name);
-      el.title = spot.kind === 'building' ? spot.type.name : spot.water === 'well' ? 'Well: clean water' : 'Tank: unsafe water';
-      el.innerHTML = `<span class="dot"></span><span class="label"></span>`;
-      el.querySelector('.label')!.textContent = spot.name;
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const store = useGameStore.getState();
-        const selected = store.selection && 'spotId' in store.selection && store.selection.spotId === spot.id;
-        if (selected) void store.travel();
-        else select({ spotId: spot.id });
-      });
-      el.addEventListener('dblclick', (e) => e.stopPropagation());
-      siteMarkers.current.set(spot.id, new Marker({ element: el, anchor: 'left', offset: [-5, 0] }).setLngLat([spot.lon, spot.lat]).addTo(map));
-    }
+      markers.set(id, new Marker({ element: el, anchor: 'left', offset: [-6, 0] }).setLngLat([lon, lat]).addTo(map));
+    };
+    const sites = Object.values(content.sites);
+    const spots = allSpots(content);
+    const refresh = () => {
+      const z = map.getZoom();
+      const b = map.getBounds();
+      const pad = 0.2 * (b.getNorth() - b.getSouth());
+      const inView = (lat: number, lon: number) => lat >= b.getSouth() - pad && lat <= b.getNorth() + pad && lon >= b.getWest() - pad && lon <= b.getEast() + pad;
+      const want = new Set<string>();
+      for (const site of sites) {
+        const min = site.tier === 'village' ? 11 : site.tier === 'town' && !site.owner ? 9 : site.tier === 'town' ? 8 : 0;
+        if (z < min || !inView(site.lat, site.lon)) continue;
+        want.add(site.id);
+        if (!markers.has(site.id)) make(site.id, site.lat, site.lon, `site-marker kind-${site.kind}${site.owner === false ? ' generated' : ''}`, site.name, '', () => ({ siteId: site.id }));
+      }
+      if (z >= SPOTS_ZOOM) {
+        for (const spot of spots) {
+          if (!inView(spot.lat, spot.lon)) continue;
+          want.add(spot.id);
+          if (markers.has(spot.id)) continue;
+          const kind = spot.kind === 'building' ? 'building' : spot.dry ? 'dry' : spot.water;
+          const title = spot.kind === 'building' ? spot.type.name : spot.dry ? 'Dry well: no water' : spot.water === 'well' ? 'Well: clean water' : 'Tank: unsafe water';
+          make(spot.id, spot.lat, spot.lon, `spot-marker spot-${kind}`, spot.name, title, () => ({ spotId: spot.id }));
+        }
+      }
+      for (const [id, m] of markers) if (!want.has(id)) { m.remove(); markers.delete(id); }
+    };
+    refresh();
+    map.on('moveend', refresh);
+    return () => { map.off('moveend', refresh); };
   }, [select]);
 
   // Parked vehicles (M10): a small square where each one was left; clicking it plans a trip there.
@@ -263,6 +275,9 @@ export function MapView() {
   useEffect(() => {
     const marker = prabuRef.current;
     if (!marker || !position) return;
+    // M11: the map is the whole state, so the view follows Prabu when he walks off its edge.
+    const map = mapRef.current;
+    if (map && !map.getBounds().contains([position.lon, position.lat])) map.easeTo({ center: [position.lon, position.lat], duration: LEG_ANIMATION_MS });
     if (!lastLegPath) {
       marker.setLngLat([position.lon, position.lat]);
       return;
@@ -290,23 +305,33 @@ function streetsGeoJson(): Feature {
   return { type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: lines } };
 }
 
-/** The terrain grid (D-101) as rectangles: runs of the same kind along each row, one feature per run. */
-function landCoverGeoJson(): FeatureCollection {
+/**
+ * The land cover (D-101, M11) as one image over the state: a pixel per ~500 m square, coloured by kind;
+ * dry land and the sea are left clear. Drawn once.
+ */
+function landCoverImage(): { type: 'image'; url: string; coordinates: [[number, number], [number, number], [number, number], [number, number]] } {
   const t = content.terrain;
-  const [south, west] = t.bbox;
-  const features: Feature[] = [];
-  for (let r = 0; r < t.rows; r++) {
-    const lat0 = south + r * t.cellDeg, lat1 = lat0 + t.cellDeg;
-    for (let c = 0; c < t.cols;) {
-      const kind = t.grid[r * t.cols + c]!;
-      let end = c + 1;
-      while (end < t.cols && t.grid[r * t.cols + end] === kind) end++;
-      if (kind !== '.') {
-        const lon0 = west + c * t.cellDeg, lon1 = west + end * t.cellDeg;
-        features.push({ type: 'Feature', properties: { kind }, geometry: { type: 'Polygon', coordinates: [[[lon0, lat0], [lon1, lat0], [lon1, lat1], [lon0, lat1], [lon0, lat0]]] } });
+  const [south, west, north, east] = t.bbox;
+  const canvas = document.createElement('canvas');
+  canvas.width = t.cols;
+  canvas.height = t.rows;
+  const ctx = canvas.getContext('2d');
+  const colours: Record<string, [number, number, number]> = { F: [62, 86, 52], S: [90, 90, 54], A: [110, 106, 60], V: [92, 79, 67] };
+  if (ctx) {
+    const img = ctx.createImageData(t.cols, t.rows);
+    for (let r = 0; r < t.rows; r++) {
+      // Grid rows run south to north; image rows north to south.
+      const y = t.rows - 1 - r;
+      for (let c = 0; c < t.cols; c++) {
+        const rgb = colours[t.grid[r * t.cols + c]!];
+        if (!rgb) continue;
+        const o = (y * t.cols + c) * 4;
+        img.data[o] = rgb[0]; img.data[o + 1] = rgb[1]; img.data[o + 2] = rgb[2]; img.data[o + 3] = 255;
       }
-      c = end;
     }
+    ctx.putImageData(img, 0, 0);
   }
-  return { type: 'FeatureCollection', features };
+  const top = south + t.rows * t.cellDeg, right = west + t.cols * t.cellDeg;
+  void north; void east;
+  return { type: 'image', url: canvas.toDataURL(), coordinates: [[west, top], [right, top], [right, south], [west, south]] };
 }

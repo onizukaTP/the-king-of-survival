@@ -14,21 +14,23 @@ import abilities from './data/abilities.json';
 import combat from './data/combat.json';
 import water from './data/water.json';
 import buildingTypes from './data/building-types.json';
-import towns from './data/towns.json';
-import townStreets from './data/town-streets.json';
+import landmarks from './data/landmarks.json';
+import backbone from './data/backbone.json';
+import generator from './data/generator.json';
 import newGame from './data/new-game.json';
 import progression from './data/progression.json';
 import story from './data/story.json';
 import charms from './data/charms.json';
 import vehicles from './data/vehicles.json';
 import roads from './data/roads.json';
-import terrain from './data/terrain.json';
+import rail from './data/rail.json';
+import forests from './data/forests.json';
 import terrainLoot from './data/terrain-loot.json';
 import sites from './data/sites.json';
 import tamilNadu from './data/tamil-nadu.json';
 import world from './data/world.json';
 
-const raw: RawContent = { characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, terrain, terrainLoot, outline: tamilNadu, newGame, progression, story, charms, vehicles };
+const raw: RawContent = { characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, backbone, landmarks, generator, roads, rail, forests, terrainLoot, outline: tamilNadu, newGame, progression, story, charms, vehicles };
 const prabu = characters[0]!;
 const home = sites[0]!;
 
@@ -36,16 +38,25 @@ describe('content loader', () => {
   it('loads the shipped content', () => {
     const content = loadContent();
     expect(content.characters['character.prabu']?.name).toBe('Prabu');
-    expect(Object.keys(content.sites)).toHaveLength(8);
+    // M11: the 8 kept destinations, the owner's 72 backbone places (Madurai and Rajapalayam among both)
+    // and the generated towns and villages around them.
+    const sites = Object.values(content.sites);
+    expect(sites.filter((s) => s.owner !== false)).toHaveLength(8 + 72 - 2);
+    expect(sites.filter((s) => s.owner === false).length).toBeGreaterThan(400);
     expect(content.roads.nodes.length).toBeGreaterThan(1000);
     // D-026 + D-037: the 28 approved items, the three starting-kit additions and lighter fuel (37 with D-057, D-058);
     // M10 adds biodiesel and the 13 charms (P-021, P-022).
     expect(Object.keys(content.items)).toHaveLength(63);
     expect(Object.values(content.items).filter((i) => i.charm)).toHaveLength(13);
     expect(Object.keys(content.vehicles.byId)).toEqual(['vehicle.hand_cart', 'vehicle.cycle', 'vehicle.cycle_trailer', 'vehicle.auto_rickshaw', 'vehicle.bullock_cart']);
-    // P-014: 16 building types; 13, 16 and 24 buildings; 39 mapped wells.
+    // P-014: 16 building types. M11: every settlement has its buildings; Madurai (a city) keeps its five
+    // named landmarks among 25–40 buildings.
     expect(Object.keys(content.buildingTypes)).toHaveLength(16);
-    expect(Object.values(content.towns).map((t) => t.buildings.length)).toEqual([13, 16, 24]);
+    expect(Object.keys(content.towns)).toHaveLength(sites.filter((s) => s.tier).length);
+    const madurai = content.towns['loc.madurai']!.buildings;
+    expect(madurai.length).toBeGreaterThanOrEqual(25);
+    expect(madurai.length).toBeLessThanOrEqual(40);
+    expect(madurai.filter((b) => b.id.startsWith('building.mdu_')).map((b) => b.name)).toContain('Meenakshi Amman temple');
     expect(content.water.wells).toHaveLength(39);
     // D-059, D-061, D-066: the 12 starter events plus the boar and the ambush; 6 conditions; 4 enemies.
     expect(content.events.events).toHaveLength(14);
@@ -70,10 +81,10 @@ describe('content loader', () => {
     expect(() => parseContent({ ...raw, loot: [{ siteId: 'loc.atlantis', search: [] }] })).toThrow(/unknown site/);
     expect(() => parseContent({ ...raw, loot: [{ siteId: 'loc.home', search: [{ itemId: 'item.gold', chance: 1, min: 1, max: 1 }] }] })).toThrow(/unknown item/);
     expect(() => parseContent({ ...raw, roads: { nodes: [[9.5, 77.6]], edges: [[0, 5, 1]] } })).toThrow(/points past/);
-    const [sri] = towns;
+    const [sri] = landmarks;
     const moved = { ...sri!, buildings: sri!.buildings.map((b, i) => (i === 1 ? { ...b, lat: sri!.buildings[0]!.lat, lon: sri!.buildings[0]!.lon } : b)) };
-    expect(() => parseContent({ ...raw, towns: [moved] })).toThrow(/under 100 m apart/);
-    expect(() => parseContent({ ...raw, towns: [{ ...sri!, buildings: [{ ...sri!.buildings[0]!, typeId: 'btype.castle' }] }] })).toThrow(/unknown building type/);
+    expect(() => parseContent({ ...raw, landmarks: [moved] })).toThrow(/under 100 m apart/);
+    expect(() => parseContent({ ...raw, landmarks: [{ ...sri!, buildings: [{ ...sri!.buildings[0]!, typeId: 'btype.castle' }] }] })).toThrow(/unknown building type/);
     expect(() => parseContent({ ...raw, loot: [...loot, { siteId: 'loc.madurai', search: [] }] })).toThrow(/town-wide loot/);
   });
 });

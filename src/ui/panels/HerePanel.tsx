@@ -41,10 +41,11 @@ export function HerePanel() {
         <button className="icon" aria-label="Close" onClick={() => openPanel(null)}>×</button>
       </div>
       <p className="muted">
-        {spot ? `${spot.kind === 'building' ? spot.type.name : spot.water === 'well' ? 'Well' : 'Tank'}, ${townName}` : site ? kindLabel[site.kind] : `${lat.toFixed(3)}° N, ${lon.toFixed(3)}° E`}
+        {spot ? `${spot.kind === 'building' ? spot.type.name : spot.dry ? 'Dry well' : spot.water === 'well' ? 'Well' : 'Tank'}, ${townName}` : site ? kindLabel[site.kind] : `${lat.toFixed(3)}° N, ${lon.toFixed(3)}° E`}
       </p>
       {site && content.towns[site.id] && <p className="muted">Its buildings, wells and tanks show on the map when you zoom in.</p>}
       {water && <p>{water === 'river' ? 'A flowing river: clean water.' : water === 'well' ? 'A well: clean water.' : 'Still water: unsafe to drink without boiling or filtering.'}</p>}
+      {spot?.kind === 'water' && spot.dry && <p>A dry well: no water here.</p>}
       {zone && <p className="warn-text">Radiation zone. Every hour here risks radiation.</p>}
       {parked.length > 0 && (
         <div data-testid="vehicles-here">

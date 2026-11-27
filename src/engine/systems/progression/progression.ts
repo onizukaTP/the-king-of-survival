@@ -47,7 +47,8 @@ export function progress(state: GameState, events: GameEvent[], content: Content
   const out: GameEvent[] = [];
   let amount = 0;
   for (const e of events) {
-    if (e.type === 'site_visited') {
+    // D-107: a first visit pays only at the owner's places, not at generated towns and villages.
+    if (e.type === 'site_visited' && content.sites[e.siteId]?.owner !== false) {
       amount += xp.firstVisit;
       addNote(state, { kind: 'visited', siteId: e.siteId }, content);
     }

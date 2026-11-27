@@ -1,5 +1,5 @@
 import type { Content } from '../../../content/loader';
-import type { Water } from '../../../content/schemas';
+import type { BuildingType, LootEntry, Water } from '../../../content/schemas';
 import type { CommandError, CommandResult, GameEvent } from '../../core/commands';
 import { nextRandom } from '../../core/rng';
 import type { GameState, Stack } from '../../core/state';
@@ -52,7 +52,8 @@ function searchTarget(state: GameState, content: Content) {
   const spot = spotHere(state, content);
   if (spot?.kind === 'building') {
     const t = spot.type;
-    return { id: spot.id, key: t.id, name: spot.name, entries: t.search, minutes: t.searchMinutes, torchMinutes: torch(t.searchMinutes), depletion: t.depletionPerSearch };
+    const entries = spot.scarce ? scarceTable(t, content) : t.search;
+    return { id: spot.id, key: t.id, name: spot.name, entries, minutes: t.searchMinutes, torchMinutes: torch(t.searchMinutes), depletion: t.depletionPerSearch };
   }
   // A town's well or tank is for water only.
   if (spot) return undefined;
@@ -82,6 +83,22 @@ function huntTarget(state: GameState, content: Content) {
   const water = waterHere(state, content);
   if (water && water !== 'well') return undefined;
   return terrainAt(state.player.position, content).hunt;
+}
+
+const scarceTables = new WeakMap<object, LootEntry[]>();
+/**
+ * What a building in a generated town or village gives (D-105, D-107): firewood often, scrap metal now
+ * and then, everything else in the type's table at a tenth of its chance.
+ */
+function scarceTable(t: BuildingType, content: Content): LootEntry[] {
+  let table = scarceTables.get(t);
+  if (!table) {
+    const { firewood, scrap, otherFactor } = content.generator.scarceLoot;
+    const others = t.search.filter((e) => e.itemId !== firewood.itemId && e.itemId !== scrap.itemId).map((e) => ({ ...e, chance: e.chance * otherFactor }));
+    table = [{ ...firewood }, { ...scrap }, ...others];
+    scarceTables.set(t, table);
+  }
+  return table;
 }
 
 /** The site's or building's richness now, applying the 7-day refresh (P-013). Mutates `state.sites`. */
@@ -263,7 +280,8 @@ export function waterAt(p: LatLon, content: Content): WaterKind | null {
 /** Water where Prabu stands: the map's water, or a town's well (clean) or tank (unsafe) he stands at (P-014, D-099). */
 export function waterHere(state: GameState, content: Content): WaterKind | null {
   const spot = spotHere(state, content);
-  if (spot?.kind === 'water') return spot.water === 'well' ? 'well' : 'still';
+  // D-103: most wells in generated places are dry.
+  if (spot?.kind === 'water') return spot.dry ? null : spot.water === 'well' ? 'well' : 'still';
   return waterAt(state.player.position, content);
 }
 
@@ -271,7 +289,7 @@ export function waterHere(state: GameState, content: Content): WaterKind | null 
 export function fillBottles(state: GameState, content: Content): CommandResult {
   if (state.travel) return fail('travel_in_progress', 'Prabu can\'t fill bottles while travelling.');
   const water = waterHere(state, content);
-  if (!water) return fail('no_water', 'There\'s no water here.');
+  if (!water) return fail('no_water', spotHere(state, content)?.kind === 'water' ? 'The well is dry.' : 'There\'s no water here.');
   const { bottles, fillMinutesPerBottle } = content.scavenging;
   const empty = state.inventory.stacks.filter((s) => s.itemId === bottles.empty).reduce((n, s) => n + s.count, 0);
   if (!empty) return fail('no_empty_bottles', 'Prabu has no empty bottles.');
@@ -287,7 +305,7 @@ export function fillBottles(state: GameState, content: Content): CommandResult {
 export function drinkHere(state: GameState, content: Content): CommandResult {
   if (state.travel) return fail('travel_in_progress', 'Prabu can\'t drink while travelling.');
   const water = waterHere(state, content);
-  if (!water) return fail('no_water', 'There\'s no water here.');
+  if (!water) return fail('no_water', spotHere(state, content)?.kind === 'water' ? 'The well is dry.' : 'There\'s no water here.');
   const events: GameEvent[] = [{ type: 'drank', clean: isClean(water) }];
   passTime(state, content.scavenging.drinkMinutes, 'work', content, events);
   if (state.dead) return { ok: true, state, events };

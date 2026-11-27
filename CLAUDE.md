@@ -164,6 +164,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ vehicles.md          # vehicles (D-024, D-030 to D-034)
 │  ├─ scavenging.md        # scavenging (D-047)
 │  ├─ towns.md             # town maps (D-052)
+│  ├─ map.md               # the generated map (M11, D-102 to D-107)
 │  ├─ night.md             # night and the moon (D-060)
 │  ├─ events.md            # events and conditions (D-059, D-061)
 │  ├─ fire.md              # fire and cooking (D-056, D-057)
@@ -176,7 +177,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 ├─ public/
 │  ├─ assets/              # placeholder art
 │  └─ geo/                 # processed GeoJSON for Tamil Nadu
-├─ scripts/geo/            # Overpass queries + build scripts: roads, rail, state outline, water and wells, town streets
+├─ scripts/geo/            # Overpass queries + build scripts: outline, backbone places, highways, water, forests, wells
 ├─ src/
 │  ├─ engine/
 │  │  ├─ core/             # GameState, commands, rng, clock, ids
@@ -185,6 +186,7 @@ Map data licensing: prefer Natural Earth (public domain) for coarse layers; Open
 │  ├─ content/
 │  │  ├─ schemas/          # Zod schemas
 │  │  ├─ data/             # items, locations, recipes, enemies, events, loot tables (JSON)
+│  │  ├─ generate/         # the generated map, built at load (M11)
 │  │  └─ loader.ts
 │  ├─ assets/              # manifest.json + resolver (asset IDs → files)
 │  ├─ map/                 # MapLibre integration, layers, fog of war
@@ -367,7 +369,7 @@ When the owner answers, move the item to **Confirmed** with a new D-number and u
 | M7 | Combat | M3, M6 | Done — live; four-rank redesign (D-069) live (released 2026-11-24) |
 | M8 | Progression, opening narrative, journal | M7 | Done — live (released 2026-11-25); journal text is the owner's (D-083) |
 | M10 | Vehicles: bullock cart, hand cart, cycle with trailer, auto-rickshaw (D-031) | M3, M4, M5 | Done — live (released 2026-11-26; D-085, D-087 to D-089), with charms (D-086, D-088) |
-| M11 | Generated map on a real backbone (D-102 to D-107) | M10 | In progress (2026-11-27) |
+| M11 | Generated map on a real backbone (D-102 to D-107) | M10 | Done — on `dev` (2026-11-27): 72 owner's places, ~590 generated towns and villages, ~4,300 buildings, statewide highways, rivers, reservoirs and land cover; scarce loot and dry wells in generated places; save v15 (`docs/map.md`) |
 | M9 | Integration, balance pass, playtest | All | In progress — first pass on `dev` (2026-11-26): playtest bot, fight table, phone playtest, four bugs fixed; owner's playtest notes (2026-11-27): open map, half-time torch searches, 1-minute bottles (D-094 to D-096), weights, loot tables and six new foods built (D-097, D-098); towns on the world map (D-099); fishing and moss (D-100); actions by terrain with land cover drawn (D-101); P-023 answered (D-090: the archer's punch and cooking tooltips); level table for level 10 in about 20 days (D-091); XP multiplier in the Test panel (D-092); next: a human playtest of a full session on desktop and a phone (`docs/playtest.md`) |
 
 Keep this table and `docs/progress.md` current at the end of every work session.

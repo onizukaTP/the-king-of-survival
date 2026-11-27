@@ -46,11 +46,12 @@ UI (React + MapLibre) ──store action──▶ store (Zustand) ──applyCom
 | `src/ui/components/StatsBlock.tsx` | Stats with resistances and the damage roll, in the Pack and on the combat screen. |
 | `src/ui/components/EventCard.tsx` | The event dialog: choices (disabled with the reason), then the outcome and Continue. |
 | `src/ui/format.ts` | Clock, duration and distance formatting, site-kind labels (UI strings stay out of the engine). |
-| `scripts/geo/` | Overpass query and `build-geo.mjs`, which regenerate the map data. |
+| `src/content/generate/` | The generated map (M11): settlements, buildings, streets, roads, tanks and land cover, built at load from the backbone data. |
+| `scripts/geo/` | Overpass queries and build scripts for the real data (outline, backbone places, highways, water, forests). |
 | `public/geo/rail.json` | Rail lines; display only. |
 | `tests/e2e/` | Playwright smoke tests (run against the production build). |
 
-## Game state (save version 14)
+## Game state (save version 15)
 
 ```ts
 GameState = {
@@ -193,9 +194,9 @@ Events: `travel_started`, `leg_completed {leg, of}`, `site_discovered {siteId}`,
 - `systems/survival/radiation`: `inRadiationZone` is distance to the Trichy–Villupuram segment ≤ 30 km. `passTime` adds the minutes spent inside (a travel leg passes the share of its path inside) to `zoneMinutes`; each full hour rolls 1 in 4 for +5 radiation. Health is capped at `100 − radiation`; at 100 radiation he dies.
 - `systems/crafting` (M5, D-058): `recipeStatus` (what's short, for the Craft panel) and the `craft` command. Recipes are data in `recipes.json`; the tool counts in the pack or the weapon slot. Inputs leave before the time passes and the output arrives after.
 - `systems/fire` (D-056, P-016 approved as D-057): `fireMinutesLeft` (the fire within 50 m), `fireOptions` (what the Fire section shows, with the reason a recipe can't be done), and the three fire commands. Methods and recipes are data in `fire.json`. Inputs leave the pack before the time passes and outputs arrive after, so spoilage can't shift them. `item.use` refuses an item whose `needsItem` (the can opener for tinned food) isn't in the pack, with `needs_item`. Loot entries can carry a `charge` range (a matchbox is found with 3–10 matches).
-- `systems/town` (D-049, D-052, D-099): `allSpots` (every town's buildings, wells and tanks, each tagged with its town), `spotAt`, `spotHere`, `townAround`. A building's search uses its type from `building-types.json` and keeps its own stock in `state.sites` under the building id. Floor piles use the building's coordinates; spots are at least 100 m apart (checked at load), so piles never mix. The town streets join the road graph at load (`content/streets.ts`).
+- `systems/town` (D-049, D-052, D-099, M11): `allSpots` (every town's and generated place's buildings, wells and tanks, each tagged with its town, buildings in generated places `scarce`, dry wells `dry`), `spotAt`, `spotHere`, `townAround`. A building's search uses its type from `building-types.json` and keeps its own stock in `state.sites` under the building id. Floor piles use the building's coordinates; spots are at least 100 m apart (checked at load), so piles never mix. The town streets join the road graph at load (`content/streets.ts`).
 - `waterHere(state)`: a town well (clean) or tank (unsafe) he stands at, else `waterAt` on the world data, where mapped wells count as clean (D-050). Fishing and moss (D-100) work at any water but a well; each ~1 km square keeps its stock in `state.sites` under `cell.water.<i>.<j>`.
-- Content: `loot.json` (per site: `search` and `hunt` tables; towns have none), `scavenging.json` (times, torch, depletion, refresh, ground hours, water range, bottle and torch item ids, radiation zone), `water.json` (generated, with wells), `building-types.json`, `towns.json` (buildings, water points and the four ends at real coordinates), `town-streets.json` (generated, drawn only).
+- Content: `loot.json` (per site: `search` and `hunt` tables; towns have none), `scavenging.json` (times, torch, depletion, refresh, ground hours, water range, bottle and torch item ids, radiation zone), `water.json` (built by script, with wells), `building-types.json`. Towns, their buildings and streets are generated at load (M11). A scarce building's table is built from its type's (`scarceTable`, D-107); a dry well gives no water.
 
 ## Map rendering
 
@@ -216,18 +217,26 @@ Events: `travel_started`, `leg_completed {leg, of}`, `site_discovered {siteId}`,
 
 ## Map data pipeline
 
-1. Run `scripts/geo/roads.overpassql` on the Overpass API.
-   - It fetches roads from motorway down to secondary, in a box covering the prototype area and the corridor to Madurai, plus tertiary roads near home.
-   - It also fetches rail in the same box.
-2. Download Natural Earth admin-1.
-3. Run `node scripts/geo/build-geo.mjs <osm.json> <ne.geojson>`. It writes three files:
-   - `src/content/data/roads.json`: the graph. Junctions and way ends are kept, other vertices thinned to 300 m spacing; about 9k nodes and 10k edges, 345 KB.
-   - `public/geo/rail.json`.
-   - `src/content/data/tamil-nadu.json`.
+The map is generated on a real backbone (M11, D-102 to D-107; `docs/map.md`). The real data is built
+once by scripts in `scripts/geo/` from OpenStreetMap (Overpass API) and Natural Earth; the generated
+detail is built from it every time the game loads.
 
-4. Water and wells: run `scripts/geo/water.overpassql` on the Overpass API, then `node scripts/geo/build-water.mjs <osm-water.json>`. It writes `src/content/data/water.json`: about 640 lakes, tanks, ponds and reservoirs and about 100 flowing river lines (seasonal rivers and swimming pools left out; vertices thinned to 50 m) and the 39 mapped wells as points, 430 KB.
-5. Town streets: run `scripts/geo/town-streets.overpassql`, then `node scripts/geo/build-town-streets.mjs <osm-streets.json>`. It writes `src/content/data/town-streets.json`: streets clipped to each town's box (Madurai keeps main roads only, since its map reaches the airport), about 200 KB. Town buildings in `towns.json` are hand-placed; see `docs/towns.md`.
-6. Land cover (D-101): run `scripts/geo/terrain.overpassql`, then `node scripts/geo/build-terrain.mjs <osm-terrain.json>`. It writes `src/content/data/terrain.json`: a 145 × 178 grid of ~500 m squares over the same box (one letter each: forest, scrub, farmland, village, or dry where nothing is mapped) and the railway lines, 43 KB. Today it is 74% dry, 14% forest, 9% village, 2% scrub and 1% farmland, since little land cover is mapped here.
+1. **Outline:** `src/content/data/tamil-nadu.json`, Natural Earth admin-1 (via `build-geo.mjs`).
+2. **Backbone places:** `places.overpassql`, then `node scripts/geo/build-backbone.mjs <osm-places.json>`. It writes `backbone.json`: the owner's 72 places with their tiers, at their OpenStreetMap positions (five set by hand where the data had no match, marked `approximate`).
+3. **Highways:** `highways.overpassql` (motorways and trunk roads across the state), then `node scripts/geo/build-highways.mjs <osm-highways.json>`. It writes `roads.json`: the graph, thinned to ~2 km with two-way joins merged, about 7k nodes, 272 KB.
+4. **Water and forests:** `water.overpassql` and `build-water.mjs` give the prototype area's detailed water (D-044, D-050). Then `rivers.overpassql`, `reservoirs.overpassql` and `forests.overpassql`, and `node scripts/geo/build-statewater.mjs <area-water.json> <rivers> <reservoirs> <forests>`, which keeps the area's water and adds every named flowing river and every reservoir at least 250 m across elsewhere (`water.json`, about 2,200 areas and 440 river lines, 1.2 MB), and writes the protected forests (`forests.json`, 28 rings).
+5. **Rail:** `rail.json` (land-cover road terrain, D-101) and `public/geo/rail.json` (drawn), from the M1 box.
+
+When the game loads, `generateWorld` (`src/content/generate/`) turns these and `generator.json` into the content the engine uses:
+
+| File | What it builds |
+|---|---|
+| `rng.ts` | Seeded streams keyed by name (`streamFor(seed, key)`), so each part of the world draws on its own. |
+| `settlements.ts` | The owner's places plus the generated towns and villages (counts, distances, names, on land, apart). |
+| `detail.ts` | Each place's main and side streets, buildings (landmarks at their spots), wells (90% dry in generated places) and tanks. |
+| `roads.ts` | Generated roads from places to the highways, between towns, and from villages to their parents. |
+| `landcover.ts` | The ~500 m land-cover grid for the whole state, with the approved mix (sampled score cut-offs, about 0.2 s). |
+| `world.ts` | Puts it together: sites, towns, town streets, roads (`withStreets` joins streets and roads to the highways), water (with the tanks) and terrain. |
 
 Raw downloads are not committed.
 
@@ -248,7 +257,7 @@ Raw downloads are not committed.
 ## Saves
 
 ```ts
-SaveFile = { saveVersion: 10, createdAt: ISO string, gameState }
+SaveFile = { saveVersion: 15, createdAt: ISO string, gameState }
 ```
 
 - `loadSave(unknown, content)`:
@@ -270,6 +279,7 @@ SaveFile = { saveVersion: 10, createdAt: ISO string, gameState }
   - **11 → 12** (D-091, D-092): `xpMultiplier: 1`, and the level the run's XP reaches on the lower level table.
   - **12 → 13** (D-094): the fog points go; the places the run knew count as visited.
   - **13 → 14** (D-099): the town state goes; a run inside a town stays at its spot.
+  - **14 → 15** (M11): stock records of buildings the generated map no longer has are dropped (the three towns' generic buildings are generated under new ids); places, landmarks and stock squares keep theirs.
   - Validation also rejects stock for unknown buildings and a `town` that points at an unknown town or spot.
 - Storage: IndexedDB database `king-of-survival`, store `saves`, key `manual` (the name dates from M0; it now holds the one run).
 - **Autosave and permadeath (D-038):** the store writes the save after every accepted command (so after every leg, rest and item action). Writes are queued so they land in order. When a command reports `died`, the save is deleted and the game over screen shows. "Save and quit" writes once more and returns to the title.

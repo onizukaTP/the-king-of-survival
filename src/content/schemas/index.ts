@@ -76,19 +76,62 @@ export const abilitySchema = z.object({
   selfMove: z.number().int().optional(),
 });
 
-export const siteKinds = ['home', 'hunting', 'ruins', 'rail', 'road', 'water', 'city'] as const;
+export const siteKinds = ['home', 'hunting', 'ruins', 'rail', 'road', 'water', 'city', 'town', 'village'] as const;
 
 export const siteSchema = z.object({
   id: slug('loc'),
   name: z.string().min(1),
   kind: z.enum(siteKinds),
   lat,
-  lon,
+  lon,
+  // M11: one of the owner's places (D-107: first-visit XP; normal loot and working wells). sites.json's
+  // kept destinations are all the owner's; generated towns and villages are not.
+  owner: z.boolean().optional(),
+  tier: z.enum(['city', 'town', 'village']).optional(),
+});
+
+// M11 (D-104, D-105, D-107): the owner's backbone places at their real positions, with their tiers.
+export const backboneSchema = z.object({
+  places: z.array(z.object({ id: slug('loc'), name: z.string().min(1), tier: z.enum(['city', 'town', 'village']), lat, lon, approximate: z.boolean().optional() })).min(1),
+});
+
+// M11: the kept towns' named landmarks (D-103), at their real places.
+export const landmarksSchema = z.array(z.object({
+  siteId: slug('loc'),
+  buildings: z.array(z.object({ id: slug('building'), typeId: slug('btype'), name: z.string().min(1), lat, lon })).min(1),
+}));
+
+const range = z.tuple([z.number().int().nonnegative(), z.number().int().nonnegative()]);
+const sizeSchema = z.object({ buildings: range, streetKm: z.number().positive(), sideStreets: range, wells: range, tanks: range });
+const mixSchema = z.object({ always: z.array(slug('btype')), oneOf: z.array(z.array(slug('btype')).min(1)).optional(), weights: z.record(slug('btype'), z.number().positive()) });
+// M11: the generator's rules (D-102 to D-107).
+export const generatorSchema = z.object({
+  worldSeed: z.number().int(),
+  version: z.number().int().positive(),
+  spawn: z.object({
+    townsPerCity: range, townKm: z.tuple([z.number().positive(), z.number().positive()]),
+    villagesPerTown: range, villageKm: z.tuple([z.number().positive(), z.number().positive()]),
+    minGapKm: z.number().positive(), villageToParentMinKm: z.number().positive(), keptSiteGapKm: z.number().nonnegative(), tries: z.number().int().positive(),
+  }),
+  sizes: z.object({ city: sizeSchema, town: sizeSchema, village: sizeSchema }),
+  buildingGapKm: z.number().positive(),
+  mix: z.object({ city: mixSchema, town: mixSchema, village: mixSchema }),
+  tankChanceVillage: z.number().min(0).max(1),
+  dryWellChance: z.number().min(0).max(1),
+  pondsPerSquare: range,
+  pondSquareDeg: z.number().positive(),
+  scarceLoot: z.object({
+    firewood: z.object({ itemId: slug('item'), chance: z.number().min(0).max(1), min: z.number().int().positive(), max: z.number().int().positive() }),
+    scrap: z.object({ itemId: slug('item'), chance: z.number().min(0).max(1), min: z.number().int().positive(), max: z.number().int().positive() }),
+    otherFactor: z.number().min(0).max(1),
+  }),
+  landCover: z.object({ cellDeg: z.number().positive() }),
+  names: z.object({ prefixes: z.array(z.string().min(1)).min(1), suffixes: z.array(z.string().min(1)).min(1) }),
 });
 
 export const worldSchema = z.object({
   roadSpeedKmh: z.number().positive(),
-  crossCountrySpeedKmh: z.number().positive(),
+  crossCountrySpeedKmh: z.number().positive(),
   legMaxMinutes: z.number().int().positive(),
   // Night and the moon (D-048, D-060): minutes of the day, and which days of the cycle have a full-moon night.
   night: z.object({
@@ -203,6 +246,10 @@ export const terrainSchema = z.object({
   rail: z.array(z.array(z.tuple([lon, lat])).min(2)),
 });
 
+// M11: the railway lines (railway land is road terrain, D-101) and the real protected forests.
+export const railSchema = z.object({ lines: z.array(z.array(z.tuple([lon, lat])).min(2)) });
+export const forestsSchema = z.object({ rings: z.array(z.array(z.tuple([lon, lat])).min(4)) });
+
 // D-101: what each kind of ground gives. Search draws as at a site; a hunt succeeds with the Hunting
 // chance times `factor`, then every entry rolls.
 export const terrainLootSchema = z.object({
@@ -310,9 +357,10 @@ export const buildingTypeSchema = z.object({
 // A town's map (D-049): buildings and water placed at real coordinates. The town's site point is its edge.
 export const townSchema = z.object({
   siteId: slug('loc'),
-  buildings: z.array(z.object({ id: slug('building'), typeId: slug('btype'), name: z.string().min(1), lat, lon })).min(1),
-  // A well gives clean water, a tank unsafe water (D-044, D-050).
-  water: z.array(z.object({ id: slug('waterpoint'), kind: z.enum(['well', 'tank']), name: z.string().min(1), lat, lon })),
+  // `scarce`: in a generated town or village, where loot is rare but for firewood and scrap (D-105, D-107).
+  buildings: z.array(z.object({ id: slug('building'), typeId: slug('btype'), name: z.string().min(1), lat, lon, scarce: z.boolean().optional() })).min(1),
+  // A well gives clean water, a tank unsafe water (D-044, D-050); a dry well none (D-103).
+  water: z.array(z.object({ id: slug('waterpoint'), kind: z.enum(['well', 'tank']), name: z.string().min(1), lat, lon, dry: z.boolean().optional() })),
   // Ways out besides the edge (D-054): leaving from one puts Prabu at that spot on the world map.
   ends: z.array(z.object({ id: slug('end'), name: z.string().min(1), lat, lon })),
 });
@@ -566,6 +614,7 @@ export type CharmProfile = z.infer<typeof charmProfile>;
 export type Vehicle = z.infer<typeof vehicleSchema>;
 export type VehiclesConfig = z.infer<typeof vehiclesSchema>;
 export type Site = z.infer<typeof siteSchema>;
+export type GeneratorRules = z.infer<typeof generatorSchema>;
 export type SiteKind = Site['kind'];
 export type WorldConfig = z.infer<typeof worldSchema>;
 export type Roads = z.infer<typeof roadsSchema>;

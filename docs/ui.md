@@ -36,7 +36,7 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 
 ## Land cover — D-101
 
-- The map is tinted by land cover from the terrain grid: forest dark green, scrub olive, farmland yellow-green, villages brown; dry land stays the plain land colour. Only the mapped area (the prototype box) is tinted.
+- The map is tinted by land cover from the terrain grid: forest dark green, scrub olive, farmland yellow-green, villages brown; dry land stays the plain land colour. Since M11 the whole state is tinted (a generated grid, `docs/map.md`).
 - On open ground, the Here panel's title names the ground ("Forest and woods", "Dry, open land") and offers Search and, where there is game, Hunt.
 
 ## Towns on the world map — D-099
@@ -46,6 +46,12 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 - At a town marker, the Here panel says its buildings show when you zoom in.
 - The top bar says "At: Garage, Srivilliputhur town ruins" at a building.
 - The old town map screen (D-052) is gone.
+
+## The generated map (M11) — D-102 to D-107
+
+- Markers by zoom: cities and the owner's places always, generated towns from zoom 9, villages from zoom 11, buildings and water from zoom 14. Generated places have smaller, greyer markers than the owner's.
+- A dry well is a grey dot ("Dry well: no water"); the Here panel says "A dry well: no water here."
+- The map eases to follow Prabu when a trip takes him out of view.
 
 ## Fire section (D-056, D-057)
 

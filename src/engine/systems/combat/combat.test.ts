@@ -441,7 +441,7 @@ describe('fleeing, loot and the survival game', () => {
     fighter(s, 'e0').corpse = true;
     expect(fleeChance(s, content)).toBe(75);
     s.survival.health = 20;
-    addItems(s, 'item.firewood', 13, content);
+    addItems(s, 'item.scrap_metal', 26, content);
     expect(fleeChance(s, content)).toBe(45);
   });
 

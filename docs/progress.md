@@ -102,7 +102,8 @@
   - P-023 answered (D-090, 2026-11-27): the bow raider's Punch (a fallback in the enemy AI) and the cooking lines in tooltips are built; fights, the ambush and the bow stay.
   - D-091 to D-093 (2026-11-27): the lower level table (level 10 in about 20 days; runs under way catch up when they load, save v12), an XP multiplier in the Test panel, and the Wild dogs text stays.
   - The owner's playtest notes (2026-11-27): the map is open with first-visit XP (D-094, save v13); torch searches take half the time (D-095); filling a bottle takes 1 minute (D-096). Built and on `dev`.
-  - Next (D-097): the redo of every item's weight and the loot tables, with firewood in houses, more food in towns and new food items (draft for the owner to edit). Then more locations, and search or hunt anywhere.
+  - D-098 (2026-11-27): the owner's weights, loot tables and six new foods are built. The playtest bot now survives 30 days in 99 of 100 careful runs, eating mostly town food (about 3 hunts a run instead of about 25).
+  - Next: fishing and moss at water, actions by terrain, and towns on the world map (proposal for the owner); then more locations.
 
 ## Pending (unblocked)
 - Nothing.

@@ -31,6 +31,7 @@ A fire needs **1 firewood** and one way to light it. The panel shows a button fo
 | Cook raw meat | Raw meat (up to 3 at once) | 30 min | Cooked meat (Food +30, keeps 5 days) |
 | Boil water | Cooking pot; bottles of unsafe water (up to 4 at once) | 30 min | Bottles of clean water |
 | Sterilize rags | Cooking pot; cloth rags (up to 3 at once); 1 bottle of water (used up) | 30 min | Sterilized bandages |
+| Cook rice (D-098) | Cooking pot; rice (up to 2 at once); 1 bottle of water (used up) | 30 min | Cooked rice (Food +50, keeps 1 day) |
 
 - If the fire would burn out before the action ends, he can't start it ("Add firewood first").
 - This replaces the old item-list notes "cooked meat: raw meat + firewood, needs flint" and "boiled water: unsafe water + firewood, needs pot".

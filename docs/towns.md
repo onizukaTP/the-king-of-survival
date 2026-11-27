@@ -77,44 +77,39 @@ Each building has its own stock. The other rules are the same as in M4:
 
 ## Loot tables by building type
 
-Each entry gives the chance per draw and the quantity found. The tables use only the approved items (`docs/items.md`).
-- Low chances reflect that scavengers got there first (D-033).
-- The cloth bandage is crafted, so no building has it.
-- Vehicle parts and biodiesel join the garage, petrol bunk and airport tables with vehicles (M10).
+Chance per draw and how many, in draw order. The owner's values from the weights and loot redo (D-098, 2026-11-27); the data is `src/content/data/building-types.json`. Low chances reflect that scavengers got there first (D-033).
 
-**Independent house:** cloth 30% (1–2) · empty bottle 20% · coir rope 10% · millet 8% · salt 8% · cooking pot 6% · tinned food 6% · painkillers 4% · aruval 3% · flint and steel 2% · lighter fuel 2%
+**Independent house** (30 min): firewood 20% (1–2) · cloth rags 25% (1–2) · empty bottle 20% (1) · rice 10% (1–2) · matchbox 10% (1) · coir rope 8% (1) · jaggery 8% (1) · groundnuts 8% (1) · millet grain 8% (1) · salt 8% (1) · turmeric 8% (1) · pre-war tinned food 6% (1) · cooking pot 6% (1) · pre-war painkillers 4% (1) · can opener 4% (1) · aruval 3% (1) · flint and steel 2% (1) · lighter fuel 2% (1).
 
-**Apartment block:** cloth 30% (1–3) · empty bottle 25% (1–2) · tinned food 8% · millet 6% · salt 6% · cooking pot 5% · painkillers 5% · coir rope 5% · charger 3% · lighter fuel 3%
+**Apartment block** (60 min): cloth rags 25% (1–3) · empty bottle 25% (1–2) · firewood 10% (1) · rice 10% (1–2) · pre-war tinned food 8% (1) · pre-war biscuit packet 8% (1) · millet grain 6% (1) · salt 6% (1) · cooking pot 5% (1) · pre-war painkillers 5% (1) · coir rope 5% (1) · can opener 4% (1) · hand-crank charger 3% (1) · lighter fuel 3% (1).
 
-**Place of worship:** cloth 20% (1–2) · firewood 15% · neem leaves 15% (1–2) · empty bottle 15% · tender coconut 10% · cooking pot 6% · salt 5% · flint and steel 3%
+**Place of worship** (45 min): cloth rags 20% (1–2) · firewood 15% (1) · neem leaves 15% (1–2) · empty bottle 15% (1) · tender coconut 12% (1) · jaggery 10% (1) · turmeric 8% (1) · cooking pot 6% (1) · salt 5% (1) · flint and steel 3% (1).
 
-**Provision store:** empty bottle 20% (1–2) · millet 20% (1–2) · salt 20% (1–2) · tinned food 10% · coir rope 8% · lighter fuel 3%
+**Provision store** (30 min): rice 20% (1–2) · jaggery 15% (1–2) · groundnuts 15% (1–2) · millet grain 15% (1–2) · salt 15% (1) · empty bottle 15% (1–2) · pre-war biscuit packet 12% (1–2) · matchbox 12% (1) · pre-war tinned food 10% (1) · turmeric 8% (1) · coir rope 5% (1) · can opener 4% (1) · lighter fuel 3% (1).
 
-**Supermarket** (picked over long ago): empty bottle 30% (1–3) · tinned food 15% (1–2) · millet 10% · salt 10% · cloth 10% · coir rope 8% · lighter fuel 4% · charger 3% · cooking pot 3%
+**Supermarket** (60 min): empty bottle 25% (1–3) · pre-war tinned food 20% (1–2) · pre-war biscuit packet 15% (1–2) · rice 12% (1–2) · salt 10% (1) · groundnuts 10% (1) · jaggery 10% (1) · matchbox 10% (1) · millet grain 8% (1) · cloth rags 8% (1) · can opener 6% (1) · turmeric 6% (1) · coir rope 5% (1) · lighter fuel 4% (1) · hand-crank charger 3% (1) · cooking pot 3% (1).
 
-**Ration shop:** millet 30% (1–3) · salt 25% (1–2) · empty bottle 10% · cloth 8%
+**Ration shop** (30 min): rice 30% (1–3) · millet grain 25% (1–3) · salt 20% (1–2) · jaggery 12% (1–2) · empty bottle 10% (1) · matchbox 8% (1) · turmeric 8% (1) · cloth rags 5% (1).
 
-**Medical store:** painkillers 20% (1–2) · cloth 15% · empty bottle 15% · salt 3%
+**Medical store** (30 min): pre-war painkillers 25% (1–2) · cloth rags 15% (1–2) · empty bottle 15% (1) · pre-war biscuit packet 5% (1) · turmeric 5% (1) · salt 3% (1).
 
-**Hospital:** painkillers 25% (1–2) · cloth 25% (1–3) · empty bottle 20% (1–2) · cooking pot 3% · charger 2%
+**Hospital** (60 min): pre-war painkillers 25% (1–2) · cloth rags 25% (1–3) · empty bottle 20% (1–2) · pre-war biscuit packet 5% (1) · cooking pot 3% (1) · hand-crank charger 2% (1).
 
-**Garage:** scrap metal 50% (1–3) · coir rope 15% · cloth 10% · empty bottle 10% · lighter fuel 6% · charger 5% · aruval 3%
+**Garage** (45 min): scrap metal 50% (1–3) · coir rope 15% (1) · cloth rags 10% (1) · empty bottle 10% (1) · can of biodiesel 8% (1) · lighter fuel 6% (1) · hand-crank charger 5% (1) · aruval 3% (1).
 
-**Petrol bunk:** scrap metal 30% (1–2) · empty bottle 25% (1–2) · lighter fuel 12% · coir rope 8% · cloth 8% · tinned food 4%
+**Petrol bunk** (30 min): scrap metal 30% (1–2) · empty bottle 25% (1–2) · can of biodiesel 12% (1) · lighter fuel 12% (1) · pre-war biscuit packet 10% (1–2) · coir rope 8% (1) · cloth rags 8% (1) · pre-war tinned food 4% (1).
 
-**Hardware store:** scrap metal 35% (1–3) · coir rope 25% (1–2) · aruval 8% · cooking pot 8% · flint and steel 6% · charger 4% · lighter fuel 3%
+**Hardware store** (45 min): scrap metal 35% (1–3) · coir rope 25% (1–2) · aruval 8% (1) · cooking pot 8% (1) · flint and steel 6% (1) · hand-crank charger 4% (1) · lighter fuel 3% (1).
 
-**Textile shop / mill:** cloth 50% (1–4) · scrap metal 10% · coir rope 10% · empty bottle 8%
+**Textile shop / mill** (60 min): cloth rags 50% (1–4) · scrap metal 10% (1) · coir rope 10% (1) · empty bottle 8% (1).
 
-**Hotel / mess:** empty bottle 20% (1–2) · salt 20% · cooking pot 15% · firewood 15% · millet 12% · tinned food 5% · flint and steel 2%
+**Hotel / mess** (45 min): firewood 20% (1–2) · salt 20% (1) · empty bottle 20% (1–2) · rice 15% (1–2) · cooking pot 12% (1) · millet grain 12% (1) · jaggery 8% (1) · matchbox 8% (1) · turmeric 8% (1) · pre-war tinned food 5% (1) · can opener 4% (1) · flint and steel 2% (1).
 
-**Police station:** coir rope 15% · cloth 15% · empty bottle 15% · aruval 10% · tinned food 6% · charger 5% · lighter fuel 4% · painkillers 4%
+**Police station** (45 min): coir rope 15% (1) · cloth rags 15% (1) · empty bottle 15% (1) · aruval 10% (1) · pre-war tinned food 6% (1) · pre-war biscuit packet 5% (1) · hand-crank charger 5% (1) · lighter fuel 4% (1) · pre-war painkillers 4% (1).
 
-**Bus stand:** empty bottle 30% (1–2) · scrap metal 30% (1–2) · cloth 15% · tinned food 4% · lighter fuel 3%
+**Bus stand** (45 min): empty bottle 30% (1–2) · scrap metal 30% (1–2) · cloth rags 15% (1) · pre-war biscuit packet 10% (1–2) · groundnuts 5% (1) · pre-war tinned food 4% (1) · lighter fuel 3% (1).
 
-**Airport:** scrap metal 40% (1–3) · empty bottle 25% (1–2) · cloth 15% · tinned food 8% (1–2) · charger 6% · lighter fuel 5% · painkillers 4%
-
-The town-wide Search tables that Srivilliputhur, Rajapalayam and Madurai have today are removed, and their finds move into the buildings.
+**Airport** (60 min): scrap metal 40% (1–3) · empty bottle 25% (1–2) · cloth rags 15% (1) · pre-war biscuit packet 10% (1–2) · pre-war tinned food 8% (1–2) · hand-crank charger 6% (1) · lighter fuel 5% (1) · pre-war painkillers 4% (1).
 
 ## Water outside towns
 

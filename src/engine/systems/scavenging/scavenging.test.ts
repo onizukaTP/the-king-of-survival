@@ -126,7 +126,7 @@ describe('ground: take or leave, 96 hours (D-045)', () => {
     away.player.position = site('loc.srivilliputhur');
     expect(err(away, { type: 'ground.take', indexes: [0] })).toBe('bad_item');
     const loaded = structuredClone(dropped);
-    addItems(loaded, 'item.firewood', 24, content);
+    addItems(loaded, 'item.scrap_metal', 48, content);
     expect(err(loaded, { type: 'ground.take', indexes: [0] })).toBe('too_heavy');
     expect(err(dropped, { type: 'ground.take', indexes: [] })).toBe('bad_item');
   });

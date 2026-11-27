@@ -43,12 +43,12 @@ export type RunReport = {
   xpByDay: number[];
 };
 
-const EAT = ['item.cooked_meat', 'item.millet_porridge', 'item.dried_meat', 'item.tinned_food', 'item.tender_coconut'];
+const EAT = ['item.cooked_rice', 'item.cooked_meat', 'item.jackfruit', 'item.millet_porridge', 'item.biscuits', 'item.wild_honey', 'item.dried_meat', 'item.tinned_food', 'item.groundnuts', 'item.jaggery', 'item.tender_coconut'];
 const DRINK = ['item.clean_water', 'item.tender_coconut', 'item.unsafe_water'];
 const CURE = ['item.neem_turmeric_paste', 'item.sterile_bandage', 'item.neem_paste', 'item.cloth_bandage'];
 // What a careful player picks up; scrap, hide, bamboo and fuel are left unless there's room to spare.
 const KEEP = new Set([
-  ...EAT, ...DRINK, ...CURE, 'item.raw_meat', 'item.millet', 'item.salt', 'item.empty_bottle', 'item.old_pills',
+  ...EAT, ...DRINK, ...CURE, 'item.raw_meat', 'item.millet', 'item.rice', 'item.salt', 'item.empty_bottle', 'item.old_pills',
   'item.cloth', 'item.neem_leaves', 'item.turmeric', 'item.firewood', 'item.matchbox', 'item.flint', 'item.lighter_fuel',
   'item.can_opener', 'item.cooking_pot', 'item.aruval', 'item.bamboo_spear', 'item.bow', 'item.arrow', 'item.crank_charger', 'item.torch',
 ]);
@@ -210,8 +210,9 @@ function* wishes(s: GameState, content: Content, mem: Memory): Generator<Command
   if (fireMinutesLeft(s) > 0) {
     if (raw) yield { type: 'fire.cook', recipeId: 'recipe.cook_meat' };
     if (unsafe && has(s, 'item.cooking_pot') >= 0) yield { type: 'fire.cook', recipeId: 'recipe.boil_water' };
+    if (countOf(s, ['item.rice']) && has(s, 'item.cooking_pot') >= 0) yield { type: 'fire.cook', recipeId: 'recipe.cooked_rice' };
     if (countOf(s, ['item.millet']) && has(s, 'item.cooking_pot') >= 0) yield { type: 'fire.cook', recipeId: 'recipe.millet_porridge' };
-  } else if (raw || (unsafe && has(s, 'item.cooking_pot') >= 0) || (sv.food < 60 && countOf(s, ['item.millet']) && has(s, 'item.cooking_pot') >= 0) || (sv.rest < 25 && isNight(s))) {
+  } else if (raw || (unsafe && has(s, 'item.cooking_pot') >= 0) || (sv.food < 60 && countOf(s, ['item.millet', 'item.rice']) && has(s, 'item.cooking_pot') >= 0) || (sv.rest < 25 && isNight(s))) {
     for (const m of ['matchbox', 'lighter', 'flint', 'sticks']) yield { type: 'fire.make', method: m };
   }
   if (raw >= 2 && countOf(s, ['item.salt'])) yield { type: 'craft', recipeId: 'recipe.dried_meat' };
@@ -231,7 +232,7 @@ function* wishes(s: GameState, content: Content, mem: Memory): Generator<Command
   const pot = has(s, 'item.cooking_pot') >= 0;
   const cookable = fireMinutesLeft(s) > 0 || countOf(s, ['item.firewood']) > 0;
   const points = (meter: 'food' | 'water') => s.inventory.stacks.reduce((n, x) => n + x.count * (
-    meter === 'food' && x.itemId === 'item.raw_meat' ? (cookable ? 30 : 0) : meter === 'food' && x.itemId === 'item.millet' && pot && cookable ? 25 : usable(x.itemId) ? content.items[x.itemId]?.effects?.[meter] ?? 0 : 0), 0);
+    meter === 'food' && x.itemId === 'item.raw_meat' ? (cookable ? 30 : 0) : meter === 'food' && x.itemId === 'item.millet' && pot && cookable ? 25 : meter === 'food' && x.itemId === 'item.rice' && pot && cookable ? 50 : usable(x.itemId) ? content.items[x.itemId]?.effects?.[meter] ?? 0 : 0), 0);
   const hungry = points('food') < 90;
   const firewood = countOf(s, ['item.firewood']);
   // Hunting is no use without firewood to cook on.

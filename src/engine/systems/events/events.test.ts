@@ -140,7 +140,7 @@ describe('choices and outcomes', () => {
     expect(has(light.state, f.itemId)).toBe(f.count);
     expect(light.state.clockMinutes).toBe(START + 30);
     const heavy = firstWhere('event.abandoned_vehicle', 'search', (s) => s.event!.result!.left.length > 0,
-      (g) => addItems(g, 'item.firewood', 24, content) && addItems(g, 'item.scrap_metal', 1, content));
+      (g) => addItems(g, 'item.scrap_metal', 49, content));
     expect(heavy.state.ground).toHaveLength(1);
   });
 

@@ -120,7 +120,8 @@ This replaces the first combat (M7, D-063 to D-067), which used Close/Mid/Far ba
 - **Each turn:**
   1. Use an ability that works from where it stands and has a target, picked by weight.
   2. Otherwise, step towards its preferred ranks.
-  3. Otherwise, pass.
+  3. Otherwise, a **fallback** ability, if it has one (D-090: the archer's bare hands).
+  4. Otherwise, pass.
 - **Every turn ends** in exactly one action, so fights can't stall. A test runs fights where Prabu only passes, and they always end.
 
 | Enemy | Ranks | Abilities | Picks |
@@ -128,7 +129,7 @@ This replaces the first combat (M7, D-063 to D-067), which used Close/Mid/Far ba
 | Wild dog | 1–2 | Bite (1–2 → 1–2); Hamstring (1 → 1, bleed) | random |
 | Mutated boar (2 ranks) | 1 | Gore (1–2 → 1, blight); Trample (1–2 → all of 1–2, can stun) | the front |
 | Raider with a blade | 1–2 | Cut (1–2 → 1–2, +50% damage on the marked); Rend (1 → 1, bleed) | the marked first |
-| Raider with a bow | 3–4 | Shoot (2–4 → any); Call the target (2–4 → any, marks and lowers DEF) | the weakest |
+| Raider with a bow | 3–4 | Shoot (2–4 → any); Call the target (2–4 → any, marks and lowers DEF); Punch, fallback (1 → 1–2, damage ×0.4, about 2–3 like Prabu's fists; D-090) | the weakest |
 
 - **Unchanged:** HP, damage rolls, DEF, SPD, ACC, Dodge and crit are as in M7. The resistances are new.
 - **Out of position:** a bow raider pushed to the front has nothing to shoot from there, so it steps back. A blade raider at the back steps forward.

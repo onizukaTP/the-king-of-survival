@@ -97,6 +97,7 @@ The four-rank battlefield replaced the band screen (D-067's columns) on 2026-11-
 ## Item tooltips (owner, 2026-11-25)
 
 - Every item name shows a tooltip on hover: name, effects, weapon damage, bonuses and abilities, charge, what it needs, spoiling time and weight, all from the item data. Inline names have a dotted underline. They are the browser's own tooltips, so touch screens don't show them; the Pack's item card still gives the same facts on a tap.
+- **Cooking** (D-090): items a fire recipe uses say how, from the recipe: "At a fire: makes cooked meat", "At a fire with a cooking pot and a bottle of water: makes millet porridge".
 
 ## Vehicles (M10) — D-089, approved
 

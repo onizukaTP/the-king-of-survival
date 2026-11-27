@@ -99,7 +99,8 @@
   - A playtest bot plays whole runs through the engine (100 runs × 30 days: 96 survive; deaths come from early fights), and a fight table runs every event fight 200 times per weapon and level.
   - A phone-width playtest of every screen.
   - Fixed: the combat log's "Someone" for cleared remains; repeated finds ("bamboo ×2"); a failed hunt's message; Prabu's dot on the town map now opens the Here panel (phone).
-  - Waiting on the owner: balance proposals P-023 and the Wild dogs text ("Five" vs 2–4). Then a human playtest of a full session on desktop and a phone.
+  - P-023 answered (D-090, 2026-11-27): the bow raider's Punch (a fallback in the enemy AI) and the cooking lines in tooltips are built; fights, the ambush and the bow stay.
+  - Waiting on the owner: the level table P-024 (level 10 in about 20 days) and the Wild dogs text ("Five" vs 2–4). Then a human playtest of a full session on desktop and a phone.
 
 ## Pending (unblocked)
 - Nothing.

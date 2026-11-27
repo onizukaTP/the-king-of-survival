@@ -54,6 +54,8 @@
   { "id": "ability.raider_rend", "name": "Rend", "description": "A ragged slash: bleeds 3 a turn for 3 turns.",
     "usableFrom": [1], "target": { "side": "enemy", "ranks": [1], "mode": "single" },
     "damage": 0.6, "effects": [{ "kind": "bleed", "amount": 3, "rounds": 3, "chance": 100 }] },
+  { "id": "ability.raider_punch", "name": "Punch", "description": "Bare hands, when the bow is no use (P-023): as weak as Prabu's fists.",
+    "usableFrom": [1], "target": { "side": "enemy", "ranks": [1, 2], "mode": "single" }, "damage": 0.4 },
   { "id": "ability.raider_shoot", "name": "Shoot", "description": "An arrow from the back ranks.",
     "usableFrom": [2, 3, 4], "target": { "side": "enemy", "ranks": [1, 2, 3, 4], "mode": "single" }, "damage": 1, "vsMarked": { "crit": 10 } },
   { "id": "ability.raider_spot", "name": "Call the target", "description": "Picks out a target for the others (marked for 3 turns) and lowers its guard (DEF −10).",

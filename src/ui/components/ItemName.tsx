@@ -38,6 +38,18 @@ export function effectText(itemId: string) {
   return parts.join(' · ');
 }
 
+/**
+ * How an item is cooked, from the fire recipes (P-023): "At a fire: makes cooked meat",
+ * "At a fire with a cooking pot and a bottle of water: makes millet porridge".
+ */
+export function fireText(itemId: string): string[] {
+  const name = (id: string) => content.items[id]?.name.toLowerCase() ?? id;
+  return content.fire.recipes.filter((r) => r.from === itemId).map((r) => {
+    const needs = [r.tool && `a ${name(r.tool)}`, r.usesWater && 'a bottle of water'].filter(Boolean).join(' and ');
+    return `At a fire${needs ? ` with ${needs}` : ''}: makes ${name(r.to)}`;
+  });
+}
+
 /** The tooltip for an item, built only from its data (no invented descriptions). */
 export function itemTip(itemId: string): string {
   const item = content.items[itemId];
@@ -49,6 +61,7 @@ export function itemTip(itemId: string): string {
     lines.push(`Abilities: ${w.abilities.map((a) => content.abilities[a]?.name ?? a).join(', ')}`);
   }
   if (item.charge) lines.push(item.charge.unit === 'percent' ? 'Runs down with use' : `Up to ${item.charge.max} uses`);
+  lines.push(...fireText(itemId));
   if (item.needsItem) lines.push(`Needs a ${content.items[item.needsItem]?.name.toLowerCase()}`);
   if (item.spoilsAfterMinutes) lines.push(`Spoils after ${formatDuration(item.spoilsAfterMinutes)}`);
   if (item.charm) lines.push(`Charm · ${SLOT_NAMES[item.charm.slot]} · ${item.charm.rarity.replace('_', ' ')}`);

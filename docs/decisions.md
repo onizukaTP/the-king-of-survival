@@ -92,18 +92,20 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-087 (approves P-021) **Vehicle numbers** as in `docs/vehicles.md`: speeds, cargo, effort, durability and wear, repair with scrap metal, the cycle trailer recipe (cycle + hand cart + 2 coir rope + 1 scrap metal, 1 h), the auto-rickshaw's fuel, and the rarity table.
 - D-088 (approves P-022) **Charms** as in `docs/charms.md`: 13 charms across the necklace, earrings, waist cord, rings and bangles, their effects and where they are found.
 - D-089 **Vehicle screens:** a Vehicle button and panel; parked vehicles on the map; Get on in the Here panel; Load into cargo for ground finds; the trailer as a Craft recipe. Spec in `docs/ui.md`.
+- D-090 (owner, 2026-11-27; answers P-023) **Balance after the first playtest:** (1) the **raider with a bow can use its hands**: a Punch from rank 1, as weak as Prabu's fists, used only when it can't shoot or step back; (2) **raw meat, millet, unsafe water and rags tooltips say how to cook them**, from the fire recipes; (3) **level 10 should come in about 20 days**, since more levels will be added (table proposed in P-024); (4) fights stay at about 1 every 4–5 days; (5) the two-raider ambush stays; (6) the bow stays as it is.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat (solo, range bands and fleeing are now D-063): 1–3 enemies, speed-based turn order; actions: attack, aim, move band, use item, flee. Numbers to be proposed.
-- P-023 (M9 playtest, `docs/playtest.md`) **Balance and fixes:** (1) give the bow raider a weak blow from rank 1 so a lone archer can act; (2) raw meat and millet tooltips say how to cook them, from the fire recipes; (3) how many days to reach level 10 (now about 90); (4) keep fights at about 1 every 4–5 days for now; (5) keep the two-raider ambush (a light avoids it); (6) keep the bow as is. Also flagged: the Wild dogs event says "Five lean dogs" but the fight has 2–4.
+- P-024 (answers D-090's level pace) **Level table for level 10 in about 20 days:** a careful player has about 600 XP on day 20, so the thresholds become 20 / 55 / 100 / 155 / 220 / 300 / 390 / 490 / 600 for levels 2–10 (gains unchanged), with gaps growing by about 10 a level for the levels to come. Details in `docs/playtest.md`.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 
 ### Open — blocking (do not implement affected areas until answered)
 
 ### Open — non-blocking
 - Tamil localisation readiness.
+- The Wild dogs event says "Five lean dogs", but its fight has 2–4 dogs (found in the M9 playtest): which is right?
 - Currency/bartering before the wealth arc (bullock cart buying and biodiesel selling wait on it).
 
 When the owner answers, move the item to **Confirmed** with a new D-number and update `docs/decisions.md`.

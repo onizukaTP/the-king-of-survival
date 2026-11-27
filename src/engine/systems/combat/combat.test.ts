@@ -381,6 +381,15 @@ describe('Death\'s Door and Deathblow (D-069)', () => {
     expect(fighter(r.state, 'p0').deathsDoor).toBe(false);
   });
 
+  it('moss gauze stops his bleeding and heals him (D-100)', () => {
+    const s = arena(['enemy.t_dummy'], (g) => { g.survival.health = 40; addItems(g, 'item.moss_gauze', 1, content); });
+    applyStatus(s, fighter(s, 'p0'), { kind: 'bleed', amount: 2, rounds: 3, chance: 300 }, content);
+    expect(fighter(s, 'p0').statuses.some((x) => x.kind === 'bleed')).toBe(true);
+    const r = ok(s, { type: 'combat.act', action: 'use_item', index: s.inventory.stacks.findIndex((st) => st.itemId === 'item.moss_gauze') }, always);
+    expect(fighter(r.state, 'p0').statuses.some((x) => x.kind === 'bleed')).toBe(false);
+    expect(r.state.survival.health).toBeGreaterThanOrEqual(60);
+  });
+
   it('winning at Death\'s Door leaves him at 1 Health, not dead', () => {
     const s = arena(['enemy.t_dummy'], (g) => (g.survival.health = 0));
     fighter(s, 'p0').deathsDoor = true;

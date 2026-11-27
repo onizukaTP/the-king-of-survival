@@ -1,5 +1,5 @@
 import type { Content } from '../../../content/loader';
-import type { LootEntry, Water } from '../../../content/schemas';
+import type { Water } from '../../../content/schemas';
 import type { CommandError, CommandResult, GameEvent } from '../../core/commands';
 import { nextRandom } from '../../core/rng';
 import type { GameState, Stack } from '../../core/state';
@@ -27,7 +27,7 @@ function roll(state: GameState): number {
   return value;
 }
 
-const quantity = (state: GameState, e: LootEntry) => e.min + Math.floor(roll(state) * (e.max - e.min + 1));
+const quantity = (state: GameState, e: { min: number; max: number }) => e.min + Math.floor(roll(state) * (e.max - e.min + 1));
 
 /** Puts items on the ground where Prabu stands, to stay for 96 hours (D-045). */
 export function leaveOnGround(state: GameState, stack: Stack, content: Content) {
@@ -265,6 +265,72 @@ export function drinkHere(state: GameState, content: Content): CommandResult {
     state.survival.illUntil = state.clockMinutes + content.survival.illness.minutes;
     events.push({ type: 'fell_ill' });
   }
+  return { ok: true, state, events };
+}
+
+/** The stock key for the stretch of water at p: one ~1 km square (D-100). */
+export function waterCellKey(p: LatLon, content: Content): string {
+  const d = content.scavenging.waterCellDeg;
+  return `cell.water.${Math.floor(p.lat / d)}.${Math.floor(p.lon / d)}`;
+}
+
+/** The best fishing tool he has (in the pack or in hand) and its chance in %, or null (D-100). */
+function fishingTool(state: GameState, content: Content) {
+  const has = (id: string) => state.inventory.weapon === id || state.inventory.stacks.some((s) => s.itemId === id);
+  return content.scavenging.fishing.tools.filter((t) => has(t.itemId)).sort((a, b) => b.chance - a.chance)[0] ?? null;
+}
+
+/** What he can do at the water here, for the UI (D-100): fish and gather moss at any water but a well. */
+export function waterOptions(state: GameState, content: Content) {
+  const water = waterHere(state, content);
+  const open = water !== null && water !== 'well';
+  const key = waterCellKey(state.player.position, content);
+  const entry = state.sites[key];
+  const left = !entry || (entry.refreshAt !== null && state.clockMinutes >= entry.refreshAt) ? 100 : entry.richness;
+  const tool = fishingTool(state, content);
+  const luck = playerStats(state, content).luck * content.combat.luck.hunting;
+  return { open, left, tool, fishChance: tool ? Math.min(100, (tool.chance + luck) * (left / 100)) : 0 };
+}
+
+/** Uses up some of the water's stock after a try (D-100). */
+function deplete(state: GameState, key: string, amount: number, content: Content) {
+  const cfg = content.scavenging;
+  const rich = richness(state, key);
+  const refreshAt = state.sites[key]?.refreshAt ?? state.clockMinutes + cfg.refreshMinutes;
+  state.sites[key] = { richness: Math.max(cfg.minRichness, rich - amount), refreshAt };
+  return rich;
+}
+
+/** An hour of fishing (D-100): needs a spear or a fishing rod; the catch lands on the ground here. */
+export function fish(state: GameState, content: Content): CommandResult {
+  if (state.travel) return fail('travel_in_progress', 'Prabu can\'t fish while travelling.');
+  const water = waterHere(state, content);
+  if (!water || water === 'well') return fail('no_water', 'There\'s no water to fish here.');
+  const tool = fishingTool(state, content);
+  if (!tool) return fail('missing_item', 'Prabu needs a spear or a fishing rod to fish.');
+  const cfg = content.scavenging.fishing;
+  const rich = deplete(state, waterCellKey(state.player.position, content), cfg.depletion, content);
+  const luck = playerStats(state, content).luck * content.combat.luck.hunting;
+  const success = roll(state) * 100 < (tool.chance + luck) * (rich / 100);
+  const finds: Find[] = success ? [{ itemId: cfg.catch.itemId, count: quantity(state, cfg.catch) }] : [];
+  const events: GameEvent[] = [{ type: 'fished', finds, success }];
+  finish(state, cfg.minutes, finds, content, events);
+  if (!state.dead) maybeEvent(state, { on: 'search', buildingTypeId: null }, content, events);
+  return { ok: true, state, events };
+}
+
+/** Half an hour gathering moss at the water's edge (D-100); it lands on the ground here. */
+export function gatherMoss(state: GameState, content: Content): CommandResult {
+  if (state.travel) return fail('travel_in_progress', 'Prabu can\'t gather moss while travelling.');
+  const water = waterHere(state, content);
+  if (!water || water === 'well') return fail('no_water', 'There\'s no moss to gather here.');
+  const cfg = content.scavenging.moss;
+  const rich = deplete(state, waterCellKey(state.player.position, content), cfg.depletion, content);
+  const luck = playerStats(state, content).luck / 100;
+  const finds: Find[] = roll(state) < (cfg.chance + luck) * (rich / 100) ? [{ itemId: cfg.find.itemId, count: quantity(state, cfg.find) }] : [];
+  const events: GameEvent[] = [{ type: 'moss_gathered', finds }];
+  finish(state, cfg.minutes, finds, content, events);
+  if (!state.dead) maybeEvent(state, { on: 'search', buildingTypeId: null }, content, events);
   return { ok: true, state, events };
 }
 

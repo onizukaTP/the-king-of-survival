@@ -1,6 +1,6 @@
 import type { Content } from '../../content/loader';
 import { dropItem, equipItem, unequipItem, applyItem, type ItemSource } from '../systems/inventory/inventory';
-import { drinkHere, fillBottles, hunt, search, takeFromGround, type Find } from '../systems/scavenging/scavenging';
+import { drinkHere, fish, gatherMoss, fillBottles, hunt, search, takeFromGround, type Find } from '../systems/scavenging/scavenging';
 import { rest } from '../systems/survival/survival';
 import { craft } from '../systems/crafting/crafting';
 import { cook, feedFire, makeFire } from '../systems/fire/fire';
@@ -28,6 +28,8 @@ export type Command =
   | { type: 'scavenge.hunt' }
   | { type: 'water.fill' }
   | { type: 'water.drink' }
+  | { type: 'water.fish' }
+  | { type: 'water.moss' }
   // `indexes` point into state.ground; `toCargo` puts them in the ridden vehicle instead of the pack (P-021).
   | { type: 'ground.take'; indexes: number[]; toCargo?: boolean }
   // Charms (D-086): wear one from the pack (`index` into stacks), or take a worn one off.
@@ -87,6 +89,8 @@ export type GameEvent =
   | { type: 'hunted'; finds: Find[]; success: boolean }
   | { type: 'bottles_filled'; count: number; clean: boolean }
   | { type: 'drank'; clean: boolean }
+  | { type: 'fished'; finds: Find[]; success: boolean }
+  | { type: 'moss_gathered'; finds: Find[] }
   | { type: 'items_taken'; count: number }
   | { type: 'irradiated'; amount: number }
   | { type: 'fire_lit'; method: string }
@@ -218,6 +222,10 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return fillBottles(state, content);
     case 'water.drink':
       return drinkHere(state, content);
+    case 'water.fish':
+      return fish(state, content);
+    case 'water.moss':
+      return gatherMoss(state, content);
     case 'ground.take':
       return takeFromGround(state, command.indexes, content, command.toCargo ?? false);
     case 'charm.wear':

@@ -142,6 +142,8 @@ export const itemSchema = z.object({
   // Applied to the survival meters when used (eaten, drunk, applied).
   effects: z.object({ food: z.number(), water: z.number(), health: z.number() }).partial().optional(),
   curesInjury: z.boolean().optional(),
+  // D-100: in a fight, it also stops Prabu's bleeding.
+  stopsBleeding: z.boolean().optional(),
   // Chance (0–1) that using it makes Prabu ill (D-027).
   illnessChance: z.number().min(0).max(1).optional(),
   // What is left after use, e.g. the empty bottle.
@@ -215,6 +217,21 @@ export const scavengingSchema = z.object({
   waterRangeKm: z.number().nonnegative(),
   fillMinutesPerBottle: z.number().int().nonnegative(),
   drinkMinutes: z.number().int().nonnegative(),
+  // D-100: fishing (a tool from the list, best first; its chance in %, plus Luck) and gathering moss, at any water but wells.
+  fishing: z.object({
+    minutes: z.number().int().positive(),
+    tools: z.array(z.object({ itemId: slug('item'), chance: z.number().min(0).max(100) })).min(1),
+    catch: z.object({ itemId: slug('item'), min: z.number().int().positive(), max: z.number().int().positive() }),
+    depletion: z.number().min(0).max(100),
+  }),
+  moss: z.object({
+    minutes: z.number().int().positive(),
+    chance: z.number().min(0).max(1),
+    find: z.object({ itemId: slug('item'), min: z.number().int().positive(), max: z.number().int().positive() }),
+    depletion: z.number().min(0).max(100),
+  }),
+  // A stretch of water keeps its own stock in squares this many degrees wide (~1 km).
+  waterCellDeg: z.number().positive(),
   bottles: z.object({ empty: slug('item'), clean: slug('item'), unsafe: slug('item') }),
   radiation: z.object({ from: place, to: place, radiusKm: z.number().positive(), chancePerHour: z.number().min(0).max(1), amount: z.number().positive() }),
 });

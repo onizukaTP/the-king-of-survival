@@ -88,6 +88,11 @@ function describe(events: GameEvent[]): string | null {
       const text = def?.choices.find((c) => c.id === e.choiceId)?.outcomes[e.outcome]?.text;
       if (text) notes.push(text);
     }
+    if (e.type === 'fished' || e.type === 'moss_gathered') {
+      const f = e.finds[0];
+      notes.push(f ? `Found: ${itemName(f.itemId).toLowerCase()}${f.count > 1 ? ` ×${f.count}` : ''}. It's on the ground here.`
+        : e.type === 'fished' ? 'Nothing bit.' : 'No moss worth taking here.');
+    }
     if (e.type === 'searched' || e.type === 'hunted') {
       // Two draws of the same item read as one: "bamboo ×2", not "bamboo, bamboo".
       const counts = new Map<string, number>();

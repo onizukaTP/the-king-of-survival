@@ -11,6 +11,10 @@ Confirmed by the owner: D-043 (radiation zone), D-044 (water), D-045 (take or le
 | **Hunt** | Sanctuary forest | 1 h | One success roll per hour on Prabu's Hunting chance (40% base, +15% with the bow, +10% with the spear, plus Luck; D-065, D-066). On success: raw meat ×2–3, and animal hide 75% of the time. A mutated boar turns up on about 1 hunt in 10. |
 | **Fill bottles** | At any water (D-044) | 1 min per bottle (D-096) | Each empty bottle is filled: **clean water** at a river, **unsafe water** anywhere else. |
 | **Drink** | At any water | 10 min | Water to 100. From a river it's safe; anywhere else it carries the 1-in-5 illness chance (D-027). |
+| **Fish** (D-100) | At any water but a well, with a spear or a fishing rod (in the pack or in hand) | 1 h | 20% with a spear, 50% with a rod (+1% per Luck), scaled by the water's stock: raw fish ×1–3 on the ground here. A catch gives 10 XP. |
+| **Gather moss** (D-100) | At any water but a well | 30 min | 60%, scaled by the stock: moss ×1–3 on the ground here. |
+
+Each ~1 km square of water keeps its own stock: every fishing or moss try takes 10 points off, and it is full again 7 days after the first try there (D-100).
 
 Time passes through the same survival clock as travel and rest.
 

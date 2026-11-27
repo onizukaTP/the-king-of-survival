@@ -53,6 +53,9 @@ export function progress(state: GameState, events: GameEvent[], content: Content
     }
     if (e.type === 'searched' && e.finds.length) amount += xp.searchWithFinds;
     if (e.type === 'hunted' && e.success) amount += xp.huntSuccess;
+    // D-100: a catch counts like a successful hunt, moss like a search that found something.
+    if (e.type === 'fished' && e.success) amount += xp.huntSuccess;
+    if (e.type === 'moss_gathered' && e.finds.length) amount += xp.searchWithFinds;
     if (e.type === 'crafted' && !state.progression.crafted.includes(e.recipeId)) {
       state.progression.crafted.push(e.recipeId);
       amount += xp.firstCraft;

@@ -122,3 +122,15 @@ Later: tyre, spark plug, battery, generator (very rare, D-032).
 
 Where each is found is in the loot tables (`docs/scavenging.md`, `docs/towns.md`). That makes 58 items.
 
+## Fishing and moss — D-100 (owner, 2026-11-27)
+
+| Item | Kind | Weight | Effect | Spoils | How you get it |
+|---|---|---|---|---|---|
+| Raw fish | Food | 0.3 kg | Cook it first | 1 day | Fishing |
+| Cooked fish | Food | 0.25 kg | Food +25 | 2 days | At a fire (up to 3, 30 min) |
+| Moss | Medical | 0.05 kg | Treats an injury, Health +5 | 2 days | Gathering moss at water |
+| Moss gauze | Medical | 0.1 kg | Treats an injury, Health +30, stops bleeding in a fight | 5 days | Craft: 2 moss + 1 cloth bandage, 10 min |
+| Fishing rod | Tool | 0.5 kg | Fishing 50% instead of 20% with a spear | Never | Craft: 1 bamboo + 1 coir rope + 1 scrap metal, 20 min |
+
+That makes 63 items.
+

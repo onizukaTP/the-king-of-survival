@@ -1,6 +1,8 @@
 [
   { "id": "item.raw_meat", "name": "Raw meat", "category": "food", "weightKg": 0.5, "spoilsAfterMinutes": 4320 },
   { "id": "item.cooked_meat", "name": "Cooked meat", "category": "food", "weightKg": 0.4, "effects": { "food": 30 }, "spoilsAfterMinutes": 7200 },
+  { "id": "item.raw_fish", "name": "Raw fish", "category": "food", "weightKg": 0.3, "spoilsAfterMinutes": 1440 },
+  { "id": "item.cooked_fish", "name": "Cooked fish", "category": "food", "weightKg": 0.25, "effects": { "food": 25 }, "spoilsAfterMinutes": 2880 },
   { "id": "item.dried_meat", "name": "Salted dried meat", "category": "food", "weightKg": 0.2, "effects": { "food": 20 } },
   { "id": "item.millet", "name": "Millet grain", "category": "food", "weightKg": 0.5 },
   { "id": "item.millet_porridge", "name": "Millet porridge", "category": "food", "weightKg": 0.5, "effects": { "food": 25, "water": 10 }, "spoilsAfterMinutes": 2880 },
@@ -20,6 +22,8 @@
   { "id": "item.clean_water", "name": "Bottle of clean water", "category": "water", "weightKg": 1.05, "effects": { "water": 25 }, "leaves": "item.empty_bottle" },
 
   { "id": "item.cloth_bandage", "name": "Cloth bandage", "category": "medical", "weightKg": 0.1, "effects": { "health": 10 }, "curesInjury": true },
+  { "id": "item.moss", "name": "Moss", "category": "medical", "weightKg": 0.05, "effects": { "health": 5 }, "curesInjury": true, "spoilsAfterMinutes": 2880 },
+  { "id": "item.moss_gauze", "name": "Moss gauze", "category": "medical", "weightKg": 0.1, "effects": { "health": 30 }, "curesInjury": true, "stopsBleeding": true, "spoilsAfterMinutes": 7200 },
   { "id": "item.neem_leaves", "name": "Neem leaves", "category": "medical", "weightKg": 0.05 },
   { "id": "item.turmeric", "name": "Turmeric", "category": "medical", "weightKg": 0.05 },
   { "id": "item.neem_paste", "name": "Neem paste", "category": "medical", "weightKg": 0.1, "effects": { "health": 15 }, "curesInjury": true },
@@ -43,6 +47,7 @@
   { "id": "item.flint", "name": "Flint and steel", "category": "tool", "weightKg": 0.1 },
   { "id": "item.matchbox", "name": "Matchbox", "category": "tool", "weightKg": 0.02, "charge": { "max": 10, "unit": "count" } },
   { "id": "item.can_opener", "name": "Can opener", "category": "tool", "weightKg": 0.05 },
+  { "id": "item.fishing_rod", "name": "Fishing rod", "category": "tool", "weightKg": 0.5 },
   { "id": "item.cooking_pot", "name": "Cooking pot", "category": "tool", "weightKg": 0.8 },
   { "id": "item.lighter", "name": "Lighter", "category": "tool", "weightKg": 0.05, "charge": { "max": 20, "unit": "count" } },
   { "id": "item.torch", "name": "Torch", "category": "tool", "weightKg": 0.25, "charge": { "max": 100, "unit": "percent" } },

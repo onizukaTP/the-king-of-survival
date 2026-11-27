@@ -50,7 +50,8 @@ describe('XP sources (D-070, D-076)', () => {
     s.combat!.defeated = ['enemy.wild_dog', 'enemy.wild_dog'];
     expect(xpOf(progress(s, [{ type: 'combat_ended', outcome: 'fled' }], content))).toBe(0);
     expect(xpOf(progress(s, [{ type: 'combat_ended', outcome: 'won' }], content))).toBe(20);
-    expect(s.journal.notes.at(-1)).toMatchObject({ kind: 'won', enemies: ['enemy.wild_dog', 'enemy.wild_dog'] });
+    // 20 XP is level 2 now (D-091), so the level note may come after the fight's note.
+    expect(s.journal.notes).toContainEqual(expect.objectContaining({ kind: 'won', enemies: ['enemy.wild_dog', 'enemy.wild_dog'] }));
   });
 
   it('gives a dead man nothing', () => {
@@ -65,7 +66,7 @@ describe('levels (D-076)', () => {
     const s = fresh();
     const events = progress(s, [{ type: 'event_resolved', eventId: 'event.stray_goat', choiceId: 'catch', outcome: 0 }], content);
     expect(events).toEqual([{ type: 'xp_gained', amount: 10 }]);
-    s.progression.xp = 245;
+    s.progression.xp = 50;
     const up = progress(s, [{ type: 'site_discovered', siteId: 'loc.rajapalayam' }], content);
     expect(up.filter((e) => e.type === 'level_up')).toEqual([{ type: 'level_up', level: 2 }, { type: 'level_up', level: 3 }]);
     expect(s.progression.level).toBe(3);

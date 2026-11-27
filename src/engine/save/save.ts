@@ -3,7 +3,7 @@ import type { Content } from '../../content/loader';
 import { gameStateSchema, startingInventory, startingSurvival, startPosition, type GameState } from '../core/state';
 import { initialMap } from '../systems/travel/travel';
 
-export const SAVE_VERSION = 11;
+export const SAVE_VERSION = 12;
 
 const saveSchema = z.object({
   saveVersion: z.literal(SAVE_VERSION),
@@ -112,6 +112,14 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
   10: (save) => {
     const gs = save.gameState as { inventory: object };
     return { ...save, saveVersion: 11, gameState: { ...gs, inventory: { ...gs.inventory, charms: [] }, vehicles: { list: [], riding: null, seq: 0 } } };
+  },
+  // v11 → v12: normal XP (the Test panel's multiplier), and the level a run's XP reaches on the
+  // lower level table (D-091), so a run under way catches up at once.
+  11: (save, content) => {
+    const gs = save.gameState as { progression: { xp: number; level: number } };
+    const reached = content.progression.levels.filter((l) => gs.progression.xp >= l.xp).reduce((n, l) => Math.max(n, l.level), 1);
+    const level = Math.max(gs.progression.level, reached);
+    return { ...save, saveVersion: 12, gameState: { ...gs, progression: { ...gs.progression, level, xpMultiplier: 1 } } };
   },
 };
 

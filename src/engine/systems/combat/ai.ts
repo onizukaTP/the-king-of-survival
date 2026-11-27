@@ -39,13 +39,13 @@ function canStep(state: GameState, c: Combatant, steps: number): boolean {
 export function decide(state: GameState, c: Combatant, content: Content): Decision {
   const def = content.enemies[c.defId]!;
   const works = (a: (typeof def.abilities)[number]) => !abilityBlocked(state, c, content.abilities[a.id]!, content);
-  const main = useAbility(state, c, def.abilities.filter((a) => !a.fallback && works(a)), content);
+  const main = pickAbility(state, c, def.abilities.filter((a) => !a.fallback && works(a)), content);
   if (main) return main;
   // Nothing works from here: head for the ranks it prefers.
   const [lo, hi] = [Math.min(...def.preferredRanks), Math.max(...def.preferredRanks)];
   const towards = c.rank > hi ? 1 : c.rank < lo ? -1 : 0;
   if (towards && canStep(state, c, towards)) return { kind: 'move', steps: towards };
-  const fallback = useAbility(state, c, def.abilities.filter((a) => a.fallback && works(a)), content);
+  const fallback = pickAbility(state, c, def.abilities.filter((a) => a.fallback && works(a)), content);
   if (fallback) return fallback;
   if (towards) return { kind: 'move', steps: towards };
   // In its ranks but still nothing to do (everything out of reach): edge forward if it can.
@@ -53,7 +53,7 @@ export function decide(state: GameState, c: Combatant, content: Content): Decisi
 }
 
 /** A weighted pick among the usable abilities, with a target; null when there are none. */
-function useAbility(state: GameState, c: Combatant, usable: Content['enemies'][string]['abilities'], content: Content): Decision | null {
+function pickAbility(state: GameState, c: Combatant, usable: Content['enemies'][string]['abilities'], content: Content): Decision | null {
   const def = content.enemies[c.defId]!;
   if (usable.length) {
     const total = usable.reduce((n, a) => n + a.weight, 0);

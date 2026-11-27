@@ -93,19 +93,20 @@ Mirrors CLAUDE.md §8. Update both when the owner rules on something.
 - D-088 (approves P-022) **Charms** as in `docs/charms.md`: 13 charms across the necklace, earrings, waist cord, rings and bangles, their effects and where they are found.
 - D-089 **Vehicle screens:** a Vehicle button and panel; parked vehicles on the map; Get on in the Here panel; Load into cargo for ground finds; the trailer as a Craft recipe. Spec in `docs/ui.md`.
 - D-090 (owner, 2026-11-27; answers P-023) **Balance after the first playtest:** (1) the **raider with a bow can use its hands**: a Punch from rank 1, as weak as Prabu's fists, used only when it can't shoot or step back; (2) **raw meat, millet, unsafe water and rags tooltips say how to cook them**, from the fire recipes; (3) **level 10 should come in about 20 days**, since more levels will be added (table proposed in P-024); (4) fights stay at about 1 every 4–5 days; (5) the two-raider ambush stays; (6) the bow stays as it is.
+- D-091 (owner, 2026-11-27; approves P-024 option A) **Level table: level 10 in about 20 days.** XP awards stay; the thresholds become 20 / 55 / 100 / 155 / 220 / 300 / 390 / 490 / 600 for levels 2–10 (gains unchanged). More levels will follow, continuing the growing gaps. A run under way catches up to the level its XP reaches when it loads (save v12).
+- D-092 (owner, 2026-11-27) **XP multiplier in the Test panel:** with `?debug=1`, every XP gain can be multiplied (0–100, 1 is normal); it stays with the run's save.
+- D-093 (owner, 2026-11-27; closes the M9 flag) **The Wild dogs text stays:** five dogs step out, but only 2 to 4 of them have the courage to fight.
 
 ### Proposed — awaiting owner approval
 - P-001 Prototype content: 1 home settlement + 6–8 discoverable locations in one region; ~20–25 items; 6–8 recipes (craft anywhere); 3–4 enemy types; 8–10 text events.
 - P-003 Action-based time (travel/scavenge/rest/craft advance the clock).
 - P-005 Combat (solo, range bands and fleeing are now D-063): 1–3 enemies, speed-based turn order; actions: attack, aim, move band, use item, flee. Numbers to be proposed.
-- P-024 (answers D-090's level pace) **Level table for level 10 in about 20 days:** a careful player has about 600 XP on day 20, so the thresholds become 20 / 55 / 100 / 155 / 220 / 300 / 390 / 490 / 600 for levels 2–10 (gains unchanged), with gaps growing by about 10 a level for the levels to come. Details in `docs/playtest.md`.
 - P-007 Screens (the map screen part is approved as D-016): Title → Intro → World Map hub (HUD bar top, location side panel, bottom nav) → Location / Event dialog / Combat → Game Over; panels for Inventory, Crafting, Character, Journal, Menu. Mobile: full-screen map, bottom sheets.
 
 ### Open — blocking (do not implement affected areas until answered)
 
 ### Open — non-blocking
 - Tamil localisation readiness.
-- The Wild dogs event says "Five lean dogs", but its fight has 2–4 dogs (found in the M9 playtest): which is right?
 - Currency/bartering before the wealth arc (bullock cart buying and biodiesel selling wait on it).
 
 When the owner answers, move the item to **Confirmed** with a new D-number and update `docs/decisions.md`.

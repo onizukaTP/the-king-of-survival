@@ -28,7 +28,7 @@ describe('createNewGame', () => {
     expect(state.rngState).toBe(123);
     expect(state.clockMinutes).toBe(720);
     expect(state.introSeen).toBe(false);
-    expect(state.progression).toEqual({ xp: 0, level: 1, crafted: [] });
+    expect(state.progression).toEqual({ xp: 0, level: 1, crafted: [], xpMultiplier: 1 });
     expect(state.player.position).toEqual({ lat: 9.5599, lon: 77.6251 });
     expect(state.map.discoveredSiteIds.sort()).toEqual(
       ['loc.home', 'loc.nh744', 'loc.sanctuary_forest', 'loc.srivilliputhur', 'loc.srivilliputhur_station'].sort(),

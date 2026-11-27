@@ -177,21 +177,21 @@ describe('choices and outcomes', () => {
 });
 
 describe('search and rest events', () => {
-  const inHouse = (c: Content) => {
-    let s = game();
-    s.player.position = { lat: content.sites[SRI]!.lat, lon: content.sites[SRI]!.lon };
-    s = ok(s, { type: 'town.enter' }, c).state;
-    const house = content.towns[SRI]!.buildings.find((b) => b.typeId === 'btype.house')!;
-    return ok(s, { type: 'town.walk', spotId: house.id }, c).state;
+  // Standing at a town building on the world map (D-099).
+  const atBuilding = (typeId: string, s = game()) => {
+    const b = content.towns[SRI]!.buildings.find((x) => x.typeId === typeId)!;
+    s.player.position = { lat: b.lat, lon: b.lon };
+    return s;
   };
+  const inHouse = () => atBuilding('btype.house');
 
   it('an unsteady floor only in houses and apartment blocks; the torch makes it safe', () => {
     const c = forced(['event.unsteady_floor']);
-    const s = ok(inHouse(c), { type: 'scavenge.search', torch: false }, c).state;
+    const s = ok(inHouse(), { type: 'scavenge.search', torch: false }, c).state;
     expect(s.event?.id).toBe('event.unsteady_floor');
     expect(ok(s, { type: 'event.choose', choiceId: 'careful' }, c).state.survival.injured).toBe(false);
-    const t = ok(inHouse(c), { type: 'town.walk', spotId: content.towns[SRI]!.buildings.find((b) => b.typeId === 'btype.place_of_worship')!.id }, c);
-    expect(ok(t.state, { type: 'scavenge.search', torch: false }, c).state.event).toBeNull();
+    const t = atBuilding('btype.place_of_worship');
+    expect(ok(t, { type: 'scavenge.search', torch: false }, c).state.event).toBeNull();
   });
 
   it('resting outdoors at night can be disturbed, but not at home or beside a fire', () => {
@@ -276,11 +276,9 @@ describe('conditions (D-061)', () => {
   });
 
   it('shaken makes searches 25% slower; an hour of rest at home ends it', () => {
-    let s = withCondition('condition.shaken');
-    s.player.position = { lat: content.sites[SRI]!.lat, lon: content.sites[SRI]!.lon };
-    s = ok(s, { type: 'town.enter' }, quiet).state;
+    const s = withCondition('condition.shaken');
     const house = content.towns[SRI]!.buildings.find((b) => b.typeId === 'btype.house')!;
-    s = ok(s, { type: 'town.walk', spotId: house.id }, quiet).state;
+    s.player.position = { lat: house.lat, lon: house.lon };
     const before = s.clockMinutes;
     expect(ok(s, { type: 'scavenge.search', torch: false }, quiet).state.clockMinutes).toBe(before + Math.round(30 * 1.25));
     expect(hasCondition(ok(withCondition('condition.shaken'), { type: 'rest', minutes: 60 }, quiet).state.survival, 'condition.shaken')).toBe(false);

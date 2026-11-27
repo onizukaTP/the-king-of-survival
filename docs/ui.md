@@ -34,16 +34,13 @@ Screen layouts the owner has approved. Visual styling (the wasteland look) is a 
 - **Map:** still water in dark blue, flowing rivers in bright blue, and the radiation zone in yellow with a dashed edge and a radiation icon in the middle. Prabu's marker sits above place markers and can be clicked.
 - **Top bar:** an "Irradiated" tag, and the Health meter shows the part lost to radiation as a dark end segment.
 
-## Town map (M4b) — D-052
+## Towns on the world map — D-099
 
-- **Entering:** at a town, the Here panel has **Enter town**. The world map is replaced by the town plan; the top bar is unchanged and the status reads "In <town>: <building>".
-- **The plan:** real streets in grey, buildings as tan squares, wells light blue, the tank dark blue, the edge of town as a grey diamond, Prabu as the blue dot. Searched buildings fade. +/− buttons, wheel zoom and drag to pan.
-- **Selecting and walking:** click a building to see it in the side panel (type, distance, walk time, search time, left to find, **Walk there**). Click it again to walk. Clicking where Prabu stands opens the Here panel.
-- **Here panel in a town:** the building's search buttons, water at a well or tank, floor piles, and **Leave town** at the top when he stands at the edge of town (elsewhere a line says to walk to the edge, D-053).
-- **Mobile:** the plan full screen, the panel as a bottom sheet, as on the world map.
-- **World map:** mapped wells show as small light-blue dots.
-
-- **Town ends and zoom (D-054):** the north, south, east and west ends are grey diamonds like the edge; Leave town shows at any of them. Zooming out stops once the whole town fits, and panning keeps the view over the town.
+- From zoom 14, each town's buildings show as small labelled squares and its wells and tanks as blue dots, with the town's streets drawn; zoomed out, the town is one marker.
+- Click a building or water spot to see it in the side panel (type, search time, how much is left, the trip there), click it again to go (D-022).
+- At a town marker, the Here panel says its buildings show when you zoom in.
+- The top bar says "At: Garage, Srivilliputhur town ruins" at a building.
+- The old town map screen (D-052) is gone.
 
 ## Fire section (D-056, D-057)
 

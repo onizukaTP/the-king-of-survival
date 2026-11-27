@@ -6,6 +6,7 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { useEffect, useRef } from 'react';
 import { distanceKm, type LatLon } from '../engine/systems/travel/geo';
 import { previewTravel } from '../engine/systems/travel/travel';
+import { allSpots } from '../engine/systems/town/town';
 import { content, LEG_ANIMATION_MS, useGameStore } from '../store/gameStore';
 
 setWorkerUrl(workerUrl);
@@ -109,6 +110,7 @@ export function MapView() {
           rivers: { type: 'geojson', data: riversGeoJson() },
           wells: { type: 'geojson', data: wellsGeoJson() },
           zone: { type: 'geojson', data: zoneGeoJson() },
+          streets: { type: 'geojson', data: streetsGeoJson() },
         },
         layers: [
           { id: 'sea', type: 'background', paint: { 'background-color': COLORS.sea } },
@@ -120,6 +122,8 @@ export function MapView() {
           { id: 'zone', type: 'fill', source: 'zone', paint: { 'fill-color': COLORS.zone, 'fill-opacity': 0.18 } },
           { id: 'zone-edge', type: 'line', source: 'zone', paint: { 'line-color': COLORS.zone, 'line-width': 1.5, 'line-dasharray': [4, 3] } },
           { id: 'rail', type: 'line', source: 'rail', paint: { 'line-color': COLORS.rail, 'line-width': 1.5, 'line-dasharray': [3, 2] } },
+          // D-099: a town's streets show once zoomed in to street level, with its buildings.
+          { id: 'streets', type: 'line', source: 'streets', minzoom: SPOTS_ZOOM - 1, paint: { 'line-color': COLORS.road, 'line-opacity': 0.55, 'line-width': ['interpolate', ['linear'], ['zoom'], 13, 0.6, 16, 2] } },
           { id: 'roads', type: 'line', source: 'roads', paint: { 'line-color': COLORS.road, 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.6, 11, 1.4, 14, 3] } },
           { id: 'route', type: 'line', source: 'route', paint: { 'line-color': COLORS.route, 'line-width': 3, 'line-dasharray': [1, 1.5] } },
         ],
@@ -132,6 +136,10 @@ export function MapView() {
       attributionControl: { customAttribution: '© OpenStreetMap contributors · Natural Earth' },
     });
     map.addControl(new NavigationControl({ showCompass: false }), 'top-left');
+    // Town spots show from street level (D-099).
+    const showSpots = () => container.current?.classList.toggle('show-spots', map.getZoom() >= SPOTS_ZOOM);
+    map.on('zoom', showSpots);
+    map.on('load', showSpots);
     map.on('click', (e: { lngLat: { lat: number; lng: number } }) => useGameStore.getState().select({ point: { lat: e.lngLat.lat, lon: e.lngLat.lng } }));
     // Double-click on open ground travels there (replaces double-click zoom; wheel, pinch and +/− still zoom).
     map.on('dblclick', (e: { lngLat: { lat: number; lng: number }; preventDefault: () => void }) => {
@@ -192,6 +200,25 @@ export function MapView() {
       el.addEventListener('dblclick', (e) => e.stopPropagation());
       siteMarkers.current.set(id, new Marker({ element: el, anchor: 'left', offset: [-6, 0] }).setLngLat([site.lon, site.lat]).addTo(map));
     }
+    // D-099: town buildings, wells and tanks are places on the world map, shown when zoomed in.
+    for (const spot of allSpots(content)) {
+      if (siteMarkers.current.has(spot.id)) continue;
+      const el = document.createElement('button');
+      el.className = `spot-marker spot-${spot.kind === 'building' ? 'building' : spot.water}`;
+      el.setAttribute('aria-label', spot.name);
+      el.title = spot.kind === 'building' ? spot.type.name : spot.water === 'well' ? 'Well: clean water' : 'Tank: unsafe water';
+      el.innerHTML = `<span class="dot"></span><span class="label"></span>`;
+      el.querySelector('.label')!.textContent = spot.name;
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const store = useGameStore.getState();
+        const selected = store.selection && 'spotId' in store.selection && store.selection.spotId === spot.id;
+        if (selected) void store.travel();
+        else select({ spotId: spot.id });
+      });
+      el.addEventListener('dblclick', (e) => e.stopPropagation());
+      siteMarkers.current.set(spot.id, new Marker({ element: el, anchor: 'left', offset: [-5, 0] }).setLngLat([spot.lon, spot.lat]).addTo(map));
+    }
   }, [select]);
 
   // Parked vehicles (M10): a small square where each one was left; clicking it plans a trip there.
@@ -250,4 +277,12 @@ export function MapView() {
   }, [position, lastLegPath]);
 
   return <div ref={container} className="map" />;
+}
+
+// Zoom from which town buildings, wells and tanks show on the world map (D-099).
+const SPOTS_ZOOM = 14;
+
+function streetsGeoJson(): Feature {
+  const lines = Object.values(content.townStreets).flat();
+  return { type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: lines } };
 }

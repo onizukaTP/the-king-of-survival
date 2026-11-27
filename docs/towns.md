@@ -1,4 +1,4 @@
-# Town maps and water at places — approved (D-052), built
+# Towns and water at places — approved (D-052), built; on the world map since D-099
 
 Confirmed by the owner:
 - **D-049:** every town has its own map of buildings to scavenge. Layouts are hand-made, with real landmarks where they exist. Building types can be any that reflect a real Tamil Nadu town; the owner's list was examples.
@@ -20,14 +20,14 @@ Everything below was approved as P-014 (D-052) and is built (M4b), except where 
 
 ## How it plays
 
-1. **Entering:** at a town, the Here panel gets **Enter town**. Entering costs no time.
-2. **The town map:** it replaces the world map. The top bar stays the same: clock, meters, Pack, Rest and Menu.
-3. **Moving:** it works like the world map. Click a building to select it, then click it again to walk there. Walking uses the straight-line distance at road speed (4.5 km/h, D-019), so 400 m takes about 5 minutes. Survival drains as on any trip.
-4. **At a building:** the panel shows **Search** (times below) and how much is left to find. Finds and drops work as in M4: you tick what to take, and the rest stays on that building's floor for 96 hours (D-045).
-5. **At a well or a tank:** **Fill bottles** and **Drink**, as in M4. A well gives clean water; a tank or pond gives unsafe water (D-044, D-050).
-6. **Leaving:** **Leave town** puts Prabu back on the world map at the town's point. He can leave **only from the edge of town** (D-053) **or from its north, south, east or west end** (D-054); elsewhere the panel says to walk to one. Leaving from an end puts him at that end on the world map. Each end is the real street point nearest to 300 m beyond the town's outermost building or water in that direction (Madurai's south end lies past the airport, about 10 km out).
+**D-099 (2026-11-27): towns are on the world map.** The separate town screen, Enter town, Leave town, the edge and the four ends (D-053, D-054) are gone.
 
-All buildings in a town are visible as soon as Prabu enters. There is no fog inside towns.
+1. **Seeing a town:** zoomed out, a town is one marker. From street level (zoom 14) its buildings (small squares), wells and tanks (blue dots) and its streets show on the world map.
+2. **Moving:** click a building to see it (type, search time, how much is left), click it again to go there. The trip is an ordinary trip with legs (D-010): the town's streets are part of the road graph, so it follows them at road speed (4.5 km/h, D-019). A leg that ends inside a town rolls only town-walk events, as before (D-059).
+3. **At a building:** the Here panel shows **Search** and how much is left. Finds and drops work as in M4: you tick what to take, and the rest stays on that building's floor for 96 hours (D-045).
+4. **At a well or a tank:** **Fill bottles** and **Drink**. A well gives clean water; a tank gives unsafe water (D-044, D-050).
+5. **Resting** at a building counts as indoors (no night disturbances outdoors).
+6. **Saves (v14):** a run that was inside a town stays where it stood.
 
 ## Building types
 
@@ -125,9 +125,4 @@ Town maps add Prabu's position inside a town, plus stock and floor piles for eac
 
 ## Town map screen
 
-- **Map area:** a flat top-down plan drawn in SVG, not MapLibre.
-  - Streets are grey lines. Buildings are blocks with a type icon and a short label.
-  - Wells and tanks are blue, and Prabu is a marker.
-  - Searched buildings fade as their stock runs low.
-- **Side panel / bottom sheet:** sits where it does on the world map. It shows the selected building (type, walking time, how much is left, Search) or the Here panel. **Leave town** sits at the top of the panel at the edge of town (D-053).
-- **On phones:** the same layout as the world map, with the plan full screen and the panel as a bottom sheet.
+Removed by D-099: the town's buildings are on the world map (`docs/ui.md`, Map screen).

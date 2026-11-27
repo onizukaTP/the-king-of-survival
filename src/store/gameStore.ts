@@ -28,8 +28,6 @@ interface GameStore {
   hasSave: boolean;
   message: string | null;
   selection: TravelTarget | null;
-  /** The building or water point picked on a town map (P-014). */
-  townSelection: string | null;
   panel: PanelMode;
   /** How the Pack lists items; kept while the panel is closed. */
   packSort: PackSort;
@@ -44,8 +42,6 @@ interface GameStore {
   loadGame: () => Promise<void>;
   quitToTitle: () => void;
   select: (target: TravelTarget | null) => void;
-  selectSpot: (spotId: string | null) => void;
-  walk: (spotId: string) => void;
   openPanel: (panel: PanelMode) => void;
   travel: () => Promise<void>;
   requestStop: () => void;
@@ -102,7 +98,6 @@ function describe(events: GameEvent[]): string | null {
     }
     if (e.type === 'bottles_filled') notes.push(`Filled ${e.count} bottle${e.count > 1 ? 's' : ''} with ${e.clean ? 'clean' : 'unsafe'} water.`);
     if (e.type === 'drank') notes.push(e.clean ? 'Drank clean water.' : 'Drank unsafe water.');
-    if (e.type === 'town_entered') notes.push(`Entered ${content.sites[e.siteId]?.name ?? 'the town'}.`);
     if (e.type === 'items_taken') notes.push('Taken.');
     if (e.type === 'irradiated') notes.push(`Radiation +${e.amount}.`);
     if (e.type === 'fire_lit') notes.push('Lit a fire.');
@@ -192,7 +187,7 @@ export const useGameStore = create<GameStore>((set, get) => {
     if (run === currentRun) set({ stopRequested: false });
   };
 
-  const reset = { message: null, selection: null, townSelection: null, panel: null, lastLegPath: null, stopRequested: false, death: null };
+  const reset = { message: null, selection: null, panel: null, lastLegPath: null, stopRequested: false, death: null };
 
   return {
     screen: 'title',
@@ -244,11 +239,7 @@ export const useGameStore = create<GameStore>((set, get) => {
     },
 
     select: (target) => set({ selection: target, panel: null, message: null }),
-    selectSpot: (spotId) => set({ townSelection: spotId, panel: null, message: null }),
-    walk: (spotId) => {
-      if (dispatch({ type: 'town.walk', spotId })) set({ townSelection: null, panel: null });
-    },
-    openPanel: (panel) => set({ panel, selection: null, townSelection: null }),
+    openPanel: (panel) => set({ panel, selection: null }),
     setPackSort: (packSort) => set({ packSort }),
 
     travel: async () => {

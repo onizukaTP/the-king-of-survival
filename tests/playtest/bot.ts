@@ -15,7 +15,7 @@ import { abilitiesOf } from '../../src/engine/systems/combat/fighters';
 import { fireMinutesLeft } from '../../src/engine/systems/fire/fire';
 import { carriedKg } from '../../src/engine/systems/inventory/inventory';
 import { groundHere, searchOptions, waterAt, waterHere } from '../../src/engine/systems/scavenging/scavenging';
-import { townSpots } from '../../src/engine/systems/town/town';
+import { allSpots, spotById, spotHere } from '../../src/engine/systems/town/town';
 import { distanceKm } from '../../src/engine/systems/travel/geo';
 import { siteAt } from '../../src/engine/systems/travel/travel';
 
@@ -85,7 +85,7 @@ export function playRun(content: Content, seed: number, maxDays = 10, trace?: (l
     if (trace) {
       const sv = played.state.survival;
       const inv = played.state.inventory.stacks.map((x) => `${x.itemId.replace('item.', '')}×${x.count}`).join(' ');
-      trace(`d${((played.state.clockMinutes - content.newGame.startClockMinutes) / 1440).toFixed(2)} ${played.command.type}${'recipeId' in played.command ? ':' + played.command.recipeId : ''}${'method' in played.command ? ':' + played.command.method : ''}${'target' in played.command && played.command.type === 'travel.start' ? '→' + JSON.stringify(played.command.target) : ''} @${played.state.town ? played.state.town.siteId + '/' + played.state.town.at : siteAt(played.state.player.position, content)?.id ?? 'open'} H${sv.health.toFixed(0)} F${sv.food.toFixed(0)} W${sv.water.toFixed(0)} R${sv.rest.toFixed(0)} | ${inv} | ${played.events.map((e) => e.type).join(',')}`);
+      trace(`d${((played.state.clockMinutes - content.newGame.startClockMinutes) / 1440).toFixed(2)} ${played.command.type}${'recipeId' in played.command ? ':' + played.command.recipeId : ''}${'method' in played.command ? ':' + played.command.method : ''}${'target' in played.command && played.command.type === 'travel.start' ? '→' + JSON.stringify(played.command.target) : ''} @${spotHere(played.state, content)?.id ?? siteAt(played.state.player.position, content)?.id ?? 'open'} H${sv.health.toFixed(0)} F${sv.food.toFixed(0)} W${sv.water.toFixed(0)} R${sv.rest.toFixed(0)} | ${inv} | ${played.events.map((e) => e.type).join(',')}`);
     }
     state = played.state;
     count(report, played.events);
@@ -123,7 +123,7 @@ function playOne(state: GameState, content: Content, mem: Memory) {
     if (r.ok) {
       if (command.type === 'travel.start') {
         const t = command.target;
-        const p = 'siteId' in t ? content.sites[t.siteId]! : t.point;
+        const p = 'siteId' in t ? content.sites[t.siteId]! : 'spotId' in t ? spotById(t.spotId, content)! : t.point;
         mem.goal = { lat: p.lat, lon: p.lon, target: command };
       }
       if (command.type === 'scavenge.search') {
@@ -136,7 +136,7 @@ function playOne(state: GameState, content: Content, mem: Memory) {
   return null;
 }
 
-const searchKey = (s: GameState, content: Content) => (s.town ? `${s.town.siteId}/${s.town.at}` : siteAt(s.player.position, content)?.id ?? `${s.player.position.lat},${s.player.position.lon}`);
+const searchKey = (s: GameState, content: Content) => spotHere(s, content)?.id ?? siteAt(s.player.position, content)?.id ?? `${s.player.position.lat},${s.player.position.lon}`;
 
 const has = (s: GameState, id: string) => s.inventory.stacks.findIndex((x) => x.itemId === id);
 const countOf = (s: GameState, ids: string[]) => s.inventory.stacks.filter((x) => ids.includes(x.itemId)).reduce((n, x) => n + x.count, 0);
@@ -219,7 +219,6 @@ function* wishes(s: GameState, content: Content, mem: Memory): Generator<Command
 
   // Sleep when tired.
   if (sv.rest < 25) {
-    if (s.town) { yield { type: 'town.walk', spotId: 'edge' }; yield { type: 'town.leave' }; }
     yield { type: 'rest', minutes: 'until_rested' };
   }
 
@@ -239,8 +238,7 @@ function* wishes(s: GameState, content: Content, mem: Memory): Generator<Command
   if (opts.canHunt && !firewood && opts.canSearch) yield { type: 'scavenge.search', torch: opts.torch && isNight(s) };
   if (opts.canHunt && hungry) yield { type: 'scavenge.hunt' };
   const starving = hungry && sv.food < 40;
-  if (starving && s.town) { yield { type: 'town.walk', spotId: 'edge' }; yield { type: 'town.leave' }; }
-  if (starving && !s.town) {
+  if (starving) {
     const p0 = s.player.position;
     const grounds = Object.values(content.sites).filter((k) => content.loot[k.id]?.hunt?.length).sort((a, b) => distanceKm(p0, a) - distanceKm(p0, b));
     for (const site of grounds) if (distanceKm(p0, site) > 0.1) yield { type: 'travel.start', target: { siteId: site.id } };
@@ -249,35 +247,27 @@ function* wishes(s: GameState, content: Content, mem: Memory): Generator<Command
     yield { type: 'scavenge.search', torch: opts.torch && isNight(s) };
   }
 
-  // In town: the next building with stock, then out.
-  if (s.town) {
-    const town = content.towns[s.town.siteId]!;
-    const pos = s.player.position;
-    const next = townSpots(town, content)
-      .filter((sp) => sp.kind === 'building' && !(exhausted[`${s.town!.siteId}/${sp.id}`] !== undefined && s.clockMinutes - exhausted[`${s.town!.siteId}/${sp.id}`]! < EXHAUSTED_FOR))
-      .sort((a, b) => distanceKm(pos, a) - distanceKm(pos, b))[0];
-    const thirsty = sv.water < 60 && countOf(s, DRINK) === 0;
-    const well = townSpots(town, content).find((sp) => sp.kind === 'water' && sp.water === 'well');
-    if (thirsty && well && s.town.at !== well.id) yield { type: 'town.walk', spotId: well.id };
-    if (next && s.town.at !== next.id) yield { type: 'town.walk', spotId: next.id };
-    if (!next) exhausted[s.town.siteId] = s.clockMinutes;
-    yield { type: 'town.walk', spotId: 'edge' };
-    yield { type: 'town.leave' };
-    return;
-  }
-  if (opts.canEnterTown && !(exhausted[opts.site!.id] !== undefined && s.clockMinutes - exhausted[opts.site!.id]! < EXHAUSTED_FOR)) yield { type: 'town.enter' };
-
   // Travel: carry on to an interrupted trip's goal, then water if dry, otherwise the nearest place not yet searched out.
-  if (mem.goal && !s.town) yield mem.goal.target;
+  if (mem.goal) yield mem.goal.target;
   const pos = s.player.position;
   const known = Object.values(content.sites).filter((k) => k.id !== FAR);
   const near = (list: typeof known) => list.sort((a, b) => distanceKm(pos, a) - distanceKm(pos, b));
   const dry = points('water') < 50 && sv.water < 80;
   const clean = (k: (typeof known)[number]) => { const w = waterAt(k, content); return w === 'river' || w === 'well'; };
-  if (dry) for (const site of [...near(known.filter(clean)), ...near(known.filter((k) => waterAt(k, content)))]) if (distanceKm(pos, site) > 0.1) yield { type: 'travel.start', target: { siteId: site.id } };
+  // Thirsty: the nearest clean water first (a town well or a river site), then any water.
+  const wells = allSpots(content).filter((sp) => sp.townId !== FAR && sp.kind === 'water' && sp.water === 'well').map((sp) => ({ lat: sp.lat, lon: sp.lon, clean: true, target: { spotId: sp.id } as const }));
+  const waterSites = known.filter((k) => waterAt(k, content)).map((k) => ({ lat: k.lat, lon: k.lon, clean: clean(k), target: { siteId: k.id } as const }));
+  const waters = [...wells, ...waterSites].filter((w) => distanceKm(pos, w) > 0.04).sort((a, b) => Number(b.clean) - Number(a.clean) || distanceKm(pos, a) - distanceKm(pos, b));
+  if (dry) for (const w of waters) yield { type: 'travel.start', target: w.target };
   if (hungry) for (const site of near(known.filter((k) => content.loot[k.id]?.hunt?.length))) if (distanceKm(pos, site) > 0.1) yield { type: 'travel.start', target: { siteId: site.id } };
-  const fresh = near(known.filter((k) => distanceKm(pos, k) > 0.1 && !(exhausted[k.id] !== undefined && s.clockMinutes - exhausted[k.id]! < EXHAUSTED_FOR)));
-  for (const site of fresh) yield { type: 'travel.start', target: { siteId: site.id } };
+  const spots = allSpots(content).filter((sp) => sp.townId !== FAR);
+  const thin = (id: string) => exhausted[id] !== undefined && s.clockMinutes - exhausted[id]! < EXHAUSTED_FOR;
+  // Sites with loot and town buildings, nearest first.
+  const places = [
+    ...known.filter((k) => content.loot[k.id]?.search.length).map((k) => ({ id: k.id, lat: k.lat, lon: k.lon, target: { siteId: k.id } as const })),
+    ...spots.filter((sp) => sp.kind === 'building').map((sp) => ({ id: sp.id, lat: sp.lat, lon: sp.lon, target: { spotId: sp.id } as const })),
+  ].filter((pl) => distanceKm(pos, pl) > 0.04 && !thin(pl.id)).sort((a, b) => distanceKm(pos, a) - distanceKm(pos, b));
+  for (const pl of places) yield { type: 'travel.start', target: pl.target };
   // Nothing left nearby: wait it out.
   yield { type: 'rest', minutes: 240 };
 }

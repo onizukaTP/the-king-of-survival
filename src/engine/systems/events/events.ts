@@ -20,6 +20,7 @@ const clamp = (v: number) => Math.min(100, Math.max(0, v));
 /** What just happened that might turn into an event (D-059). */
 export type Trigger =
   | { on: 'travel'; minutes: number; crossShare: number; unlit: boolean }
+  // A leg inside a town (D-099 keeps D-059's town walks: only events meant for them, such as bad footing).
   | { on: 'walk'; minutes: number; unlit: boolean }
   | { on: 'search'; buildingTypeId: string | null }
   | { on: 'rest' }

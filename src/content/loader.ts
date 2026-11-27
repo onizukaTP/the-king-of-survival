@@ -20,6 +20,7 @@ import combat from './data/combat.json';
 import water from './data/water.json';
 import buildingTypes from './data/building-types.json';
 import towns from './data/towns.json';
+import { withStreets } from './streets';
 import townStreets from './data/town-streets.json';
 import survival from './data/survival.json';
 import newGame from './data/new-game.json';
@@ -120,7 +121,8 @@ export function parseContent(raw: RawContent): Content {
     buildingTypes: byId(z.array(buildingTypeSchema).parse(raw.buildingTypes), 'building type'),
     towns: Object.fromEntries(z.array(townSchema).parse(raw.towns).map((t) => [t.siteId, t])),
     townStreets: townStreetsSchema.parse(raw.townStreets),
-    roads: roadsSchema.parse(raw.roads),
+    // D-099: trips inside towns follow their streets, so the streets join the road graph.
+    roads: checkedRoads(roadsSchema.parse(raw.roads), townStreetsSchema.parse(raw.townStreets)),
     outline: outlineSchema.parse(raw.outline),
     newGame: newGameSchema.parse(raw.newGame),
     progression: progressionSchema.parse(raw.progression),
@@ -277,12 +279,17 @@ export function parseContent(raw: RawContent): Content {
       if (v.build.tool) item(v.build.tool, where);
     }
   }
-  const nodeCount = content.roads.nodes.length;
-  const badEdge = content.roads.edges.find(([a, b]) => a >= nodeCount || b >= nodeCount);
-  if (badEdge) throw new Error(`roads.json: edge ${badEdge.join(',')} points past the ${nodeCount} nodes`);
   return content;
 }
 
 export function loadContent(): Content {
   return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, outline: tamilNadu, newGame, progression, story, charms, vehicles });
+}
+
+/** roads.json checked as shipped, then joined with the town streets (D-099). */
+function checkedRoads(roads: Roads, streets: TownStreets): Roads {
+  const nodeCount = roads.nodes.length;
+  const badEdge = roads.edges.find(([a, b]) => a >= nodeCount || b >= nodeCount);
+  if (badEdge) throw new Error(`roads.json: edge ${badEdge.join(',')} points past the ${nodeCount} nodes`);
+  return withStreets(roads, streets);
 }

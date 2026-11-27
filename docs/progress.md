@@ -107,6 +107,7 @@
   - D-100 (2026-11-27): fishing (spear 20%, rod 50%) and gathering moss at any water but wells, cooked fish, moss gauze and the fishing rod; each ~1 km of water keeps its own stock.
   - D-101 (2026-11-27): actions by terrain: a land-cover grid from OpenStreetMap (forest, scrub, farmland, villages, dry land) drawn on the map; search and hunt anywhere by the ground, roads and railways included; ~1 km stock squares. The playtest bot survives 30 days in 96 of 100 runs.
   - Flagged: only 1% of the area is mapped farmland, so most open ground counts as dry (the approved rule for unmapped land).
+  - D-102 (2026-11-27): the map becomes generated detail on a real backbone, Tamil Nadu first. Design P-026 awaits the owner; it would replace the OpenStreetMap roads, water, town streets and land-cover grid.
 
 ## Pending (unblocked)
 - Nothing.

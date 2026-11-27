@@ -42,6 +42,8 @@ export const kindLabel: Record<SiteKind, string> = {
   home: 'Home',
   hunting: 'Hunting ground',
   ruins: 'Ruins',
+  town: 'Town',
+  village: 'Village',
   rail: 'Railway',
   road: 'Highway',
   water: 'Water',

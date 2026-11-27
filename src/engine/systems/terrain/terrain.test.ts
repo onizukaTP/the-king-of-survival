@@ -8,7 +8,16 @@ import { terrainAt, terrainCellKey } from './terrain';
 const loaded = loadContent();
 const content = { ...loaded, events: { ...loaded.events, events: [] } };
 const SANCTUARY = { lat: 9.56, lon: 77.58 }; // inside the wildlife sanctuary, off any road
-const PLAIN = { lat: 9.62, lon: 77.85 }; // nothing mapped
+// M11: land cover is generated; a dry square away from roads, found in the grid.
+const PLAIN = (() => {
+  const t = content.terrain;
+  for (let i = 0; i < t.grid.length; i += 97) {
+    if (t.grid[i] !== '.') continue;
+    const p = { lat: t.bbox[0] + (Math.floor(i / t.cols) + 0.5) * t.cellDeg, lon: t.bbox[1] + ((i % t.cols) + 0.5) * t.cellDeg };
+    if (p.lat > 9.2 && p.lat < 10.5 && p.lon > 77.6 && p.lon < 78.6 && terrainAt(p, content).id === 'dry') return p;
+  }
+  throw new Error('no dry land found');
+})();
 
 function standing(p: { lat: number; lon: number }, seed = 1): GameState {
   const s = createNewGame(content, seed);
@@ -22,11 +31,11 @@ function ok(state: GameState, command: Command) {
 }
 
 describe('actions by terrain (D-101)', () => {
-  it('reads the ground: forest in the sanctuary, road along a highway, dry where nothing is mapped', () => {
+  it('reads the ground: forest in the sanctuary, road along a highway, dry land in the generated grid', () => {
     expect(terrainAt(SANCTUARY, content).id).toBe('forest');
     expect(terrainAt(content.sites['loc.nh744']!, content).id).toBe('road');
     expect(terrainAt(PLAIN, content).id).toBe('dry');
-    expect(terrainAt({ lat: 12.9, lon: 79.1 }, content).id).toBe('dry'); // outside the mapped area
+    expect(terrainAt({ lat: 13.5, lon: 82 }, content).id).toBe('dry'); // out at sea
   });
 
   it('searches the ground with its own table, in 1 hour, and thins a ~1 km square', () => {

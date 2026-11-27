@@ -84,14 +84,25 @@ export function withStreets(roads: Roads, streets: TownStreets): Roads {
     const list = cutOff.get(r);
     if (list) list.push(i); else cutOff.set(r, [i]);
   }
+  // Searched outwards ring by ring on the grid, up to ~10 km, so a big map stays quick to load.
+  const joined = (j: number) => roadRoots.has(find(j));
   for (const members of cutOff.values()) {
     let best: [number, number, number] | null = null;
     for (const i of members) {
-      for (let j = 0; j < roadCount; j++) {
-        const d = km(nodes[i]!, nodes[j]!);
-        if (!best || d < best[2]) best = [i, j, d];
+      const p = nodes[i]!;
+      const r0 = Math.floor(p[0] / CELL_DEG), c0 = Math.floor(p[1] / CELL_DEG);
+      for (let ring = 0; ring <= 90 && !(best && best[2] < ring * CELL_DEG * 111); ring++) {
+        for (let dy = -ring; dy <= ring; dy++) {
+          for (let dx = -ring; dx <= ring; dx++) {
+            if (Math.max(Math.abs(dy), Math.abs(dx)) !== ring) continue;
+            for (const j of grid.get(`${r0 + dy},${c0 + dx}`) ?? []) {
+              if (!joined(j)) continue;
+              const d = km(p, nodes[j]!);
+              if (!best || d < best[2]) best = [i, j, d];
+            }
+          }
+        }
       }
-      // Good enough once it's within a street's length of a road.
       if (best && best[2] < JOIN_KM) break;
     }
     if (best) edges.push(best);

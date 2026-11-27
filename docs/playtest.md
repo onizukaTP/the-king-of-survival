@@ -55,6 +55,13 @@ Won / fled / died, then the Health lost in a win. "Flees" means the bot flees be
 - The bow does worse than the aruval and the spear, and it spends arrows.
 - Level 5 helps only a little.
 
+## On the generated map (M11, 2026-11-27)
+
+- First run: 60 of 60 runs died (54 of thirst, by day 4). The bot walked to the nearest well, and 90% of
+  wells in generated places are dry (D-103). The bot now skips dry wells, as a player would after one look.
+- After the fix: 57 of 60 runs survive 30 days (2 thirst, 1 killed); with statewide rivers and reservoirs,
+  20 of 20 survive (lowest Water 14 on average, level 10 by day 30). Nothing in the game was changed for this.
+
 ## Bugs found and fixed (on `dev`)
 
 1. **Combat log:** a blow that cleared remains read "Prabu hits **Someone** for 9". Remains now read "the remains of Wild dog", and a fighter removed during the round keeps its name.

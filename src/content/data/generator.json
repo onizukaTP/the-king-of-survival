@@ -1,0 +1,255 @@
+{
+  "worldSeed": 1,
+  "version": 1,
+  "spawn": {
+    "townsPerCity": [
+      3,
+      5
+    ],
+    "townKm": [
+      15,
+      40
+    ],
+    "villagesPerTown": [
+      4,
+      8
+    ],
+    "villageKm": [
+      3,
+      12
+    ],
+    "minGapKm": 5,
+    "villageToParentMinKm": 3,
+    "keptSiteGapKm": 2,
+    "tries": 40
+  },
+  "sizes": {
+    "city": {
+      "buildings": [
+        25,
+        40
+      ],
+      "streetKm": 2.6,
+      "sideStreets": [
+        5,
+        7
+      ],
+      "wells": [
+        2,
+        3
+      ],
+      "tanks": [
+        1,
+        2
+      ]
+    },
+    "town": {
+      "buildings": [
+        10,
+        20
+      ],
+      "streetKm": 1.6,
+      "sideStreets": [
+        3,
+        4
+      ],
+      "wells": [
+        1,
+        2
+      ],
+      "tanks": [
+        1,
+        1
+      ]
+    },
+    "village": {
+      "buildings": [
+        3,
+        8
+      ],
+      "streetKm": 0.7,
+      "sideStreets": [
+        0,
+        1
+      ],
+      "wells": [
+        1,
+        1
+      ],
+      "tanks": [
+        0,
+        1
+      ]
+    }
+  },
+  "buildingGapKm": 0.1,
+  "mix": {
+    "city": {
+      "always": [
+        "btype.hospital",
+        "btype.bus_stand",
+        "btype.supermarket",
+        "btype.petrol_bunk",
+        "btype.place_of_worship",
+        "btype.place_of_worship"
+      ],
+      "weights": {
+        "btype.house": 6,
+        "btype.apartment_block": 3,
+        "btype.provision_store": 2,
+        "btype.ration_shop": 1,
+        "btype.medical_store": 2,
+        "btype.garage": 2,
+        "btype.hardware_store": 1,
+        "btype.textile": 1,
+        "btype.hotel": 2,
+        "btype.police_station": 1,
+        "btype.place_of_worship": 1,
+        "btype.supermarket": 1
+      }
+    },
+    "town": {
+      "always": [
+        "btype.place_of_worship",
+        "btype.provision_store",
+        "btype.ration_shop",
+        "btype.medical_store",
+        "btype.hotel"
+      ],
+      "oneOf": [
+        [
+          "btype.garage",
+          "btype.petrol_bunk"
+        ]
+      ],
+      "weights": {
+        "btype.house": 8,
+        "btype.police_station": 1,
+        "btype.textile": 1,
+        "btype.hardware_store": 1,
+        "btype.apartment_block": 1,
+        "btype.garage": 1,
+        "btype.petrol_bunk": 1
+      }
+    },
+    "village": {
+      "always": [
+        "btype.place_of_worship"
+      ],
+      "weights": {
+        "btype.house": 8,
+        "btype.ration_shop": 1,
+        "btype.provision_store": 1
+      }
+    }
+  },
+  "tankChanceVillage": 0.8,
+  "dryWellChance": 0.9,
+  "pondsPerSquare": [
+    0,
+    2
+  ],
+  "pondSquareDeg": 0.1,
+  "scarceLoot": {
+    "firewood": {
+      "itemId": "item.firewood",
+      "chance": 0.3,
+      "min": 1,
+      "max": 2
+    },
+    "scrap": {
+      "itemId": "item.scrap_metal",
+      "chance": 0.1,
+      "min": 1,
+      "max": 1
+    },
+    "otherFactor": 0.1
+  },
+  "landCover": {
+    "cellDeg": 0.005
+  },
+  "names": {
+    "prefixes": [
+      "Puthu",
+      "Mela",
+      "Kila",
+      "Periya",
+      "Chinna",
+      "Vada",
+      "Then",
+      "Nalla",
+      "Kuruvi",
+      "Ponnan",
+      "Sengal",
+      "Arasan",
+      "Kallu",
+      "Thiru",
+      "Velli",
+      "Pattu",
+      "Muthu",
+      "Sundara",
+      "Kovil",
+      "Aala",
+      "Maruda",
+      "Panai",
+      "Vembu",
+      "Ilangi",
+      "Kamatchi",
+      "Ayya",
+      "Siva",
+      "Rama",
+      "Annai",
+      "Kanni",
+      "Karu",
+      "Sembu",
+      "Vellai",
+      "Pudhu",
+      "Kumara",
+      "Ganapathi",
+      "Mallan",
+      "Ponnu",
+      "Senthil",
+      "Thenna",
+      "Kaattu",
+      "Elumalai",
+      "Mangala",
+      "Vaikai",
+      "Theppa",
+      "Kurinji",
+      "Marutha",
+      "Neithal",
+      "Selva",
+      "Kalai"
+    ],
+    "suffixes": [
+      "patti",
+      "kulam",
+      "puram",
+      "palayam",
+      "nallur",
+      "kurichi",
+      "pettai",
+      "ur",
+      "kottai",
+      "pakkam",
+      "thurai",
+      "malai",
+      "nagar",
+      "kudi",
+      "samudram",
+      "vilai",
+      "kuppam",
+      "cheri",
+      "medu",
+      "kadu",
+      "valasai",
+      "oothu",
+      "ppatti",
+      "gudi",
+      "kollai",
+      "eri",
+      "manai",
+      "thottam"
+    ]
+  }
+}

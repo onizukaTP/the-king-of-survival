@@ -1,0 +1,513 @@
+{
+ "places": [
+  {
+   "id": "loc.chennai",
+   "name": "Chennai",
+   "tier": "city",
+   "lat": 13.08009,
+   "lon": 80.2808
+  },
+  {
+   "id": "loc.madurai",
+   "name": "Madurai",
+   "tier": "city",
+   "lat": 9.92612,
+   "lon": 78.1141
+  },
+  {
+   "id": "loc.tirunelveli",
+   "name": "Tirunelveli",
+   "tier": "city",
+   "lat": 8.73317,
+   "lon": 77.71026
+  },
+  {
+   "id": "loc.thoothukudi",
+   "name": "Thoothukudi",
+   "tier": "city",
+   "lat": 8.80526,
+   "lon": 78.14527
+  },
+  {
+   "id": "loc.trichy",
+   "name": "Trichy",
+   "tier": "city",
+   "lat": 10.80711,
+   "lon": 78.68809
+  },
+  {
+   "id": "loc.thanjavur",
+   "name": "Thanjavur",
+   "tier": "city",
+   "lat": 10.78603,
+   "lon": 79.13815
+  },
+  {
+   "id": "loc.coimbatore",
+   "name": "Coimbatore",
+   "tier": "city",
+   "lat": 11.00181,
+   "lon": 76.96284
+  },
+  {
+   "id": "loc.tiruppur",
+   "name": "Tiruppur",
+   "tier": "city",
+   "lat": 11.10178,
+   "lon": 77.34519
+  },
+  {
+   "id": "loc.salem",
+   "name": "Salem",
+   "tier": "city",
+   "lat": 11.6552,
+   "lon": 78.15818
+  },
+  {
+   "id": "loc.erode",
+   "name": "Erode",
+   "tier": "city",
+   "lat": 11.33065,
+   "lon": 77.72765
+  },
+  {
+   "id": "loc.vellore",
+   "name": "Vellore",
+   "tier": "city",
+   "lat": 12.90718,
+   "lon": 79.13097
+  },
+  {
+   "id": "loc.dindigul",
+   "name": "Dindigul",
+   "tier": "city",
+   "lat": 10.36565,
+   "lon": 77.96933
+  },
+  {
+   "id": "loc.pondicherry",
+   "name": "Pondicherry",
+   "tier": "city",
+   "lat": 11.93406,
+   "lon": 79.83064
+  },
+  {
+   "id": "loc.kanyakumari",
+   "name": "Kanyakumari",
+   "tier": "town",
+   "lat": 8.07925,
+   "lon": 77.54993
+  },
+  {
+   "id": "loc.tiruchendur",
+   "name": "Tiruchendur",
+   "tier": "town",
+   "lat": 8.49557,
+   "lon": 78.12332
+  },
+  {
+   "id": "loc.valliyur",
+   "name": "Valliyur",
+   "tier": "town",
+   "lat": 8.384,
+   "lon": 77.611,
+   "approximate": true
+  },
+  {
+   "id": "loc.tenkasi",
+   "name": "Tenkasi",
+   "tier": "town",
+   "lat": 8.95675,
+   "lon": 77.31214
+  },
+  {
+   "id": "loc.kovilpatti",
+   "name": "Kovilpatti",
+   "tier": "town",
+   "lat": 9.17559,
+   "lon": 77.8687
+  },
+  {
+   "id": "loc.sankarankovil",
+   "name": "Sankarankovil",
+   "tier": "town",
+   "lat": 9.17007,
+   "lon": 77.53537
+  },
+  {
+   "id": "loc.aruppukottai",
+   "name": "Aruppukottai",
+   "tier": "town",
+   "lat": 9.50732,
+   "lon": 78.0959
+  },
+  {
+   "id": "loc.virudhunagar",
+   "name": "Virudhunagar",
+   "tier": "town",
+   "lat": 9.58224,
+   "lon": 77.9537
+  },
+  {
+   "id": "loc.sattur",
+   "name": "Sattur",
+   "tier": "town",
+   "lat": 9.35163,
+   "lon": 77.92113
+  },
+  {
+   "id": "loc.sivakasi",
+   "name": "Sivakasi",
+   "tier": "town",
+   "lat": 9.45083,
+   "lon": 77.79767
+  },
+  {
+   "id": "loc.rajapalayam",
+   "name": "Rajapalayam",
+   "tier": "town",
+   "lat": 9.44561,
+   "lon": 77.55428
+  },
+  {
+   "id": "loc.ramanathapuram",
+   "name": "Ramanathapuram",
+   "tier": "town",
+   "lat": 9.36524,
+   "lon": 78.83432
+  },
+  {
+   "id": "loc.rameswaram",
+   "name": "Rameswaram",
+   "tier": "town",
+   "lat": 9.28447,
+   "lon": 79.31256
+  },
+  {
+   "id": "loc.keelakarai",
+   "name": "Keelakarai",
+   "tier": "town",
+   "lat": 9.231,
+   "lon": 78.785,
+   "approximate": true
+  },
+  {
+   "id": "loc.karaikudi",
+   "name": "Karaikudi",
+   "tier": "town",
+   "lat": 10.07284,
+   "lon": 78.77952
+  },
+  {
+   "id": "loc.devakottai",
+   "name": "Devakottai",
+   "tier": "town",
+   "lat": 9.94569,
+   "lon": 78.82692
+  },
+  {
+   "id": "loc.theni",
+   "name": "Theni",
+   "tier": "town",
+   "lat": 10.01081,
+   "lon": 77.48101
+  },
+  {
+   "id": "loc.thirumangalam",
+   "name": "Thirumangalam",
+   "tier": "town",
+   "lat": 9.82382,
+   "lon": 77.98622
+  },
+  {
+   "id": "loc.melur",
+   "name": "Melur",
+   "tier": "town",
+   "lat": 10.0309,
+   "lon": 78.33759
+  },
+  {
+   "id": "loc.manamadurai",
+   "name": "Manamadurai",
+   "tier": "town",
+   "lat": 9.69567,
+   "lon": 78.45627
+  },
+  {
+   "id": "loc.kodaikanal",
+   "name": "Kodaikanal",
+   "tier": "town",
+   "lat": 10.23371,
+   "lon": 77.49197
+  },
+  {
+   "id": "loc.pudukkottai",
+   "name": "Pudukkottai",
+   "tier": "town",
+   "lat": 10.38265,
+   "lon": 78.81913
+  },
+  {
+   "id": "loc.kumbakonam",
+   "name": "Kumbakonam",
+   "tier": "town",
+   "lat": 10.96041,
+   "lon": 79.38209
+  },
+  {
+   "id": "loc.chidambaram",
+   "name": "Chidambaram",
+   "tier": "town",
+   "lat": 11.39948,
+   "lon": 79.69094
+  },
+  {
+   "id": "loc.nagapattinam",
+   "name": "Nagapattinam",
+   "tier": "town",
+   "lat": 10.7648,
+   "lon": 79.84308
+  },
+  {
+   "id": "loc.karaikal",
+   "name": "Karaikal",
+   "tier": "town",
+   "lat": 10.91571,
+   "lon": 79.83758
+  },
+  {
+   "id": "loc.cuddalore",
+   "name": "Cuddalore",
+   "tier": "town",
+   "lat": 11.75643,
+   "lon": 79.76346
+  },
+  {
+   "id": "loc.namakkal",
+   "name": "Namakkal",
+   "tier": "town",
+   "lat": 11.21917,
+   "lon": 78.16787
+  },
+  {
+   "id": "loc.karur",
+   "name": "Karur",
+   "tier": "town",
+   "lat": 10.9596,
+   "lon": 78.08078
+  },
+  {
+   "id": "loc.dharmapuri",
+   "name": "Dharmapuri",
+   "tier": "town",
+   "lat": 12.1348,
+   "lon": 78.15899
+  },
+  {
+   "id": "loc.krishnagiri",
+   "name": "Krishnagiri",
+   "tier": "town",
+   "lat": 12.51888,
+   "lon": 78.22065
+  },
+  {
+   "id": "loc.pollachi",
+   "name": "Pollachi",
+   "tier": "town",
+   "lat": 10.65882,
+   "lon": 77.00873
+  },
+  {
+   "id": "loc.ulundurpet",
+   "name": "Ulundurpet",
+   "tier": "town",
+   "lat": 11.69077,
+   "lon": 79.28869
+  },
+  {
+   "id": "loc.tindivanam",
+   "name": "Tindivanam",
+   "tier": "town",
+   "lat": 12.22617,
+   "lon": 79.6515
+  },
+  {
+   "id": "loc.maduranthakam",
+   "name": "Maduranthakam",
+   "tier": "town",
+   "lat": 12.50818,
+   "lon": 79.88823
+  },
+  {
+   "id": "loc.tiruvannamalai",
+   "name": "Tiruvannamalai",
+   "tier": "town",
+   "lat": 12.23432,
+   "lon": 79.0762
+  },
+  {
+   "id": "loc.tiruttani",
+   "name": "Tiruttani",
+   "tier": "town",
+   "lat": 13.17697,
+   "lon": 79.61276
+  },
+  {
+   "id": "loc.tiruvallur",
+   "name": "Tiruvallur",
+   "tier": "town",
+   "lat": 13.13942,
+   "lon": 79.90708
+  },
+  {
+   "id": "loc.ambur",
+   "name": "Ambur",
+   "tier": "town",
+   "lat": 12.78742,
+   "lon": 78.71882
+  },
+  {
+   "id": "loc.arakkonam",
+   "name": "Arakkonam",
+   "tier": "town",
+   "lat": 13.08398,
+   "lon": 79.67009
+  },
+  {
+   "id": "loc.avadi",
+   "name": "Avadi",
+   "tier": "town",
+   "lat": 13.11901,
+   "lon": 80.09357
+  },
+  {
+   "id": "loc.guduvancheri",
+   "name": "Guduvancheri",
+   "tier": "town",
+   "lat": 12.84395,
+   "lon": 80.06068
+  },
+  {
+   "id": "loc.mahabalipuram",
+   "name": "Mahabalipuram",
+   "tier": "town",
+   "lat": 12.6196,
+   "lon": 80.19365
+  },
+  {
+   "id": "loc.koodankulam",
+   "name": "Koodankulam",
+   "tier": "village",
+   "lat": 8.19386,
+   "lon": 77.70584
+  },
+  {
+   "id": "loc.manapad",
+   "name": "Manapad",
+   "tier": "village",
+   "lat": 8.376,
+   "lon": 78.058,
+   "approximate": true
+  },
+  {
+   "id": "loc.gangaikondan",
+   "name": "Gangaikondan",
+   "tier": "village",
+   "lat": 8.85816,
+   "lon": 77.77914
+  },
+  {
+   "id": "loc.alangulam",
+   "name": "Alangulam",
+   "tier": "village",
+   "lat": 8.86695,
+   "lon": 77.49598
+  },
+  {
+   "id": "loc.sayalkudi",
+   "name": "Sayalkudi",
+   "tier": "village",
+   "lat": 9.1694,
+   "lon": 78.44543
+  },
+  {
+   "id": "loc.kayathar",
+   "name": "Kayathar",
+   "tier": "village",
+   "lat": 8.94795,
+   "lon": 77.77245
+  },
+  {
+   "id": "loc.vilathikulam",
+   "name": "Vilathikulam",
+   "tier": "village",
+   "lat": 9.13093,
+   "lon": 78.16732
+  },
+  {
+   "id": "loc.devipattinam",
+   "name": "Devipattinam",
+   "tier": "village",
+   "lat": 9.47492,
+   "lon": 78.89676
+  },
+  {
+   "id": "loc.dhanushkodi",
+   "name": "Dhanushkodi",
+   "tier": "village",
+   "lat": 9.18463,
+   "lon": 79.41475
+  },
+  {
+   "id": "loc.kamudi",
+   "name": "Kamudi",
+   "tier": "village",
+   "lat": 9.40861,
+   "lon": 78.36843
+  },
+  {
+   "id": "loc.thondi",
+   "name": "Thondi",
+   "tier": "village",
+   "lat": 9.74227,
+   "lon": 79.01759
+  },
+  {
+   "id": "loc.aviyur",
+   "name": "Aviyur",
+   "tier": "village",
+   "lat": 9.645,
+   "lon": 78.06,
+   "approximate": true
+  },
+  {
+   "id": "loc.melmaruvattur",
+   "name": "Melmaruvattur",
+   "tier": "village",
+   "lat": 12.43,
+   "lon": 79.83,
+   "approximate": true
+  },
+  {
+   "id": "loc.yelagiri",
+   "name": "Yelagiri",
+   "tier": "village",
+   "lat": 12.58932,
+   "lon": 78.63236
+  },
+  {
+   "id": "loc.adyar",
+   "name": "Adyar",
+   "tier": "village",
+   "lat": 13.00645,
+   "lon": 80.25778
+  },
+  {
+   "id": "loc.thuraipakkam",
+   "name": "Thuraipakkam",
+   "tier": "village",
+   "lat": 12.95019,
+   "lon": 80.24071
+  }
+ ]
+}

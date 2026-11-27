@@ -20,9 +20,9 @@ test('travel to a known place, reload and continue restores identical state (aut
   await expect(page.getByTestId('clock')).toHaveText('Day 1 · 12:00');
   await expect(page.getByTestId('status')).toHaveText('At: Kottai Nagar');
 
-  // D-094: the map is open; every place shows from the start, Madurai included.
+  // D-094: the map is open; M11: markers exist for what is on screen, so far places (Madurai) aren't drawn yet.
   await expect(page.getByRole('button', { name: 'Srivilliputhur town ruins' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Madurai city ruins' })).toHaveCount(1);
+  await expect(page.getByRole('button', { name: 'Madurai city ruins' })).toHaveCount(0);
 
   await page.getByRole('button', { name: 'Srivilliputhur town ruins' }).click();
   await expect(page.locator('.panel h2')).toHaveText('Srivilliputhur town ruins');
@@ -150,10 +150,12 @@ test('a town building on the world map: go there, search it; drops stay on its f
   // Buildings show on the world map from street level (D-099).
   const garage = page.locator('.spot-marker[aria-label="Garage"]').first();
   await expect(garage).toBeHidden();
-  // Zoom in to street level (a click during the zoom animation adds less than a whole level).
-  for (let i = 0; i < 6 && !(await garage.isVisible()); i++) {
-    await page.getByRole('button', { name: 'Zoom in' }).click();
-    await page.waitForTimeout(400);
+  // Zoom in to street level over the town, as a player scrolls over it (M11: markers exist only in view).
+  for (let i = 0; i < 8 && !(await garage.isVisible()); i++) {
+    const box = await page.getByRole('button', { name: 'Srivilliputhur town ruins' }).boundingBox();
+    if (box) await page.mouse.move(box.x + 6, box.y + box.height / 2);
+    await page.mouse.wheel(0, -400);
+    await page.waitForTimeout(500);
   }
   await expect(garage).toBeVisible();
 

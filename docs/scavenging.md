@@ -64,7 +64,8 @@ Chance per draw and how many, in draw order (a search makes 2 draws; each takes 
 
 Away from named places and town buildings, **the ground Prabu stands on decides what he can do**. Named places keep their own tables (home and a town's marker have nothing to search; town wells and tanks are for water only), and on open water he fishes and gathers moss instead (D-100).
 
-- **Ground:** within 100 m of a road, town street or railway it is road; otherwise the land-cover square (~500 m, `docs/architecture.md`, Map data pipeline); outside the mapped area, dry land.
+- **Ground:** within 100 m of a road, town street or railway it is road; otherwise the land-cover square (~500 m; since M11 generated for the whole state, `docs/map.md`).
+- **Generated towns and villages (D-105 to D-107):** their buildings give firewood 30% (1–2), scrap metal 10% (1) and every other item at one tenth of its type's chance; 90% of their wells are dry. The owner's places keep normal loot.
 - **Stock:** each ~1 km square keeps its own: −10 points a search, full again 7 days after the first search there.
 - **Hunting:** the place's share of his Hunting chance (40% at the start, +Luck), so the bow and level gains still count.
 - **Events** roll as on any search or hunt.

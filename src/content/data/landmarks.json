@@ -1,0 +1,41 @@
+[
+ {
+  "siteId": "loc.srivilliputhur",
+  "buildings": [
+   { "id": "building.sri_andal_temple", "typeId": "btype.place_of_worship", "name": "Andal temple", "lat": 9.50826, "lon": 77.63081
+   },
+   { "id": "building.sri_church", "typeId": "btype.place_of_worship", "name": "Church", "lat": 9.51168, "lon": 77.63439
+   },
+   { "id": "building.sri_government_hospital", "typeId": "btype.hospital", "name": "Government hospital", "lat": 9.51357, "lon": 77.63262
+   }
+  ]
+ },
+ {
+  "siteId": "loc.rajapalayam",
+  "buildings": [
+   { "id": "building.raja_spinning_mill", "typeId": "btype.textile", "name": "Spinning mill", "lat": 9.42765, "lon": 77.57257
+   },
+   { "id": "building.raja_church", "typeId": "btype.place_of_worship", "name": "Church", "lat": 9.4548, "lon": 77.55755
+   },
+   { "id": "building.raja_temple", "typeId": "btype.place_of_worship", "name": "Temple", "lat": 9.44711, "lon": 77.55155
+   },
+   { "id": "building.raja_government_hospital", "typeId": "btype.hospital", "name": "Government hospital", "lat": 9.43777, "lon": 77.53736
+   }
+  ]
+ },
+ {
+  "siteId": "loc.madurai",
+  "buildings": [
+   { "id": "building.mdu_meenakshi_temple", "typeId": "btype.place_of_worship", "name": "Meenakshi Amman temple", "lat": 9.91952, "lon": 78.11937
+   },
+   { "id": "building.mdu_mosque", "typeId": "btype.place_of_worship", "name": "Mosque", "lat": 9.91275, "lon": 78.11426
+   },
+   { "id": "building.mdu_rajaji_hospital", "typeId": "btype.hospital", "name": "Government Rajaji Hospital", "lat": 9.92711, "lon": 78.13017
+   },
+   { "id": "building.mdu_mattuthavani_bus_stand", "typeId": "btype.bus_stand", "name": "Mattuthavani bus stand", "lat": 9.94409, "lon": 78.15604
+   },
+   { "id": "building.mdu_airport", "typeId": "btype.airport", "name": "Madurai airport", "lat": 9.83631, "lon": 78.08967
+   }
+  ]
+ }
+]

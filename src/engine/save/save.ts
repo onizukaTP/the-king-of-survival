@@ -3,7 +3,7 @@ import type { Content } from '../../content/loader';
 import { gameStateSchema, startingInventory, startingSurvival, startPosition, type GameState } from '../core/state';
 import { initialMap } from '../systems/travel/travel';
 
-export const SAVE_VERSION = 14;
+export const SAVE_VERSION = 15;
 
 const saveSchema = z.object({
   saveVersion: z.literal(SAVE_VERSION),
@@ -135,6 +135,14 @@ const migrations: Record<number, (save: RawSave, content: Content) => RawSave> =
     const { town: _town, ...gs } = save.gameState as { town?: unknown };
     void _town;
     return { ...save, saveVersion: 14, gameState: gs };
+  },
+  // v14 → v15 (M11, the generated map): the three towns' generic buildings are generated now, under new
+  // ids; their old stock records are dropped. Landmarks, places and stock squares keep theirs.
+  14: (save, content) => {
+    const gs = save.gameState as { sites: Record<string, unknown> };
+    const buildings = new Set(Object.values(content.towns).flatMap((t) => t.buildings.map((b) => b.id)));
+    const sites = Object.fromEntries(Object.entries(gs.sites).filter(([id]) => content.sites[id] || buildings.has(id) || id.startsWith('cell.')));
+    return { ...save, saveVersion: 15, gameState: { ...gs, sites } };
   },
 };
 

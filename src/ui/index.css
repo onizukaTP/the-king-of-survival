@@ -47,6 +47,12 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .map.show-spots .spot-marker { display: flex; }
 .spot-marker .dot { width: 9px; height: 9px; border-radius: 2px; background: #b9a27f; border: 1.5px solid #141210; flex: none; }
 .spot-marker.spot-well .dot, .spot-marker.spot-tank .dot { border-radius: 50%; background: #5aa0e0; }
+.spot-marker.spot-dry .dot { border-radius: 50%; background: #6b6157; }
+/* M11: generated towns and villages are quieter than the owner's places. */
+.site-marker.generated .dot { width: 9px; height: 9px; background: #7d7366; }
+.site-marker.generated .label { color: #c9bfb2; font-size: 11px; }
+.site-marker.kind-town .dot { background: #a99a86; }
+.site-marker.kind-village .dot { width: 8px; height: 8px; }
 .spot-marker .label { background: rgba(20, 18, 16, 0.7); padding: 0 4px; border-radius: 3px; white-space: nowrap; }
 
 /* Survival meters (D-023) and Pack (approved layout) */

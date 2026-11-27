@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import {
-  abilitySchema, buildingTypeSchema, combatSchema, statsSchema, type Ability, conditionSchema, enemySchema, eventsSchema, type CombatConfig, type Enemy, fireSchema, type Condition, type EventsConfig, recipeSchema, townSchema, type FireConfig, type Recipe, townStreetsSchema, type BuildingType, type Town, type TownStreets,
+  abilitySchema, buildingTypeSchema, combatSchema, statsSchema, type Ability, conditionSchema, enemySchema, eventsSchema, type CombatConfig, type Enemy, fireSchema, type Condition, type EventsConfig, recipeSchema, type FireConfig, type Recipe, type BuildingType, type Town, type TownStreets,
+  backboneSchema, landmarksSchema, generatorSchema, type GeneratorRules,
   progressionSchema, storySchema, type ProgressionConfig, type Story,
   charmsSchema, vehiclesSchema, type CharmsConfig, type Vehicle, type VehiclesConfig,
-  characterSchema, itemSchema, lootSchema, terrainSchema, terrainLootSchema, type Terrain, type TerrainKind, type TerrainLoot, newGameSchema, outlineSchema, roadsSchema, scavengingSchema, siteSchema, survivalSchema, waterSchema, worldSchema,
+  characterSchema, itemSchema, lootSchema, railSchema, forestsSchema, terrainLootSchema, type Terrain, type TerrainKind, type TerrainLoot, newGameSchema, outlineSchema, roadsSchema, scavengingSchema, siteSchema, survivalSchema, waterSchema, worldSchema,
   type Character, type Item, type Loot, type NewGameConfig, type Outline, type Roads, type ScavengingConfig, type Site, type SurvivalConfig, type Water, type WorldConfig,
 } from './schemas';
 import characters from './data/characters.json';
@@ -19,9 +20,10 @@ import abilities from './data/abilities.json';
 import combat from './data/combat.json';
 import water from './data/water.json';
 import buildingTypes from './data/building-types.json';
-import towns from './data/towns.json';
-import { withStreets } from './streets';
-import townStreets from './data/town-streets.json';
+import backbone from './data/backbone.json';
+import landmarks from './data/landmarks.json';
+import generator from './data/generator.json';
+import { generateWorld } from './generate/world';
 import survival from './data/survival.json';
 import newGame from './data/new-game.json';
 import progression from './data/progression.json';
@@ -29,7 +31,8 @@ import story from './data/story.json';
 import charms from './data/charms.json';
 import vehicles from './data/vehicles.json';
 import roads from './data/roads.json';
-import terrain from './data/terrain.json';
+import rail from './data/rail.json';
+import forests from './data/forests.json';
 import terrainLoot from './data/terrain-loot.json';
 import sites from './data/sites.json';
 import tamilNadu from './data/tamil-nadu.json';
@@ -53,9 +56,11 @@ export interface Content {
   combat: CombatConfig;
   water: Water;
   buildingTypes: Record<string, BuildingType>;
-  // Keyed by the town's site id.
+  // Keyed by the settlement's site id: every town, city and village, generated with the map (M11).
   towns: Record<string, Town>;
   townStreets: TownStreets;
+  // The generator's rules (M11), for what the generated places give.
+  generator: GeneratorRules;
   roads: Roads;
   terrain: Terrain;
   terrainLoot: Omit<TerrainLoot, 'kinds'> & { byId: Record<string, TerrainKind> };
@@ -84,10 +89,12 @@ export interface RawContent {
   combat: unknown;
   water: unknown;
   buildingTypes: unknown;
-  towns: unknown;
-  townStreets: unknown;
+  backbone: unknown;
+  landmarks: unknown;
+  generator: unknown;
   roads: unknown;
-  terrain: unknown;
+  rail: unknown;
+  forests: unknown;
   terrainLoot: unknown;
   outline: unknown;
   newGame: unknown;
@@ -108,9 +115,26 @@ function byId<T extends { id: string }>(list: T[], label: string): Record<string
 
 /** Validates raw content and cross-references; throws a readable error, since bad content is a build bug. */
 export function parseContent(raw: RawContent): Content {
+  // M11: the map is generated on a real backbone (D-102 to D-107), the same every time.
+  const kept = Object.values(byId(z.array(siteSchema).parse(raw.sites), 'site'));
+  const buildingTypes = byId(z.array(buildingTypeSchema).parse(raw.buildingTypes), 'building type');
+  const outline = outlineSchema.parse(raw.outline);
+  const rules = generatorSchema.parse(raw.generator);
+  const world = generateWorld({
+    backbone: backboneSchema.parse(raw.backbone).places,
+    kept,
+    landmarks: Object.fromEntries(landmarksSchema.parse(raw.landmarks).map((l) => [l.siteId, l.buildings])),
+    buildingTypes,
+    outline,
+    highways: checkedRoads(roadsSchema.parse(raw.roads)),
+    water: waterSchema.parse(raw.water),
+    forests: forestsSchema.parse(raw.forests).rings,
+    rail: railSchema.parse(raw.rail).lines,
+    cfg: rules,
+  });
   const content: Content = {
     characters: byId(z.array(characterSchema).parse(raw.characters), 'character'),
-    sites: byId(z.array(siteSchema).parse(raw.sites), 'site'),
+    sites: world.sites,
     items: byId(z.array(itemSchema).parse(raw.items), 'item'),
     world: worldSchema.parse(raw.world),
     survival: survivalSchema.parse(raw.survival),
@@ -123,15 +147,16 @@ export function parseContent(raw: RawContent): Content {
     enemies: byId(z.array(enemySchema).parse(raw.enemies), 'enemy'),
     abilities: byId(z.array(abilitySchema).parse(raw.abilities), 'ability'),
     combat: combatSchema.parse(raw.combat),
-    water: waterSchema.parse(raw.water),
-    buildingTypes: byId(z.array(buildingTypeSchema).parse(raw.buildingTypes), 'building type'),
-    towns: Object.fromEntries(z.array(townSchema).parse(raw.towns).map((t) => [t.siteId, t])),
-    townStreets: townStreetsSchema.parse(raw.townStreets),
-    // D-099: trips inside towns follow their streets, so the streets join the road graph.
-    roads: checkedRoads(roadsSchema.parse(raw.roads), townStreetsSchema.parse(raw.townStreets)),
-    terrain: terrainSchema.parse(raw.terrain),
+    water: world.water,
+    buildingTypes,
+    towns: world.towns,
+    townStreets: world.townStreets,
+    // D-099: trips inside towns follow their streets; generated roads join the highways (M11).
+    roads: world.roads,
+    generator: rules,
+    terrain: world.terrain,
     terrainLoot: (({ kinds, ...rest }) => ({ ...rest, byId: Object.fromEntries(kinds.map((k) => [k.id, k])) }))(terrainLootSchema.parse(raw.terrainLoot)),
-    outline: outlineSchema.parse(raw.outline),
+    outline,
     newGame: newGameSchema.parse(raw.newGame),
     progression: progressionSchema.parse(raw.progression),
     story: storySchema.parse(raw.story),
@@ -228,7 +253,7 @@ export function parseContent(raw: RawContent): Content {
   }
   // D-101: the land-cover grid fills its box, and terrain loot names real items.
   const t = content.terrain;
-  if (t.grid.length !== t.rows * t.cols) throw new Error(`terrain.json: the grid has ${t.grid.length} squares, not ${t.rows} × ${t.cols}`);
+  if (t.grid.length !== t.rows * t.cols) throw new Error(`the land cover has ${t.grid.length} squares, not ${t.rows} × ${t.cols}`);
   for (const k of Object.values(content.terrainLoot.byId)) {
     for (const e of [...k.search, ...(k.hunt?.entries ?? [])]) if (!content.items[e.itemId]) throw new Error(`terrain-loot.json: ${k.id} has unknown item ${e.itemId}`);
   }
@@ -248,19 +273,18 @@ export function parseContent(raw: RawContent): Content {
   const spotIds = new Set<string>();
   for (const t of Object.values(content.towns)) {
     const site = content.sites[t.siteId];
-    if (!site) throw new Error(`towns.json: unknown site ${t.siteId}`);
+    if (!site) throw new Error(`a town: unknown site ${t.siteId}`);
     // A town's finds live in its buildings; a town-wide table as well would be a content mistake.
     if (content.loot[t.siteId]) throw new Error(`loot.json: ${t.siteId} has a town map, so it has no town-wide loot`);
     const spots = [{ id: 'its edge', lat: site.lat, lon: site.lon }, ...t.buildings, ...t.water, ...t.ends];
-    for (const b of t.buildings) if (!content.buildingTypes[b.typeId]) throw new Error(`towns.json ${b.id}: unknown building type ${b.typeId}`);
+    for (const b of t.buildings) if (!content.buildingTypes[b.typeId]) throw new Error(`a town's ${b.id}: unknown building type ${b.typeId}`);
     for (const [i, a] of spots.entries()) {
       if (i > 0 && spotIds.has(a.id)) throw new Error(`towns.json: duplicate id ${a.id}`);
       spotIds.add(a.id);
       // Ground piles count as "here" within 50 m, so spots must be clearly apart or piles would mix.
-      for (const b of spots.slice(i + 1)) if (distanceKm(a, b) < 0.1) throw new Error(`towns.json ${t.siteId}: ${a.id} and ${b.id} are under 100 m apart`);
+      for (const b of spots.slice(i + 1)) if (distanceKm(a, b) < 0.1) throw new Error(`${t.siteId}: ${a.id} and ${b.id} are under 100 m apart`);
     }
   }
-  for (const id of Object.keys(content.townStreets)) if (!content.towns[id]) throw new Error(`town-streets.json: ${id} has no town map`);
   // D-076: levels follow one another from 2, each needing more XP than the last.
   content.progression.levels.forEach((l, i) => {
     const prev = content.progression.levels[i - 1];
@@ -297,13 +321,13 @@ export function parseContent(raw: RawContent): Content {
 }
 
 export function loadContent(): Content {
-  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, towns, townStreets, roads, terrain, terrainLoot, outline: tamilNadu, newGame, progression, story, charms, vehicles });
+  return parseContent({ characters, sites, items, world, survival, loot, scavenging, fire, recipes, conditions, events, enemies, abilities, combat, water, buildingTypes, backbone, landmarks, generator, roads, rail, forests, terrainLoot, outline: tamilNadu, newGame, progression, story, charms, vehicles });
 }
 
-/** roads.json checked as shipped, then joined with the town streets (D-099). */
-function checkedRoads(roads: Roads, streets: TownStreets): Roads {
+/** roads.json checked as shipped; the generator joins its roads and streets to it (M11). */
+function checkedRoads(roads: Roads): Roads {
   const nodeCount = roads.nodes.length;
   const badEdge = roads.edges.find(([a, b]) => a >= nodeCount || b >= nodeCount);
   if (badEdge) throw new Error(`roads.json: edge ${badEdge.join(',')} points past the ${nodeCount} nodes`);
-  return withStreets(roads, streets);
+  return roads;
 }

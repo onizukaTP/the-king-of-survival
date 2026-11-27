@@ -11,6 +11,7 @@
   "recipes": [
     { "id": "recipe.cook_meat", "name": "Cook raw meat", "from": "item.raw_meat", "to": "item.cooked_meat", "maxBatch": 3, "minutes": 30, "tool": null, "usesWater": false },
     { "id": "recipe.boil_water", "name": "Boil water", "from": "item.unsafe_water", "to": "item.clean_water", "maxBatch": 4, "minutes": 30, "tool": "item.cooking_pot", "usesWater": false },
+    { "id": "recipe.cooked_rice", "name": "Cooked rice", "from": "item.rice", "to": "item.cooked_rice", "maxBatch": 2, "minutes": 30, "tool": "item.cooking_pot", "usesWater": true },
     { "id": "recipe.millet_porridge", "name": "Millet porridge", "from": "item.millet", "to": "item.millet_porridge", "maxBatch": 2, "minutes": 30, "tool": "item.cooking_pot", "usesWater": true },
     { "id": "recipe.sterilize_rags", "name": "Sterilize rags", "from": "item.cloth", "to": "item.sterile_bandage", "maxBatch": 3, "minutes": 30, "tool": "item.cooking_pot", "usesWater": true }
   ]

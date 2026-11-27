@@ -33,19 +33,19 @@ Time passes through the same survival clock as travel and rest.
 
 ## Loot tables (chance per draw, quantity)
 
-**Sanctuary forest**: firewood 55% (1–2) · bamboo 35% (1) · neem leaves 30% (1–3).
+Chance per draw and how many, in draw order (a search makes 2 draws; each takes the first entry that hits). The owner's values from the weights and loot redo (D-098, 2026-11-27); the data is `src/content/data/loot.json`.
 
-**Srivilliputhur town ruins**: cloth rags 25% (1–2) · scrap metal 25% (1–2) · empty bottle 20% (1) · coir rope 10% (1) · tinned food 8% (1) · millet 6% (1) · salt 6% (1) · flint and steel 4% · cooking pot 4% · aruval 3% · pre-war painkillers 3% · lighter fuel 2% · hand-crank charger 2%.
+**Sanctuary forest** (search): firewood 50% (1–2) · neem leaves 30% (1–3) · bamboo 25% (1) · wild jackfruit 15% (1) · wild honey 4% (1–3).
 
-**Srivilliputhur railway station**: scrap metal 40% (1–3) · cloth rags 15% (1) · empty bottle 15% (1) · coir rope 10% (1) · tinned food 5% (1) · pre-war painkillers 3% · lighter fuel 3% · hand-crank charger 3%.
+**Sanctuary forest** (hunt, when it succeeds): raw meat 100% (2–3) · animal hide 75% (1).
 
-**NH 744 highway** (wrecks): scrap metal 40% (1–2) · empty bottle 20% (1) · cloth rags 12% (1) · tinned food 6% (1) · lighter fuel 4%.
+**Srivilliputhur railway station** (search): scrap metal 40% (1–3) · cloth rags 15% (1) · empty bottle 15% (1) · pre-war biscuit packet 8% (1–2) · coir rope 10% (1) · pre-war tinned food 6% (1) · pre-war painkillers 3% (1) · lighter fuel 3% (1) · hand-crank charger 3% (1) · can of biodiesel 2% (1).
 
-**Pilavakkal dam**: tender coconut 25% (1–2) · firewood 25% (1) · neem leaves 15% (1–2). It is also water (unsafe: a reservoir, not a flowing river).
+**NH 744 highway** (search): scrap metal 40% (1–2) · empty bottle 20% (1) · cloth rags 12% (1) · pre-war biscuit packet 8% (1–2) · pre-war tinned food 6% (1) · can of biodiesel 4% (1) · lighter fuel 4% (1).
 
-**Rajapalayam town ruins** (a bigger town, a little richer): cloth rags 30% (1–3) · scrap metal 25% (1–2) · empty bottle 20% (1–2) · tinned food 10% (1) · millet 8% (1) · salt 6% · coir rope 8% · cooking pot 5% · aruval 4% · pre-war painkillers 4% · lighter fuel 3% · hand-crank charger 2% · tender coconut 6%.
+**Pilavakkal dam** (search): tender coconut 25% (1–2) · firewood 25% (1) · neem leaves 15% (1–2) · empty bottle 10% (1).
 
-**Madurai city ruins** (richest, **no radiation**, D-043): tinned food 15% (1–2) · scrap metal 35% (1–3) · empty bottle 25% (1–2) · cloth rags 25% (1–2) · pre-war painkillers 8% · cooking pot 6% · aruval 5% · hand-crank charger 5% · lighter fuel 5% · flint and steel 4%.
+**Towns** (Srivilliputhur, Rajapalayam, Madurai): searched building by building; see `docs/towns.md`.
 
 **Home:** nothing to search; the settlement's stores come with trading (D-046).
 

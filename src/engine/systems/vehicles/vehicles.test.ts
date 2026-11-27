@@ -135,14 +135,14 @@ describe('cargo (P-021)', () => {
   it('loads from the pack within the vehicle\'s capacity and unloads back', () => {
     const s = fresh();
     give(s, 'vehicle.cycle');
-    addItems(s, 'item.firewood', 6, content);
-    const i = s.inventory.stacks.findIndex((x) => x.itemId === 'item.firewood');
-    expect(code(s, { type: 'cargo.load', index: i, count: 6 })).toBe('cargo_full');
-    const loaded = ok(s, { type: 'cargo.load', index: i, count: 5 }).state;
-    expect(ridden(loaded)!.cargo).toEqual([{ itemId: 'item.firewood', count: 5 }]);
+    addItems(s, 'item.scrap_metal', 11, content);
+    const i = s.inventory.stacks.findIndex((x) => x.itemId === 'item.scrap_metal');
+    expect(code(s, { type: 'cargo.load', index: i, count: 11 })).toBe('cargo_full');
+    const loaded = ok(s, { type: 'cargo.load', index: i, count: 10 }).state;
+    expect(ridden(loaded)!.cargo).toEqual([{ itemId: 'item.scrap_metal', count: 10 }]);
     expect(carriedKg(loaded.inventory, content)).toBeCloseTo(carriedKg(s.inventory, content) - 10);
     const back = ok(loaded, { type: 'cargo.unload', index: 0, count: 2 }).state;
-    expect(ridden(back)!.cargo).toEqual([{ itemId: 'item.firewood', count: 3 }]);
+    expect(ridden(back)!.cargo).toEqual([{ itemId: 'item.scrap_metal', count: 8 }]);
   });
 
   it('takes ground piles straight into the cargo', () => {
@@ -169,14 +169,14 @@ describe('load all, load selected, and equipping from the cargo (owner, 2026-11-
   it('loads whole stacks as far as they fit; the rest stays in the pack', () => {
     const s = fresh();
     give(s, 'vehicle.cycle');
-    addItems(s, 'item.firewood', 5, content);
+    addItems(s, 'item.scrap_metal', 12, content);
     addItems(s, 'item.cloth', 2, content);
     const all = s.inventory.stacks.map((_, i) => i);
     const r = ok(s, { type: 'cargo.loadMany', indexes: all });
-    // The cycle holds 10 kg: the starting kit, four of the five firewood (2 kg each) and the rags fit.
+    // The cycle holds 10 kg: whole stacks go in pack order as far as they fit; some of the 12 kg of scrap stays.
     const cargoKg = ridden(r.state)!.cargo.reduce((kg, x) => kg + content.items[x.itemId]!.weightKg * x.count, 0);
     expect(cargoKg).toBeLessThanOrEqual(10);
-    expect(r.state.inventory.stacks.find((x) => x.itemId === 'item.firewood')?.count).toBeGreaterThan(0);
+    expect(r.state.inventory.stacks.some((x) => x.itemId === 'item.scrap_metal')).toBe(true);
     expect(r.events[0]).toMatchObject({ type: 'cargo_moved', loaded: true });
     expect((r.events[0] as { leftKg: number }).leftKg).toBeGreaterThan(0);
   });
@@ -192,7 +192,7 @@ describe('load all, load selected, and equipping from the cargo (owner, 2026-11-
     expect(r.state.inventory.stacks.length).toBe(s.inventory.stacks.length - 1);
     const full = fresh();
     give(full, 'vehicle.cycle');
-    ridden(full)!.cargo.push({ itemId: 'item.firewood', count: 5 });
+    ridden(full)!.cargo.push({ itemId: 'item.scrap_metal', count: 10 });
     expect(code(full, { type: 'cargo.loadMany', indexes: [0] })).toBe('cargo_full');
   });
 
@@ -213,8 +213,7 @@ describe('load all, load selected, and equipping from the cargo (owner, 2026-11-
   it("won't equip a weapon from the cargo past 50 kg", () => {
     const s = fresh();
     give(s, 'vehicle.hand_cart');
-    addItems(s, 'item.firewood', 24, content);
-    addItems(s, 'item.cloth', 4, content);
+    addItems(s, 'item.scrap_metal', 49, content);
     ridden(s)!.cargo.push({ itemId: 'item.bamboo_spear', count: 1 });
     s.inventory.weapon = null;
     expect(code(s, { type: 'item.equip', index: 0, from: 'cargo' })).toBe('too_heavy');

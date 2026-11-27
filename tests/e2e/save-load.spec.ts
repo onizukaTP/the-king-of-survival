@@ -171,7 +171,7 @@ test('enter the town, walk to a building, search it; drops stay on its floor; le
   await expect(panel.getByText('On the ground')).toBeVisible();
   await panel.getByRole('button', { name: 'Take all' }).click();
   await expect(panel.getByText('On the ground')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: /^Pack/ })).not.toHaveText('Pack 0.65 kg');
+  await expect(page.getByRole('button', { name: /^Pack/ })).not.toHaveText('Pack 0.8 kg');
 
   // Drop the torch: it waits on the garage floor and can be taken back.
   await page.getByRole('button', { name: /^Pack/ }).click();
@@ -258,7 +258,7 @@ test('a fight from the wild dogs card: attack until they are dead, take the meat
   await expect(result).toContainText('Found: raw meat');
   await result.getByRole('button', { name: 'Continue' }).click();
   await expect(combat).toHaveCount(0);
-  await expect(page.getByRole('button', { name: /^Pack/ })).not.toHaveText('Pack 0.65 kg');
+  await expect(page.getByRole('button', { name: /^Pack/ })).not.toHaveText('Pack 0.8 kg');
   // D-076: the win gave XP and left a note in the journal.
   await page.getByRole('button', { name: 'Journal' }).click();
   await expect(page.getByTestId('level')).toContainText(/Level \d+ · /);
@@ -415,7 +415,7 @@ test('vehicles and charms (M10): build the cycle trailer, repair it, park it, we
 
   await page.getByTestId('vehicle-button').click();
   const panel = page.getByTestId('vehicle-panel');
-  await expect(panel).toContainText('4 kg of 60 kg');
+  await expect(panel).toContainText("3 kg of 60 kg");
   await panel.getByRole('button', { name: /^Repair: 1 scrap metal → 70/ }).click();
   await expect(page.getByTestId('vehicle-button')).toHaveText('Vehicle: Cycle with trailer 70%');
   await panel.getByRole('button', { name: 'Get off' }).click();

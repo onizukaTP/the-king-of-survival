@@ -29,7 +29,7 @@ describe('inventory', () => {
       { itemId: 'item.lighter', count: 1, charge: 10 },
       { itemId: 'item.torch', count: 1, charge: 50 },
     ]);
-    expect(carriedKg(s.inventory, content)).toBeCloseTo(0.65);
+    expect(carriedKg(s.inventory, content)).toBeCloseTo(0.8);
   });
 
   it('stacks identical items and keeps different spoil times apart', () => {
@@ -42,10 +42,10 @@ describe('inventory', () => {
   });
 
   it('carries up to 50 kg and refuses more (D-036)', () => {
-    const s = withItems([['item.firewood', 24]]);
-    expect(carriedKg(s.inventory, content)).toBeCloseTo(48.65);
-    expect(addItems(s, 'item.firewood', 1, content)).toMatchObject({ ok: false, error: { code: 'too_heavy' } });
-    expect(addItems(s, 'item.scrap_metal', 1, content).ok).toBe(true);
+    const s = withItems([['item.scrap_metal', 49]]);
+    expect(carriedKg(s.inventory, content)).toBeCloseTo(49.8);
+    expect(addItems(s, 'item.scrap_metal', 1, content)).toMatchObject({ ok: false, error: { code: 'too_heavy' } });
+    expect(addItems(s, 'item.cloth', 1, content).ok).toBe(true);
   });
 
   it('raises drain evenly from ×1 at 25 kg to ×2 at 50 kg', () => {

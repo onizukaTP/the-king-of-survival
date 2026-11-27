@@ -47,13 +47,13 @@ describe('survival drain (D-023, D-035)', () => {
 
   it('charges the overload cost while travelling only (D-036)', () => {
     const heavy = fresh();
-    // 0.65 kg starting kit + 18 × 2 kg firewood = 36.65 kg → ×1.466.
+    // 0.8 kg starting kit + 36 × 1 kg scrap metal = 36.8 kg → ×1.472.
     ok(heavy, { type: 'item.unequip' });
-    if (!addItems(heavy, 'item.firewood', 18, content).ok) throw new Error('add failed');
+    if (!addItems(heavy, 'item.scrap_metal', 36, content).ok) throw new Error('add failed');
     const working = structuredClone(heavy);
     pass(heavy, 60, 'travel');
     pass(working, 60, 'work');
-    expect(heavy.survival.water).toBeCloseTo(100 - 3 * (1 + (36.65 - 25) / 25));
+    expect(heavy.survival.water).toBeCloseTo(100 - 3 * (1 + (36.8 - 25) / 25));
     expect(working.survival.water).toBeCloseTo(97);
   });
 

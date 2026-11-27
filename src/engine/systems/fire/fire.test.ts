@@ -126,3 +126,41 @@ describe('fire in saves', () => {
     expect(old.ok && old.save.gameState.fire).toBeNull();
   });
 });
+
+describe('new foods (D-098)', () => {
+  const idx = (s: GameState, id: string) => s.inventory.stacks.findIndex((st) => st.itemId === id);
+
+  it('cooks rice at a fire with the pot and a bottle of water: Food +50, spoils after a day', () => {
+    const s = createNewGame(content, 1);
+    for (const [id, n] of [['item.rice', 2], ['item.cooking_pot', 1], ['item.clean_water', 1], ['item.firewood', 1]] as const) addItems(s, id, n, content);
+    const lit = ok(s, { type: 'fire.make', method: 'lighter' }).state;
+    const cooked = ok(lit, { type: 'fire.cook', recipeId: 'recipe.cooked_rice' }).state;
+    const rice = cooked.inventory.stacks.find((st) => st.itemId === 'item.cooked_rice')!;
+    expect(rice.count).toBe(2);
+    expect(rice.spoilsAt).toBe(cooked.clockMinutes + 1440);
+    expect(content.items['item.cooked_rice']!.effects).toEqual({ food: 50 });
+  });
+
+  it('opens wild jackfruit with the knife in hand or in the pack, and refuses without one', () => {
+    const s = createNewGame(content, 1);
+    addItems(s, 'item.jackfruit', 1, content);
+    s.survival.food = 20;
+    expect(s.inventory.weapon).toBe('item.hunting_knife');
+    expect(ok(s, { type: 'item.use', index: idx(s, 'item.jackfruit') }).state.survival.food).toBe(60);
+    const bare = structuredClone(s);
+    bare.inventory.weapon = null;
+    const r = applyCommand(bare, { type: 'item.use', index: idx(bare, 'item.jackfruit') }, content);
+    expect(r.ok || r.error.code).toBe('needs_item');
+  });
+
+  it('eats honey, biscuits, groundnuts and jaggery as they are', () => {
+    const s = createNewGame(content, 1);
+    s.survival.food = 10;
+    s.survival.health = 50;
+    for (const id of ['item.wild_honey', 'item.biscuits', 'item.groundnuts', 'item.jaggery']) addItems(s, id, 1, content);
+    let state = s;
+    for (const id of ['item.wild_honey', 'item.biscuits', 'item.groundnuts', 'item.jaggery']) state = ok(state, { type: 'item.use', index: idx(state, id) }).state;
+    expect(state.survival.food).toBe(10 + 20 + 20 + 15 + 10);
+    expect(state.survival.health).toBe(60);
+  });
+});

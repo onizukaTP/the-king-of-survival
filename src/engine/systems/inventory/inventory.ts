@@ -106,8 +106,8 @@ export function applyItem(state: GameState, index: number, content: Content): Co
   const fx = item.effects ?? {};
   const cures = s.conditions.filter((c) => content.conditions[c.id]?.curedBy?.includes(item.id));
   if (!item.effects && !item.curesInjury) return fail('cannot_use', `${item.name} can't be used on its own.`);
-  // D-056: tinned food needs a can opener in the pack; the opener is kept.
-  if (item.needsItem && !state.inventory.stacks.some((t) => t.itemId === item.needsItem)) {
+  // D-056: tinned food needs a can opener (wild jackfruit a knife, D-098); the tool is kept and may be in hand.
+  if (item.needsItem && state.inventory.weapon !== item.needsItem && !state.inventory.stacks.some((t) => t.itemId === item.needsItem)) {
     return fail('needs_item', `Prabu needs a ${content.items[item.needsItem]!.name.toLowerCase()} for that.`);
   }
   // D-039: Health can't rise while injured, so a pure painkiller would be wasted.

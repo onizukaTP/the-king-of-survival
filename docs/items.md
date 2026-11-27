@@ -95,7 +95,7 @@ Later: tyre, spark plug, battery, generator (very rare, D-032).
 
 **Carry limit on foot:** 25 kg without penalty, 50 kg at most; picking up past 50 kg is refused. Above 25 kg, Food, Water and Rest drain faster, gradually: ×1 at 25 kg, ×1.5 at 37.5 kg, ×2 at 50 kg. Carts and vehicles will add cargo space.
 
-**Weights (kg):** raw meat 1 · cooked meat 0.5 · dried meat 0.2 · millet 1 · porridge 0.5 · tender coconut 1.5 · tinned food 0.4 · salt 0.5 · empty bottle 0.1 · water bottle (either) 1.1 · bandage 0.1 · neem leaves 0.1 · neem paste 0.2 · pills 0.05 · firewood 2 · bamboo 1.5 · scrap metal 1 · cloth 0.2 · coir rope 0.5 · animal hide 2 · hunting knife 0.3 · aruval 0.8 · bamboo spear 1.2 · bow 0.8 · arrow 0.05 · flint 0.1 · cooking pot 1 · lighter 0.05 · torch 0.3 · lighter fuel 0.1 · charger 0.4.
+**Weights (kg)** *(redone by D-098, 2026-11-27: see below)*: raw meat 1 · cooked meat 0.5 · dried meat 0.2 · millet 1 · porridge 0.5 · tender coconut 1.5 · tinned food 0.4 · salt 0.5 · empty bottle 0.1 · water bottle (either) 1.1 · bandage 0.1 · neem leaves 0.1 · neem paste 0.2 · pills 0.05 · firewood 2 · bamboo 1.5 · scrap metal 1 · cloth 0.2 · coir rope 0.5 · animal hide 2 · hunting knife 0.3 · aruval 0.8 · bamboo spear 1.2 · bow 0.8 · arrow 0.05 · flint 0.1 · cooking pot 1 · lighter 0.05 · torch 0.3 · lighter fuel 0.1 · charger 0.4.
 
 **Spoilage (D-028, merciful):** raw meat 3 days · cooked meat 5 days · millet porridge 2 days · tender coconut 10 days. Everything else keeps. Spoiled food disappears with a message.
 
@@ -106,3 +106,19 @@ Later: tyre, spark plug, battery, generator (very rare, D-032).
 **Lighter and torch:** the lighter holds 20 lights and starts with 10; each cooking or boiling uses one. The torch battery starts at 50%; cranking the charger for 30 minutes adds 25%. A can of lighter fuel refills the lighter to 20.
 
 **Equip:** one weapon slot; the hunting knife starts equipped.
+
+## Weights and new foods — D-098 (owner, 2026-11-27)
+
+**New weights (kg):** raw meat 0.5 · cooked meat 0.4 · millet 0.5 · tender coconut 1.2 · salt 0.1 · empty bottle 0.05 · water bottle (either) 1.05 · neem leaves 0.05 · turmeric 0.05 · neem paste 0.1 · neem–turmeric paste 0.1 · firewood 1.5 · cloth rags 0.1 · animal hide 1.5 · hunting knife 0.5 · aruval 1 · can opener 0.05 · cooking pot 0.8 · torch 0.25. Every other item keeps its weight. The starting kit weighs 0.8 kg.
+
+| Item | How it's eaten | Gives | Weight | Spoils |
+|---|---|---|---|---|
+| Rice | Cooked at a fire with the cooking pot and a bottle of water (up to 2, 30 min) | Cooked rice: Food +50 | 0.5 kg (cooked 0.5 kg) | Cooked rice after 1 day |
+| Jaggery | As it is | Food +10 | 0.2 kg | Never |
+| Pre-war biscuit packet | As it is | Food +20 | 0.1 kg | Never |
+| Groundnuts | As they are | Food +15 | 0.2 kg | Never |
+| Wild jackfruit | Opened with the hunting knife (in hand or in the pack) | Food +40 | 2 kg | 3 days |
+| Wild honey | As it is | Food +20, Health +10 | 0.3 kg | Never |
+
+Where each is found is in the loot tables (`docs/scavenging.md`, `docs/towns.md`). That makes 58 items.
+

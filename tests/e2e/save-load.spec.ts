@@ -98,7 +98,7 @@ test('the pack shows the starting kit and equips, and rest passes time', async (
   await page.getByRole('button', { name: 'Player', exact: true }).click();
   const player = page.getByTestId('player-panel');
   await expect(player.locator('h2')).toHaveText('Prabu');
-  await expect(player).toContainText('Level 1 · 0 / 100 XP');
+  await expect(player).toContainText('Level 1 · 0 / 20 XP');
   const equipped = page.getByTestId('equipped');
   await expect(equipped).toContainText('WeaponHunting knife');
   // Item tooltips come from the item's data.
@@ -261,7 +261,7 @@ test('a fight from the wild dogs card: attack until they are dead, take the meat
   await expect(page.getByRole('button', { name: /^Pack/ })).not.toHaveText('Pack 0.65 kg');
   // D-076: the win gave XP and left a note in the journal.
   await page.getByRole('button', { name: 'Journal' }).click();
-  await expect(page.getByTestId('level')).toContainText('Level 1 · ');
+  await expect(page.getByTestId('level')).toContainText(/Level \d+ · /);
   await expect(page.getByTestId('level')).not.toContainText('Level 1 · 0 /');
   await expect(page.getByTestId('journal-panel')).toContainText('Won a fight: wild dog');
 });
@@ -368,7 +368,7 @@ test('the intro reads through to the map once, and the Journal opens on the sist
   await page.getByRole('button', { name: 'Journal' }).click();
   const journal = page.getByTestId('journal-panel');
   await expect(journal).toContainText('Find my sister');
-  await expect(journal).toContainText('Level 1 · 0 / 100 XP');
+  await expect(journal).toContainText('Level 1 · 0 / 20 XP');
   await expect(journal).toContainText("My mother's wish");
 
   // Reloading goes back to the map, not the intro.

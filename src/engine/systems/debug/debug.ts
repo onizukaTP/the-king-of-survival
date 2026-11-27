@@ -55,6 +55,13 @@ export function debugVehicle(state: GameState, vehicleId: string, content: Conte
   return { ok: true, state, events: [{ type: 'vehicle_found', vehicleId, uid }] };
 }
 
+/** Multiplies every XP gain from now on (owner, 2026-11-27), to try levels quickly. 0 to 100; 1 is normal. */
+export function debugXpMultiplier(state: GameState, multiplier: number): CommandResult {
+  if (!Number.isFinite(multiplier) || multiplier < 0 || multiplier > 100) return fail('bad_choice', 'The XP multiplier goes from 0 to 100.');
+  state.progression.xpMultiplier = multiplier;
+  return { ok: true, state, events: [] };
+}
+
 /** Sets the ridden vehicle's durability and fuel, to try wear, breakdowns and an empty tank. */
 export function debugVehicleState(state: GameState, durability: number | null, fuel: number | null, content: Content): CommandResult {
   const v = ridden(state);

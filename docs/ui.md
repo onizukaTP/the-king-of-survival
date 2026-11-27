@@ -85,6 +85,7 @@ The four-rank battlefield replaced the band screen (D-067's columns) on 2026-11-
   - **Items** (owner, 2026-11-26): give any item except charms, 1–100 at a time (past 50 kg the rest goes on the ground).
   - **Charms** (owner, 2026-11-26): give any one charm, or one of every charm.
   - **Vehicles** (owner, 2026-11-26): park any vehicle here in full repair with a full tank; while riding, set its durability and fuel.
+  - **Experience** (D-092): an XP multiplier, 0 to 100 (1 is normal), with Set; the line under it shows the one in use. It stays with the run's save.
   - Every list (events, enemies, items, charms, vehicles) is in **alphabetical order** (owner, 2026-11-26).
 
 ## Intro and Journal (M8) — D-076

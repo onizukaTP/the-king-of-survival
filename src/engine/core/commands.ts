@@ -7,7 +7,7 @@ import { cook, feedFire, makeFire } from '../systems/fire/fire';
 import { enterTown, leaveTown, walkTo } from '../systems/town/town';
 import { chooseEvent, closeEvent } from '../systems/events/events';
 import { closeCombat, combatAct, type CombatAction } from '../systems/combat/combat';
-import { debugEvent, debugFight, debugItem, debugNight, debugVehicle, debugVehicleState } from '../systems/debug/debug';
+import { debugEvent, debugFight, debugItem, debugNight, debugVehicle, debugVehicleState, debugXpMultiplier } from '../systems/debug/debug';
 import { finishIntro, progress } from '../systems/progression/progression';
 import { removeCharm, wearCharm } from '../systems/charms/charms';
 import { boardVehicle, buildVehicle, leaveVehicle, loadCargo, loadManyCargo, refuelVehicle, repairVehicle, unloadCargo } from '../systems/vehicles/vehicles';
@@ -68,7 +68,8 @@ export type Command =
   | { type: 'debug.night' }
   | { type: 'debug.item'; itemId: string; count: number }
   | { type: 'debug.vehicle'; vehicleId: string }
-  | { type: 'debug.vehicleState'; durability: number | null; fuel: number | null };
+  | { type: 'debug.vehicleState'; durability: number | null; fuel: number | null }
+  | { type: 'debug.xpMultiplier'; multiplier: number };
 
 export type DeathCause = 'hunger' | 'thirst' | 'hunger_and_thirst' | 'radiation' | 'injury' | 'killed';
 
@@ -283,6 +284,8 @@ function run(state: GameState, command: Command, content: Content): CommandResul
       return debugVehicle(state, command.vehicleId, content);
     case 'debug.vehicleState':
       return debugVehicleState(state, command.durability, command.fuel, content);
+    case 'debug.xpMultiplier':
+      return debugXpMultiplier(state, command.multiplier);
     default:
       return { ok: false, error: { code: 'unknown_command', message: `Unknown command: ${(command as { type: string }).type}` } };
   }

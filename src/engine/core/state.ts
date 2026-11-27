@@ -175,6 +175,8 @@ const progressionStateSchema = z.object({
   xp: z.number().int().nonnegative(),
   level: z.number().int().positive(),
   crafted: z.array(z.string()),
+  // Testing tool (owner, 2026-11-27): every XP gain is multiplied by this; 1 in a normal run.
+  xpMultiplier: z.number().min(0).max(100),
 });
 
 // A journal note (D-076), kept as data so the UI words it: a place found, a fight won, a level gained.
@@ -271,7 +273,7 @@ export function createNewGame(content: Content, seed: number): GameState {
     event: null,
     lastEventAt: null,
     combat: null,
-    progression: { xp: 0, level: 1, crafted: [] },
+    progression: { xp: 0, level: 1, crafted: [], xpMultiplier: 1 },
     journal: { notes: [] },
     vehicles: { list: [], riding: null, seq: 0 },
     introSeen: false,

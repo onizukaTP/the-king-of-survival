@@ -24,7 +24,9 @@ export function addNote(state: GameState, note: Omit<JournalNote, 'at'>, content
   notes.splice(0, Math.max(0, notes.length - content.progression.notesKept));
 }
 
-function gainXp(state: GameState, amount: number, content: Content, out: GameEvent[]) {
+function gainXp(state: GameState, base: number, content: Content, out: GameEvent[]) {
+  // The Test panel's multiplier (1 in a normal run).
+  const amount = Math.round(base * state.progression.xpMultiplier);
   if (amount <= 0) return;
   state.progression.xp += amount;
   out.push({ type: 'xp_gained', amount });

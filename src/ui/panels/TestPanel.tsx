@@ -29,6 +29,7 @@ export function TestPanel() {
   const ridingDef = riding && content.vehicles.byId[riding.vehicleId];
   const [durability, setDurability] = useState(20);
   const [fuel, setFuel] = useState(1);
+  const [xpMultiplier, setXpMultiplier] = useState(game.progression.xpMultiplier);
 
   return (
     <div className="panel-body" data-testid="test-panel">
@@ -111,6 +112,15 @@ export function TestPanel() {
           )}
         </>
       ) : <p className="muted tiny">Get on a vehicle to set its durability and fuel.</p>}
+
+      <h3>Experience</h3>
+      <label className="test-row">
+        <span>XP multiplier (1 is normal)</span>
+        <input type="number" min={0} max={100} step={0.5} value={xpMultiplier} aria-label="XP multiplier"
+          onChange={(ev) => setXpMultiplier(Math.max(0, Math.min(100, Number(ev.target.value) || 0)))} />
+      </label>
+      <button className="small" onClick={() => act({ type: 'debug.xpMultiplier', multiplier: xpMultiplier })}>Set</button>
+      <p className="muted tiny" data-testid="xp-multiplier">Now: every XP gain ×{game.progression.xpMultiplier}.</p>
 
       <h3>Time</h3>
       <button className="small" onClick={() => run({ type: 'debug.night' })}>Jump to 22:00</button>

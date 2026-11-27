@@ -68,8 +68,8 @@ Not bugs:
 
 ## Flagged for the owner (not changed)
 
-- **Wild dogs text vs numbers:** the event says "Five lean dogs step out of the scrub", but the fight it starts has **2 to 4** dogs (`events.json`). Which is right?
-- **A lone archer can't act:** when the bow raider ends up alone in rank 1 (after the blade raider's remains are cleared), it can't shoot. Shoot is used from ranks 2–4, it has no other attack, and with no one behind it, it can't step back. It just waits, which makes it a free kill.
+- **Wild dogs text vs numbers:** the event says "Five lean dogs step out of the scrub", but the fight it starts has **2 to 4** dogs. *Answered (D-093): the text stays; only 2 to 4 of them have the courage to fight.*
+- **A lone archer can't act** *(fixed by D-090: it punches)*: when the bow raider ends up alone in rank 1 (after the blade raider's remains are cleared), it can't shoot. Shoot is used from ranks 2–4, it has no other attack, and with no one behind it, it can't step back. It just waits, which makes it a free kill.
 
 ## Balance proposals (P-023, answered by D-090 on 2026-11-27)
 
@@ -86,7 +86,7 @@ The owner's answers: 1 yes, as bare hands (built); 2 yes (built); 3 **level 10 i
 
 Still to do in M9 after the owner's answers: a human playtest of a full 30–60 minute session on desktop and a phone (acceptance criterion), and any approved balance changes.
 
-## P-024: level table for level 10 in about 20 days (awaiting the owner)
+## P-024: level table for level 10 in about 20 days (approved as option A: D-091, 2026-11-27)
 
 A careful player's XP by the end of each day (100 runs, median, `tests/playtest/xp.sim.ts`): day 1: 45 · 2: 77 · 3: 115 · 5: 184 · 7: 263 · 10: 349 · 15: 479 · 20: **606** · 30: 876. After the first week it's about 30 XP a day, nearly all from searches.
 

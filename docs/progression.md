@@ -30,15 +30,17 @@ Level 1 at the start, **level 10 at most**. Each level gives a **fixed** gain; t
 
 | Level | Total XP | Gain |
 |---|---|---|
-| 2 | 100 | ATK +1 |
-| 3 | 250 | ACC +3, Dodge +2 |
-| 4 | 450 | SPD +1 |
-| 5 | 700 | Hunting +5, crit +2% |
-| 6 | 1,000 | DEF +5% |
-| 7 | 1,350 | ATK +1, Deathblow res +5% |
-| 8 | 1,750 | SPD +1 |
-| 9 | 2,200 | ACC +3, Dodge +2 |
-| 10 | 2,700 | ATK +1, crit +3% |
+| 2 | 20 | ATK +1 |
+| 3 | 55 | ACC +3, Dodge +2 |
+| 4 | 100 | SPD +1 |
+| 5 | 155 | Hunting +5, crit +2% |
+| 6 | 220 | DEF +5% |
+| 7 | 300 | ATK +1, Deathblow res +5% |
+| 8 | 390 | SPD +1 |
+| 9 | 490 | ACC +3, Dodge +2 |
+| 10 | 600 | ATK +1, crit +3% |
+
+The thresholds were lowered by D-091 (2026-11-27; they were 100 to 2,700) so a careful player reaches level 10 in about 20 days (M9 playtest, `docs/playtest.md`). More levels will follow, continuing the growing gaps.
 
 - **Stats:** gains add to Prabu's stats with his weapon's (D-066), so they show in the Stats block and count in fights, hunting and searching.
 - **Health:** maximum Health stays 100.

@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { loadContent } from '../../../content/loader';
 import { applyCommand, type Command } from '../../core/commands';
 import { createNewGame } from '../../core/state';
+import { loadSave } from '../../save/save';
+import { progress } from '../progression/progression';
 
 const content = loadContent();
 const run = (command: Command, s = createNewGame(content, 1)) => applyCommand(s, command, content);
@@ -54,5 +56,29 @@ describe('testing tools (D-068)', () => {
     const on = run({ type: 'vehicle.board', uid: r.state.vehicles.list[0]!.uid }, r.state);
     const set = on.ok ? run({ type: 'debug.vehicleState', durability: 5, fuel: 99 }, on.state) : on;
     expect(set.ok && set.state.vehicles.list[0]).toMatchObject({ durability: 5, fuel: 10 });
+  });
+});
+
+describe('XP multiplier (owner, 2026-11-27)', () => {
+  it('multiplies every XP gain, keeps it in the save, and refuses values outside 0–100', () => {
+    const set = run({ type: 'debug.xpMultiplier', multiplier: 10 });
+    if (!set.ok) throw new Error(set.error.message);
+    expect(set.state.progression).toMatchObject({ xp: 0, xpMultiplier: 10 });
+    // A discovery is 15 XP; ×10 gives 150, which is level 4 (100) but not level 5 (155).
+    const events = progress(structuredClone(set.state), [{ type: 'site_discovered', siteId: 'loc.rajapalayam' }], content);
+    expect(events[0]).toEqual({ type: 'xp_gained', amount: 150 });
+    expect(events.filter((e) => e.type === 'level_up').map((e) => (e as { level: number }).level)).toEqual([2, 3, 4]);
+    for (const bad of [-1, 101, Number.NaN]) expect(run({ type: 'debug.xpMultiplier', multiplier: bad }).ok).toBe(false);
+    expect(run({ type: 'debug.xpMultiplier', multiplier: 0 }).ok).toBe(true);
+  });
+
+  it('migrates a v11 save to normal XP and the level its XP reaches on the new table (D-091)', () => {
+    const v11 = structuredClone(createNewGame(content, 1)) as unknown as { progression: Record<string, unknown> };
+    delete v11.progression.xpMultiplier;
+    v11.progression.xp = 123;
+    v11.progression.level = 2;
+    const result = loadSave({ saveVersion: 11, createdAt: 'x', gameState: v11 }, content);
+    if (!result.ok) throw new Error(result.error);
+    expect(result.save.gameState.progression).toMatchObject({ xp: 123, level: 4, xpMultiplier: 1 });
   });
 });

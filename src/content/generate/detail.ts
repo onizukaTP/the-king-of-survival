@@ -33,6 +33,15 @@ export interface Detail {
 }
 
 const round = (n: number) => Math.round(n * 1e5) / 1e5;
+
+/** The part of a street around index `from` that stays dry; at least two points, so it still joins the roads. */
+function toShore<P extends { lat: number; lon: number }>(street: P[], from: number, wet: (p: P) => boolean): P[] {
+  let lo = from, hi = from;
+  while (lo > 0 && !wet(street[lo - 1]!)) lo--;
+  while (hi < street.length - 1 && !wet(street[hi + 1]!)) hi++;
+  if (hi === lo) return lo + 1 < street.length ? street.slice(lo, lo + 2) : street.slice(Math.max(0, lo - 1), lo + 1);
+  return street.slice(lo, hi + 1);
+}
 const slugOf = (id: string) => id.replace(/^loc\./, '');
 
 export function generateDetail(
@@ -41,6 +50,8 @@ export function generateDetail(
   typeNames: Record<string, string>,
   landmarks: GenBuilding[],
   seed: number,
+  /** Ground a building or well can't stand on (rivers and big reservoirs). */
+  wet: (p: { lat: number; lon: number }) => boolean = () => false,
 ): Detail {
   const r = streamFor(seed, `detail:${s.id}`);
   const size = cfg.sizes[s.tier];
@@ -53,18 +64,21 @@ export function generateDetail(
     Array.from({ length: steps + 1 }, (_, i) => offset(from, (len * i) / steps, a));
   const start = offset(s, half, angle + Math.PI);
   const steps = Math.max(2, Math.round(size.streetKm / 0.2)) & ~1; // even, so the centre is a vertex
-  const main = line(start, angle, size.streetKm, steps);
-  main[steps / 2] = { lat: s.lat, lon: s.lon };
+  const fullMain = line(start, angle, size.streetKm, steps);
+  fullMain[steps / 2] = { lat: s.lat, lon: s.lon };
+  // Streets stop at the shore of a river or big reservoir (owner, 2026-11-28: water stays outside towns).
+  const main = toShore(fullMain, steps / 2, wet);
   const streets = [main];
   const sides = between(r, size.sideStreets);
   for (let i = 0; i < sides; i++) {
     // Each side street crosses the main street at one of its points, so they join on the road graph.
-    const at = main[1 + Math.floor(r() * (main.length - 2))]!;
+    const at = main[Math.floor(r() * main.length)]!;
     const len = size.streetKm * (0.3 + r() * 0.3);
     const n = Math.max(1, Math.round(len / 0.4));
     const across = angle + Math.PI / 2;
     const back = line(at, across + Math.PI, len / 2, n).reverse();
-    streets.push([...back.slice(0, -1), at, ...line(at, across, len / 2, n).slice(1)]);
+    const side = toShore([...back.slice(0, -1), at, ...line(at, across, len / 2, n).slice(1)], n, wet);
+    if (side.length >= 2) streets.push(side);
   }
 
   // Places along the streets, kept apart from each other, the centre and the landmarks (with 10 m to
@@ -77,7 +91,7 @@ export function generateDetail(
       const i = Math.floor(r() * (street.length - 1));
       const a = street[i]!, b = street[i + 1]!, f = r();
       const p = { lat: a.lat + (b.lat - a.lat) * f, lon: a.lon + (b.lon - a.lon) * f };
-      if (taken.every((q) => km(p, q) >= gap)) {
+      if (taken.every((q) => km(p, q) >= gap) && !wet(p)) {
         taken.push(p);
         return { lat: round(p.lat), lon: round(p.lon) };
       }

@@ -79,12 +79,15 @@ export function generateSettlements(
   cfg: SpawnConfig,
   names: { prefixes: string[]; suffixes: string[] },
   seed: number,
+  /** Too close to a river or big reservoir to build a place on. */
+  wet: (p: { lat: number; lon: number }) => boolean = () => false,
 ): Settlement[] {
   const all: Settlement[] = [...owners];
   const name = namer(seed, names, new Set(owners.map((o) => o.name.toLowerCase())));
 
   const fits = (p: { lat: number; lon: number }, parent: Settlement, gapToParent: number) =>
     onLand(p, outline)
+    && !wet(p)
     && keptSites.every((k) => km(p, k) >= cfg.keptSiteGapKm)
     && all.every((s) => km(p, s) >= (s.id === parent.id ? gapToParent : cfg.minGapKm));
 

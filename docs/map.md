@@ -46,6 +46,10 @@ backbone and highway data, not new code.
   owner's places' wells are never dry. A dry well shows grey on the map, "Dry well" in the panel, and
   filling or drinking there says "The well is dry."
 - Tanks sit at the edge of each place (unsafe water, D-044).
+- **Water stays outside places (D-109):** a tank, pond or lake under 2 km across that any building, well or
+  street touches is left out (about 25 across the state), as is a generated tank that reaches another place.
+  Rivers and bigger reservoirs stay: buildings and wells keep 50 m from them, streets end at their shore,
+  and generated places sit at least 300 m from them.
 - Streets join the highway network when the game loads, so trips use them.
 
 ## Roads

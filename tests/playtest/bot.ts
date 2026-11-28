@@ -222,6 +222,16 @@ function* wishes(s: GameState, content: Content, mem: Memory): Generator<Command
     yield { type: 'rest', minutes: 'until_rested' };
   }
 
+  // Very thirsty with nothing to drink: the nearest water of any kind comes before searching.
+  if (sv.water < 40 && countOf(s, DRINK) === 0) {
+    const p0 = s.player.position;
+    const near = [
+      ...allSpots(content).filter((sp) => sp.townId !== FAR && sp.kind === 'water' && !sp.dry).map((sp) => ({ lat: sp.lat, lon: sp.lon, target: { spotId: sp.id } as const })),
+      ...Object.values(content.sites).filter((k) => k.id !== FAR && waterAt(k, content)).map((k) => ({ lat: k.lat, lon: k.lon, target: { siteId: k.id } as const })),
+    ].filter((w) => distanceKm(p0, w) > 0.04).sort((a, b) => distanceKm(p0, a) - distanceKm(p0, b));
+    for (const w of near.slice(0, 5)) yield { type: 'travel.start', target: w.target };
+  }
+
   // Scavenge.
   const opts = searchOptions(s, content);
   const key = searchKey(s, content);
@@ -255,7 +265,7 @@ function* wishes(s: GameState, content: Content, mem: Memory): Generator<Command
   const dry = points('water') < 50 && sv.water < 80;
   const clean = (k: (typeof known)[number]) => { const w = waterAt(k, content); return w === 'river' || w === 'well'; };
   // Thirsty: the nearest clean water first (a town well or a river site), then any water.
-  const wells = allSpots(content).filter((sp) => sp.townId !== FAR && sp.kind === 'water' && sp.water === 'well' && !sp.dry).map((sp) => ({ lat: sp.lat, lon: sp.lon, clean: true, target: { spotId: sp.id } as const }));
+  const wells = allSpots(content).filter((sp) => sp.townId !== FAR && sp.kind === 'water' && !sp.dry).map((sp) => ({ lat: sp.lat, lon: sp.lon, clean: sp.kind === 'water' && sp.water === 'well', target: { spotId: sp.id } as const }));
   const waterSites = known.filter((k) => waterAt(k, content)).map((k) => ({ lat: k.lat, lon: k.lon, clean: clean(k), target: { siteId: k.id } as const }));
   const waters = [...wells, ...waterSites].filter((w) => distanceKm(pos, w) > 0.04).sort((a, b) => Number(b.clean) - Number(a.clean) || distanceKm(pos, a) - distanceKm(pos, b));
   if (dry) for (const w of waters) yield { type: 'travel.start', target: w.target };

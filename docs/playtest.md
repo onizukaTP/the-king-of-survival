@@ -61,6 +61,10 @@ Won / fled / died, then the Health lost in a win. "Flees" means the bot flees be
   wells in generated places are dry (D-103). The bot now skips dry wells, as a player would after one look.
 - After the fix: 57 of 60 runs survive 30 days (2 thirst, 1 killed); with statewide rivers and reservoirs,
   20 of 20 survive (lowest Water 14 on average, level 10 by day 30). Nothing in the game was changed for this.
+- With water kept outside places (D-109, 2026-11-28): 5 of 20 died of thirst. The bot searched open ground
+  (possible anywhere since D-101) before going for water, and the small water by Srivilliputhur's centre it
+  used to drink from is gone. The bot now walks to the nearest water first when Water is under 40 and it has
+  nothing to drink: 20 of 20 survive, lowest Water 25 on average.
 
 ## Bugs found and fixed (on `dev`)
 

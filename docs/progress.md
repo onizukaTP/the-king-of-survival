@@ -116,6 +116,7 @@
   - The map shows places by size as you zoom, draws only what's in view, and follows Prabu on trips.
   - 243 unit tests and 14 e2e tests pass; checked in the browser. The playtest bot first died of thirst in 54 of 60 runs: it was walking to dry wells (a bot bug, fixed); see `docs/playtest.md`.
   - D-108 (2026-11-27): the radiation zone (D-043) is switched off: not drawn, no radiation. Its rules stay in the data for later.
+  - D-109 (2026-11-28): water stays outside towns, cities and villages (the owner saw Srivilliputhur's buildings standing in tanks). Small water that a place touches is left out; buildings, wells and streets keep off rivers and big reservoirs; a test checks that no building, well or street point is in water.
 
 ## Pending (unblocked)
 - Nothing.

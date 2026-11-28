@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { loadContent, parseContent, type RawContent } from './loader';
+import { distanceToLineKm, insideRing } from '../engine/systems/travel/geo';
 import characters from './data/characters.json';
 import items from './data/items.json';
 import survival from './data/survival.json';
@@ -62,6 +63,20 @@ describe('content loader', () => {
     expect(content.events.events).toHaveLength(14);
     expect(Object.keys(content.enemies)).toHaveLength(4);
     expect(Object.keys(content.conditions)).toHaveLength(6);
+  });
+
+  it('keeps water out of towns, cities and villages: no building or well stands in water (owner, 2026-11-28)', () => {
+    const content = loadContent();
+    const areas = content.water.areas.map((a) => {
+      const lons = a.ring.map((q) => q[0]), lats = a.ring.map((q) => q[1]);
+      return { ring: a.ring, s: Math.min(...lats) - 0.001, n: Math.max(...lats) + 0.001, w: Math.min(...lons) - 0.001, e: Math.max(...lons) + 0.001 };
+    });
+    const spots = Object.values(content.towns).flatMap((t) => [...t.buildings, ...t.water.filter((w) => w.kind === 'well')]);
+    const wet = spots.filter((p) => areas.some((a) => p.lat >= a.s && p.lat <= a.n && p.lon >= a.w && p.lon <= a.e && (insideRing(p, a.ring) || distanceToLineKm(p, a.ring) < 0.05)));
+    expect(wet.map((p) => p.id)).toEqual([]);
+    // Streets end at the shore: no street point lies in water.
+    const streetPoints = Object.values(content.townStreets).flat(2).map(([lon, lat]) => ({ lat, lon }));
+    expect(streetPoints.filter((p) => areas.some((a) => p.lat >= a.s && p.lat <= a.n && p.lon >= a.w && p.lon <= a.e && insideRing(p, a.ring)))).toEqual([]);
   });
 
   it('rejects bad ids and duplicates', () => {
